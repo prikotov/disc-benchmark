@@ -85,7 +85,7 @@ const FIND_LISTS = (keysJson, quirksJson) => {
   // мягкая видимость: скрытые будущие панели тоже обрабатываем —
   // события дойдут до состояния/порядка в любом случае
   const vis = (el) => !!(el.offsetParent || el.getClientRects().length);
-  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); s = s.replace(/^[^\p{L}]+/u, ''); const q = JSON.parse(quirksJson); return q[s] || s; };
+  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, ''); const q = JSON.parse(quirksJson); return q[s] || s; };
   const keys = new Set(JSON.parse(keysJson));
   let n = 0;
   for (const el of document.querySelectorAll('body *')) {
@@ -101,7 +101,7 @@ const FIND_LISTS = (keysJson, quirksJson) => {
 // чтобы шагивизарда прошли, точный порядок не критичен
 const SHUFFLE = (mapJson, quirksJson) => {
   const vis = (el) => !!(el.offsetParent || el.getClientRects().length);
-  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); s = s.replace(/^[^\p{L}]+/u, ''); const q = JSON.parse(quirksJson); return q[s] || s; };
+  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, ''); const q = JSON.parse(quirksJson); return q[s] || s; };
   const refMap = new Map(JSON.parse(mapJson));
   for (const el of document.querySelectorAll('body *')) {
     if (!vis(el) || el.children.length !== 4) continue;

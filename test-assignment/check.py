@@ -79,7 +79,7 @@ def extract_pairs(html: str) -> Counter:
     pairs: Counter = Counter()
     # ключи могут быть в кавычках (JSON) и без; полный (type/text) и короткий (t/l/w)
     T = r"[\"']?(?:t|type)[\"']?"
-    X = r"[\"']?(?:l|w|text|label|title|word|content|name|t)[\"']?"
+    X = r"[\"']?(?:l|w|text|label|title|word|content|name|t|q)[\"']?"
     pats = [
         # разметка оригинала: <li data-type="d">Волевой</li>
         r"data-type=[\"']([disc])[\"'][^>]*>\s*([^<>{]{2,40}?)\s*<",
@@ -98,6 +98,16 @@ def extract_pairs(html: str) -> Counter:
             txt = txt.strip()
             if 2 <= len(txt) <= 40:
                 pairs[(txt, t)] += 1
+
+    # позиционный разбор: data-type в атрибуте, текст элемента — где-то внутри
+    # (вложенные span'ы: <li data-type="d"><span>1</span><span>Волевой</span></li>)
+    for m in re.finditer(r'data-type=["\']([disc])["\']', html):
+        chunk = html[m.end():m.end() + 300]
+        for tm in re.finditer(r">([^<>{}]{2,40})<", chunk):
+            txt = tm.group(1).strip()
+            if txt and not txt.isdigit():
+                pairs[(txt, m.group(1))] += 1
+                break
     return pairs
 
 

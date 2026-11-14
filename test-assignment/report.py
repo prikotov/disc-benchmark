@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -229,6 +230,10 @@ def build_report_html() -> str:
             jhtml = (f'<b>судья ярус 1:</b> data {jd.get("data")} · logic {jd.get("logic")} · '
                      f'ux {jd.get("ux")} · impl {jd.get("impl")} — <b>{jd.get("total")}/16</b>'
                      f'<div class="notes">{(jd.get("notes") or "")[:500]}</div>' if jd else "судья: не выполнялся")
+            app_link = ""
+            if (run / "index.html").is_file():
+                rel = os.path.relpath(run / "index.html", ROOT / "reports")
+                app_link = f'<a class="try" href="{rel}" target="_blank" rel="noopener">открыть приложение</a>'
             flow = f'OK, {pt.get("questions_processed")}/24' if pt.get("flow_ok") else "—"
             quirk = "<br>+ исправлена известная опечатка оригинала" if chk.get("known_quirk_normalized") else ""
             status = "⏱ таймаут, " + str(r.get("duration_s")) + "с" if r.get("killed") else str(r.get("duration_s")) + "с"
@@ -241,6 +246,7 @@ def build_report_html() -> str:
   данные {r['data_found']}/{r['data_total']} · пары текст+тип {r['types_correct']}/{r['types_total']} ·
   внешние запросы: {'нет' if r['external_pass'] else 'ЕСТЬ'} · рендер: {'OK' if r['smoke_ok'] else '—'} ·
   автопрохождение: {flow}{quirk}</div>
+  <div style="margin:8px 0">{app_link}</div>
   <div class="shots">{''.join(shots)}</div>
   <div class="judge">{jhtml}</div>
 </div>""")
@@ -273,6 +279,10 @@ pre{{background:#101418;color:#d6e2f0;padding:12px;border-radius:8px;overflow:au
 img.shot{{max-width:340px;border:1px solid #ccc;border-radius:6px;cursor:zoom-in}}
 figure{{margin:0}} figcaption{{font-size:12px;color:#666}}
 .judge{{margin-top:8px;font-size:13px;background:#f2f6ff;border-radius:8px;padding:8px}}
+a.try{{display:inline-block;background:#123f8c;color:#fff;padding:6px 14px;border-radius:8px;
+text-decoration:none;font-size:14px;font-family:system-ui}}
+a.try:hover{{background:#0e3270}}
+a.try:before{{content:"▶ ";font-size:12px}}
 .notes{{color:#333;margin-top:4px}}
 .toc a{{margin-right:14px}}
 #lb{{display:none;position:fixed;inset:0;background:rgba(10,12,16,.92);overflow:auto;z-index:99;cursor:zoom-out}}

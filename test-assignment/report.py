@@ -141,8 +141,34 @@ def cross_report() -> str:
 
 
 def html_report(runs: list[Path]) -> str:
-    """Визуальный отчёт: скриншоты инлайном, чеки, судья — всё в одном файле."""
+    """Визуальный отчёт: скриншоты инлайном, чеки, судья — всё в одном файле.
+    Клик по скриншоту — просмотр в масштабе 1:1 (оверлей с прокруткой)."""
     import base64
+    head = """<!DOCTYPE html><html lang=ru><meta charset=utf-8><title>disc — прогоны</title>
+<style>
+body{background:#f5f6f8;margin:20px;font-family:system-ui}
+h1{font-family:system-ui}
+img.shot{max-width:420px;border:1px solid #ccc;border-radius:6px;cursor:zoom-in}
+figure{margin:0}
+figcaption{font-size:12px;color:#666;margin-top:2px;font-family:system-ui}
+#lb{display:none;position:fixed;inset:0;background:rgba(10,12,16,.92);overflow:auto;z-index:99;cursor:zoom-out}
+#lb img{max-width:none;display:block;margin:16px auto;cursor:zoom-out}
+#lb .hint{position:fixed;top:10px;right:16px;color:#cfd3da;font-family:system-ui;font-size:13px}
+</style>
+<div id="lb"><div class="hint">масштаб 1:1 · прокрутка — панорама · Esc или клик — закрыть</div><img alt=""></div>
+<script>
+const lb = document.getElementById('lb');
+const lbImg = lb.querySelector('img');
+const openLb = (src) => { lbImg.src = src; lb.style.display = 'block'; document.body.style.overflow = 'hidden'; };
+const closeLb = () => { lb.style.display = 'none'; lbImg.src = ''; document.body.style.overflow = ''; };
+document.addEventListener('click', (e) => {
+  const im = e.target.closest('img.shot');
+  if (im) { openLb(im.src); return; }
+  if (e.target.closest('#lb')) closeLb();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb(); });
+</script>
+<h1>disc: прогоны копирования DISC-теста</h1>"""
     cards = []
     for run in runs:
         r = run_row(run)
@@ -155,7 +181,7 @@ def html_report(runs: list[Path]) -> str:
             p = run / "screenshots" / name
             if p.is_file():
                 b64 = base64.b64encode(p.read_bytes()).decode()
-                shots.append(f"<figure><img src=\"data:image/png;base64,{b64}\" style=\"max-width:420px;border:1px solid #ccc;border-radius:6px\"><figcaption>{cap}</figcaption></figure>")
+                shots.append(f"<figure><img class=\"shot\" src=\"data:image/png;base64,{b64}\" alt=\"{cap}\"><figcaption>{cap} (клик — 1:1)</figcaption></figure>")
         j = (f"<b>судья:</b> data {jd.get('data')} · logic {jd.get('logic')} · ux {jd.get('ux')} · "
              f"impl {jd.get('impl')} — <b>{jd.get('total')}/16</b><br><i>{notes[:400]}</i>" if jd else "судья: не выполнялся")
         cards.append(f"""
@@ -170,9 +196,6 @@ def html_report(runs: list[Path]) -> str:
   <div style="display:flex;gap:10px;flex-wrap:wrap">{''.join(shots)}</div>
   <div style="margin-top:8px">{j}</div>
 </div>""")
-    head = """<!DOCTYPE html><html lang=ru><meta charset=utf-8><title>disc — прогоны</title>
-<style>body{background:#f5f6f8;margin:20px}h1{font-family:system-ui}</style>
-<h1>disc: прогоны копирования DISC-теста</h1>"""
     return head + "\n".join(cards)
 
 

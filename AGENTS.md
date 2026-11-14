@@ -255,10 +255,10 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
 | `muse-glimmer-ctx100k/` | `muse-glimmer:ctx100k` | off, low, high (дефолт) | 3 |
 | `orcarouter-Qwen3.8-27B-Uncensored-ctx100k/` | `orcarouter/Qwen3.8-27B-Uncensored:ctx100k` | off, on | 3 |
 
-Пробный xhigh-прогон huihui (run-10, 2026-11-14): 16/16, но время ×2–4
-и вых. токены ×2–4 против low — **xhigh/max-уровни в серию не включаются**
-(качество то же, цена выше; для qwen3.8 правило то же, отдельный пробный
-прогон не требуется).
+Пробный xhigh huihui вырос до полной тройки (run-10…12, 2026-11-14:
+16,16,16 — качество как low, время ×2–4, вых. токены ×2–4):
+**xhigh/max-уровни в стандартные серии не включаются**; для qwen3.8
+правило то же, отдельный пробный прогон не требуется.
 
 Алиас `bonsai-2:ctx100k` создан 2026-11-14 (`POST /api/create`:
 `from bonsai-2:27b` + `parameters: {"num_ctx": 102400}` — блобы весов

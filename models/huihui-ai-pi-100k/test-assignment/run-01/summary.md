@@ -10,8 +10,11 @@
 
 - файлы агента: 4; index.html: есть
 - самодостаточность (внешние запросы): OK
-- данные: прилагательных 84/84; типов верно 96/84
+- данные: прилагательных 84/84; пар текст+тип верно 96/96
 - рендер-смоук (headless Chrome): OK
+- автопрохождение (поток): OK, вопросов 24; баллы на экране — справочно (симуляция drag&drop не воспроизводима, логику проверяет судья по коду)
+- скриншоты: /home/dp/MyProjects/disc/models/huihui-ai-pi-100k/test-assignment/run-01/screenshots/start.png, /home/dp/MyProjects/disc/models/huihui-ai-pi-100k/test-assignment/run-01/screenshots/step.png, /home/dp/MyProjects/disc/models/huihui-ai-pi-100k/test-assignment/run-01/screenshots/result.png
+- судья яруса 1: data 4, logic 4, ux 4, impl 4 — **16/16**
 - **итог чека: PASSED**
 
-Дальше: судьи яруса 1–2 по рубрике rubrics/scorecard.md; смоук полного прохождения и замер баллов — после подключения браузерной автоматизации.
+Дальше: судья яруса 2 (обзор + сверка), при расхождениях — доработки в тот же run.

@@ -3,16 +3,21 @@
 
 Проверяет run-каталог (см. runner.py):
 1. files       — инвентарь созданного, наличие index.html в корне;
-2. external    — решение самодостаточно: нет внешних запросов (CDN, fetch,
-                 XHR, sendBeacon, WebSocket, внешние ресурсы в разметке);
-3. data        — точность данных: все 96 прилагательных из эталона
-                 (reference/questions.json) присутствуют посимвольно;
-                 отображение (текст -> тип) извлекается из разметки/данных
-                 решения и сравнивается с эталоном как мультимножество пар;
-4. smoke       — рендер в headless Chrome (google-chrome --headless):
-                 страница открывается, DOM отрисовался, нет Uncaught-ошибок
-                 в консоли; симуляция полного прохождения — отдельная задача
-                 (playwright), в pilote не выполняется.
+2. external    — решение самодостаточно: в index.html нет ни внешних запросов
+                 (CDN, fetch, XHR, sendBeacon, WebSocket), ни ЛОКАЛЬНЫХ
+                 зависимостей (script src/link href/img src с относительными
+                 путями — решение должно быть одним файлом);
+3. data        — точность данных: все прилагательные из эталона
+                 (reference/questions.json) присутствуют посимвольно
+                 (включая латинскую «c» в «Экспресcивный»);
+4. types       — пары (текст, тип) извлекаются из разметки/данных решения
+                 (разнообразные форматы: data-type-разметка, JS-объекты
+                 с полными и короткими ключами, массивы пар) и сравниваются
+                 с эталоном как мультимножество — повторяющиеся прилагательные
+                 с разными типами ловятся;
+5. smoke       — рендер в headless Chrome: DOM отрисовался, нет
+                 Uncaught-ошибок; симуляция полного прохождения —
+                 playthrough.mjs (поток) и судья (логика по коду).
 
 Результат: <run>/check.json; код возврата 0, если чек пройден.
 Запуск: python3 test-assignment/check.py --run models/<м>/test-assignment/run-01
@@ -32,7 +37,9 @@ REFERENCE = HERE / "reference" / "questions.json"
 
 
 def scan_external(html: str) -> tuple[bool, list[str], list[str]]:
-    """(pass, находки-паттерны, уникальные внешние URL)."""
+    """(pass, находки-паттерны, уникальные внешние URL). Локальные
+    относительные зависимости (script src="disc.js" и т.п.) — тоже нарушение:
+    решение должно быть одним самодостаточным файлом."""
     findings: list[str] = []
     urls: set[str] = set()
     patterns = [
@@ -47,6 +54,10 @@ def scan_external(html: str) -> tuple[bool, list[str], list[str]]:
         ("EventSource", r"\bEventSource\b"),
         ("form action", r"<form[^>]+action=[\"'](?!#|javascript:)[^\"']+"),
         ("import( внешний", r"\bimport\s*\(\s*[\"'](https?:)?//"),
+        # локальные зависимости: src/href с путями (решение — один файл)
+        ("script src локальный", r"<script[^>]+src=[\"'](?!#|data:|javascript:)[^\"']+"),
+        ("link href локальный", r"<link[^>]+href=[\"'](?!#|data:)[^\"']+\.(?:css|js)[\"']"),
+        ("img src локальный", r"<img[^>]+src=[\"'](?!#|data:)[^\"']+\.(?:png|jpe?g|gif|svg|webp)[\"']"),
     ]
     for name, pat in patterns:
         m = re.findall(pat, html, re.I)
@@ -54,27 +65,31 @@ def scan_external(html: str) -> tuple[bool, list[str], list[str]]:
             findings.append(f"{name}: {len(m)}")
     for m in re.finditer(r"https?://[^\s\"'<>)]+", html):
         u = m.group(0).rstrip("\\")
-        if "w3.org" not in u and "stratoplan" not in u:  # w3.org — часто в xmlns/svg
+        if "w3.org" not in u:  # w3.org — часто в xmlns/svg
             urls.add(u[:120])
     return (not findings and not urls), findings, sorted(urls)
 
 
 def extract_pairs(html: str) -> Counter:
     """Извлечение пар (текст, тип) из разметки/данных решения, best effort.
-    Мультимножество: прилагательные могут повторяться с разными типами."""
+    Мультимножество: прилагательные могут повторяться с разными типами.
+    Поддержанные форматы: data-type-разметка, JS-объекты с полными ключами
+    (type/text/label/...), короткими (t/l/w), с ключами в кавычках (JSON),
+    массивы пар ["d","Текст"] — в обоих порядках."""
     pairs: Counter = Counter()
+    # ключи могут быть в кавычках (JSON) и без; полный (type/text) и короткий (t/l/w)
+    T = r"[\"']?(?:t|type)[\"']?"
+    X = r"[\"']?(?:l|w|text|label|title|word|content|name|t)[\"']?"
     pats = [
         # разметка оригинала: <li data-type="d">Волевой</li>
         r"data-type=[\"']([disc])[\"'][^>]*>\s*([^<>{]{2,40}?)\s*<",
-        # JS-объекты в обоих порядках ключей
-        r"type\s*:\s*[\"']([disc])[\"']\s*,\s*text\s*:\s*[\"']([^\"']{2,40})[\"']",
-        r"text\s*:\s*[\"']([^\"']{2,40})[\"']\s*,\s*type\s*:\s*[\"']([disc])[\"']",
+        # JS-объекты, тип первым
+        rf"{T}\s*:\s*[\"']([disc])[\"']\s*,\s*{X}\s*:\s*[\"']([^\"']{{2,40}})[\"']",
+        # JS-объекты, текст первым
+        rf"{X}\s*:\s*[\"']([^\"']{{2,40}})[\"']\s*,\s*{T}\s*:\s*[\"']([disc])[\"']",
         # массивы пар ["d","Волевой"] / ["Волевой","d"]
         r"\[\s*[\"']([disc])[\"']\s*,\s*[\"']([^\"']{2,40})[\"']\s*\]",
         r"\[\s*[\"']([^\"']{2,40})[\"']\s*,\s*[\"']([disc])[\"']\s*\]",
-        # type: "d", label/title/word/content
-        r"type\s*:\s*[\"']([disc])[\"']\s*,\s*(?:label|title|word|content)\s*:\s*[\"']([^\"']{2,40})[\"']",
-        r"(?:label|title|word|content)\s*:\s*[\"']([^\"']{2,40})[\"']\s*,\s*type\s*:\s*[\"']([disc])[\"']",
     ]
     for pat in pats:
         for m in re.finditer(pat, html):
@@ -152,17 +167,18 @@ def main() -> int:
         pairs = extract_pairs(html)
         common = pairs & ref_pairs                      # пересечение мультимножеств
         correct = sum(common.values())                  # верные пары (текст, тип)
+        total = sum(ref_pairs.values())
         mismatches: dict = {}
         for (txt, tp), n in (ref_pairs - pairs).items():
             mismatches[f"{txt} -> {tp}"] = f"не хватает ×{n}"
         for (txt, tp), n in (pairs - ref_pairs).items():
-            mismatches[f"{txt} -> {tp}"] = mismatches.get(f"{txt} -> {tp}", "") + f" лишних ×{n}"
+            mismatches[f"{txt} -> {tp}"] = f"лишних ×{n}"
         result["types"] = {"extracted": sum(pairs.values()), "correct": correct,
-                           "total": sum(ref_pairs.values()), "mismatches": mismatches}
+                           "total": total, "mismatches": mismatches}
         # типы извлекаются не из любой реализации: слабое извлечение —
         # не провал (ручная проверка/судьи), но фиксируется
-        if sum(pairs.values()) >= 96 * 0.9:
-            ok = ok and correct >= 96 * 0.9
+        if sum(pairs.values()) >= total * 0.9:
+            ok = ok and correct >= total * 0.9
 
         smoke = chrome_smoke(index)
         result["smoke"] = smoke

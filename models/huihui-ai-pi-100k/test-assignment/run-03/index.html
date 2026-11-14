@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — определите свой поведенческий профиль</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 16V3a13 13 0 0 1 13 13z' fill='%23e4573d'/%3E%3Cpath d='M16 16h13A13 13 0 0 1 16 29z' fill='%23f0a437'/%3E%3Cpath d='M16 16v13a13 13 0 0 1-13-13z' fill='%233f9d6a'/%3E%3Cpath d='M16 16H3A13 13 0 0 1 16 3z' fill='%233d7bd6'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#f4f7fb;
+    --ink:#182a3e;
+    --muted:#5c6c80;
+    --line:#dfe6ee;
+    --card:#ffffff;
+    --blue:#1f5bd6;
+    --blue-dark:#17469f;
+    --d:#e4573d;
+    --i:#efa435;
+    --s:#3f9d6a;
+    --c:#3d7bd6;
+    --radius:16px;
+    --shadow:0 12px 40px rgba(23,42,62,.10);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  .no-scroll{overflow:hidden}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  .icon{display:inline-block;vertical-align:middle;flex:none}
+  button{font:inherit;color:inherit}
+
+  /* ---------- header ---------- */
+  .site-head{border-bottom:1px solid var(--line);background:#fff}
+  .site-head .wrap{display:flex;align-items:center;gap:12px;padding-top:14px;padding-bottom:14px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
+  .brand small{display:block;font-weight:500;color:var(--muted);font-size:12px;line-height:1.2}
+
+  /* ---------- hero ---------- */
+  .hero{padding:52px 0 40px}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#e8f0fe;color:var(--blue-dark);
+    font-size:13px;font-weight:600;
+    padding:6px 12px;border-radius:999px;
+  }
+  .hero h1{
+    margin:16px 0 12px;
+    font-size:clamp(30px,5vw,44px);
+    line-height:1.12;font-weight:800;letter-spacing:-.5px;
+    max-width:22ch;
+  }
+  .hero .lead{margin:0 0 22px;max-width:58ch;color:var(--muted);font-size:17px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 28px;padding:0;list-style:none}
+  .facts li{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+  .facts .icon{color:var(--blue)}
+  .cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    border:1px solid transparent;border-radius:12px;
+    padding:14px 26px;font-size:16px;font-weight:700;cursor:pointer;
+    text-decoration:none;transition:background .15s ease,border-color .15s ease,transform .05s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn--primary{background:var(--blue);color:#fff}
+  .btn--primary:hover{background:var(--blue-dark)}
+  .btn--ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+  .btn--ghost:hover{border-color:#c4cfdc}
+  .btn--sm{padding:10px 16px;font-size:14px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+
+  /* ---------- about ---------- */
+  .about{padding:16px 0 56px}
+  .about h2{font-size:24px;margin:0 0 6px}
+  .about .sub{margin:0 0 20px;color:var(--muted);max-width:70ch}
+  .types{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .type{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)
+  }
+  .type__badge{
+    flex:none;width:46px;height:46px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:800;font-size:20px;
+  }
+  .type__badge--d{background:var(--d)} .type__badge--i{background:var(--i)}
+  .type__badge--s{background:var(--s)} .type__badge--c{background:var(--c)}
+  .type h3{margin:0 0 4px;font-size:15px}
+  .type p{margin:0;font-size:14px;color:var(--muted)}
+  .howto{
+    margin-top:14px;background:#fff;border:1px solid var(--line);
+    border-radius:var(--radius);padding:16px 18px;font-size:14px;color:var(--muted)
+  }
+  .howto b{color:var(--ink)}
+
+  footer{border-top:1px solid var(--line);background:#fff}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;padding-top:18px;padding-bottom:18px;font-size:13px;color:var(--muted)}
+
+  /* ---------- modal ---------- */
+  .modal{position:fixed;inset:0;z-index:100}
+  .modal[hidden]{display:none}
+  .modal__overlay{position:absolute;inset:0;background:rgba(15,26,39,.62);backdrop-filter:blur(2px)}
+  .dialog{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(940px,calc(100% - 20px));
+    max-height:min(90vh,840px);
+    display:flex;flex-direction:column;overflow:hidden;
+    background:#fff;border-radius:20px;
+    box-shadow:0 30px 90px rgba(10,20,35,.35);
+  }
+  .dialog__close{
+    position:absolute;top:14px;right:14px;z-index:6;
+    width:38px;height:38px;border:0;border-radius:10px;
+    background:rgba(23,42,62,.07);color:#41516a;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .dialog__close:hover{background:rgba(23,42,62,.13)}
+  .dialog__head{padding:22px 24px 10px;text-align:center}
+  .dialog__head h2{margin:0 0 6px;font-size:22px;font-weight:800;letter-spacing:-.2px}
+  .dialog__head .sub{margin:0;font-size:14px;color:var(--muted)}
+  .dialog__head .lead{margin:8px 0 0;font-size:14px;font-weight:600;color:var(--s)}
+
+  .tabs{
+    display:flex;gap:8px;padding:14px 24px 12px;
+    overflow-x:auto;scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs[hidden]{display:none}
+  .tab{
+    flex:none;border:0;border-radius:10px;padding:10px 16px;
+    background:#eef3f9;color:#41516a;font-size:14px;font-weight:600;cursor:pointer;
+    white-space:nowrap;
+  }
+  .tab:hover{background:#e2eaf4}
+  .tab.is-active{background:var(--blue);color:#fff}
+
+  .body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+
+  .pane{display:none;padding:4px 24px 8px}
+  .pane.is-active{display:block}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{border:1px solid #d7dee8;border-radius:12px;overflow:hidden;background:#fff}
+  .card__cap{padding:10px 14px;font-size:14px;font-weight:700}
+  .card__cap--foot{background:#f6f9fc;border-top:1px solid var(--line);text-align:right;color:var(--muted);font-weight:600}
+
+  .list{list-style:none;margin:0;padding:4px 8px;position:relative}
+  .item{
+    position:relative;display:flex;align-items:center;gap:10px;
+    min-height:46px;padding:10px 40px 10px 12px;
+    border-bottom:1px solid var(--line);
+    font-size:14.5px;cursor:grab;user-select:none;-webkit-user-select:none;
+    background:#fff;
+  }
+  .item:last-child{border-bottom:0}
+  .item:hover{background:#f7fafd}
+  .item.is-dragging{
+    background:#fff;box-shadow:0 10px 26px rgba(15,30,50,.22);
+    outline:2px solid #bfd0ea;outline-offset:-2px;
+    cursor:grabbing;z-index:3;
+  }
+  .rank{
+    flex:none;width:22px;height:22px;border-radius:7px;
+    display:flex;align-items:center;justify-content:center;
+    background:#eef3f9;color:#5c6c80;font-size:12px;font-weight:700;
+  }
+  .item.is-dragging .rank{background:#dfe9f8}
+  .handle{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    display:flex;align-items:center;justify-content:center;
+    width:26px;height:26px;border-radius:8px;
+    color:#9aa8ba;cursor:grab;touch-action:none;
+  }
+  .handle:hover{background:#eef3f9;color:#5c6c80}
+  .item.is-dragging .handle{cursor:grabbing}
+
+  .progress{
+    margin:18px 24px 0;height:6px;border-radius:999px;background:#e6ebf2;overflow:hidden;
+  }
+  .progress__bar{height:100%;width:12.5%;border-radius:999px;background:linear-gradient(90deg,#2f7ad9,#1f5bd6);transition:width .25s ease}
+  .actions{
+    display:flex;gap:10px;align-items:center;justify-content:space-between;
+    padding:16px 24px 18px;
+  }
+  .actions .hint{font-size:12.5px;color:var(--muted)}
+  .actions[hidden]{display:none}
+
+  /* ---------- result ---------- */
+  .result{display:none;padding:10px 24px 24px}
+  .result.is-active{display:block}
+  .result__title{
+    display:flex;align-items:center;gap:12px;
+    margin:8px 0 4px;font-size:20px;font-weight:800;
+  }
+  .result__title .icon{color:var(--s)}
+  .result__scores{
+    font-size:clamp(20px,3.5vw,28px);font-weight:800;letter-spacing:.3px;
+    margin:0 0 4px;color:var(--ink);font-variant-numeric:tabular-nums;
+  }
+  .result__sub{margin:0 0 18px;color:var(--muted);font-size:14px}
+  .profile{display:grid;gap:10px;margin:0 0 18px}
+  .profile__row{
+    display:grid;grid-template-columns:110px 1fr 52px;gap:12px;align-items:center;
+    border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff;
+    font-size:14px;
+  }
+  .profile__row--top{border-color:#c9d8f0;background:#f6f9ff}
+  .profile__name{font-weight:700}
+  .profile__meter{height:10px;border-radius:999px;background:#e6ebf2;overflow:hidden}
+  .profile__fill{height:100%;border-radius:999px;width:0;transition:width .5s ease}
+  .profile__pct{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;color:#41516a}
+  .result__note{
+    margin:0 0 18px;padding:12px 14px;border-radius:12px;
+    background:#f6f9fc;border:1px solid var(--line);
+    font-size:13.5px;color:var(--muted);
+  }
+  .result__actions{display:flex;flex-wrap:wrap;gap:10px}
+
+  @media (max-width:760px){
+    .dialog{width:100%;height:100dvh;max-height:none;border-radius:0}
+    .types{grid-template-columns:1fr}
+    .grid{grid-template-columns:1fr;gap:12px}
+    .pane{padding:4px 14px 8px}
+    .tabs{padding:12px 14px 10px}
+    .progress{margin:14px 14px 0}
+    .actions{padding:14px}
+    .result{padding:10px 16px 20px}
+    .profile__row{grid-template-columns:84px 1fr 44px;gap:8px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;scroll-behavior:auto !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap">
+    <span class="icon" aria-hidden="true">
+      <svg width="34" height="34" viewBox="0 0 32 32"><path d="M16 16V3a13 13 0 0 1 13 13z" fill="#e4573d"/><path d="M16 16h13A13 13 0 0 1 16 29z" fill="#efa435"/><path d="M16 16v13a13 13 0 0 1-13-13z" fill="#3f9d6a"/><path d="M16 16H3A13 13 0 0 1 16 3z" fill="#3d7bd6"/><circle cx="16" cy="16" r="5" fill="#fff"/></svg>
+    </span>
+    <span class="brand">Тест DISC<small>поведенческий профайлинг</small></span>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <span class="kicker">
+      <span class="icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+      Короткий и бесплатный
+    </span>
+    <h1>Узнайте свой стиль поведения по методике DISC</h1>
+    <p class="lead">
+      DISC описывает, как мы принимаем решения, общаемся и реагируем на задачи и дедлайны.
+      Восемь шагов, 24 карточки с оценками — и в конце вы увидите свой поведенческий профиль.
+      Данные никуда не отправляются: всё считается прямо в браузере.
+    </p>
+    <ul class="facts">
+      <li>
+        <span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 1.8"/></svg></span>
+        ≈ 5 минут
+      </li>
+      <li>
+        <span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="m8.5 12 2.4 2.4 4.6-4.8"/></svg></span>
+        8 шагов — ранжирование
+      </li>
+      <li>
+        <span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m3.8 7 8.2 5.8L20.2 7"/></svg></span>
+        без e-mail и регистрации
+      </li>
+    </ul>
+    <div class="cta-row">
+      <button class="btn btn--primary" data-disc-open type="button">
+        Пройти тест DISC
+        <span class="icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg></span>
+      </button>
+      <a class="btn btn--ghost" href="#about">Что такое DISC</a>
+    </div>
+  </section>
+
+  <section class="about wrap" id="about">
+    <h2>Что такое DISC</h2>
+    <p class="sub">
+      Это модель четырёх поведенческих стилей. DISC описывает наблюдаемое поведение в рабочем контексте
+      и сознательно не оценивает способности, интеллект или личность как таковую.
+    </p>
+    <div class="types">
+      <div class="type">
+        <span class="type__badge type__badge--d">D</span>
+        <div>
+          <h3>Доминирование <span style="color:var(--muted);font-weight:500">(Dominance)</span></h3>
+          <p>Решительность, прямолинейность, напор и ориентация на результат: быстрые решения, явные цели.</p>
+        </div>
+      </div>
+      <div class="type">
+        <span class="type__badge type__badge--i">I</span>
+        <div>
+          <h3>Влияние <span style="color:var(--muted);font-weight:500">(Influence)</span></h3>
+          <p>Энергия, открытость, энтузиазм: контакт с людьми, убеждение, работа через отношения.</p>
+        </div>
+      </div>
+      <div class="type">
+        <span class="type__badge type__badge--s">S</span>
+        <div>
+          <h3>Стабильность <span style="color:var(--muted);font-weight:500">(Stability)</span></h3>
+          <p>Спокойствие, надёжность, терпение: умение слушать, поддержка устойчивой работы команды.</p>
+        </div>
+      </div>
+      <div class="type">
+        <span class="type__badge type__badge--c">C</span>
+        <div>
+          <h3>Соблюдение стандартов <span style="color:var(--muted);font-weight:500">(Compliance)</span></h3>
+          <p>Точность, аккуратность, внимательность к деталям: аргументы, качество, проверенные способы.</p>
+        </div>
+      </div>
+    </div>
+    <div class="howto">
+      <b>Как проходит тест.</b> На каждом шаге четыре описания нужно разложить перетаскиванием:
+      сверху — то, что наиболее похоже на вас, снизу — наименее похожее.
+      Чем честнее ответ, тем точнее результат.
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Тест DISC · копия приложения со stratoplan-school.com/disc</span>
+    <span>Один файл, без сети и бэкенда</span>
+  </div>
+</footer>
+
+<!-- ===================== modal ===================== -->
+<div class="modal" id="discModal" hidden role="dialog" aria-modal="true" aria-labelledby="discTitle">
+  <div class="modal__overlay" data-disc-close></div>
+
+  <div class="dialog">
+    <button class="dialog__close" type="button" data-disc-close aria-label="Закрыть">
+      <span class="icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></span>
+    </button>
+
+    <div class="dialog__head">
+      <h2 id="discTitle">Тестирование DISC</h2>
+      <p class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+      <p class="lead">Разместите описания в порядке от наиболее похожего на вас до наименее похожего</p>
+    </div>
+
+    <div class="tabs" id="tabs" role="tablist" aria-label="Шаги теста"></div>
+
+    <div class="body" id="body">
+      <div id="panes"></div>
+
+      <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+
+      <div class="actions" id="actions">
+        <button class="btn btn--ghost btn--sm" type="button" id="btnPrev">
+          <span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H5"/><path d="m11 6-6 6 6 6"/></svg></span>
+          Назад
+        </button>
+        <span class="hint" id="stepHint"></span>
+        <button class="btn btn--primary btn--sm" type="button" id="btnNext">
+          Далее
+          <span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg></span>
+        </button>
+        <button class="btn btn--primary btn--sm" type="button" id="btnFinish" hidden>
+          <span class="icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+          Завершить тест
+        </button>
+      </div>
+
+      <!-- result -->
+      <section class="result" id="result" aria-live="polite">
+        <div class="result__title">
+          <span class="icon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.4"/><path d="m8 12.6 2.7 2.7L16.4 9"/></svg></span>
+          Готово! Ваш DISC-профиль
+        </div>
+        <p class="result__scores" id="resultScores"></p>
+        <p class="result__sub" id="resultTop"></p>
+
+        <div class="profile" id="profileBars"></div>
+
+        <p class="result__note">
+          Обратите внимание: DISC описывает поведенческие паттерны, а не когнитивные способности или личность.
+          Используйте результат для самопонимания и работы с командой — без крайних выводов.
+        </p>
+
+        <div class="result__actions">
+          <button class="btn btn--primary" type="button" id="btnRestart">
+            <span class="icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.9-6.2"/><path d="M20 4.5V9h-4.5"/></svg></span>
+            Пройти заново
+          </button>
+          <button class="btn btn--ghost" type="button" id="btnCloseResult">Закрыть</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ================= data (as in the original test) ================= */
+  const STEPS = [
+    [
+      [["Экспресcивный","i"],["Покладистый","c"],["Волевой","d"],["Осторожный","s"]],
+      [["Пылкий","d"],["Разговорчивый","i"],["Добродушный","s"],["Сдержанный","c"]],
+      [["Любитель приключений","i"],["Энтузиаст","c"],["Исполнитель инструкций","d"],["Верный","s"]],
+    ],
+    [
+      [["Настойчивый","d"],["Осторожный","c"],["Эмоциональный","i"],["Удовлетворенный","s"]],
+      [["Довольный","s"],["Нетерпеливый","d"],["Убедительный","i"],["Безропотный","c"]],
+      [["Смиренный","c"],["Умеющий слушать","s"],["Душа компании","i"],["Волевой","d"]],
+    ],
+    [
+      [["Правильный","c"],["Первопроходец","d"],["Спокойный","s"],["Влиятельный","i"]],
+      [["Почтительный","c"],["Контактный","i"],["Агрессивный","d"],["Мягкий","s"]],
+      [["Весельчак","i"],["Покорный","s"],["Тактичный","c"],["Соперничающий","d"]],
+    ],
+    [
+      [["Точный","c"],["Доминирующий","d"],["Охотный","s"],["Притягательный","i"]],
+      [["Уравновешенный","i"],["Уступчивый","c"],["Идущий на риск","d"],["Услужливый","s"]],
+      [["Осмотрительный","c"],["Добрососедский","s"],["Энергичный","d"],["Убедительный","i"]],
+    ],
+    [
+      [["Уравновешенный","s"],["Мотивирующий","i"],["Щепетильный","c"],["Решительный","d"]],
+      [["Уверенный","i"],["Готовый к сотрудничеству","c"],["Беззаботный","s"],["Аргументирующий","d"]],
+      [["Сдержанный","s"],["Прямой","d"],["Строгий","c"],["Убедительный","i"]],
+    ],
+    [
+      [["Застенчивый","c"],["Требовательный","d"],["Терпеливый","s"],["Очаровательный","i"]],
+      [["Неугомонный","d"],["Дисциплинированный","c"],["Вдохновляющий","i"],["Внимательный","s"]],
+      [["Обязательный","s"],["Оживленный","i"],["Решительный","d"],["Точный","c"]],
+    ],
+    [
+      [["Добросовестный","c"],["Компанейский","i"],["Добрый","s"],["Уверенный в себе","d"]],
+      [["Дипломатичный","c"],["Отважный","d"],["Сочувствующий","s"],["Оптимистичный","i"]],
+      [["Настойчивый","d"],["Общительный","i"],["Постоянный","s"],["Организованный","c"]],
+    ],
+    [
+      [["Соглашающийся","c"],["Владеющий собой","s"],["Шутливый","d"],["Настойчивый","i"]],
+      [["Обаятельный","i"],["Позитивный","d"],["Снисходительный","s"],["Требовательный","c"]],
+      [["Коммуникабельный","i"],["Смелый","d"],["Перфекционист","c"],["Сдержанный","s"]],
+    ],
+  ];
+
+  const STEP_LABELS = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+  const TOTAL_STEPS = STEPS.length;
+
+  const TYPES = [
+    ["d","Dominance","Доминирование","var(--d)","#e4573d",
+     "Решительность, прямолинейность, ориентация на результат."],
+    ["i","Influence","Влияние","var(--i)","#efa435",
+     "Открытость, энергия, общение и влияние через контакт."],
+    ["s","Stability","Стабильность","var(--s)","#3f9d6a",
+     "Спокойствие, надёжность, поддержка и терпение."],
+    ["c","Compliance","Соблюдение стандартов","var(--c)","#3d7bd6",
+     "Точность, качество, аргументы и внимание к деталям."],
+  ];
+
+  const HANDLE_SVG = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="5.5" cy="3.6" r="1.5"/><circle cx="10.5" cy="3.6" r="1.5"/><circle cx="5.5" cy="8" r="1.5"/><circle cx="10.5" cy="8" r="1.5"/><circle cx="5.5" cy="12.4" r="1.5"/><circle cx="10.5" cy="12.4" r="1.5"/></svg>';
+
+  /* ================= dom ================= */
+  const modal     = document.getElementById('discModal');
+  const tabsEl    = document.getElementById('tabs');
+  const panesEl   = document.getElementById('panes');
+  const progress  = document.getElementById('progressBar');
+  const actionsEl = document.getElementById('actions');
+  const stepHint  = document.getElementById('stepHint');
+  const btnPrev   = document.getElementById('btnPrev');
+  const btnNext   = document.getElementById('btnNext');
+  const btnFinish = document.getElementById('btnFinish');
+  const bodyEl    = document.getElementById('body');
+  const resultEl  = document.getElementById('result');
+
+  let step = 0;
+  let lastFocus = null;
+  let done = false;
+
+  const qs  = (s, r) => (r || document).querySelector(s);
+  const qsa = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+  /* ================= build ui ================= */
+  function buildTabs() {
+    STEP_LABELS.forEach((label, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tab';
+      b.dataset.step = String(i);
+      b.setAttribute('role', 'tab');
+      b.textContent = label;
+      b.addEventListener('click', () => { showStep(i); centerTab(i); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function buildPanes() {
+    STEPS.forEach((lists, si) => {
+      const pane = document.createElement('section');
+      pane.className = 'pane';
+      pane.dataset.pane = String(si);
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      lists.forEach(items => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const cap = document.createElement('div');
+        cap.className = 'card__cap';
+        cap.textContent = 'Я наиболее';
+        const ul = document.createElement('ul');
+        ul.className = 'list';
+        items.forEach(([text, type]) => {
+          const li = document.createElement('li');
+          li.className = 'item';
+          li.dataset.type = type;
+          const rank = document.createElement('span');
+          rank.className = 'rank';
+          rank.textContent = String(1);
+          const label = document.createElement('span');
+          label.className = 'item__text';
+          label.textContent = text;
+          const handle = document.createElement('span');
+          handle.className = 'handle';
+          handle.setAttribute('aria-hidden', 'true');
+          handle.innerHTML = HANDLE_SVG;
+          li.append(rank, label, handle);
+          ul.appendChild(li);
+        });
+        rerank(ul);
+        ul.__origOrder = items.map(it => it[1]);
+        const foot = document.createElement('div');
+        foot.className = 'card__cap card__cap--foot';
+        foot.textContent = 'Я наименее';
+        card.append(cap, ul, foot);
+        grid.appendChild(card);
+      });
+      pane.appendChild(grid);
+      panesEl.appendChild(pane);
+      makeSortable(pane);
+    });
+  }
+
+  function rerank(ul) {
+    qsa('.item', ul).forEach((li, idx) => {
+      const r = li.querySelector('.rank');
+      if (r) r.textContent = String(idx + 1);
+    });
+  }
+
+  /* ================= sortable (pointer-based, no libs) ================= */
+  function makeSortable(scope) {
+    qsa('.list', scope).forEach(ul => {
+      const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+
+      ul.addEventListener('pointerdown', e => {
+        const li = e.target.closest('.item');
+        if (!li || li.parentElement !== ul) return;
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (isCoarse && !e.target.closest('.handle')) return; // touch: drag by handle only
+
+        const drag = {
+          ul, li,
+          pointerId: e.pointerId,
+          startX: e.clientX, startY: e.clientY,
+          center0: 0, topShift: 0,
+          started: false, active: true,
+        };
+        ul.__drag = drag;
+
+        try { li.setPointerCapture(e.pointerId); } catch (_) {}
+
+        const onMove = ev => {
+          if (!drag.active || ev.pointerId !== drag.pointerId) return;
+          const dy = ev.clientY - drag.startY;
+          const dx = ev.clientX - drag.startX;
+
+          if (!drag.started) {
+            // horizontal swipe (e.g. on tabs) — cancel, let the page do its thing
+            if (Math.abs(dx) > 10 && Math.abs(dy) <= 10) { endDrag(drag); return; }
+            if (Math.abs(dy) < 6) return;
+            drag.started = true;
+            drag.center0 = drag.li.offsetTop + drag.li.offsetHeight / 2;
+            drag.li.classList.add('is-dragging');
+            ul.classList.add('is-reordering');
+          }
+          try { ev.preventDefault(); } catch (_) {}
+          moveDrag(drag, dy);
+        };
+        const onUp = ev => {
+          if (!drag.active || ev.pointerId !== drag.pointerId) return;
+          if (drag.started) {
+            drag.li.classList.remove('is-dragging');
+            ul.classList.remove('is-reordering');
+            drag.li.style.transform = '';
+            qsa('.item', ul).forEach(el => { el.style.transition = ''; el.style.transform = ''; });
+            rerank(ul);
+          }
+          endDrag(drag);
+        };
+        const onCancel = onUp;
+
+        li.addEventListener('pointermove', onMove);
+        li.addEventListener('pointerup', onUp);
+        li.addEventListener('pointercancel', onCancel);
+        drag.cleanup = () => {
+          li.removeEventListener('pointermove', onMove);
+          li.removeEventListener('pointerup', onUp);
+          li.removeEventListener('pointercancel', onCancel);
+        };
+      });
+    });
+  }
+
+  function endDrag(drag) {
+    drag.active = false;
+    if (drag.ul.__drag === drag) drag.ul.__drag = null;
+    if (drag.cleanup) drag.cleanup();
+  }
+
+  function moveDrag(drag, dy) {
+    const { ul, li } = drag;
+    const movingCenter = drag.center0 + dy;
+
+    const children = Array.from(ul.children);
+    const siblings = children.filter(x => x !== li);
+
+    let target = 0;
+    for (const sib of siblings) {
+      if (movingCenter < sib.offsetTop + sib.offsetHeight / 2) break;
+      target++;
+    }
+    const current = children.indexOf(li);
+    if (target !== current) {
+      const beforeTop = li.offsetTop;
+      const others = Array.from(ul.children);
+      const first = new Map(others.map(el => [el, el.offsetTop]));
+      ul.insertBefore(li, siblings[target] || null);
+      others.forEach(el => {
+        if (el === li) return;
+        const delta = (first.get(el) - el.offsetTop) || 0;
+        if (Math.abs(delta) > 2) {
+          el.style.transition = 'none';
+          el.style.transform = 'translateY(' + delta + 'px)';
+          void el.offsetWidth;
+          el.style.transition = 'transform 150ms ease';
+          el.style.transform = '';
+        }
+      });
+      drag.topShift += beforeTop - li.offsetTop;
+    }
+    li.style.transform = 'translateY(' + (dy + drag.topShift) + 'px)';
+    rerank(ul);
+  }
+
+  /* ================= steps ================= */
+  function showStep(n) {
+    step = Math.max(0, Math.min(TOTAL_STEPS - 1, n));
+    render();
+  }
+
+  function render() {
+    qsa('.tab', tabsEl).forEach(t => {
+      const is = Number(t.dataset.step) === step;
+      t.classList.toggle('is-active', is);
+      t.setAttribute('aria-selected', is ? 'true' : 'false');
+    });
+    qsa('.pane', panesEl).forEach(p => p.classList.toggle('is-active', Number(p.dataset.pane) === step));
+
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === TOTAL_STEPS - 1;
+    btnFinish.hidden = step !== TOTAL_STEPS - 1;
+
+    progress.style.width = (((step + 1) / TOTAL_STEPS) * 100) + '%';
+    stepHint.textContent = (step + 1) + ' / ' + TOTAL_STEPS;
+  }
+
+  function centerTab(i) {
+    if (!tabsEl.scrollWidth || tabsEl.scrollWidth <= tabsEl.clientWidth + 1) return;
+    const tabs = qsa('.tab', tabsEl);
+    const tab = tabs[i];
+    if (!tab) return;
+    const target = tab.offsetLeft - (tabsEl.clientWidth - tab.clientWidth) / 2;
+    tabsEl.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  }
+
+  /* ================= score (as in the original) ================= */
+  function collectPayload() {
+    const payload = [];
+    qsa('.list', panesEl).forEach((ul, listIndex) => {
+      qsa('.item', ul).forEach((li, pos) => {
+        payload.push({ list: listIndex, pos, type: li.dataset.type });
+      });
+    });
+    return payload;
+  }
+
+  function score(payload) {
+    const count = (arr, ch) => arr.reduce((a, v) => a + (v === ch ? 1 : 0), 0);
+    const maj = payload.filter(x => x.pos === 0).map(x => x.type);
+    const min = payload.filter(x => x.pos === 3).map(x => x.type);
+    return {
+      d: count(maj, 'd') - count(min, 'd'),
+      i: count(maj, 'i') - count(min, 'i'),
+      s: count(maj, 's') - count(min, 's'),
+      c: count(maj, 'c') - count(min, 'c'),
+    };
+  }
+
+  /* ================= result view ================= */
+  function showResult() {
+    done = true;
+    const res = score(collectPayload());
+
+    document.getElementById('resultScores').textContent =
+      'D:' + res.d + ', I:' + res.i + ', S:' + res.s + ', C:' + res.c;
+
+    // dominant type
+    let topKey = 'd', topVal = -Infinity;
+    for (const k of ['d','i','s','c']) if (res[k] > topVal) { topVal = res[k]; topKey = k; }
+    const topMeta = TYPES.find(t => t[0] === topKey);
+    document.getElementById('resultTop').textContent =
+      'Ваш ведущий стиль — «' + topMeta[2] + '». ' + topMeta[5];
+
+    // bars: share of the positive component, like a profile mix
+    const barsEl = document.getElementById('profileBars');
+    barsEl.innerHTML = '';
+    const pos = {};
+    let posSum = 0;
+    for (const k of ['d','i','s','c']) { pos[k] = Math.max(0, res[k]); posSum += pos[k]; }
+    if (posSum === 0) posSum = 1;
+
+    TYPES.forEach(([key, en, ru, , hex, desc]) => {
+      const pct = Math.round((pos[key] / posSum) * 100);
+      const row = document.createElement('div');
+      row.className = 'profile__row' + (key === topKey ? ' profile__row--top' : '');
+      row.innerHTML =
+        '<div class="profile__name">' + ru + ' <span style="color:var(--muted);font-weight:500">' + en + '</span></div>' +
+        '<div class="profile__meter" role="img" aria-label="' + ru + ': ' + pct + '%"></div>' +
+        '<div class="profile__pct">' + pct + '%</div>';
+      const fill = document.createElement('div');
+      fill.className = 'profile__fill';
+      fill.style.background = hex;
+      row.querySelector('.profile__meter').appendChild(fill);
+      barsEl.appendChild(row);
+      requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = pct + '%'; }));
+    });
+
+    tabsEl.hidden = true;
+    qsa('.pane', panesEl).forEach(p => p.classList.remove('is-active'));
+    progress.parentElement.hidden = true;
+    actionsEl.hidden = true;
+    resultEl.classList.add('is-active');
+    bodyEl.scrollTop = 0;
+  }
+
+  function resetTest() {
+    // restore initial order of every list
+    qsa('.list', panesEl).forEach(ul => {
+      const lis = qsa('.item', ul);
+      const orig = ul.__origOrder;
+      // find li by type (each list is a permutation) and rearrange
+      const byType = {};
+      lis.forEach(li => { byType[li.dataset.type] = li; });
+      orig.forEach(t => ul.appendChild(byType[t]));
+      rerank(ul);
+    });
+    done = false;
+    step = 0;
+    resultEl.classList.remove('is-active');
+    tabsEl.hidden = false;
+    progress.parentElement.hidden = false;
+    actionsEl.hidden = false;
+    qsa('.pane', panesEl).forEach(p => p.classList.toggle('is-active', Number(p.dataset.pane) === 0));
+    render();
+    bodyEl.scrollTop = 0;
+  }
+
+  /* ================= modal open/close ================= */
+  function openModal() {
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll');
+    render();
+    const closeBtn = qs('.dialog__close', modal);
+    if (closeBtn) closeBtn.focus({ preventScroll: true });
+  }
+
+  function closeModal() {
+    modal.hidden = true;
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll');
+    if (lastFocus && typeof lastFocus.focus === 'function') {
+      lastFocus.focus({ preventScroll: true });
+    }
+  }
+
+  /* ================= wiring ================= */
+  buildTabs();
+  buildPanes();
+
+  qsa('[data-disc-open]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); openModal(); }));
+  qsa('[data-disc-close]', modal).forEach(b => b.addEventListener('click', e => { e.preventDefault(); closeModal(); }));
+
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || modal.hidden) return;
+    closeModal();
+  });
+
+  btnPrev.addEventListener('click', () => showStep(step - 1));
+  btnNext.addEventListener('click', () => {
+    showStep(step + 1);
+    bodyEl.scrollTo({ top: 0, behavior: 'smooth' });
+    centerTab(step);
+  });
+  btnFinish.addEventListener('click', showResult);
+  document.getElementById('btnRestart').addEventListener('click', resetTest);
+  document.getElementById('btnCloseResult').addEventListener('click', closeModal);
+
+  render();
+})();
+</script>
+</body>
+</html>

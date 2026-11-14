@@ -1,0 +1,10 @@
+The "external fonts/links: 7" is just the SVG `xmlns` URIs (http://www.w3.org/2000/svg) which are namespace identifiers, not network requests — expected and fine. Everything renders from `STEPS` data at runtime via JS (that's why pane/card counts look low in raw HTML text — they're generated dynamically, which is correct and intended).
+
+**Done.** `index.html` (565 lines, ~26KB) is ready in the current directory — a single self-contained file replicating the DISC test from stratoplan-school.com/disc/:
+
+- 8 steps × 3 cards × 4 draggable items, identical wordings and D/I/S/C types as the original
+- Drag-and-drop reordering within each list (pointer-events based, works with mouse and touch, no external libraries)
+- Step navigation (tabs, "Назад"/"Далее"), progress bar, "Завершить тест"
+- Scoring with the exact same logic as the original (`score`: position 0 = "major", position 3 = "minor", score per letter = maj count − min count)
+- Results shown in-app (no email form, no redirect, no network): 4 score cards (D/I/S/C) with color badges, range meter, numeric score, and a "Пройти заново" restart button
+- Inline SVG icons only, no external assets, works offline via `file://`

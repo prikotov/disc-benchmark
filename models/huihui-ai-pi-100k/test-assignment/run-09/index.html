@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — типы поведенческой личности</title>
+<style>
+  :root{
+    --bg:#0e1526; --panel:#141d33;
+    --card:#1b2742; --line:#2a3a5f; --text:#eef2fb; --muted:#9daecf;
+    --accent:#3f7cf6; --accent-2:#6ea1ff; --good:#39d98a;
+    --d:#ff6b5e; --i:#ffc24b; --s:#5dd3a5; --c:#5aa2ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #1c2f5e 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #17264a 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    display:flex;align-items:flex-start;justify-content:center;
+    padding:28px 16px;
+  }
+  .app{
+    width:100%;max-width:980px;background:var(--panel);
+    border:1px solid var(--line);border-radius:20px;
+    box-shadow:0 24px 60px rgba(0,0,0,.45);
+    overflow:hidden;
+  }
+  header{padding:28px 28px 20px;border-bottom:1px solid var(--line)}
+  .logo{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .logo__mark{
+    width:44px;height:44px;border-radius:12px;flex:none;
+    background:linear-gradient(135deg,var(--accent),#7b5cff);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:15px;letter-spacing:.5px;color:#fff;
+  }
+  .logo__name{font-size:14px;color:var(--muted);line-height:1.3}
+  h1{font-size:26px;font-weight:700;letter-spacing:.2px}
+  .sub{margin-top:8px;color:var(--muted);font-size:15px;line-height:1.5}
+  .lead{
+    margin-top:14px;display:inline-flex;align-items:center;gap:8px;
+    background:#20305c;border:1px solid #334980;border-radius:10px;
+    padding:9px 14px;font-size:14px;color:#dfe7fa;
+  }
+  .lead svg{flex:none}
+  main{padding:22px 28px 28px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .tab{
+    appearance:none;background:#1a2547;border:1px solid var(--line);color:var(--muted);
+    font-family:inherit;font-size:13px;line-height:1;font-weight:600;
+    padding:9px 14px;border-radius:999px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .tab .n{
+    width:19px;height:19px;border-radius:50%;background:#25355e;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;
+  }
+  .tab:hover{border-color:#3d548c;color:#cfdaef}
+  .tab[aria-selected="true"]{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+  }
+  .tab[aria-selected="true"] .n{background:rgba(255,255,255,.25)}
+  .tab:disabled{opacity:.45;cursor:default}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:14px;display:flex;flex-direction:column;
+  }
+  .card__label{
+    font-size:13px;font-weight:600;color:var(--muted);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:2px 4px 8px;
+  }
+  .card__label .low{color:#6f7ea6;font-weight:500}
+  ul.list{list-style:none;display:flex;flex-direction:column;gap:8px;flex:1}
+  li.item{
+    background:#101a30;border:1px solid #2c3d68;border-radius:11px;
+    padding:11px 12px;font-size:15px;line-height:1.25;
+    display:flex;align-items:center;gap:10px;
+    cursor:grab;user-select:none;-webkit-user-select:none;
+    touch-action:none;position:relative;
+    transition:box-shadow .12s, border-color .12s, transform .12s, opacity .12s;
+  }
+  li.item::before{
+    content:attr(data-pos);
+    flex:none;width:22px;height:22px;border-radius:7px;
+    background:#22315c;color:#8fa3d4;font-size:12px;font-weight:700;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  li.item:hover{border-color:#41568e}
+  li.item.dragging{
+    opacity:.92;border-color:var(--accent);
+    box-shadow:0 10px 26px rgba(0,0,0,.5);
+    transform:scale(1.03);cursor:grabbing;z-index:5;
+  }
+  li.item .grip{
+    flex:none;margin-left:auto;color:#4d5f92;display:flex;
+  }
+  li.item.dragging .grip{color:var(--accent-2)}
+  .foot{
+    margin-top:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .prog{flex:1;min-width:140px;height:7px;border-radius:99px;background:#22304f;overflow:hidden}
+  .prog > i{
+    display:block;height:100%;width:12.5%;border-radius:99px;
+    background:linear-gradient(90deg,var(--accent),#7b5cff);
+    transition:width .25s ease;
+  }
+  .foot .counter{font-size:13px;color:var(--muted);white-space:nowrap}
+  .actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+  .btn{
+    appearance:none;border:0;font-family:inherit;font-size:15px;font-weight:600;
+    border-radius:11px;padding:12px 22px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:background .15s, opacity .15s, transform .05s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn--ghost{background:#202c50;color:#d7e1f7;border:1px solid #33436e}
+  .btn--ghost:hover{background:#273563}
+  .btn--ghost:disabled{opacity:.4;cursor:default}
+  .btn--primary{background:linear-gradient(135deg,var(--accent),#6f6bff);color:#fff}
+  .btn--primary:hover{filter:brightness(1.08)}
+  .btn--done{background:linear-gradient(135deg,#2fbf7f,#39d98a);color:#06281a}
+  .pane{display:none}
+  .pane.active{display:block}
+  /* ===== Result ===== */
+  .result{display:none;padding:6px 0 10px;text-align:center}
+  .result.show{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .result__badge{
+    width:64px;height:64px;border-radius:18px;margin:6px auto 16px;
+    background:linear-gradient(135deg,var(--accent),#7b5cff);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .result h2{font-size:24px}
+  .result__line{margin:14px 0 26px;font-size:19px;color:var(--muted)}
+  .result__line b{color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.3px}
+  .bars{max-width:520px;margin:0 auto 18px;display:flex;flex-direction:column;gap:12px;text-align:left}
+  .bar{display:grid;grid-template-columns:110px 1fr 44px;align-items:center;gap:12px}
+  .bar__name{font-size:14px;font-weight:600;color:var(--muted)}
+  .bar__track{height:10px;border-radius:99px;background:#22304f;overflow:hidden}
+  .bar__track i{display:block;height:100%;width:0;border-radius:99px;transition:width .6s cubic-bezier(.2,.7,.3,1)}
+  .bar__val{font-size:15px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+  .result__note{
+    max-width:520px;margin:0 auto 26px;font-size:14px;color:#8394bd;line-height:1.55;
+    background:#18233f;border:1px solid #2a3a63;border-radius:12px;padding:14px 16px;
+  }
+  .result .actions{justify-content:center}
+  [hidden]{display:none !important}
+  .visually-hint{display:none}
+  footer{border-top:1px solid var(--line);padding:14px 28px;font-size:13px;color:#6d7ea3}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="logo__mark">DISC</div>
+      <div class="logo__name">Тест поведенческих типов<br>Stratoplan School</div>
+    </div>
+    <h1>Тестирование DISC</h1>
+    <p class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+    <div class="lead" style="margin-top:16px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fb2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/></svg>
+      Разместите блоки в порядке от наиболее похожего на вас (сверху) до наименее похожего (снизу)
+    </div>
+  </header>
+
+  <main>
+    <section id="test" aria-label="Тест">
+      <div class="tabs" id="tabs" role="tablist" aria-label="Шаги"></div>
+      <div id="panes"></div>
+      <div class="foot">
+        <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
+        <span class="counter" id="counter">Шаг 1 из 8</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn--ghost" id="btnPrev" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          Назад
+        </button>
+        <button class="btn btn--primary" id="btnNext" type="button">
+          Далее
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn btn--done" id="btnFinish" type="button" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          Завершить тест
+        </button>
+      </div>
+    </section>
+
+    <section class="result" id="result" aria-live="polite">
+      <div class="result__badge">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h2>Тест завершён!</h2>
+      <p class="result__line">Ваш DISC-профиль: <b id="scoreText">D:0, I:0, S:0, C:0</b></p>
+      <div class="bars" id="scoreBars"></div>
+      <p class="result__note" id="scoreNote"></p>
+      <div class="actions" style="justify-content:center">
+        <button class="btn btn--ghost" id="btnRestart" type="button">Пройти ещё раз</button>
+        <button class="btn btn--primary" id="btnClose" type="button">Закрыть</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>Балл каждого типа = количество раз, когда вы выбрали его «наиболее похожим», минус количество раз, когда «наименее похожим».</footer>
+</div>
+
+<script>
+"use strict";
+/* ===== Данные теста (8 шагов × 3 карточки, порядок слов как в оригинале) ===== */
+const STEPS = [
+  [ [ {t:"i",w:"Экспрессивный"}, {t:"c",w:"Покладистый"}, {t:"d",w:"Волевой"}, {t:"s",w:"Осторожный"} ],
+    [ {t:"d",w:"Пылкий"}, {t:"i",w:"Разговорчивый"}, {t:"s",w:"Добродушный"}, {t:"c",w:"Сдержанный"} ],
+    [ {t:"i",w:"Любитель приключений"}, {t:"c",w:"Энтузиаст"}, {t:"d",w:"Исполнитель инструкций"}, {t:"s",w:"Верный"} ] ],
+  [ [ {t:"d",w:"Настойчивый"}, {t:"c",w:"Осторожный"}, {t:"i",w:"Эмоциональный"}, {t:"s",w:"Удовлетворенный"} ],
+    [ {t:"s",w:"Довольный"}, {t:"d",w:"Нетерпеливый"}, {t:"i",w:"Убедительный"}, {t:"c",w:"Безропотный"} ],
+    [ {t:"c",w:"Смиренный"}, {t:"s",w:"Умеющий слушать"}, {t:"i",w:"Душа компании"}, {t:"d",w:"Волевой"} ] ],
+  [ [ {t:"c",w:"Правильный"}, {t:"d",w:"Первопроходец"}, {t:"s",w:"Спокойный"}, {t:"i",w:"Влиятельный"} ],
+    [ {t:"c",w:"Почтительный"}, {t:"i",w:"Контактный"}, {t:"d",w:"Агрессивный"}, {t:"s",w:"Мягкий"} ],
+    [ {t:"i",w:"Весельчак"}, {t:"s",w:"Покорный"}, {t:"c",w:"Тактичный"}, {t:"d",w:"Соперничающий"} ] ],
+  [ [ {t:"c",w:"Точный"}, {t:"d",w:"Доминирующий"}, {t:"s",w:"Охотный"}, {t:"i",w:"Притягательный"} ],
+    [ {t:"i",w:"Уравновешенный"}, {t:"c",w:"Уступчивый"}, {t:"d",w:"Идущий на риск"}, {t:"s",w:"Услужливый"} ],
+    [ {t:"c",w:"Осмотрительный"}, {t:"s",w:"Добрососедский"}, {t:"d",w:"Энергичный"}, {t:"i",w:"Убедительный"} ] ],
+  [ [ {t:"s",w:"Уравновешенный"}, {t:"i",w:"Мотивирующий"}, {t:"c",w:"Щепетильный"}, {t:"d",w:"Решительный"} ],
+    [ {t:"i",w:"Уверенный"}, {t:"c",w:"Готовый к сотрудничеству"}, {t:"s",w:"Беззаботный"}, {t:"d",w:"Аргументирующий"} ],
+    [ {t:"s",w:"Сдержанный"}, {t:"d",w:"Прямой"}, {t:"c",w:"Строгий"}, {t:"i",w:"Убедительный"} ] ],
+  [ [ {t:"c",w:"Застенчивый"}, {t:"d",w:"Требовательный"}, {t:"s",w:"Терпеливый"}, {t:"i",w:"Очаровательный"} ],
+    [ {t:"d",w:"Неугомонный"}, {t:"c",w:"Дисциплинированный"}, {t:"i",w:"Вдохновляющий"}, {t:"s",w:"Внимательный"} ],
+    [ {t:"s",w:"Обязательный"}, {t:"i",w:"Оживленный"}, {t:"d",w:"Решительный"}, {t:"c",w:"Точный"} ] ],
+  [ [ {t:"c",w:"Добросовестный"}, {t:"i",w:"Компанейский"}, {t:"s",w:"Добрый"}, {t:"d",w:"Уверенный в себе"} ],
+    [ {t:"c",w:"Дипломатичный"}, {t:"d",w:"Отважный"}, {t:"s",w:"Сочувствующий"}, {t:"i",w:"Оптимистичный"} ],
+    [ {t:"d",w:"Настойчивый"}, {t:"i",w:"Общительный"}, {t:"s",w:"Постоянный"}, {t:"c",w:"Организованный"} ] ],
+  [ [ {t:"c",w:"Соглашающийся"}, {t:"s",w:"Владеющий собой"}, {t:"d",w:"Шутливый"}, {t:"i",w:"Настойчивый"} ],
+    [ {t:"i",w:"Обаятельный"}, {t:"d",w:"Позитивный"}, {t:"s",w:"Снисходительный"}, {t:"c",w:"Требовательный"} ],
+    [ {t:"i",w:"Коммуникабельный"}, {t:"d",w:"Смелый"}, {t:"c",w:"Перфекционист"}, {t:"s",w:"Сдержанный"} ] ]
+];
+const STEP_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+const TYPE_INFO = {
+  d:{name:"Доминирование (D)", color:"var(--d)"},
+  i:{name:"Влияние (I)",      color:"var(--i)"},
+  s:{name:"Стабильность (S)", color:"var(--s)"},
+  c:{name:"Комплаенс (C)",    color:"var(--c)"}
+};
+const GRIP_SVG = '<svg width="14" height="18" viewBox="0 0 14 18" fill="currentColor" aria-hidden="true"><circle cx="4" cy="3" r="1.6"/><circle cx="10" cy="3" r="1.6"/><circle cx="4" cy="9" r="1.6"/><circle cx="10" cy="9" r="1.6"/><circle cx="4" cy="15" r="1.6"/><circle cx="10" cy="15" r="1.6"/></svg>';
+
+const els = {
+  tabs: document.getElementById("tabs"),
+  panes: document.getElementById("panes"),
+  prog: document.getElementById("progBar"),
+  counter: document.getElementById("counter"),
+  prev: document.getElementById("btnPrev"),
+  next: document.getElementById("btnNext"),
+  finish: document.getElementById("btnFinish"),
+  test: document.getElementById("test"),
+  result: document.getElementById("result"),
+  scoreText: document.getElementById("scoreText"),
+  scoreBars: document.getElementById("scoreBars"),
+  scoreNote: document.getElementById("scoreNote"),
+  restart: document.getElementById("btnRestart"),
+  close: document.getElementById("btnClose")
+};
+
+let step = 0;
+
+/* ===== Рендер ===== */
+function buildUI(){
+  els.tabs.innerHTML = "";
+  els.panes.innerHTML = "";
+  STEPS.forEach((cards, si) => {
+    const tab = document.createElement("button");
+    tab.type = "button"; tab.className = "tab"; tab.role = "tab";
+    tab.dataset.step = si;
+    tab.innerHTML = '<span class="n">' + (si+1) + '</span>' + STEP_NAMES[si];
+    tab.addEventListener("click", () => setStep(si));
+    els.tabs.appendChild(tab);
+
+    const pane = document.createElement("div");
+    pane.className = "pane"; pane.dataset.pane = si; pane.setAttribute("role","tabpanel");
+    const grid = document.createElement("div"); grid.className = "grid";
+    cards.forEach(items => {
+      const card = document.createElement("div"); card.className = "card";
+      const label = document.createElement("div"); label.className = "card__label";
+      label.innerHTML = "Я наиболее <span class='low'>Я наименее&nbsp;&#8595;</span>";
+      const ul = document.createElement("ul"); ul.className = "list";
+      items.forEach(it => {
+        const li = document.createElement("li");
+        li.className = "item"; li.dataset.type = it.t;
+        li.innerHTML = "<span class='txt'></span><span class='grip'>" + GRIP_SVG + "</span>";
+        li.querySelector(".txt").textContent = it.w;
+        ul.appendChild(li);
+      });
+      attachDrag(ul);
+      card.appendChild(label); card.appendChild(ul); grid.appendChild(card);
+    });
+    pane.appendChild(grid);
+    els.panes.appendChild(pane);
+    refreshPositions(pane);
+  });
+}
+
+function refreshPositions(pane){
+  pane.querySelectorAll("ul.list").forEach(ul => {
+    [...ul.children].forEach((li,i) => li.dataset.pos = i+1);
+  });
+}
+
+function setStep(n){
+  step = Math.max(0, Math.min(7, n));
+  const tabs = [...els.tabs.children], panes = [...els.panes.children];
+  tabs.forEach((t,i) => t.setAttribute("aria-selected", i===step ? "true":"false"));
+  panes.forEach((p,i) => p.classList.toggle("active", i===step));
+  els.prev.disabled = step === 0;
+  els.next.hidden = step === 7;
+  els.finish.hidden = step !== 7;
+  els.prog.style.width = ((step+1)/8*100) + "%";
+  els.counter.textContent = "Шаг " + (step+1) + " из 8";
+}
+
+/* ===== Drag & drop (Pointer Events, без библиотек) ===== */
+let dragState = null;
+
+function attachDrag(ul){
+  ul.addEventListener("pointerdown", e => {
+    const li = e.target.closest("li.item");
+    if(!li || li.classList.contains("dragging")) return;
+    if(e.pointerType === "mouse" && e.button !== 0) return;
+    e.preventDefault();
+    dragState = {
+      li, list: ul,
+      startX: e.clientX, startY: e.clientY,
+      moved: false
+    };
+    window.addEventListener("pointermove", onDragMove, {passive:false});
+    window.addEventListener("pointerup", onDragEnd);
+    window.addEventListener("pointercancel", onDragEnd);
+  });
+}
+
+function onDragMove(e){
+  if(!dragState) return;
+  const { li, list, startX, startY } = dragState;
+  if(!dragState.moved){
+    if(Math.hypot(e.clientX - startX, e.clientY - startY) < 5) return;
+    dragState.moved = true;
+    li.classList.add("dragging");
+  }
+  e.preventDefault();
+  // живой reorder: вставляем перетаскиваемый элемент относительно соседа под курсором
+  const sibs = [...list.children].filter(x => x !== li);
+  for(const sib of sibs){
+    const r = sib.getBoundingClientRect();
+    const mid = r.top + r.height/2;
+    const liAfterSib = li.compareDocumentPosition(sib) & Node.DOCUMENT_POSITION_PRECEDING;
+    if((e.clientY < mid && liAfterSib) || (e.clientY > mid && !liAfterSib)){
+      list.insertBefore(li, e.clientY < mid ? sib : sib.nextSibling);
+      break;
+    }
+  }
+  refreshPositions(li.closest(".pane"));
+}
+
+function onDragEnd(){
+  if(!dragState) return;
+  dragState.li.classList.remove("dragging");
+  dragState = null;
+  window.removeEventListener("pointermove", onDragMove);
+  window.removeEventListener("pointerup", onDragEnd);
+  window.removeEventListener("pointercancel", onDragEnd);
+}
+
+/* ===== Подсчёт (как в оригинале: pos 0 = major, pos 3 = minor) ===== */
+function collectPayload(){
+  const payload = [];
+  els.panes.querySelectorAll("ul.list").forEach(ul => {
+    [...ul.children].forEach((li, idx) => payload.push({ pos: idx, type: li.dataset.type }));
+  });
+  return payload;
+}
+
+function computeScore(payload){
+  const maj = payload.filter(x => x.pos === 0).map(x => x.type);
+  const min = payload.filter(x => x.pos === 3).map(x => x.type);
+  const count = (arr, ch) => arr.reduce((a,v) => a + (v === ch ? 1 : 0), 0);
+  return {
+    d: count(maj, "d") - count(min, "d"),
+    i: count(maj, "i") - count(min, "i"),
+    s: count(maj, "s") - count(min, "s"),
+    c: count(maj, "c") - count(min, "c")
+  };
+}
+
+/* ===== Результаты ===== */
+function showResult(){
+  const res = computeScore(collectPayload());
+  els.scoreText.textContent = "D:" + res.d + ", I:" + res.i + ", S:" + res.s + ", C:" + res.c;
+
+  const maxAbs = Math.max(1, ...["d","i","s","c"].map(k => Math.abs(res[k])));
+  els.scoreBars.innerHTML = "";
+  ["d","i","s","c"].forEach(k => {
+    const info = TYPE_INFO[k], val = res[k];
+    const row = document.createElement("div"); row.className = "bar";
+    row.innerHTML =
+      '<span class="bar__name">' + info.name + '</span>' +
+      '<span class="bar__track"><i style="background:' + info.color + '"></i></span>' +
+      '<span class="bar__val" style="color:' + info.color + '">' + val + '</span>';
+    els.scoreBars.appendChild(row);
+    requestAnimationFrame(() => {
+      row.querySelector("i").style.width = (Math.abs(val)/maxAbs*100) + "%";
+    });
+  });
+
+  // доминирующий тип
+  const letters = ["d","i","s","c"].sort((a,b) => res[b] - res[a]);
+  const top = letters[0], second = letters[1];
+  if(res[top] > 0 && res[top] > res[second]){
+    els.scoreNote.textContent =
+      "Ваш доминирующий поведенческий тип — " + TYPE_INFO[top].name +
+      ". Обратите внимание: мы показываем только количественный профиль; полноценная расшифровка индивидуальных результатов — задача работы с тренером.";
+  } else {
+    els.scoreNote.textContent =
+      "У вас нет ярко выраженного доминирующего типа — показатели сбалансированы.";
+  }
+
+  els.test.hidden = true;
+  els.result.classList.add("show");
+}
+
+function restart(){
+  buildUI();
+  step = 0;
+  setStep(0);
+  els.result.classList.remove("show");
+  els.test.hidden = false;
+}
+
+els.prev.addEventListener("click", () => setStep(step - 1));
+els.next.addEventListener("click", () => setStep(step + 1));
+els.finish.addEventListener("click", showResult);
+els.restart.addEventListener("click", restart);
+els.close.addEventListener("click", restart);
+
+document.addEventListener("keydown", e => {
+  if(els.result.classList.contains("show")) return;
+  if(e.key === "ArrowRight" && step < 7) setStep(step + 1);
+  if(e.key === "ArrowLeft"  && step > 0) setStep(step - 1);
+});
+
+/* init */
+buildUI();
+setStep(0);
+</script>
+</body>
+</html>

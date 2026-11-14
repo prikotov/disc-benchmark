@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T08-11-38-098Z_01a1d91c-aef2-722b-8e39-0a5371c20048.jsonl",
+  "turns": 26,
+  "tool_calls": 26,
+  "tools_by_name": {
+    "bash": 17,
+    "read": 3,
+    "write": 1,
+    "edit": 5
+  },
+  "tokens_in": 74790,
+  "tokens_out": 23368,
+  "bash_total": 6,
+  "bash_with_network": 5,
+  "curl_to_source": 5,
+  "network_cmds_sample": [
+    "curl -s https://stratoplan-school.com/disc/ -o /tmp/disc.html && wc -c /tmp/disc.html && head -c 3000 /tmp/disc.html",
+    "cd /tmp && curl -s https://stratoplan-school.com/js/disc_patched.js -o disc.js && curl -s https://stratoplan-school.com/js/app.js -o app.js && wc -c disc.js app.js",
+    "for p in \\\"disc/js/app.js\\\" \\\"disc/js/disc_patched.js\\\" \\\"js/disc_patched.js\\\"; do echo \\\"== $p\\\"; curl -s -o /tmp/t.js -w \\\"%{http_code} %{size_download}\\ \\\" \\\"https://stratoplan-school.com/$p\\\"; done",
+    "curl -s https://stratoplan-school.com/disc/js/app.js -o /tmp/app.js && curl -s https://stratoplan-school.com/disc/js/disc_patched.js -o /tmp/discpatch.js && wc -c /tmp/app.js /tmp/discpatch.js",
+    "curl -s https://stratoplan-school.com/disc/result/ -o /tmp/result.html; head -c 500 /tmp/result.html; echo; grep -o \\\"decrypt[A-Za-z]*\\\\|btoa\\\\|atob\\\" /tmp/result.html | sort | uniq -c | head"
+  ],
+  "errors": 4,
+  "first_ts": "2026-11-14T08:11:38.098Z",
+  "last_ts": "2026-11-14T09:11:37.894Z"
+}

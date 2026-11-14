@@ -24,12 +24,14 @@ figure{margin:0} figcaption{font-size:12px;color:#666}
 <div id="lb"><div class="hint">масштаб 1:1 · прокрутка — панорама · Esc или клик — закрыть</div><img alt=""></div>
 <script>
 const lb = document.getElementById('lb'); const lbImg = lb.querySelector('img');
+const openLb = (src) => { lbImg.src = src; lb.style.display = 'block'; document.body.style.overflow = 'hidden'; };
+const closeLb = () => { lb.style.display = 'none'; lbImg.src = ''; document.body.style.overflow = ''; };
 document.addEventListener('click', (e) => {
   const im = e.target.closest('img.shot');
-  if (im) { lbImg.src = im.src; lb.style.display = 'block'; document.body.style.overflow = 'hidden'; return; }
-  if (e.target.closest('#lb')) { lb.style.display = 'none'; lbImg.src = ''; document.body.style.overflow = ''; }
+  if (im) { openLb(im.src); return; }
+  if (e.target.closest('#lb')) closeLb();
 });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { lb.style.display = 'none'; lbImg.src = ''; } });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb(); });
 </script>
 <h1>disc: сводный отчёт — тестирование копирования DISC-теста</h1>
 <p class="small">Обновлено 2026-11-14. Полная методика: reports/METHOD.md · конвенции: AGENTS.md ·

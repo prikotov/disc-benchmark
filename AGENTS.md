@@ -164,7 +164,9 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
 
 ## Методика: копирование DISC-теста (кратко)
 
-Подробно — `test-assignment/reference/original.md` (оригинал) и
+Сводное описание всего конвейера (промпт дословно, запуск pi, проверки,
+судья, агрегация) — `reports/METHOD.md`; подробно —
+`test-assignment/reference/original.md` (оригинал) и
 `test-assignment/rubrics/scorecard.md` (оценка). Кратко:
 
 - один прогон = агентная сессия pi (`test-assignment/runner.py`): рабочая

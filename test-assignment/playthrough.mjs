@@ -58,21 +58,34 @@ const shot = async (page, name) => {
   result.screenshots.push(path.basename(p));
 };
 
+// строгая видимость: display/visibility/opacity по всей цепочке предков
+// (offsetParent/getClientRects пропускают visibility:hidden и opacity:0)
+const VISIBLE_FN = `(el) => {
+  for (let e = el; e; e = e.parentElement) {
+    const cs = getComputedStyle(e);
+    if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0) return false;
+  }
+  const r = el.getBoundingClientRect();
+  return r.width > 0 && r.height > 0;
+}`;
 const clickByText = async (page, reSrc) => {
-  return page.evaluate((pattern) => {
+  return page.evaluate((pattern, visFn) => {
     const rx = new RegExp(pattern, 'i');
+    const visible = new Function('return ' + visFn)();
     const btns = [...document.querySelectorAll('button, a[role=button], [role=button], input[type=submit], input[type=button], a')]
-      .filter((b) => b.offsetParent !== null || b.getClientRects().length);
+      .filter((b) => visible(b));
     const hit = btns.find((b) => rx.test((b.textContent || b.value || '').trim()));
     if (hit) { hit.click(); return (hit.textContent || hit.value || '').trim().slice(0, 40); }
     return null;
-  }, reSrc);
+  }, reSrc, VISIBLE_FN);
 };
 
 // страница: число видимых списков-вопросов (4 ребёнка, набор текстов из эталона)
 const FIND_LISTS = (keysJson, quirksJson) => {
+  // мягкая видимость: скрытые будущие панели тоже обрабатываем —
+  // события дойдут до состояния/порядка в любом случае
   const vis = (el) => !!(el.offsetParent || el.getClientRects().length);
-  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); const q = JSON.parse(quirksJson); return q[s] || s; };
+  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); s = s.replace(/^[^\p{L}]+/u, ''); const q = JSON.parse(quirksJson); return q[s] || s; };
   const keys = new Set(JSON.parse(keysJson));
   let n = 0;
   for (const el of document.querySelectorAll('body *')) {
@@ -88,7 +101,7 @@ const FIND_LISTS = (keysJson, quirksJson) => {
 // чтобы шагивизарда прошли, точный порядок не критичен
 const SHUFFLE = (mapJson, quirksJson) => {
   const vis = (el) => !!(el.offsetParent || el.getClientRects().length);
-  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); const q = JSON.parse(quirksJson); return q[s] || s; };
+  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); s = s.replace(/^[^\p{L}]+/u, ''); const q = JSON.parse(quirksJson); return q[s] || s; };
   const refMap = new Map(JSON.parse(mapJson));
   for (const el of document.querySelectorAll('body *')) {
     if (!vis(el) || el.children.length !== 4) continue;
@@ -128,24 +141,29 @@ const SHUFFLE = (mapJson, quirksJson) => {
     await sleep(600);
 
     for (let step = 0; step < 60; step++) {
-      const nLists = await page.evaluate(FIND_LISTS, refKeysJson, quirksJson);
+      let nLists = await page.evaluate(FIND_LISTS, refKeysJson, quirksJson);
+      if (nLists === 0 && result.questions_processed < 24) {
+        // панель могла ещё рендериться — подождать и перечитать
+        await sleep(700);
+        nLists = await page.evaluate(FIND_LISTS, refKeysJson, quirksJson);
+      }
       if (nLists > 0) {
         await page.evaluate(SHUFFLE, JSON.stringify([...bySet.entries()]), quirksJson);
         result.questions_processed += nLists;
         result.steps.push({ step, lists: nLists });
-        if (result.questions_processed <= 3) await shot(page, 'step');
+        if (!result.screenshots.includes('step.png') && nLists > 0) await shot(page, 'step');
       }
 
-      const fin = await clickByText(page, 'заверш|finish|результат|узнать результат');
-      if (fin) { result.notes.push('клик «' + fin + '»'); break; }
+      if (result.questions_processed >= 24) {
+        const fin = await clickByText(page, 'заверш|finish|результат|узнать результат');
+        if (fin) { result.notes.push('клик «' + fin + '»'); break; }
+      }
       const nxt = await clickByText(page, 'далее|дальше|next|следующ|→|›|»');
       if (!nxt) {
-        if (result.questions_processed >= 24) {
-          result.notes.push('все 24 вопроса обработаны, кнопка завершения не найдена');
-        } else {
-          result.incomplete = true;
-          result.notes.push('навигация остановилась: шаг ' + step + ', обработано ' + result.questions_processed);
-        }
+        const fin = await clickByText(page, 'заверш|finish|результат|узнать результат');
+        if (fin) { result.notes.push('клик «' + fin + '» (dead-end)'); break; }
+        if (result.questions_processed < 24) result.incomplete = true;
+        result.notes.push('навигация остановилась: шаг ' + step + ', обработано ' + result.questions_processed);
         break;
       }
       await sleep(450);

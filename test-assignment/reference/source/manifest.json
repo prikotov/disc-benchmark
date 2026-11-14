@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "what": "Снимок оригинала DISC-теста Stratoplan для задания «перенос функционала»",
+    "extracted_at": "2026-11-14",
+    "base_url": "https://stratoplan-school.com/disc/",
+    "result_url": "https://stratoplan-school.com/disc/result/",
+    "note": "page.html — полный снимок страницы (в промпт не входит, слишком большой); widget.html — фрагмент модалок теста (входит в промпт v2); disc_patched.js — JS теста (входит в промпт v2); result-page.html — снимок страницы результата (для судей)"
+  },
+  "files": {
+    "page.html": {
+      "origin": "https://stratoplan-school.com/disc/",
+      "bytes": 538959,
+      "sha256": "5367dc222b40006cf7a0001a164a98ff09fb78a5315f6d63a45b98b8262f6c55"
+    },
+    "widget.html": {
+      "origin": "фрагмент page.html: #wizardmodal + #apruve",
+      "bytes": 19884,
+      "sha256": "738280d3541b4112f336e05fdccac5a67cf8a5eca9532bb66a0be194d733050e"
+    },
+    "disc_patched.js": {
+      "origin": "https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6",
+      "bytes": 21650,
+      "sha256": "f3c8345545ebf2642b0fe08f82992e5e8563c123ada7ffedb0c9039203322f98"
+    },
+    "result-page.html": {
+      "origin": "https://stratoplan-school.com/disc/result/",
+      "bytes": 64317,
+      "sha256": "520100b4e30a4c6e798e419986c148d4bf671613a5aec51bcc701ff220e21f98"
+    }
+  },
+  "related_scripts_not_saved": [
+    "js/app.js?v=0.0.0.1 — общестраничные скрипты (GSAP-анимации и пр.), к функционалу теста отношения не имеет",
+    "https://cdnjs.cloudflare.com/ajax/libs/gsap/... — анимации лендинга",
+    "https://plausible.io/js/... — аналитика",
+    "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js — подгружается самим disc_patched.js"
+  ]
+}

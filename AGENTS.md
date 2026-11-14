@@ -224,20 +224,21 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
 | `qwen3.8-27b-pi-100k/` | `qwen3.8:27b-pi-100k` | off, low, medium | 3 |
 | `ornith-1.5-35b-ctx100k/` | `ornith-1.5:35b-ctx100k` | off, on (градаций нет) | 3 |
 | `gemma4-26b-pi-100k/` | `gemma4:26b-pi-100k` | off, on | 3 |
-| `bonsai-2-27b/` | `bonsai-2:27b` | off, low, medium | 3 |
+| `bonsai-2-27b/` | `bonsai-2:ctx100k` | off, low, medium | 3 |
 | `muse-glimmer-ctx100k/` | `muse-glimmer:ctx100k` | off, low, high (дефолт) | 3 |
 
 Плюс 1 пробный прогон `qwen3.8` на `xhigh` — решить, включать ли уровень
 в серию (тяжёлый по токенам).
 
-Тег `bonsai-2:27b` — единственный в матрице без алиаса `-ctx100k`: в его
-modelfile нет `num_ctx`, фактическое окно при загрузке 32768 (проверено
-`/api/ps` 2026-11-14, несмотря на 262144 в весах). Для прогонов задавать
-`num_ctx: 102400` опцией вызова и фиксировать это в `run.json` (альтернатива —
-создать на сервере алиас `bonsai-2:ctx100k`, как у muse-glimmer — решение
-владельца сервера). Сэмплинг тега отличается от qwen3.8: `min_p 0.05` (у
-qwen3.8 — 0); MTP-спекуляции нет (`draft_num_predict` в modelfile отсутствует);
-думает по шкале false/low/medium/xhigh, дефолт medium — совпадает с карточкой.
+Алиас `bonsai-2:ctx100k` создан 2026-11-14 (`POST /api/create`:
+`from bonsai-2:27b` + `parameters: {"num_ctx": 102400}` — блобы весов
+переиспользованы), окно 102400 проверено загрузкой (`/api/ps`). Базовый тег
+`bonsai-2:27b` без `num_ctx` даёт окно 32768 — для прогонов не использовать.
+Нюанс API: поле `params` в `/api/create` молча игнорируется — работает
+только `parameters` (map). Сэмплинг тега отличается от qwen3.8: `min_p 0.05`
+(у qwen3.8 — 0); MTP-спекуляций нет (`draft_num_predict` в modelfile
+отсутствует); думает по шкале false/low/medium/xhigh, дефолт medium —
+совпадает с карточкой.
 
 ### Волна 2 — малые, вариаты, кванты (локальные)
 

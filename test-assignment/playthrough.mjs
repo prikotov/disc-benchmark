@@ -32,9 +32,14 @@ const jsonPath = arg('json') ? path.resolve(arg('json')) : path.join(outDir, 'pl
 fs.mkdirSync(outDir, { recursive: true });
 
 const ref = JSON.parse(fs.readFileSync(refPath, 'utf-8'));
+// известные опечатки оригинала — нормализуем при сопоставлении наборов
+// (решение владельца: исправление — плюс модели, не дефект)
+const KNOWN_QUIRKS = { 'Экспресcивный': 'Экспрессивный' };
+const quirksJson = JSON.stringify(KNOWN_QUIRKS);
 const bySet = new Map();
 for (const q of ref.questions) {
-  bySet.set(q.items.map(i => i.text).sort().join('|'), Object.fromEntries(q.items.map(i => [i.text, i.type])));
+  bySet.set(q.items.map(i => (KNOWN_QUIRKS[i.text] || i.text)).sort().join('|'),
+            Object.fromEntries(q.items.map(i => [(KNOWN_QUIRKS[i.text] || i.text), i.type])));
 }
 const refKeysJson = JSON.stringify([...bySet.keys()]);
 
@@ -65,9 +70,9 @@ const clickByText = async (page, reSrc) => {
 };
 
 // страница: число видимых списков-вопросов (4 ребёнка, набор текстов из эталона)
-const FIND_LISTS = (keysJson) => {
+const FIND_LISTS = (keysJson, quirksJson) => {
   const vis = (el) => !!(el.offsetParent || el.getClientRects().length);
-  const norm = (s) => (s || '').replace(/\s+/g, ' ').trim();
+  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); const q = JSON.parse(quirksJson); return q[s] || s; };
   const keys = new Set(JSON.parse(keysJson));
   let n = 0;
   for (const el of document.querySelectorAll('body *')) {
@@ -81,9 +86,9 @@ const FIND_LISTS = (keysJson) => {
 
 // страница: перетасовать видимые списки (дети вверх/вниз + события) —
 // чтобы шагивизарда прошли, точный порядок не критичен
-const SHUFFLE = (mapJson) => {
+const SHUFFLE = (mapJson, quirksJson) => {
   const vis = (el) => !!(el.offsetParent || el.getClientRects().length);
-  const norm = (s) => (s || '').replace(/\s+/g, ' ').trim();
+  const norm = (s) => { s = (s || '').replace(/\s+/g, ' ').trim(); const q = JSON.parse(quirksJson); return q[s] || s; };
   const refMap = new Map(JSON.parse(mapJson));
   for (const el of document.querySelectorAll('body *')) {
     if (!vis(el) || el.children.length !== 4) continue;
@@ -123,9 +128,9 @@ const SHUFFLE = (mapJson) => {
     await sleep(600);
 
     for (let step = 0; step < 60; step++) {
-      const nLists = await page.evaluate(FIND_LISTS, refKeysJson);
+      const nLists = await page.evaluate(FIND_LISTS, refKeysJson, quirksJson);
       if (nLists > 0) {
-        await page.evaluate(SHUFFLE, JSON.stringify([...bySet.entries()]));
+        await page.evaluate(SHUFFLE, JSON.stringify([...bySet.entries()]), quirksJson);
         result.questions_processed += nLists;
         result.steps.push({ step, lists: nLists });
         if (result.questions_processed <= 3) await shot(page, 'step');

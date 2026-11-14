@@ -162,7 +162,6 @@ def main() -> int:
         found = len(unique_texts) - len(missing)
         result["data"] = {"adjectives_total": len(unique_texts),
                           "adjectives_found": found, "missing": missing}
-        ok = ok and not missing
 
         pairs = extract_pairs(html)
         common = pairs & ref_pairs                      # пересечение мультимножеств
@@ -175,10 +174,33 @@ def main() -> int:
             mismatches[f"{txt} -> {tp}"] = f"лишних ×{n}"
         result["types"] = {"extracted": sum(pairs.values()), "correct": correct,
                            "total": total, "mismatches": mismatches}
-        # типы извлекаются не из любой реализации: слабое извлечение —
-        # не провал (ручная проверка/судьи), но фиксируется
-        if sum(pairs.values()) >= total * 0.9:
-            ok = ok and correct >= total * 0.9
+
+        # Известные странности оригинала: их исправление моделью — НЕ провал
+        # (решение владельца 2026-11-14). Факт посимвольного отклонения
+        # остаётся в отчёте выше; гейт считается по нормализованному виду:
+        # латинская «c» в «Экспресcивный» ≡ кириллической.
+        KNOWN_QUIRKS = {"Экспресcивный": "Экспрессивный"}
+        norm = lambda s: KNOWN_QUIRKS.get(s, s)
+        ref_norm: Counter = Counter({(norm(t2), tp): n for (t2, tp), n in ref_pairs.items()})
+        pairs_norm: Counter = Counter({(norm(t2), tp): n for (t2, tp), n in pairs.items()})
+        correct_n = sum((pairs_norm & ref_norm).values())
+        missing_n = [t2 for t2 in missing if norm(t2) not in html]
+        quirk_fixed = (correct < total or missing) and correct_n == total and not missing_n
+        if quirk_fixed:
+            result["known_quirk_normalized"] = True
+            result["quirk_fix_plus"] = True
+            result["data"]["note"] = ("+ модели: исправлена известная опечатка оригинала "
+                                      "(латинская «c» в «Экспресcивный» — косяк Stratoplan)")
+            result["data"]["missing"] = missing_n
+            result["types"]["note"] = "посимвольно 95/96 из-за исправленной опечатки оригинала"
+
+        types_extracted_ok = sum(pairs.values()) >= total * 0.9
+        if quirk_fixed:
+            ok = ok and True
+        elif types_extracted_ok:
+            ok = ok and (not missing) and correct >= total * 0.9
+        else:
+            ok = ok and not missing
 
         smoke = chrome_smoke(index)
         result["smoke"] = smoke

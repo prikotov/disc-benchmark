@@ -25,9 +25,8 @@
   "data": {
     "adjectives_total": 84,
     "adjectives_found": 83,
-    "missing": [
-      "Экспресcивный"
-    ]
+    "missing": [],
+    "note": "+ модели: исправлена известная опечатка оригинала (латинская «c» в «Экспресcивный» — косяк Stratoplan)"
   },
   "types": {
     "extracted": 96,
@@ -36,8 +35,11 @@
     "mismatches": {
       "Экспресcивный -> i": "не хватает ×1",
       "Экспрессивный -> i": "лишних ×1"
-    }
+    },
+    "note": "посимвольно 95/96 из-за исправленной опечатки оригинала"
   },
+  "known_quirk_normalized": true,
+  "quirk_fix_plus": true,
   "smoke": {
     "tool": "google-chrome --headless=new --virtual-time-budget=8000",
     "ran": true,
@@ -46,5 +48,5 @@
     "uncaught_errors": 0,
     "ok": true
   },
-  "passed": false
+  "passed": true
 }

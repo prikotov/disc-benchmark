@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T21-41-59-245Z_01a1dc02-954c-74de-86cf-7cb1b3b5f1ef.jsonl",
+  "turns": 183,
+  "tool_calls": 182,
+  "tools_by_name": {
+    "bash": 135,
+    "read": 21,
+    "write": 23,
+    "edit": 3
+  },
+  "tokens_in": 372010,
+  "tokens_out": 119602,
+  "bash_total": 8,
+  "bash_with_network": 8,
+  "curl_to_source": 8,
+  "network_cmds_sample": [
+    "cd /tmp && curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o disc.html 2>&1; wc -c disc.html; echo \\\"---\\\"; grep -o '<title>[^<]*</title>' disc.html",
+    "cd /tmp && mkdir -p discsrc/js discsrc/img && curl -sL \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" -o discsrc/js/app.js && curl -sL \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o discsrc/js/disc_patched.js && curl -sL \\\"https://stratoplan-school.com/js/tracker.js\\\" -o di",
+    "cd /tmp && rm -f disc.html && curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o disc.html && ls -la disc.html && sed -n '1,10p' disc.html",
+    "cd /tmp && curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o disc.html && grep -c 'Такой страницы' disc.html; grep -o '<title>[^<]*</title>' disc.html",
+    "cd /tmp && rm -f page.html && curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o disc.html && python3 jsx.py 2>&1 | head -40"
+  ],
+  "errors": 30,
+  "first_ts": "2026-11-14T21:41:59.245Z",
+  "last_ts": "2026-11-14T21:57:06.922Z"
+}

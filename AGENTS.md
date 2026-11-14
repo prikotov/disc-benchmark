@@ -219,13 +219,19 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
 
 ### Волна 1 — ядро (локальные, ollama)
 
+В ядре — все сильные локальные по агентному этапу сестринского workspace
+(huihui — лидер сетки: чекер 13/13, ревью 4/4; orca — полный зачёт пилота,
+ревью 3.7; qwen3.8 — единственный без развала на off).
+
 | Папка (models/) | Тег | Уровни | Прогонов/ур. |
 |---|---|---|---|
 | `qwen3.8-27b-pi-100k/` | `qwen3.8:27b-pi-100k` | off, low, medium | 3 |
+| `huihui-ai-pi-100k/` | `huihui-ai:pi-100k` | off, low, medium | 3 |
 | `ornith-1.5-35b-ctx100k/` | `ornith-1.5:35b-ctx100k` | off, on (градаций нет) | 3 |
 | `gemma4-26b-pi-100k/` | `gemma4:26b-pi-100k` | off, on | 3 |
 | `bonsai-2-27b/` | `bonsai-2:ctx100k` | off, low, medium | 3 |
 | `muse-glimmer-ctx100k/` | `muse-glimmer:ctx100k` | off, low, high (дефолт) | 3 |
+| `orcarouter-Qwen3.8-27B-Uncensored-ctx100k/` | `orcarouter/Qwen3.8-27B-Uncensored:ctx100k` | off, on | 3 |
 
 Плюс 1 пробный прогон `qwen3.8` на `xhigh` — решить, включать ли уровень
 в серию (тяжёлый по токенам).
@@ -240,17 +246,32 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
 отсутствует); думает по шкале false/low/medium/xhigh, дефолт medium —
 совпадает с карточкой.
 
-### Волна 2 — малые, вариаты, кванты (локальные)
+Примечания к волне 1 (huihui и orca):
+
+- `huihui-ai:pi-100k` ≡ `huihui_ai/Qwen3.8-abliterated:{latest,ctx100k}` —
+  один дайджест блобов (проверено `/api/show` 2026-11-14, у всех сейчас
+  `num_ctx 102400` + `draft_num_predict 4`); папка одна, тег для прогонов —
+  pi-100k. Исторически off у huihui слабое место (9.0 против 12.3–13 на
+  thinking-уровнях в сестринском этапе 2) — off-серия особенно интересна;
+- `orcarouter/Qwen3.8-27B-Uncensored:ctx100k` — алиас latest (блобы те же),
+  но **сейчас без `draft_num_predict`** (в карточке сестринского workspace
+  описан с draft 4 — перед серией перечитать `/api/show`); renderer
+  `qwen3.5/qwen3.5`; мышление только `false/true` (дефолт true); off
+  исторически слабый и «снимает сдержанность агента» (блуждания за пределами
+  песочницы в сестринском run-14) — для off-серии следить за выходами
+  за пределы рабочей директории в трейсе.
+
+### Волна 2 — малые, техварианты, кванты (локальные)
 
 | Папка | Тег | Уровни | Зачем |
 |---|---|---|---|
 | `gemma4-31b-it-qat-pi-100k/` | `gemma4:31b-it-qat-pi-100k` | off, on | QAT-квант против 26b |
 | `gemma4-e2b-ctx100k/` | `gemma4:e2b-ctx100k` | off, on | пол возможностей (4.6B) |
 | `ornith-1.5-9b/` | `ornith-1.5:9b` | off, on | пол возможностей (9B) |
-| `huihui_ai-Qwen3.8-abliterated-ctx100k/` | `huihui_ai/Qwen3.8-abliterated:ctx100k` | off, low | эффект abliterated |
-| `orcarouter-Qwen3.8-27B-Uncensored-ctx100k/` | `orcarouter/Qwen3.8-27B-Uncensored:ctx100k` | off | эффект uncensored (on/off only) |
 | `qwen3.8-nomtp-pi-100k/` | `qwen3.8-nomtp:pi-100k` | low | техвариант: без MTP-слоя |
 | `qwen3-vl-30b-a3b-pi-100k/` | `qwen3-vl:30b-a3b-pi-100k` | off, on | опционально: VL-семейство |
+| `orcarouter-Qwen3.8-27B-Uncensored-iq4_xs-ctx100k/` | `orcarouter/Qwen3.8-27B-Uncensored:iq4_xs-ctx100k` | off, on | опционально: квант IQ4_XS против Q4_K_M |
+
 
 ### Волна 3 — облачные (платно; траты — в reports/spend.csv)
 
@@ -273,9 +294,11 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
   «судья судит сам себя»); если всё же тестировать — решить отдельно
   (уровни low/medium/max, off не существует по докам z.ai);
 - `qwen3-vl:8b-pi-100k` — мелкая VL, не планируется;
-- `qwen3.8-unc:pi-100k`, `ornith-1.5:35b-ctx100k-tuned`,
-  `huihui-ai:pi-100k` — провенанс уточнить у владельца, в список не
-  включены.
+- `qwen3.8-unc:pi-100k` — провенанс противоречив (в THINKING-knobs
+  сестринского workspace значился удалённым 2026-10-21 как ретаг orcarouter,
+  но на сервере присутствует); в список не включён, папка-заготовка оставлена;
+- `ornith-1.5:35b-ctx100k-tuned` — провенанс уточнить у владельца, в список
+  не включена.
 
 Суффиксы тегов: `-pi-100k` / `-ctx100k` — вариант с расширенным контекстом
 (position interpolation до ~100k) для агентных прогонов; по API у всех

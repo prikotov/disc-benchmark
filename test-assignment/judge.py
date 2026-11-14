@@ -101,11 +101,14 @@ def main() -> int:
     log = run / "judge-run.log"
     started = time.time()
 
+    # промпт передаём через stdin: длинные решения упираются в лимит
+    # одного argv (MAX_ARG_STRLEN ~128KB)
     cmd = ["pi", "-p", "--no-context-files", "--no-session",
-           "--model", args.model, "--thinking", args.thinking, prompt]
+           "--model", args.model, "--thinking", args.thinking]
     with log.open("w", encoding="utf-8") as out:
-        p = subprocess.run(cmd, cwd=run, stdout=out, stderr=subprocess.STDOUT,
-                           text=True, timeout=args.timeout)
+        p = subprocess.run(cmd, cwd=run, input=prompt, stdout=out,
+                           stderr=subprocess.STDOUT, text=True,
+                           timeout=args.timeout)
     dur = round(time.time() - started, 1)
     out_text = log.read_text(encoding="utf-8", errors="replace")
     verdict = extract_json(out_text)

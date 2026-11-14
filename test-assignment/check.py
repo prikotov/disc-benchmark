@@ -78,7 +78,7 @@ def extract_pairs(html: str) -> Counter:
     массивы пар ["d","Текст"] — в обоих порядках."""
     pairs: Counter = Counter()
     # ключи могут быть в кавычках (JSON) и без; полный (type/text) и короткий (t/l/w)
-    T = r"[\"']?(?:t|type)[\"']?"
+    T = r"[\"']?(?:t|type|ty)[\"']?"
     X = r"[\"']?(?:l|w|text|label|title|word|content|name|t|q)[\"']?"
     pats = [
         # разметка оригинала: <li data-type="d">Волевой</li>

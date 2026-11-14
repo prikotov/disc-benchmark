@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Доска обсуждений</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;--card:#fff;--ink:#0e1728;--soft:#5a6478;
+      --line:#e2e7f0;--accent:#5b4bdb;--accent2:#38bdf8;
+      --d:#ef4444;--i:#f59e0b;--s:#22c55e;--c:#3b82f6;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,“Segoe UI”,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;line-height:1.55}
+    .wrap{max-width:860px;margin:0 auto;padding:26px 20px 64px}
+    .hero{margin-bottom:18px}
+    .hero h1{font-size:clamp(22px,4.6vw,32px);font-weight:800;margin:0 0 6px}
+    .hero p{color:var(--soft);font-size:15px;margin:0 0 20px}
+    #start-disc{border:none;cursor:pointer;border-radius:12px;padding:13px 26px;font-size:15px;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .tabbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+    .tab{border:1px solid var(--line);background:var(--card);color:#475569;border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
+    .tab.is-active{color:#fff;background:var(--accent)}
+    .progress{height:7px;background:var(--line);border-radius:7px;margin:14px 0 26px;overflow:hidden}
+    #progress{height:100%;width:0;transition:width .32s}
+    .grid3{display:grid;grid-template-columns:1fr;gap:24px}
+    @media(min-width:780px){ .grid3{grid-template-columns:repeat(3,1fr)} }
+    .card{border:1px solid var(--line);border-radius:14px;padding:4px 12px 14px;background:var(--card)}
+    .card__label{font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:7px}
+    ul.disc-list{list-style:none;margin:0;padding:0}
+    .disc-item{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:7px;background:#fff;cursor:grab;user-select:none}
+    .disc-item:last-child{margin-bottom:0}
+    .disc-item.is-dragging{opacity:.45}
+    .dot-handle{flex:0 0 auto;color:#cbd5e1}
+    .disc-item-text{flex:1 1 auto;font-size:15px}
+    .actions{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
+    .actions .btn{flex:1;max-width:220px;border:none;cursor:pointer;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:700}
+    .btn--ghost{background:#eef1f6;color:#334155}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .actions .btn:disabled{opacity:.4}
+    .result{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+    .result h2{font-size:22px;margin:0 0 10px}
+    .result .note{color:var(--soft);font-size:14px;margin:0 0 20px}
+    .scores-block{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:640px){ .scores-block{grid-template-columns:1fr 1fr} }
+    .score-card{border-radius:14px;padding:16px;color:#fff}
+    .score-card.type-d{background:linear-gradient(135deg,#ef4444,#f97316)}
+    .score-card.type-i{background:linear-gradient(135deg,#f59e0b,#eab308)}
+    .score-card.type-s{background:linear-gradient(135deg,#22c55e,#14b8a6)}
+    .score-card.type-c{background:linear-gradient(135deg,#3b82f6,#8b5cf6)}
+    .score-type{font-size:32px;font-weight:800;line-height:1}
+    .score-name{font-size:14px;font-weight:600;margin-top:4px;opacity:.95}
+    .score-value{font-size:20px;font-weight:800;margin-top:10px}
+    .legend{margin-top:26px}
+    .legend-item{font-size:13px;color:var(--soft);line-height:1.55;margin-bottom:9px}
+    .legend-item b{color:var(--ink)}
+    .btn--restart{display:block;width:100%;max-width:240px;margin:24px auto 0}
+    .disclaimer{font-size:12px;color:var(--soft);line-height:1.55}
+    .overlay{position:fixed;inset:0;background:rgba(9,14,30,.6);display:none;align-items:flex-start;justify-content:center;padding:20px 10px;overflow-y:auto;z-index:90}
+    .overlay.open{display:flex}
+    .modal{position:relative;background:#fff;border-radius:18px;width:100%;max-width:880px;box-shadow:0 24px 60px rgba(0,0,0,.3);margin:6px 0;overflow:hidden}
+    .modal__head{padding:20px 22px 14px;border-bottom:1px solid var(--line)}
+    .modal__title{font-size:20px;font-weight:800;margin:0}
+    .modal__sub{margin:6px 0 0;font-size:13px;color:var(--soft)}
+    .modal__lead{margin:9px 0 0;font-size:13px;font-weight:600}
+    .modal__close{position:absolute;top:12px;right:12px;background:transparent;border:none;font-size:26px;cursor:pointer;color:var(--soft);width:34px;height:34px;border-radius:8px}
+    .modal__close:hover{background:var(--line)}
+    .tabbar{display:flex;flex-wrap:wrap;gap:6px;padding:10px 20px;border-bottom:1px solid var(--line);overflow-x:auto}
+    .body{padding:18px 20px 8px}
+    .disc-no-scroll{overflow:hidden}
+    .pane{display:none}
+    .pane.is-active{display:block}
+  </style>
+</head>
+<body>var QUESTIONS = [
+[
+    {"type":"i","text":"Экспресcивный"}, {"type":"c","text":"Покладистый"}, {"type":"d","text":"Волевой"}, {"type":"s","text":"Осторожный"}
+  ],
+[
+    {"type":"d","text":"Пылкий"}, {"type":"i","text":"Разговорчивый"}, {"type":"s","text":"Добродушный"}, {"type":"c","text":"Сдержанный"}
+  ],
+[
+    {"type":"i","text":"Любитель приключений"}, {"type":"c","text":"Энтузиаст"}, {"type":"d","text":"Исполнитель инструкций"}, {"type":"s","text":"Верный"}
+  ],
+[
+    {"type":"d","text":"Настойчивый"}, {"type":"c","text":"Осторожный"}, {"type":"i","text":"Эмоциональный"}, {"type":"s","text":"Удовлетворенный"}
+  ],
+[
+    {"type":"s","text":"Довольный"}, {"type":"d","text":"Нетерпеливый"}, {"type":"i","text":"Убедительный"}, {"type":"c","text":"Безропотный"}
+  ],
+[
+    {"type":"c","text":"Смиренный"}, {"type":"s","text":"Умеющий слушать"}, {"type":"i","text":"Душа компании"}, {"type":"d","text":"Волевой"}
+  ],
+[
+    {"type":"c","text":"Правильный"}, {"type":"d","text":"Первопроходец"}, {"type":"s","text":"Спокойный"}, {"type":"i","text":"Влиятельный"}
+  ],
+[
+    {"type":"c","text":"Почтительный"}, {"type":"i","text":"Контактный"}, {"type":"d","text":"Агрессивный"}, {"type":"s","text":"Мягкий"}
+  ],
+[
+    {"type":"i","text":"Весельчак"}, {"type":"s","text":"Покорный"}, {"type":"c","text":"Тактичный"}, {"type":"d","text":"Соперничающий"}
+  ],
+[
+    {"type":"c","text":"Точный"}, {"type":"d","text":"Доминирующий"}, {"type":"s","text":"Охотный"}, {"type":"i","text":"Притягательный"}
+  ],
+[
+    {"type":"i","text":"Уравновешенный"}, {"type":"c","text":"Уступчивый"}, {"type":"d","text":"Идущий на риск"}, {"type":"s","text":"Услужливый"}
+  ],
+[
+    {"type":"c","text":"Осмотрительный"}, {"type":"s","text":"Добрососедский"}, {"type":"d","text":"Энергичный"}, {"type":"i","text":"Убедительный"}
+  ],
+[
+    {"type":"s","text":"Уравновешенный"}, {"type":"i","text":"Мотивирующий"}, {"type":"c","text":"Щепетильный"}, {"type":"d","text":"Решительный"}
+  ],
+[
+    {"type":"i","text":"Уверенный"}, {"type":"c","text":"Готовый к сотрудничеству"}, {"type":"s","text":"Беззаботный"}, {"type":"d","text":"Аргументирующий"}
+  ],
+[
+    {"type":"s","text":"Сдержанный"}, {"type":"d","text":"Прямой"}, {"type":"c","text":"Строгий"}, {"type":"i","text":"Убедительный"}
+  ],
+[
+    {"type":"c","text":"Застенчивый"}, {"type":"d","text":"Требовательный"}, {"type":"s","text":"Терпеливый"}, {"type":"i","text":"Очаровательный"}
+  ],
+[
+    {"type":"d","text":"Неугомонный"}, {"type":"c","text":"Дисциплинированный"}, {"type":"i","text":"Вдохновляющий"}, {"type":"s","text":"Внимательный"}
+  ],
+[
+    {"type":"s","text":"Обязательный"}, {"type":"i","text":"Оживленный"}, {"type":"d","text":"Решительный"}, {"type":"c","text":"Точный"}
+  ],
+[
+    {"type":"c","text":"Добросовестный"}, {"type":"i","text":"Компанейский"}, {"type":"s","text":"Добрый"}, {"type":"d","text":"Уверенный в себе"}
+  ],
+[
+    {"type":"c","text":"Дипломатичный"}, {"type":"d","text":"Отважный"}, {"type":"s","text":"Сочувствующий"}, {"type":"i","text":"Оптимистичный"}
+  ],
+[
+    {"type":"d","text":"Настойчивый"}, {"type":"i","text":"Общительный"}, {"type":"s","text":"Постоянный"}, {"type":"c","text":"Организованный"}
+  ],
+[
+    {"type":"c","text":"Соглашающийся"}, {"type":"s","text":"Владеющий собой"}, {"type":"d","text":"Шутливый"}, {"type":"i","text":"Настойчивый"}
+  ],
+[
+    {"type":"i","text":"Обаятельный"}, {"type":"d","text":"Позитивный"}, {"type":"s","text":"Снисходительный"}, {"type":"c","text":"Требовательный"}
+  ],
+[
+    {"type":"i","text":"Коммуникабельный"}, {"type":"d","text":"Смелый"}, {"type":"c","text":"Перфекционист"}, {"type":"s","text":"Сдержанный"}
+  ]
+];
+<script>
+"use strict";
+(function () {
+  var TYPES = ["d", "i", "s", "c"];
+  var TYPE_NAME = {
+    d: "Dominance · Доминирование",
+    i: "Influence · Влияние",
+    s: "Stability · Стабильность",
+    c: "Compliance · Соответствие"
+  };
+  var STEP_LABELS = ["Войдите в первый", "Второй", "Третий",
+    "Четвертый", "Пятый", "Шестой", "Седьмой", "Восьмой"];
+
+  var $ = function (sel) { return document.querySelector(sel); };
+  var $$ = function (sel) {
+    return Array.prototype.slice.call(document.querySelectorAll(sel));
+  };
+  var elAll = function (sel, root) {
+    return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+  };
+  var esc = function (s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  };
+
+  var cur = 0;
+  var dragItem = null;
+  var els = {};
+
+  function buildPanels() {
+    var html = "";
+    for (var s = 0; s <= 7; s++) {
+      html += '<div class="pane" data-step-pane="' + s + '"><div class="grid3">';
+      for (var c = 0; c < 3; c++) {
+        var qi = s * 3 + c;
+        var items = QUESTIONS[qi];
+        var cards = "";
+        items.forEach(function (it, idx) {
+          var isMajor = (idx === 0), isMinor = (idx === items.length - 1);
+          var cls = "disc-item" + (isMajor ? " is-major" : "") + (isMinor ? " is-minor" : "");
+          cards += '<li class="' + cls + '" draggable="true" data-item="' + idx + '" data-type="' + esc(it.type) + '"';
+          if (isMajor) cards += ' data-major="1"';
+          if (isMinor) cards += ' data-minor="1"';
+          cards += '><span class="disc-item-text">' + esc(it.text) + "</span></li>";
+        });
+        html += '<div class="card"><div class="card__label">Я наиболее</div>'
+          + '<ul class="disc-list" data-question="' + qi + '">' + cards + "</ul>"
+          + '<div class="card__label">Я наименее</div></div>';
+      }
+      html += "</div></div>";
+    }
+    var root = $("#disc-root");
+    if (root) root.innerHTML = html;
+  }
+
+  function build() {
+    els.tabbar.innerHTML = "";
+    STEP_LABELS.forEach(function (lab, i) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tab" + (i === 0 ? " is-active" : "");
+      b.setAttribute("data-step-btn", String(i));
+      b.textContent = lab;
+      els.tabbar.appendChild(b);
+    });
+    stepTo(0);
+  }
+
+  function stepTo(n) {
+    cur = Math.min(7, Math.max(0, n));
+    elAll("[data-step-btn]").forEach(function (t) {
+      var i = Number(t.getAttribute("data-step-btn"));
+      t.classList.toggle("is-active", i === cur);
+    });
+    elAll("[data-step-pane]").forEach(function (p) {
+      var i = Number(p.getAttribute("data-step-pane"));
+      p.classList.toggle("is-active", i === cur);
+    });
+    if (els.progressBar) els.progressBar.style.width = ((cur + 1) / 8 * 100) + "%";
+    if (els.back) els.back.disabled = cur === 0;
+    els.next.hidden = cur === 7;
+    if (els.finish) els.finish.hidden = cur !== 7;
+  }
+
+  function openWizard() {
+    var w = $("#wizardmodal");
+    if (w) w.classList.add("is-open");
+    document.body.classList.add("disc-no-scroll");
+  }
+
+  function closeWizard() {
+    var w = $("#wizardmodal");
+    if (w) w.classList.remove("is-open");
+    document.body.classList.remove("disc-no-scroll");
+  }
+
+  function collectRows() {
+    var rows = [];
+    elAll("ul.disc-list").forEach(function (list) {
+      elAll("li.disc-item", list).forEach(function (li) {
+        rows.push({
+          pos: Number(li.getAttribute("data-item")),
+          type: li.getAttribute("data-type")
+        });
+      });
+    });
+    return rows;
+  }
+
+  function scoreRows(rows) {
+    var maj = {};
+    var min = {};
+    TYPES.forEach(function (t) { maj[t] = 0; min[t] = 0; });
+    rows.forEach(function (r) {
+      if (r.pos === 0) maj[r.type]++;
+      else if (r.pos === rows.length - 1) min[r.type]++;
+    });
+    var res = { d: 0, i: 0, s: 0, c: 0 };
+    TYPES.forEach(function (t) { res[t] = maj[t] - min[t]; });
+    return res;
+  }
+
+  function showResults() {
+    var r = scoreRows(collectRows());
+    var html = '<div class="result"><h2>Ваш DISC-профиль:</h2>';
+    html += '<div class="scores-block">';
+    TYPES.forEach(function (t) {
+      var v = r[t] > 0 ? "+" + r[t] : String(r[t]);
+      html += '<div class="score-card score-card-' + t + '">'
+        + '<div class="score-type">' + t + '</div>'
+        + '<div class="score-name">' + TYPE_NAME[t] + '</div>'
+        + '<div class="score-value">' + v + '</div></div>';
+    });
+    html += '</div>';
+    html += '<div class="legend">';
+    html += '<div class="legend-item"><b>D:</b> Доминирование - решительность и напористость, стремление к результату.</div>';
+    html += '<div class="legend-item"><b>I:</b> Влияние - общительность, энтузиаст, умение убеждать.</div>';
+    html += '<div class="legend-item"><b>S:</b>Стабильность - стабильность, терпение, постоянство и надёжность.</div>';
+    html += '<div class="legend-item"><b>C:</b> соответствие - соответствие стандартам, точность и аккуратность.</div>';
+    html += '</div>';
+    html += '<p class="disclaimer">Обратите внимание: мы не даем расшифровку вашего индивидуального результата. Инструмент для самопостигания и работы с командой.</p>';
+    html += '<p class="disclaimer">Результаты не отправляются на сервер - всё вычисляется только у вас в браузере.</p>';
+    var stage = $("#disc-root");
+    if (stage) stage.innerHTML = html;
+    document.body.classList.remove("disc-no-scroll");
+    var w = $("#wizardmodal");
+    if (w) w.classList.remove("is-open");
+  }
+
+  function wireDragAndDrop() {
+    elAll("li.disc-item").forEach(function (li) {
+      li.addEventListener("dragstart", function () {
+        dragItem = li;
+        setTimeout(function () { li.classList.add("is-dragging"); }, 0);
+      });
+      li.addEventListener("dragend", function () {
+        li.classList.remove("is-dragging");
+        dragItem = null;
+      });
+    });
+    document.addEventListener("dragover", function (e) {
+      if (!dragItem) return;
+      var target = e.target && e.target.closest ? e.target.closest("li.disc-item") : null;
+      if (!target || target === dragItem || !target.parentNode || target.parentNode === dragItem.parentNode) return;
+      var wrap = dragItem.parentNode;
+      if (!wrap) return;
+      var rect = target.getBoundingClientRect();
+      var after = e.clientY - rect.top < rect.height / 2;
+      e.preventDefault();
+      wrap.insertBefore(dragItem, after ? target : target.nextSibling);
+    });
+  }
+
+  function wire() {
+    var next = $("#step-next");
+    if (next) next.addEventListener("click", function () {
+      if (cur < 7) stepTo(cur + 1);
+      else showResults();
+    });
+    var back = $("#step-back");
+    if (back) back.addEventListener("click", function () {
+      if (cur > 0) stepTo(cur - 1);
+    });
+    var closeBtn = $("#disc-close");
+    if (closeBtn) closeBtn.addEventListener("click", closeWizard);
+    var startBtn = $("#start-disc");
+    if (startBtn) startBtn.addEventListener("click", function () { openWizard(); stepTo(0); });
+    elAll("[data-close]").forEach(function (b) { b.addEventListener("click", closeWizard); });
+  }
+
+  function boot() {
+    els.tabbar = $("#disc-tabs");
+    els.progressBar = $("#disc-progress-bar");
+    els.next = $("#step-next");
+    els.back = $("#step-back");
+    els.finish = $("#step-finish");
+    buildPanels();
+    build();
+    wireDragAndDrop();
+    wire();
+    stepTo(0);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+YPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Доска обсуждений</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;--card:#fff;--ink:#0e1728;--soft:#5a6478;
+      --line:#e2e7f0;--accent:#5b4bdb;--accent2:#38bdf8;
+      --d:#ef4444;--i:#f59e0b;--s:#22c55e;--c:#3b82f6;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,“Segoe UI”,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;line-height:1.55}
+    .wrap{max-width:860px;margin:0 auto;padding:26px 20px 64px}
+    .hero{margin-bottom:18px}
+    .hero h1{font-size:clamp(22px,4.6vw,32px);font-weight:800;margin:0 0 6px}
+    .hero p{color:var(--soft);font-size:15px;margin:0 0 20px}
+    #start-disc{border:none;cursor:pointer;border-radius:12px;padding:13px 26px;font-size:15px;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .tabbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+    .tab{border:1px solid var(--line);background:var(--card);color:#475569;border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
+    .tab.is-active{color:#fff;background:var(--accent)}
+    .progress{height:7px;background:var(--line);border-radius:7px;margin:14px 0 26px;overflow:hidden}
+    #progress{height:100%;width:0;transition:width .32s}
+    .grid3{display:grid;grid-template-columns:1fr;gap:24px}
+    @media(min-width:780px){ .grid3{grid-template-columns:repeat(3,1fr)} }
+    .card{border:1px solid var(--line);border-radius:14px;padding:4px 12px 14px;background:var(--card)}
+    .card__label{font-size:11px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:7px}
+    ul.disc-list{list-style:none;margin:0;padding:0}
+    .disc-item{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:7px;background:#fff;cursor:grab;user-select:none}
+    .disc-item:last-child{margin-bottom:0}
+    .disc-item.is-dragging{opacity:.45}
+    .dot-handle{flex:0 0 auto;color:#cbd5e1}
+    .disc-item-text{flex:1 1 auto;font-size:15px}
+    .actions{display:flex;justify-content:space-between;gap:12px;margin-top:8px}
+    .actions .btn{flex:1;max-width:220px;border:none;cursor:pointer;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:700}
+    .btn--ghost{background:#eef1f6;color:#334155}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .actions .btn:disabled{opacity:.4}
+    .result{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+    .result h2{font-size:22px;margin:0 0 10px}
+    .result .note{color:var(--soft);font-size:14px;margin:0 0 20px}
+    .scores-block{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:640px){ .scores-block{grid-template-columns:1fr 1fr} }
+    .score-card{border-radius:14px;padding:16px;color:#fff}
+    .score-card.type-d{background:linear-gradient(135deg,#ef4444,#f97316)}
+    .score-card.type-i{background:linear-gradient(135deg,#f59e0b,#eab308)}
+    .score-card.type-s{background:linear-gradient(135deg,#22c55e,#14b8a6)}
+    .score-card.type-c{background:linear-gradient(135deg,#3b82f6,#8b5cf6)}
+    .score-type{font-size:32px;font-weight:800;line-height:1}
+    .score-name{font-size:14px;font-weight:600;margin-top:4px;opacity:.95}
+    .score-value{font-size:20px;font-weight:800;margin-top:10px}
+    .legend{margin-top:26px}
+    .legend-item{font-size:13px;color:var(--soft);line-height:1.55;margin-bottom:9px}
+    .legend-item b{color:var(--ink)}
+    .btn--restart{display:block;width:100%;max-width:240px;margin:24px auto 0}
+    .disclaimer{font-size:12px;color:var(--soft);line-height:1.55}
+    .overlay{position:fixed;inset:0;background:rgba(9,14,30,.6);display:none;align-items:flex-start;justify-content:center;padding:20px 10px;overflow-y:auto;z-index:90}
+    .overlay.open{display:flex}
+    .modal{position:relative;background:#fff;border-radius:18px;width:100%;max-width:880px;box-shadow:0 24px 60px rgba(0,0,0,.3);margin:6px 0;overflow:hidden}
+    .modal__head{padding:20px 22px 14px;border-bottom:1px solid var(--line)}
+    .modal__title{font-size:20px;font-weight:800;margin:0}
+    .modal__sub{margin:6px 0 0;font-size:13px;color:var(--soft)}
+    .modal__lead{margin:9px 0 0;font-size:13px;font-weight:600}
+    .modal__close{position:absolute;top:12px;right:12px;background:transparent;border:none;font-size:26px;cursor:pointer;color:var(--soft);width:34px;height:34px;border-radius:8px}
+    .modal__close:hover{background:var(--line)}
+    .tabbar{display:flex;flex-wrap:wrap;gap:6px;padding:10px 20px;border-bottom:1px solid var(--line);overflow-x:auto}
+    .body{padding:18px 20px 8px}
+    .disc-no-scroll{overflow:hidden}
+    .pane{display:none}
+    .pane.is-active{display:block}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div>Пройдите тест за 5 минут</div>
+      <h1>Доска обсуждений</h1>
+      <p>Тест DISC для руководителей — оцените, какие описания вам наиболее близки, и сразу получите свой поведенческий профиль.</p>
+      <button id="start-disc" type="button">Открыть опросник</button>
+    </header>
+
+    <div class="overlay" id="wizardmodal" aria-hidden="true">
+      <div class="modal">
+        <div class="modal__head">
+          <h2 class="modal__title">Доска обсуждений</h2>
+          <div class="modal__sub">Помните: честно отвечая, вы получите более точные результаты.</div>
+          <div class="modal__lead">Расставьте описания в порядке от « Наиболее» до «Наименее».</div>
+        </div>
+        <button class="modal__close" data-close aria-label="Закрыть">×</button>
+        <div class="tabbar" id="disc-tabs"></div>
+        <div class="progress"><div id="progress"></div></div>
+        <div class="body" id="disc-root"><div class="card__label"></div></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn--ghost" id="step-back" disabled>Назад</button>
+      <button class="btn" id="step-next">Далее</button>
+      <button class="btn" id="step-finish" hidden>Завершение</button>
+    </div>
+  </div>
+</body>
+</html>

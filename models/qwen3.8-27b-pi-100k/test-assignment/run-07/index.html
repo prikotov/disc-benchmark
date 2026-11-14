@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тестирование DISC</title>
+<style>
+  :root{
+    --bg:#f3f5f8;
+    --card:#ffffff;
+    --ink:#1d2430;
+    --muted:#5b6474;
+    --line:#dfe4ec;
+    --accent:#2f6fed;
+    --accent-ink:#ffffff;
+    --item:#f7f9fc;
+    --item-line:#e3e8f0;
+    --shadow:0 6px 24px rgba(29,36,48,.08);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.45;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:28px 16px 64px}
+  header h1{margin:0 0 6px;font-size:28px;letter-spacing:-.01em}
+  header .sub{margin:0 0 4px;color:var(--muted)}
+  header .lead{margin:0 0 18px;font-weight:600}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 14px;-webkit-overflow-scrolling:touch}
+  .tab{
+    flex:0 0 auto;padding:8px 16px;border:1px solid var(--line);border-radius:999px;
+    background:var(--card);color:var(--muted);font-size:14px;cursor:pointer;
+  }
+  .tab.is-active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+  .tab:not(.is-active):hover{border-color:var(--accent);color:var(--accent)}
+
+  /* cards */
+  .stage{display:grid;gap:16px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:14px;
+  }
+  .card__title,.card__foot{
+    font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+    padding:4px 2px;
+  }
+  .card__foot{margin-top:2px}
+
+  /* lists */
+  .list{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:8px;min-height:0}
+  .item{
+    display:flex;align-items:center;gap:10px;
+    background:var(--item);border:1px solid var(--item-line);border-radius:10px;
+    padding:10px 12px;font-size:15px;cursor:grab;
+    user-select:none;-webkit-user-select:none;touch-action:none;
+  }
+  .item .grip{flex:0 0 auto;color:#9aa4b5;display:inline-flex}
+  .item .txt{flex:1 1 auto}
+  .item.is-dragging{
+    border-color:var(--accent);box-shadow:0 8px 20px rgba(47,111,237,.25);
+    background:#eef4ff;cursor:grabbing;z-index:2;position:relative;
+  }
+
+  /* progress */
+  .progress{height:6px;border-radius:999px;background:var(--line);overflow:hidden;margin:18px 0 14px}
+  .progress__bar{height:100%;width:12.5%;background:var(--accent);border-radius:999px;transition:width .25s ease}
+
+  /* actions */
+  .actions{display:flex;justify-content:space-between;gap:12px}
+  .btn{
+    border-radius:10px;border:1px solid transparent;padding:11px 22px;font-size:15px;cursor:pointer;
+    font-family:inherit;
+  }
+  .btn--ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+  .btn--ghost:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+  .btn--ghost:disabled{opacity:.45;cursor:default}
+  .btn--primary{background:var(--accent);color:var(--accent-ink)}
+  .btn--primary:hover{background:#255cd6}
+  .btn[hidden]{display:none}
+
+  /* result */
+  .result{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:28px;margin-top:8px;
+  }
+  .result h2{margin:0 0 6px;font-size:22px}
+  .result .rsub{margin:0 0 20px;color:var(--muted)}
+  .scores{display:grid;gap:12px;margin-bottom:24px}
+  .score{
+    display:flex;align-items:center;gap:14px;padding:14px 16px;
+    border:1px solid var(--line);border-radius:12px;background:var(--item);
+  }
+  .score .letter{
+    flex:0 0 auto;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+    font-size:22px;font-weight:700;color:#fff;background:var(--accent);
+  }
+  .score .name{flex:1 1 auto;font-weight:600}
+  .score .name small{display:block;font-weight:400;color:var(--muted)}
+  .score .val{font-size:26px;font-weight:700;min-width:48px;text-align:right}
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Тестирование DISC</h1>
+    <p class="sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+    <p class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+  </header>
+
+  <div id="test">
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Шаги"></nav>
+
+    <div class="stage" id="stage"></div>
+
+    <div class="progress" aria-hidden="true">
+      <div class="progress__bar" id="bar"></div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn--ghost" id="prevBtn">Назад</button>
+      <span style="flex:1 1 auto"></span>
+      <button type="button" class="btn btn--primary" id="nextBtn">Далее</button>
+      <button type="button" class="btn btn--primary" id="finishBtn" hidden>Завершить тест</button>
+    </div>
+  </div>
+
+  <section class="result" id="result" hidden aria-live="polite">
+    <h2>Ваш результат</h2>
+    <p class="rsub">Баллы по четырём поведенческим стилям DISC</p>
+    <div class="scores">
+      <div class="score">
+        <span class="letter">D</span>
+        <span class="name">Доминирование<small>Упорство, решимость, ориентация на результат</small></span>
+        <span class="val" id="scoreD">0</span>
+      </div>
+      <div class="score">
+        <span class="letter">I</span>
+        <span class="name">Влияние<small>Общительность, энергия, оптимизм</small></span>
+        <span class="val" id="scoreI">0</span>
+      </div>
+      <div class="score">
+        <span class="letter">S</span>
+        <span class="name">Стабильность<small>Спокойствие, надёжность, поддержка</small></span>
+        <span class="val" id="scoreS">0</span>
+      </div>
+      <div class="score">
+        <span class="letter">C</span>
+        <span class="name">Соблюдение правил<small>Точность, аккуратность, внимание к деталям</small></span>
+        <span class="val" id="scoreC">0</span>
+      </div>
+    </div>
+    <button type="button" class="btn btn--primary" id="againBtn">Пройти заново</button>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+/* ==== данные теста: 8 шагов × 3 карточки × 4 варианта (тип, текст) ==== */
+const DATA = [[["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],[["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],[["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]],[["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],[["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],[["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]],[["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],[["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],[["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]],[["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],[["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],[["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]],[["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],[["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],[["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]],[["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],[["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],[["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]],[["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],[["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],[["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]],[["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],[["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],[["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]];
+
+const STEPS = 8;
+const PER_STEP = 3;
+const STEP_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+
+const GRIP_SVG =
+  '<svg class="grip" xmlns="http://www.w3.org/2000/svg" width="14" height="18" viewBox="0 0 14 18" aria-hidden="true">' +
+  '<circle cx="4" cy="3" r="1.6" fill="currentColor"/>' +
+  '<circle cx="10" cy="3" r="1.6" fill="currentColor"/>' +
+  '<circle cx="4" cy="9" r="1.6" fill="currentColor"/>' +
+  '<circle cx="10" cy="9" r="1.6" fill="currentColor"/>' +
+  '<circle cx="4" cy="15" r="1.6" fill="currentColor"/>' +
+  '<circle cx="10" cy="15" r="1.6" fill="currentColor"/>' +
+  '</svg>';
+
+/* ==== ссылки на DOM ==== */
+const tabsEl   = document.getElementById("tabs");
+const stageEl  = document.getElementById("stage");
+const barEl    = document.getElementById("bar");
+const prevBtn  = document.getElementById("prevBtn");
+const nextBtn  = document.getElementById("nextBtn");
+const finishBtn= document.getElementById("finishBtn");
+const testEl   = document.getElementById("test");
+const resultEl = document.getElementById("result");
+const againBtn = document.getElementById("againBtn");
+
+let step = 0;
+
+/* ==== построение интерфейса ==== */
+function buildTabs(){
+  tabsEl.textContent = "";
+  for (let i = 0; i < STEPS; i++){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tab";
+    b.textContent = STEP_NAMES[i];
+    b.dataset.step = i;
+    b.addEventListener("click", () => setStep(i));
+    tabsEl.appendChild(b);
+  }
+}
+
+function buildStage(){
+  stageEl.textContent = "";
+  for (let s = 0; s < STEPS; s++){
+    const panel = document.createElement("section");
+    panel.className = "cards";
+    panel.dataset.pane = s;
+    panel.setAttribute("role", "tabpanel");
+    for (let c = 0; c < PER_STEP; c++){
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML =
+        '<div class="card__title">Я наиболее</div>' +
+        '<ul class="list"></ul>' +
+        '<div class="card__foot">Я наименее</div>';
+      const ul = card.querySelector("ul");
+      const items = DATA[s * PER_STEP + c];
+      items.forEach(([type, text]) => {
+        const li = document.createElement("li");
+        li.className = "item";
+        li.dataset.type = type;
+        li.innerHTML = GRIP_SVG + '<span class="txt"></span>';
+        li.querySelector(".txt").textContent = text;
+        ul.appendChild(li);
+      });
+      makeDraggable(ul);
+      panel.appendChild(card);
+    }
+    stageEl.appendChild(panel);
+  }
+}
+
+/* ==== drag & drop (Pointer Events: мышь + тач) ==== */
+function makeDraggable(ul){
+  ul.querySelectorAll("li").forEach((li) => {
+    li.addEventListener("pointerdown", (e) => {
+      if (!e.isPrimary) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      li.setPointerCapture(e.pointerId);
+      li.classList.add("is-dragging");
+      const rect = li.getBoundingClientRect();
+      const offY = e.clientY - rect.top;
+
+      const move = (ev) => {
+        const top = ev.clientY - offY;
+        const center = top + rect.height / 2;
+        const others = Array.from(ul.children).filter((el) => el !== li);
+        let pos = 0;
+        for (const s of others){
+          const r = s.getBoundingClientRect();
+          if (center > r.top + r.height / 2) pos++;
+        }
+        if (others[pos] !== li){
+          ul.insertBefore(li, others[pos] || null);
+        }
+      };
+      const up = () => {
+        li.classList.remove("is-dragging");
+        li.removeEventListener("pointermove", move);
+        li.removeEventListener("pointerup", up);
+        li.removeEventListener("pointercancel", up);
+      };
+      li.addEventListener("pointermove", move);
+      li.addEventListener("pointerup", up);
+      li.addEventListener("pointercancel", up);
+    });
+  });
+}
+
+/* ==== навигация ==== */
+function setStep(n){
+  step = Math.max(0, Math.min(STEPS - 1, n));
+  render();
+}
+
+function render(){
+  Array.from(tabsEl.children).forEach((t, i) => {
+    t.classList.toggle("is-active", i === step);
+  });
+  Array.from(stageEl.children).forEach((p, i) => {
+    p.hidden = i !== step;
+  });
+  prevBtn.disabled = step === 0;
+  nextBtn.hidden = step === STEPS - 1;
+  finishBtn.hidden = step !== STEPS - 1;
+  barEl.style.width = (((step + 1) / STEPS) * 100).toFixed(2) + "%";
+}
+
+prevBtn.addEventListener("click", () => setStep(step - 1));
+nextBtn.addEventListener("click", () => setStep(step + 1));
+
+/* ==== сбор и подсчёт (как в оригинале) ==== */
+function collect(){
+  const payload = [];
+  stageEl.querySelectorAll("ul.list").forEach((ul, listIndex) => {
+    ul.querySelectorAll("li").forEach((li, idx) => {
+      payload.push({ list: listIndex, pos: idx, type: li.dataset.type });
+    });
+  });
+  return payload;
+}
+
+function score(payload){
+  const maj = [], min = [];
+  payload.forEach((x) => {
+    if (x.pos === 0) maj.push(x.type);
+    if (x.pos === 3) min.push(x.type);
+  });
+  const count = (arr, ch) => arr.reduce((a, v) => a + (v === ch ? 1 : 0), 0);
+  return {
+    d: count(maj, "d") - count(min, "d"),
+    i: count(maj, "i") - count(min, "i"),
+    s: count(maj, "s") - count(min, "s"),
+    c: count(maj, "c") - count(min, "c"),
+  };
+}
+
+finishBtn.addEventListener("click", () => {
+  const res = score(collect());
+  document.getElementById("scoreD").textContent = res.d;
+  document.getElementById("scoreI").textContent = res.i;
+  document.getElementById("scoreS").textContent = res.s;
+  document.getElementById("scoreC").textContent = res.c;
+  testEl.hidden = true;
+  resultEl.hidden = false;
+  resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+/* ==== перезапуск ==== */
+againBtn.addEventListener("click", () => {
+  resultEl.hidden = true;
+  testEl.hidden = false;
+  setStep(0);
+});
+
+/* init */
+buildTabs();
+buildStage();
+render();
+</script>
+</body>
+</html>

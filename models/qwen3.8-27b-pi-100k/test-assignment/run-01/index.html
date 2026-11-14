@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Тест DISC — типы личности</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --accent-soft: #eff6ff;
+      --d: #dc2626;
+      --i: #d97706;
+      --s: #059669;
+      --c: #0ea5e9;
+      --shadow: 0 12px 32px rgba(15, 23, 42, .14);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1100px 480px at 85% -10%, #1e293b 0%, transparent 60%),
+        radial-gradient(900px 480px at -10% 110%, #1e293b 0%, transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 30px 16px 56px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .app { width: 100%; max-width: 1060px; }
+
+    .dialog {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .head { padding: 22px 28px 14px; border-bottom: 1px solid var(--line); }
+    .title { margin: 0 0 6px; font-size: 22px; letter-spacing: .2px; display: flex; align-items: center; gap: 10px; }
+    .title .logo { width: 28px; height: 28px; flex: 0 0 auto; }
+    .sub { margin: 0 0 4px; color: var(--muted); font-size: 14px; }
+    .lead { margin: 0; color: var(--ink); font-size: 15px; font-weight: 600; }
+
+    #closeBtn {
+      position: absolute; top: 14px; right: 14px; z-index: 3; width: 36px; height: 36px;
+      border-radius: 10px; border: 1px solid var(--line); background: #fff; color: var(--muted);
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    }
+    #closeBtn:hover { background: var(--panel-soft); color: var(--ink); }
+    #closeBtn svg { width: 15px; height: 15px; display: block; }
+    #closeBtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .tabs {
+      display: flex; gap: 6px; padding: 12px 20px;
+      border-bottom: 1px solid var(--line); background: var(--accent-soft);
+      overflow-x: auto; scrollbar-width: thin;
+    }
+    .tab {
+      flex: 0 0 auto; appearance: none; border: 1px solid transparent; background: transparent;
+      color: var(--muted); font-size: 14px; font-weight: 500; font-family: inherit;
+      padding: 8px 14px; border-radius: 999px; cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .tab:hover { background: #dbeafe; }
+    .tab.is-active { background: var(--accent); color: #fff; }
+    .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .pane-wrap { padding: 20px 26px 6px; }
+    .pane { display: none; }
+    .pane.is-active { display: block; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    @media (max-width: 600px) { .pane-wrap { padding: 16px 14px 4px; } .head { padding: 20px 16px 12px; } }
+
+    .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    @media (max-width: 900px) { .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) { .grid3 { grid-template-columns: 1fr; } }
+
+    .card { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); padding: 12px 12px 10px; min-width: 0; }
+    .card__title, .card__foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      font-size: 12.5px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase;
+      color: var(--muted); padding: 2px 4px 8px;
+    }
+    .card__foot { padding: 8px 4px 2px; }
+    .rank {
+      font-size: 10.5px; font-weight: 700; color: var(--accent); background: var(--accent-soft);
+      border-radius: 999px; padding: 2px 8px; flex: 0 0 auto; text-transform: none; letter-spacing: .2px;
+    }
+
+    .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; min-height: 4px; }
+    .item {
+      position: relative;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--panel-soft); border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 12px; font-size: 14.5px; line-height: 1.25;
+      cursor: grab; user-select: none; -webkit-user-select: none;
+      touch-action: none;
+      transition: box-shadow .12s, border-color .12s, background .12s, opacity .12s;
+    }
+    .item:hover { border-color: #bfdbfe; }
+    .item .text { flex: 1 1 auto; min-width: 0; }
+    @media (hover: none), (pointer: coarse) { .item { cursor: default; } }
+    .item .handle { flex: 0 0 auto; display: inline-flex; opacity: .6; }
+    .item .handle svg { display: block; }
+    .item.is-dragging { box-shadow: var(--shadow); border-color: var(--accent); background: #fff; opacity: .35; }
+    .item.is-over { border-color: var(--accent); background: var(--accent-soft); }
+    .item.ghost {
+      position: fixed; z-index: 9999; pointer-events: none; margin: 0;
+      box-shadow: var(--shadow); border-color: var(--accent); background: #fff; opacity: 1;
+    }
+
+    .progress { height: 6px; background: var(--line); border-radius: 999px; margin: 18px 0 14px; overflow: hidden; }
+    .progress__bar { height: 100%; width: 12.5%; background: linear-gradient(90deg, var(--accent), #60a5fa); transition: width .3s ease; }
+    .actions { display: flex; justify-content: space-between; gap: 10px; padding-bottom: 22px; }
+    .actions .mid { flex: 1 1 12px; }
+    .btn {
+      appearance: none; border: 1px solid var(--line); background: #fff; color: var(--ink);
+      font: inherit; font-weight: 600; font-size: 14.5px; padding: 11px 20px; border-radius: 10px;
+      cursor: pointer; transition: background .15s, border-color .15s;
+      display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .btn[disabled] { opacity: .45; cursor: not-allowed; }
+    .btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
+    .btn--ghost:hover { background: var(--panel-soft); }
+    .btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn--primary:hover { background: var(--accent-dark); }
+
+    .result-head { text-align: center; margin-bottom: 18px; }
+    .result-head .icon {
+      width: 54px; height: 54px; margin: 0 auto 10px; border-radius: 14px;
+      background: var(--accent-soft); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .result-head .icon svg { width: 28px; height: 28px; }
+    .result-head h3 { margin: 0 0 6px; font-size: 22px; }
+    .result-head p { margin: 0; color: var(--muted); font-size: 14.5px; }
+    .result-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    @media (max-width: 780px) { .result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .result-card { border: 1px solid var(--line); border-radius: 12px; padding: 16px 14px; text-align: center; background: var(--panel-soft); }
+    .result-card .letter {
+      width: 46px; height: 46px; margin: 0 auto 10px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 23px; font-weight: 800; color: #fff;
+    }
+    .result-card[data-letter="d"] .letter { background: var(--d); }
+    .result-card[data-letter="i"] .letter { background: var(--i); }
+    .result-card[data-letter="s"] .letter { background: var(--s); }
+    .result-card[data-letter="c"] .letter { background: var(--c); }
+    .result-card .name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .result-card .en { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .result-card .score { font-size: 32px; font-weight: 800; letter-spacing: .5px; }
+    .result-card .bar { height: 6px; border-radius: 999px; background: #e2e8f0; margin-top: 10px; overflow: hidden; position: relative; }
+    .result-card .bar span { position: absolute; top: 0; bottom: 0; background: #cbd5e1; }
+    .result-note { font-size: 13px; color: var(--muted); text-align: center; margin: 16px 0 0; }
+    .result-actions { display: flex; justify-content: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+      <button id="closeBtn" type="button" title="Пройти заново" aria-label="Пройти тест заново">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="head">
+        <h2 class="title" id="discTitle">
+          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+            <path d="M10 21V11h3.2c2.7 0 4.3 1.5 4.3 4s-1.6 4-4.3 4H10zm2-2h1.1c1.6 0 2.4-.8 2.4-2s-.8-2-2.4-2H12v4z" fill="#2563eb"/>
+          </svg>
+          Тестирование DISC
+        </h2>
+        <div class="sub">Помните - чем честнее вы с тестом, тем точнее результаты!</div>
+        <div class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+      </div>
+
+      <div class="tabs" id="tabs" role="tablist" aria-label="Шаги"></div>
+      <div class="pane-wrap" id="body"><noscript>Для прохождения теста включите JavaScript.</noscript></div>
+
+      <div class="progress" aria-hidden="true"><div class="progress__bar" id="progress"></div></div>
+
+      <div class="actions">
+        <button class="btn btn--ghost" type="button" id="btnPrev">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Назад
+        </button>
+        <div class="mid"></div>
+        <button class="btn btn--primary" type="button" id="btnNext">
+          Далее
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn btn--primary" type="button" id="btnFinish" hidden>
+          Завершить тест
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  "use strict";
+  (() => {
+    // ================= данные =================
+    // 8 шагов × 3 вопроса × 4 варианта; [word, type], type ∈ {d,i,s,c}
+    const STEPS = [
+      [
+        [ ["Экспресcивный","i"], ["Покладистый","c"], ["Волевой","d"], ["Осторожный","s"] ],
+        [ ["Пылкий","d"], ["Разговорчивый","i"], ["Добродушный","s"], ["Сдержанный","c"] ],
+        [ ["Любитель приключений","i"], ["Энтузиаст","c"], ["Исполнитель инструкций","d"], ["Верный","s"] ],
+      ],
+      [
+        [ ["Настойчивый","d"], ["Осторожный","c"], ["Эмоциональный","i"], ["Удовлетворенный","s"] ],
+        [ ["Довольный","s"], ["Нетерпеливый","d"], ["Убедительный","i"], ["Безропотный","c"] ],
+        [ ["Смиренный","c"], ["Умеющий слушать","s"], ["Душа компании","i"], ["Волевой","d"] ],
+      ],
+      [
+        [ ["Правильный","c"], ["Первопроходец","d"], ["Спокойный","s"], ["Влиятельный","i"] ],
+        [ ["Почтительный","c"], ["Контактный","i"], ["Агрессивный","d"], ["Мягкий","s"] ],
+        [ ["Весельчак","i"], ["Покорный","s"], ["Тактичный","c"], ["Соперничающий","d"] ],
+      ],
+      [
+        [ ["Точный","c"], ["Доминирующий","d"], ["Охотный","s"], ["Притягательный","i"] ],
+        [ ["Уравновешенный","i"], ["Уступчивый","c"], ["Идущий на риск","d"], ["Услужливый","s"] ],
+        [ ["Осмотрительный","c"], ["Добрососедский","s"], ["Энергичный","d"], ["Убедительный","i"] ],
+      ],
+      [
+        [ ["Уравновешенный","s"], ["Мотивирующий","i"], ["Щепетильный","c"], ["Решительный","d"] ],
+        [ ["Уверенный","i"], ["Готовый к сотрудничеству","c"], ["Беззаботный","s"], ["Аргументирующий","d"] ],
+        [ ["Сдержанный","s"], ["Прямой","d"], ["Строгий","c"], ["Убедительный","i"] ],
+      ],
+      [
+        [ ["Застенчивый","c"], ["Требовательный","d"], ["Терпеливый","s"], ["Очаровательный","i"] ],
+        [ ["Неугомонный","d"], ["Дисциплинированный","c"], ["Вдохновляющий","i"], ["Внимательный","s"] ],
+        [ ["Обязательный","s"], ["Оживленный","i"], ["Решительный","d"], ["Точный","c"] ],
+      ],
+      [
+        [ ["Добросовестный","c"], ["Компанейский","i"], ["Добрый","s"], ["Уверенный в себе","d"] ],
+        [ ["Дипломатичный","c"], ["Отважный","d"], ["Сочувствующий","s"], ["Оптимистичный","i"] ],
+        [ ["Настойчивый","d"], ["Общительный","i"], ["Постоянный","s"], ["Организованный","c"] ],
+      ],
+      [
+        [ ["Соглашающийся","c"], ["Владеющий собой","s"], ["Шутливый","d"], ["Настойчивый","i"] ],
+        [ ["Обаятельный","i"], ["Позитивный","d"], ["Снисходительный","s"], ["Требовательный","c"] ],
+        [ ["Коммуникабельный","i"], ["Смелый","d"], ["Перфекционист","c"], ["Сдержанный","s"] ],
+      ],
+    ];
+    const N_STEPS = 8;
+    const RESULT_STEP = 8;
+    const STEP_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+    const NAME = {
+      d: { ru: "Доминирование", en: "Dominance" },
+      i: { ru: "Влияние", en: "Influence" },
+      s: { ru: "Стабильность", en: "Stability" },
+      c: { ru: "Соответствие", en: "Compliance" },
+    };
+    const HANDLE_SVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+      '<g fill="#94a3b8">' +
+      [4,8,12].map(y => [6,10].map(x => '<circle cx="'+x+'" cy="'+y+'" r="1.5"/>').join("")).join("") +
+      '</g></svg>';
+
+    // state: order[step][q] = массив из 4 индексов (0..3) — мест в STEPS[s][q]
+    const makeOrder = i => [0,1,2,3].map(n => (n + i) % 4);
+    const initialOrder = () => Array.from({ length: N_STEPS }, () => Array.from({ length: 3 }, (_, q) => [0,1,2,3]));
+    let order = initialOrder();
+    let step = 0;
+
+    const tabsEl = document.getElementById("tabs");
+    for (let s = 0; s < N_STEPS; s++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "tab" + (s === 0 ? " is-active" : "");
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", s === 0 ? "true" : "false");
+      b.setAttribute("data-step-btn", s);
+      b.textContent = STEP_NAMES[s];
+      b.addEventListener("click", () => setStep(s));
+      tabsEl.appendChild(b);
+    }
+
+    const bodyEl = document.getElementById("body");
+    bodyEl.innerHTML = "";
+    const panes = [];
+    for (let s = 0; s < N_STEPS; s++) {
+      const pane = document.createElement("div");
+      pane.className = "pane" + (s === 0 ? " is-active" : "");
+      pane.dataset.stepPane = s;
+      pane.id = "tab" + (s + 1);
+      pane.setAttribute("role", "tabpanel");
+
+      const grid = document.createElement("div");
+      grid.className = "grid3";
+      for (let q = 0; q < 3; q++) {
+        const card = document.createElement("div");
+        card.className = "card";
+        const title = document.createElement("div");
+        title.className = "card__title";
+        const tT = document.createElement("span"); tT.textContent = "Я наиболее";
+        const tR = document.createElement("span"); tR.className = "rank"; tR.textContent = "1";
+        title.append(tT, tR);
+        const ul = document.createElement("ul");
+        ul.className = "list";
+        ul.dataset.step = s; ul.dataset.q = q;
+        const foot = document.createElement("div");
+        foot.className = "card__foot";
+        const fT = document.createElement("span"); fT.textContent = "Я наименее";
+        const fR = document.createElement("span"); fR.className = "rank"; fR.textContent = "4";
+        foot.append(fT, fR);
+        card.append(title, ul, foot);
+        grid.appendChild(card);
+      }
+      pane.appendChild(grid);
+      bodyEl.appendChild(pane);
+      panes.push(pane);
+    }
+    const resultPane = document.createElement("div");
+    resultPane.className = "pane";
+    resultPane.id = "tabResult";
+    resultPane.setAttribute("role", "tabpanel");
+    bodyEl.appendChild(resultPane);
+
+    const makeItem = (word, type) => {
+      const li = document.createElement("li");
+      li.className = "item";
+      li.dataset.word = word;
+      li.dataset.type = type;
+      const h = document.createElement("span");
+      h.className = "handle";
+      h.innerHTML = HANDLE_SVG;
+      const t = document.createElement("span");
+      t.className = "text";
+      t.textContent = word;
+      li.append(h, t);
+      return li;
+    };
+
+    function fillList(ul) {
+      const s = Number(ul.dataset.step), q = Number(ul.dataset.q);
+      ul.innerHTML = "";
+      const qOrder = order[s][q];
+      const base = STEPS[s][q];
+      for (const idx of qOrder) {
+        ul.appendChild(makeItem(base[idx][0], base[idx][1]));
+      }
+    }
+    function refreshStep(s) {
+      panes[s].querySelectorAll(".list").forEach(ul => fillList(ul));
+    }
+    function refreshAll() { for (let s = 0; s < N_STEPS; s++) refreshStep(s); }
+    refreshAll();
+
+    function syncDomToState(ul) {
+      const s = Number(ul.dataset.step), q = Number(ul.dataset.q);
+      const base = STEPS[s][q];
+      const words = Array.from(ul.children).map(li => li.dataset.word);
+      const newOrder = words.map(w => {
+        const i = base.findIndex(pair => pair[0] === w);
+        return i >= 0 ? i : 0;
+      });
+      order[s][q] = newOrder;
+    }
+
+    // ================= DnD =================
+    function makeSortable(ul) {
+      let activeLi = null, ghost = null, dragOffset = { x: 0, y: 0 };
+      const itemsIn = () => Array.from(ul.children).filter(n => n.tagName === "LI");
+
+      function teardown() {
+        if (ghost) { ghost.remove(); ghost = null; }
+        if (activeLi) {
+          activeLi.classList.remove("is-dragging");
+          activeLi.style.height = "";
+          activeLi.style.opacity = "";
+          activeLi.style.overflow = "";
+          Array.from(activeLi.childNodes).forEach(c => { if (c.style) c.style.visibility = ""; });
+          activeLi = null;
+        }
+        itemsIn().forEach(x => x.classList.remove("is-over"));
+      }
+
+      ul.addEventListener("pointerdown", (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        const li = (e.target && e.target.closest) ? e.target.closest("li") : null;
+        if (!li || !ul.contains(li) || activeLi) return;
+
+        activeLi = li;
+        li.setPointerCapture && li.setPointerCapture(e.pointerId);
+        const r = li.getBoundingClientRect();
+        dragOffset = { x: e.clientX - r.left, y: e.clientY - r.top };
+
+        const g = li.cloneNode(true);
+        g.classList.add("ghost");
+        g.classList.remove("is-dragging");
+        g.style.position = "fixed";
+        g.style.left = r.left + "px";
+        g.style.top = r.top + "px";
+        g.style.width = r.width + "px";
+        g.style.zIndex = "9999";
+        g.style.pointerEvents = "none";
+        document.body.appendChild(g);
+        ghost = g;
+
+        li.classList.add("is-dragging");
+        li.style.height = r.height + "px";
+        li.style.overflow = "hidden";
+        li.style.opacity = ".3";
+
+        const onMove = (ev) => {
+          ev.preventDefault();
+          if (!ghost) return;
+          ghost.style.left = (ev.clientX - dragOffset.x) + "px";
+          ghost.style.top = (ev.clientY - dragOffset.y) + "px";
+          let target = null, before = false;
+          for (const x of itemsIn()) {
+            if (x === activeLi) continue;
+            const xr = x.getBoundingClientRect();
+            if (ev.clientY >= xr.top && ev.clientY <= xr.bottom) {
+              target = x; before = (ev.clientY - xr.top) < xr.height / 2; break;
+            }
+          }
+          if (target) {
+            itemsIn().forEach(x => x.classList.remove("is-over"));
+            target.classList.add("is-over");
+            if (before) ul.insertBefore(activeLi, target);
+            else ul.insertBefore(activeLi, target.nextSibling);
+          }
+        };
+        const onUp = (ev) => {
+          if (activeLi) activeLi.releasePointerCapture && activeLi.releasePointerCapture(e.pointerId);
+          teardown();
+          syncDomToState(ul);
+        };
+        const onCancel = () => { teardown(); };
+
+        ul.addEventListener("pointermove", onMove, { passive: false });
+        ul.addEventListener("pointerup", onUp, { once: true });
+        ul.addEventListener("pointercancel", onCancel, { once: true });
+        // после pointerup удаляем move-обработчик
+        const cleanup = () => ul.removeEventListener("pointermove", onMove);
+        ul.addEventListener("pointerup", cleanup, { once: true });
+        e.preventDefault();
+      });
+    }
+    bodyEl.querySelectorAll(".list").forEach(makeSortable);
+
+    // ================= nav / render =================
+    const progressEl = document.getElementById("progress");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const btnFinish = document.getElementById("btnFinish");
+
+    function render() {
+      tabsEl.querySelectorAll(".tab").forEach(t => {
+        const is = Number(t.dataset.stepBtn) === step;
+        t.classList.toggle("is-active", is);
+        t.setAttribute("aria-selected", is ? "true" : "false");
+      });
+      panes.forEach((p, s) => p.classList.toggle("is-active", s === step));
+      resultPane.classList.toggle("is-active", step === RESULT_STEP);
+      tabsEl.style.display = (step === RESULT_STEP) ? "none" : "";
+      btnPrev.disabled = (step === 0) || (step === RESULT_STEP);
+      btnNext.hidden = (step === RESULT_STEP) || (step === N_STEPS - 1);
+      btnFinish.hidden = !(step === N_STEPS - 1 && step !== RESULT_STEP);
+      progressEl.style.width = ((Math.min(step, N_STEPS) + 1) / (N_STEPS + 1)) * 100 + "%";
+    }
+    function setStep(n) {
+      step = Math.max(0, Math.min(RESULT_STEP, n));
+      render();
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    btnPrev.addEventListener("click", () => setStep(step - 1));
+    btnNext.addEventListener("click", () => setStep(step + 1));
+
+    // ================= подсчёт =================
+    function computeResult() {
+      const res = { d: 0, i: 0, s: 0, c: 0 };
+      for (let s = 0; s < N_STEPS; s++) {
+        for (let q = 0; q < 3; q++) {
+          const qOrder = order[s][q];
+          const base = STEPS[s][q];
+          for (let pos = 0; pos < 4; pos++) {
+            const type = base[qOrder[pos]][1];
+            if (pos === 0) res[type] += 1;
+            if (pos === 3) res[type] -= 1;
+          }
+        }
+      }
+      return res;
+    }
+
+    function buildResult() {
+      const res = computeResult();
+      resultPane.innerHTML = "";
+      const head = document.createElement("div");
+      head.className = "result-head";
+      head.innerHTML =
+        '<div class="icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<path d="M5 20V4M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+        '<path d="M9 16l3.5-4 3 2L20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg></div>' +
+        '<h3>Ваш результат DISC</h3>' +
+        '<p>Баллы по четырём линиям поведения</p>';
+
+      const grid = document.createElement("div");
+      grid.className = "result-grid";
+      const MIN = -5, MAX = 15;
+      const norm = v => Math.max(0.02, Math.min(1, (v - MIN) / (MAX - MIN)));
+      for (const k of ["d", "i", "s", "c"]) {
+        const v = res[k];
+        const card = document.createElement("div");
+        card.className = "result-card";
+        card.dataset.letter = k;
+        const letter = document.createElement("div"); letter.className = "letter"; letter.textContent = k.toUpperCase();
+        const name = document.createElement("div"); name.className = "name"; name.textContent = NAME[k].ru;
+        const en = document.createElement("div"); en.className = "en"; en.textContent = NAME[k].en;
+        const score = document.createElement("div"); score.className = "score"; score.textContent = String(v);
+        const bar = document.createElement("div"); bar.className = "bar";
+        const span = document.createElement("span");
+        span.style.left = (norm(v) * 100).toFixed(1) + "%";
+        span.style.width = (100 - norm(v) * 100).toFixed(1) + "%";
+        bar.appendChild(span);
+        card.append(letter, name, en, score, bar);
+        grid.appendChild(card);
+      }
+
+      const note = document.createElement("p");
+      note.className = "result-note";
+      note.textContent = "Результат считается по ранжированиям: слово на 1-й позиции даёт +1 балл, на 4-й — −1.";
+
+      const actions = document.createElement("div");
+      actions.className = "result-actions";
+      const again = document.createElement("button");
+      again.type = "button";
+      again.className = "btn btn--primary";
+      again.textContent = "Пройти заново";
+      again.addEventListener("click", resetAll);
+      actions.appendChild(again);
+
+      resultPane.append(head, grid, note, actions);
+    }
+
+    function resetAll() {
+      order = initialOrder();
+      step = 0;
+      refreshAll();
+      render();
+    }
+
+    btnFinish.addEventListener("click", () => {
+      buildResult();
+      setStep(RESULT_STEP);
+    });
+
+    document.getElementById("closeBtn").addEventListener("click", resetAll);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") resetAll(); });
+
+    render();
+  })();
+  </script>
+</body>
+</html>

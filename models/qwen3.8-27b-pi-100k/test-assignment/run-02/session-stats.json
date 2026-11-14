@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-14T19-39-18-334Z_01a1db92-43be-7343-a93d-149465729f58.jsonl",
+  "turns": 39,
+  "tool_calls": 41,
+  "tools_by_name": {
+    "bash": 36,
+    "read": 2,
+    "write": 3
+  },
+  "tokens_in": 107145,
+  "tokens_out": 27196,
+  "bash_total": 11,
+  "bash_with_network": 7,
+  "curl_to_source": 7,
+  "network_cmds_sample": [
+    "curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o /tmp/disc_page.html; wc -c /tmp/disc_page.html",
+    "curl -sL \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o /tmp/disc_patched.js; wc -c /tmp/disc_patched.js",
+    "curl -sL \\\"https://stratoplan-school.com/js/disc_patched.js\\\" -o /tmp/disc_patched.js; head -50 /tmp/disc_patched.js; wc -l /tmp/disc_patched.js",
+    "curl -s -L -o /tmp/t.js -w \\\"%{http_code} %{url_effective}\\ \\\" \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\"; head -c 300 /tmp/t.js",
+    "for p in /js/disc_patched.js /disc/js/disc_patched.js /disc/js/disc_patched.js?v=0.0.0.6; do code=$(curl -s -o /tmp/probe -w \\\"%{http_code}\\\" \\\"https://stratoplan-school.com$p\\\"); echo \\\"$code $p $(head -c 60 /tmp/probe | tr '\\ ' ' ')\\\"; done"
+  ],
+  "errors": 0,
+  "first_ts": "2026-11-14T19:39:18.334Z",
+  "last_ts": "2026-11-14T19:43:16.770Z"
+}

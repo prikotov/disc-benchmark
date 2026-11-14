@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-14T16-55-33-077Z_01a1dafc-57d4-724d-a8ca-c3ebfad370da.jsonl",
+  "turns": 90,
+  "tool_calls": 90,
+  "tools_by_name": {
+    "bash": 64,
+    "read": 18,
+    "write": 2,
+    "edit": 6
+  },
+  "tokens_in": 157277,
+  "tokens_out": 104405,
+  "bash_total": 10,
+  "bash_with_network": 5,
+  "curl_to_source": 4,
+  "network_cmds_sample": [
+    "curl -s -L https://stratoplan-school.com/disc/ -o /tmp/disc_source.html; ls -la /tmp/disc_source.html",
+    "curl -s -L https://stratoplan-school.com/js/disc_patched.js -o /tmp/disc_patched.js; curl -s -L https://stratoplan-school.com/js/app.js -o /tmp/app.js; ls -la /tmp/disc_patched.js /tmp/app.js",
+    "curl -s -L https://stratoplan-school.com/disc/js/disc_patched.js -o /tmp/disc_patched.js; curl -s -L https://stratoplan-school.com/disc/js/app.js -o /tmp/app.js; ls -la /tmp/disc_patched.js /tmp/app.js; head -c 300 /tmp/disc_patched.js; echo",
+    "curl -s -L \\\"https://stratoplan-school.com/disc/result/?x\\\" -o /tmp/result.html; grep -n \\\"disc\\\\|result\\\\|script\\\" /tmp/result.html | grep -v \\\"disc-result-token\\\\|disc-result-1\\\" | head -20; echo \\\"===\\\"; grep -n \\\"function\\\\|DISC\\\\|score\\\\|D\\\\b\\\\|I\\\\b\\\" /tmp/result.html | head -30"
+  ],
+  "errors": 9,
+  "first_ts": "2026-11-14T16:55:33.077Z",
+  "last_ts": "2026-11-14T17:16:13.272Z"
+}

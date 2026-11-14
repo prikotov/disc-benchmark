@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бесплатный тест DISC для руководителей</title>
+<meta name="description" content="Короткий тест DISC на типы личности. Определите свой управленческий стиль за 5 минут. Проводится полностью офлайн, без сбора данных.">
+<style>
+/* ============ Базовые переменные ============ */
+:root{
+  --brand:#215FCB;
+  --brand-dark:#1747A4;
+  --brand-soft:#4358B3;
+  --ink:#22304a;
+  --ink-soft:#5b6880;
+  --bg:#f4f6ff;
+  --card:#ffffff;
+  --border:#e3e7f1;
+  --radius:14px;
+  --d-color:#e85a5a;
+  --i-color:#f2a03d;
+  --s-color:#2e9b6f;
+  --c-color:#215fcB;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+button{font:inherit;cursor:pointer;color:inherit}
+.disc-no-scroll{overflow:hidden}
+
+/* ============ Hero ============ */
+.disc-hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px 16px;
+  background:
+    radial-gradient(120% 90% at 85% -10%, #2f6ae0 0%, transparent 45%),
+    linear-gradient(145deg,#1747a4 0%, #215FCB 46%, #4358B3 100%);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.disc-hero__bg{position:absolute;inset:0;pointer-events:none}
+.disc-hero__inner{
+  position:relative;
+  max-width:940px;
+  width:100%;
+  text-align:center;
+  padding:24px 24px 48px;
+}
+.disc-hero__badge{
+  display:inline-flex;gap:8px;align-items:center;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.24);
+  padding:8px 14px;border-radius:999px;
+  font-size:13px;letter-spacing:.4px;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.disc-hero__badge b{font-weight:700;color:#ffd98f}
+.disc-hero__title{
+  font-size:clamp(28px,5vw,52px);
+  font-weight:800;
+  line-height:1.08;
+  letter-spacing:-.02em;
+  margin-bottom:16px;
+  text-shadow:0 2px 12px rgba(0,0,0,.25);
+}
+.disc-hero__sub{
+  font-size:clamp(15px,2.3vw,19px);
+  color:rgba(255,255,255,.92);
+  max-width:620px;margin:0 auto 28px;
+}
+.disc-hero__legend{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:12px;
+  margin-bottom:30px;
+}
+.disc-hero__legend .leg{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  padding:8px 14px;border-radius:12px;
+  font-weight:600;font-size:14px;
+}
+.disc-hero__legend .leg b{font-size:16px}
+.disc-hero__legend .leg.d b{color:var(--d-color)}
+.disc-hero__legend .leg.i b{color:var(--i-color)}
+.disc-hero__legend .leg.s b{color:var(--s-color)}
+.disc-hero__legend .leg.c b{color:#9db5ff}
+.disc-hero__btn{
+  display:inline-block;
+  background:#fff;color:var(--brand-dark);
+  font-size:17px;font-weight:700;
+  padding:16px 30px;border-radius:999px;
+  border:none;
+  box-shadow:0 12px 30px rgba(0,0,0,.3);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.disc-hero__btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.disc-hero__btn:active{transform:translateY(0)}
+.disc-hero__note{
+  margin-top:16px;
+  font-size:13px;
+  color:rgba(255,255,255,.8);
+}
+
+/* ============ Модалка ============ */
+.disc-modal{
+  position:fixed;inset:0;z-index:1000;
+  opacity:0;visibility:hidden;
+  transition:opacity .22s ease, visibility .22s ease;
+  display:flex;align-items:flex-start;overflow:auto;
+}
+.disc-modal.is-open{opacity:1;visibility:visible}
+.disc-modal__overlay{
+  position:fixed;inset:0;
+  background:rgba(16,24,48,.55);
+  backdrop-filter:blur(3px);
+}
+.disc-modal__dialog{
+  position:relative;
+  margin:18px auto;
+  width:min(920px,100%);
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:0 24px 60px rgba(0,0,0,.35);
+  max-height:96vh;
+  overflow:auto;
+}
+.disc-modal__close{
+  position:absolute;top:14px;right:14px;
+  width:38px;height:38px;
+  border:none;border-radius:50%;
+  background:rgba(0,0,0,.06);
+  color:var(--ink);font-size:24px;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  z-index:5;
+}
+.disc-modal__close:hover{background:rgba(0,0,0,.12)}
+.disc-modal__head{
+  padding:24px 28px 18px;
+  background:linear-gradient(90deg,#215FCB,#4358B3);
+  color:#fff;
+  position:relative;
+}
+.disc-modal__head::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(135deg,
+    rgba(255,255,255,.28) 0 2px,
+    rgba(255,255,255,.28) 2px 6px);
+  opacity:.22;
+  -webkit-mask:linear-gradient(to bottom, #fff 0, transparent 14px);
+  mask:linear-gradient(to bottom, #fff 0, transparent 14px);
+}
+.disc-modal__title{font-size:22px;font-weight:800}
+.disc-modal__sub{font-size:14px;opacity:.95;margin-top:4px}
+.disc-modal__lead{font-size:15px;margin-top:10px;opacity:.92}
+
+.disc-modal__tabs{
+  display:flex;flex-wrap:wrap;gap:6px;
+  padding:14px 28px 0;
+  background:#eef1f9;
+  border-bottom:1px solid var(--border);
+}
+.disc-tab{
+  flex:1 1 84px;
+  min-width:84px;
+  border:none;background:rgba(255,255,255,.5);
+  color:var(--ink-soft);
+  font-size:13px;font-weight:600;
+  padding:9px 10px;border-radius:10px;
+  transition:background .18s,color .18s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.disc-tab.is-active{
+  background:var(--brand);color:#fff;
+  box-shadow:0 6px 14px rgba(33,95,203,.45);
+}
+.disc-modal__body{padding:22px 28px 28px}
+
+.disc-grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.disc-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  display:flex;flex-direction:column;
+  box-shadow:0 6px 18px rgba(33,95,203,.08);
+}
+.disc-card__title{
+  font-size:13px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--brand);
+  margin-bottom:10px;
+}
+.disc-card__foot{
+  font-size:11px;color:var(--ink-soft);
+  margin-top:10px;text-align:center;
+}
+
+.disc-list{
+  display:flex;flex-direction:column;gap:8px;
+  padding:4px;
+  border-radius:10px;
+  background:rgba(33,95,203,.04);
+  border:1px dashed transparent;
+  touch-action:none;
+  list-style:none;
+}
+.disc-item{
+  display:flex;align-items:center;justify-content:center;
+  min-height:44px;
+  padding:10px 10px;
+  border-radius:10px;
+  background:#fff;
+  border:1px solid var(--border);
+  box-shadow:0 2px 6px rgba(33,95,203,.08);
+  cursor:grab;
+  user-select:none;-webkit-user-select:none;
+  font-size:13.5px;font-weight:600;color:var(--ink);
+  line-height:1.25;
+  transition:transform .14s ease, box-shadow .14s ease, background .14s ease;
+  position:relative;
+}
+.disc-item::before{
+  content:"";
+  position:absolute;left:10px;top:50%;
+  transform:translateY(-50%);
+  width:9px;height:9px;
+  border-radius:50%;
+  background:#c9d0e0;
+}
+.disc-item[data-type="d"]::before{background:var(--d-color)}
+.disc-item[data-type="i"]::before{background:var(--i-color)}
+.disc-item[data-type="s"]::before{background:var(--s-color)}
+.disc-item[data-type="c"]::before{background:var(--c-color)}
+.disc-item:hover{transform:translateX(2px);box-shadow:0 4px 12px rgba(33,95,203,.15)}
+.disc-item.is-dragging{visibility:hidden}
+
+.disc-ghost{
+  position:fixed;z-index:10000;
+  pointer-events:none;
+  border-radius:10px;background:#fff;
+  border:1px solid var(--brand);
+  box-shadow:0 14px 34px rgba(33,95,203,.45);
+  transform:translateY(-6px) rotate(.5deg);
+  opacity:.98;
+}
+.disc-ghost::before{
+  content:"";
+  position:absolute;left:10px;top:50%;
+  transform:translateY(-50%);
+  width:9px;height:9px;border-radius:50%;
+  background:#c9d0e0;
+}
+.disc-ghost[data-type="d"]::before{background:var(--d-color)}
+.disc-ghost[data-type="i"]::before{background:var(--i-color)}
+.disc-ghost[data-type="s"]::before{background:var(--s-color)}
+.disc-ghost[data-type="c"]::before{background:var(--c-color)}
+
+.disc-progress{
+  margin-top:20px;height:10px;border-radius:999px;
+  background:rgba(33,95,203,.12);
+  overflow:hidden;
+}
+.disc-progress__bar{
+  height:100%;width:0%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#215FCB,#4358B3);
+  transition:width .28s ease;
+}
+.disc-actions{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-top:20px;
+}
+.disc-btn{
+  border:none;border-radius:10px;
+  font-size:14.5px;font-weight:700;
+  padding:12px 18px;
+  transition:transform .14s, box-shadow .14s, opacity .14s;
+}
+.disc-btn--ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--border)}
+.disc-btn--ghost:hover{border-color:#b8c0d8;color:var(--ink)}
+.disc-btn--primary{background:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(33,95,203,.4)}
+.disc-btn--primary:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(33,95,203,.5)}
+.disc-btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ============ Результаты ============ */
+.disc-results{padding:28px;position:relative;overflow:hidden}
+.disc-results::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,#215FCB,#4358B3);
+  -webkit-mask:linear-gradient(to bottom, #fff 0, transparent 60px);
+  mask:linear-gradient(to bottom, #fff 0, transparent 60px);
+}
+.disc-results__title{font-size:24px;font-weight:800;color:var(--brand-dark);margin-bottom:6px}
+.disc-results__sub{color:var(--ink-soft);font-size:15px;margin-bottom:20px}
+.disc-results__dom{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#eef1f9;border:1px solid rgba(33,95,203,.3);
+  border-radius:999px;padding:10px 18px;
+  font-weight:700;font-size:15px;color:var(--brand-dark);
+  margin-bottom:22px;
+}
+.disc-results__dom b{font-size:20px}
+.disc-results__types{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:14px;
+  margin-bottom:22px;
+}
+.disc-type-card{
+  background:#fff;border:1px solid var(--border);
+  border-radius:14px;padding:14px;
+}
+.disc-type-card__top{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.disc-type-card__name{font-weight:700;font-size:14px}
+.disc-type-card__score{font-weight:800;font-size:16px;white-space:nowrap}
+.disc-type-card__bar{
+  height:12px;border-radius:999px;background:rgba(0,0,0,.07);
+  overflow:hidden;
+}
+.disc-type-card__fill{height:100%;width:0;border-radius:999px;display:block;
+  background:var(--bar);
+  transition:width .5s cubic-bezier(.2,.8,.3,1);
+}
+.disc-results__desc{
+  background:#fff;border:1px solid var(--border);
+  border-radius:14px;padding:16px 18px;
+  font-size:14.5px;color:var(--ink-soft);
+  margin-bottom:22px;
+}
+.disc-results__desc b{color:var(--ink)}
+.disc-actions__reset{display:flex;justify-content:center}
+
+@media (max-width:720px){
+  .disc-grid3{grid-template-columns:1fr}
+  .disc-results__types{grid-template-columns:1fr}
+  .disc-modal{align-items:flex-start;margin:0}
+  .disc-modal__dialog{margin:0;border-radius:0;height:100%}
+  .disc-modal__tabs{gap:5px;padding:12px 18px 0}
+  .disc-tab{min-width:72px;padding:8px 8px;font-size:12px}
+  .disc-modal__body{padding:18px}
+  .disc-results{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<main class="disc-hero" id="hero">
+  <svg class="disc-hero__bg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 700" preserveAspectRatio="none" fill="none" aria-hidden="true">
+    <g stroke="#ffffff" stroke-opacity=".16" stroke-width="1.5">
+      <path d="M80 120c30 40 90 40 110-20s-40-90-110-70c-30 12-45 45-50 90z"/>
+      <circle cx="300" cy="90" r="3" fill="#fff" fill-opacity=".6" stroke="none"/>
+      <circle cx="520" cy="180" r="2" fill="#fff" fill-opacity=".5" stroke="none"/>
+      <circle cx="720" cy="80" r="4" fill="#fff" fill-opacity=".6" stroke="none"/>
+      <circle cx="900" cy="150" r="2" fill="#fff" fill-opacity=".5" stroke="none"/>
+      <circle cx="1080" cy="90" r="3" fill="#fff" fill-opacity=".6" stroke="none"/>
+      <path d="M150 560c-40 30-30 100 30 100s90-60 70-110z"/>
+      <path d="M1030 540c-30 50-90 40-110-20s40-90 110-70z"/>
+      <circle cx="450" cy="600" r="3" fill="#fff" fill-opacity=".5" stroke="none"/>
+      <circle cx="760" cy="590" r="4" fill="#fff" fill-opacity=".6" stroke="none"/>
+      <circle cx="200" cy="470" r="2" fill="#fff" fill-opacity=".5" stroke="none"/>
+    </g>
+  </svg>
+  <div class="disc-hero__inner">
+    <div class="disc-hero__badge"><span>Офлайн · без регистрации</span><b>За 5 минут</b></div>
+    <h1 class="disc-hero__title">Бесплатный тест DISC<br>для руководителей</h1>
+    <p class="disc-hero__sub">Определите свой управленческий стиль за 5 минут</p>
+    <div class="disc-hero__legend" aria-label="Типы DISC">
+      <span class="leg d"><b>D</b> Доминирование</span>
+      <span class="leg i"><b>I</b> Влияние</span>
+      <span class="leg s"><b>S</b> Стабильность</span>
+      <span class="leg c"><b>C</b> Соответствие</span>
+    </div>
+    <button class="disc-hero__btn" id="startDisc" data-modal-open="wizardmodal" type="button">Пройти онлайн-тест</button>
+    <p class="disc-hero__note">Тест проходит полностью в браузере. Ваши ответы никуда не отправляются.</p>
+  </div>
+</main>
+
+<!-- ===== ДИСК-ВОЖДИР ===== -->
+<div class="disc-modal" id="wizardmodal" aria-hidden="true">
+  <div class="disc-modal__overlay" data-disc-close></div>
+  <div class="disc-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+    <button class="disc-modal__close" type="button" data-disc-close aria-label="Закрыть">×</button>
+    <div class="disc-modal__head">
+      <h2 class="disc-modal__title" id="discTitle">Тестирование DISC</h2>
+      <div class="disc-modal__sub">Помните: чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="disc-modal__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+    <div class="disc-modal__tabs" role="tablist" aria-label="Шаги">
+      <button class="disc-tab is-active" type="button" role="tab" aria-selected="true" data-step-btn="0">Первый</button>
+      <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="1">Второй</button>
+      <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="2">Третий</button>
+      <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="3">Четвертый</button>
+      <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="4">Пятый</button>
+      <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="5">Шестой</button>
+      <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="6">Седьмой</button>
+      <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="7">Восьмой</button>
+    </div>
+    <div class="disc-modal__body" id="rootwizard" data-step="0"></div>
+    <div class="disc-results" id="discResults" hidden></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Данные: шаги, карточки, списки ---------- */
+  var STEPS = [
+    [
+      [["i","Экспрессивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+      [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],
+      [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]
+    ],
+    [
+      [["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворённый"]],
+      [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+      [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]
+    ],
+    [
+      [["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+      [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+      [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]
+    ],
+    [
+      [["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+      [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+      [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]
+    ],
+    [
+      [["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+      [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+      [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]
+    ],
+    [
+      [["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+      [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+      [["s","Обязательный"],["i","Оживлённый"],["d","Решительный"],["c","Точный"]]
+    ],
+    [
+      [["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+      [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+      [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]
+    ],
+    [
+      [["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+      [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+      [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]
+    ]
+  ];
+
+  var TYPE_META = {
+    d:{name:"Доминирование", color:"var(--d-color)"},
+    i:{name:"Влияние",       color:"var(--i-color)"},
+    s:{name:"Стабильность",  color:"var(--s-color)"},
+    c:{name:"Соответствие",  color:"var(--c-color)"}
+  };
+  var TYPE_DESC = {
+    d:"Вы решаете и действуете уверенно, берёте инициативу и ведёте за собой. Сильная сторона — решительность и энергия; старайтесь слышать других.",
+    i:"Вы оптимистичны и открыты, заряжаете людей и настраиваете команду на позитив. Сильная сторона — коммуникация и вдохновение; держите фокус на деталях.",
+    s:"Вы спокойны, надёжны и внимательны к людям. Сильная сторона — стабильность и поддержка; иногда смелее выставляйте свою точку зрения.",
+    c:"Вы точны, ответственно и системно. Сильная сторона — анализ и порядок; не бойтесь быстрее принимать решения."
+  };
+
+  /* ---------- Состояние ---------- */
+  var currentStep = 0;
+  var TOTAL = STEPS.length;
+  var listBackup = {};
+  var rootWizard;
+  var tabButtons = [];
+  var panes = [];
+  var resultsEl;
+  var scrollLock = false;
+
+  function qs(sel){ return document.querySelector(sel); }
+  function qsa(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+
+  /* ---------- Скролл-лок ---------- */
+  function lockScroll(on){
+    if(on){
+      if(!scrollLock) document.body.style.height = window.innerHeight + "px";
+      document.body.classList.add("disc-no-scroll");
+    } else {
+      document.body.classList.remove("disc-no-scroll");
+      document.body.style.height = "";
+    }
+  }
+
+  /* ---------- Построение шагов ---------- */
+  function buildPanes(){
+    rootWizard = qs("#rootwizard");
+    STEPS.forEach(function(step, idx){
+      var pane = document.createElement("div");
+      pane.className = "disc-pane" + (idx===0 ? " is-active" : "");
+      pane.setAttribute("data-step-pane", idx);
+      pane.setAttribute("role","tabpanel");
+      var grid = document.createElement("div");
+      grid.className = "disc-grid3";
+      step.forEach(function(cols){
+        var card = document.createElement("div");
+        card.className = "disc-card";
+        var title = document.createElement("div");
+        title.className = "disc-card__title";
+        title.textContent = "Я наиболее";
+        var list = document.createElement("ul");
+        list.className = "disc-list";
+        cols.forEach(function(col){
+          var li = document.createElement("li");
+          li.className = "disc-item";
+          li.setAttribute("data-type", col[0]);
+          li.textContent = col[1];
+          list.appendChild(li);
+        });
+        var foot = document.createElement("div");
+        foot.className = "disc-card__foot";
+        foot.textContent = "Я наименее";
+        card.appendChild(title); card.appendChild(list); card.appendChild(foot);
+        grid.appendChild(card);
+      });
+      pane.appendChild(grid);
+      rootWizard.appendChild(pane);
+      panes.push(pane);
+    });
+    tabButtons = qsa(".disc-modal__tabs .disc-tab");
+    resultsEl = qs("#discResults");
+    // присваиваем id спискам и бэкапим исходный порядок
+    var lists = qsa(".disc-list");
+    lists.forEach(function(ul, i){
+      ul.id = "dl" + i;
+    });
+    listBackup = {};
+    lists.forEach(function(ul){ listBackup[ul.id] = ul.innerHTML; });
+    // прогресс и кнопки — вставляем в rootwizard после паней
+    var prog = document.createElement("div");
+    prog.className = "disc-progress";
+    prog.setAttribute("aria-hidden","true");
+    var pbar = document.createElement("div");
+    pbar.className = "disc-progress__bar";
+    pbar.id = "discProgress";
+    prog.appendChild(pbar);
+    rootWizard.appendChild(prog);
+
+    var actions = document.createElement("div");
+    actions.className = "disc-actions";
+    var b = function(cls, label, attrName){
+      var el = document.createElement("button");
+      el.type = "button";
+      el.className = "disc-btn " + cls;
+      el.textContent = label;
+      if(attrName) el.setAttribute(attrName, "");
+      return el;
+    };
+    var prevB = b("disc-btn--ghost", "Назад", "data-disc-prev");
+    var nextB = b("disc-btn--primary", "Далее", "data-disc-next");
+    var finB = b("disc-btn--primary", "Завершить тест", "data-disc-finish");
+    finB.hidden = true;
+    actions.appendChild(prevB); actions.appendChild(nextB); actions.appendChild(finB);
+    rootWizard.appendChild(actions);
+
+    makeListSortable();
+  }
+
+  /* ---------- Сортировка (перетаскивание) ---------- */
+  var drag = null; // {item, list, ghost, offsetX, offsetY, newIndex}
+  function makeListSortable(){
+    qsa(".disc-list").forEach(function(listEl){
+      listEl.addEventListener("pointerdown", function(e){
+        if(drag) return;
+        var item = e.target.closest ? e.target.closest(".disc-item") : null;
+        if(!item) return;
+        startDrag(item, listEl, e);
+      });
+    });
+  }
+  function startDrag(item, listEl, e){
+    if(e.preventDefault) e.preventDefault();
+    var rect = item.getBoundingClientRect();
+    var ghost = item.cloneNode(true);
+    ghost.id = "";
+    ghost.className = "disc-item disc-ghost";
+    ghost.style.pointerEvents = "none";
+    document.body.appendChild(ghost);
+    drag = {
+      item:item, list:listEl, ghost:ghost,
+      offsetX:e.clientX - rect.left,
+      offsetY:e.clientY - rect.top,
+      newIndex:0
+    };
+    item.classList.add("is-dragging");
+    positionGhost(ghost, e.clientX, e.clientY);
+    document.addEventListener("pointermove", onDragMove, {passive:false});
+    document.addEventListener("pointerup", onDragUp, {passive:false});
+    document.addEventListener("pointercancel", onDragUp, {passive:false});
+    document.addEventListener("blur", onDragUp, {passive:false});
+  }
+  function positionGhost(g, x, y){
+    g.style.left = (x - drag.offsetX) + "px";
+    g.style.top  = (y - drag.offsetY) + "px";
+  }
+  function onDragMove(e){
+    if(!drag) return;
+    e.preventDefault();
+    positionGhost(drag.ghost, e.clientX, e.clientY);
+    var siblings = Array.prototype.filter.call(drag.list.children, function(n){
+      return n !== drag.item && n.tagName === "LI";
+    });
+    var ni = siblings.length;
+    for(var i=0;i<siblings.length;i++){
+      var r = siblings[i].getBoundingClientRect();
+      if(e.clientY < r.top + r.height/2){ ni = i; break; }
+    }
+    if(ni !== drag.newIndex){
+      drag.newIndex = ni;
+      drag.list.removeChild(drag.item);
+      var s2 = Array.prototype.filter.call(drag.list.children, function(n){ return n.tagName === "LI"; });
+      if(ni < s2.length) drag.list.insertBefore(drag.item, s2[ni]);
+      else drag.list.appendChild(drag.item);
+    }
+  }
+  function onDragUp(){
+    if(!drag) return;
+    var it = drag.item, gh = drag.ghost;
+    if(gh.parentNode) gh.parentNode.removeChild(gh);
+    if(it) it.classList.remove("is-dragging");
+    document.removeEventListener("pointermove", onDragMove);
+    document.removeEventListener("pointerup", onDragUp);
+    document.removeEventListener("pointercancel", onDragUp);
+    document.removeEventListener("blur", onDragUp);
+    drag = null;
+    updateProgress();
+  }
+
+  /* ---------- Навигация шагов ---------- */
+  function setStep(step){
+    currentStep = step;
+    panes.forEach(function(p){
+      var a = parseInt(p.getAttribute("data-step-pane"),10) === step;
+      p.classList.toggle("is-active", a);
+    });
+    tabButtons.forEach(function(t){
+      var a = parseInt(t.getAttribute("data-step-btn"),10) === step;
+      t.classList.toggle("is-active", a);
+      t.setAttribute("aria-selected", a ? "true":"false");
+    });
+    rootWizard.setAttribute("data-step", currentStep);
+    var prev = qs("[data-disc-prev]"), next = qs("[data-disc-next]"), fin = qs("[data-disc-finish]");
+    if(prev) prev.disabled = (currentStep === 0);
+    if(next) next.disabled = (currentStep === TOTAL - 1);
+    if(fin) fin.hidden = (currentStep !== TOTAL - 1);
+    updateProgress();
+  }
+  function updateProgress(){
+    var bar = qs("#discProgress");
+    if(bar) bar.style.width = (currentStep/(TOTAL-1)*100) + "%";
+  }
+
+  /* ---------- Сбор результатов ---------- */
+  function countArr(arr, t){ var n=0; for(var i=0;i<arr.length;i++) if(arr[i]===t) n++; return n; }
+  function collectScore(){
+    var maj=[], min=[];
+    qsa(".disc-list").forEach(function(list){
+      var items = list.querySelectorAll(".disc-item");
+      var n = items.length;
+      if(n<2) return;
+      maj.push(items[0].getAttribute("data-type"));
+      min.push(items[n-1].getAttribute("data-type"));
+    });
+    return {
+      d: countArr(maj,"d")-countArr(min,"d"),
+      i: countArr(maj,"i")-countArr(min,"i"),
+      s: countArr(maj,"s")-countArr(min,"s"),
+      c: countArr(maj,"c")-countArr(min,"c")
+    };
+  }
+
+  /* ---------- Результаты ---------- */
+  function fmtScore(v){ return (v>0 ? "+" + v : String(v)); }
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return c==="&" ? "&amp;" : c==="<" ? "&lt;" : c===">" ? "&gt;" : "&quot;";
+    });
+  }
+  function showResults(score){
+    var tabsEl = qs(".disc-modal__tabs");
+    if(tabsEl) tabsEl.hidden = true;
+    if(rootWizard) rootWizard.hidden = true;
+    resultsEl.hidden = false;
+    var maxAbs = 24;
+    var order = ["d","i","s","c"];
+    var top = Math.max.apply(Math, order.map(function(t){ return score[t]; }));
+    var tops = order.filter(function(t){ return score[t] === top; });
+    var topName = tops.map(function(t){ return TYPE_META[t].name; }).join(", ");
+    var topLetter = tops.map(function(t){ return t.toUpperCase(); }).join(" / ");
+
+    var html = "<div class='disc-results__title'>Ваши результаты</div>";
+    html += "<div class='disc-results__sub'>Профиль поведения по модели DISC</div>";
+    html += "<div class='disc-results__dom'><b>" + esc(topLetter) + "</b> главный тип: " + esc(topName) + "</div>";
+    html += "<div class='disc-results__types'>";
+    order.forEach(function(t){
+      var pct = Math.max(0, Math.min(100, (score[t] + maxAbs) / (2 * maxAbs) * 100));
+      html += "<div class='disc-type-card'>"
+        + "<div class='disc-type-card__top'>"
+        +   "<span class='disc-type-card__name'>" + t.toUpperCase() + " · " + TYPE_META[t].name + "</span>"
+        +   "<span class='disc-type-card__score' style='color:" + TYPE_META[t].color + "'>" + fmtScore(score[t]) + "</span>"
+        + "</div>"
+        + "<div class='disc-type-card__bar'><span class='disc-type-card__fill' style='width:" + pct.toFixed(1) + "%; --bar:" + TYPE_META[t].color + "'></span></div>"
+        + "</div>";
+    });
+    html += "</div>";
+    html += "<div class='disc-results__desc'><b>О вашем типе:</b><br>Главный тип — <span style='color:var(--brand);font-weight:700'>" + TYPE_META[tops[0]].name + "</span>: " + TYPE_DESC[tops[0]] + "</div>";
+    html += "<div class='disc-actions disc-actions__reset'><button class='disc-btn disc-btn--primary' id='resetDisc' type='button'>Пройти заново</button></div>";
+    resultsEl.innerHTML = html;
+    qs("#resetDisc").addEventListener("click", resetTest);
+  }
+
+  /* ---------- Сброс ---------- */
+  function resetTest(){
+    qsa(".disc-list").forEach(function(ul){
+      ul.innerHTML = listBackup[ul.id] || ul.innerHTML;
+    });
+    setStep(0);
+    resultsEl.hidden = true;
+    var tabsEl = qs(".disc-modal__tabs"); if(tabsEl) tabsEl.hidden = false;
+    if(rootWizard) rootWizard.hidden = false;
+  }
+
+  /* ---------- Открытие/закрытие модалки ---------- */
+  function openModal(el){
+    if(!el) return;
+    lockScroll(true);
+    el.setAttribute("aria-hidden","false");
+    el.classList.add("is-open");
+  }
+  function closeModal(elId){
+    var el = elId ? document.getElementById(elId) : null;
+    if(!el) return;
+    if(drag){
+      var it = drag.item, gh = drag.ghost;
+      if(gh && gh.parentNode) gh.parentNode.removeChild(gh);
+      if(it) it.classList.remove("is-dragging");
+      document.removeEventListener("pointermove", onDragMove);
+      document.removeEventListener("pointerup", onDragUp);
+      document.removeEventListener("pointercancel", onDragUp);
+      document.removeEventListener("blur", onDragUp);
+      drag = null;
+    }
+    el.setAttribute("aria-hidden","true");
+    el.classList.remove("is-open");
+    lockScroll(false);
+  }
+
+  /* ---------- Инициализация ---------- */
+  function init(){
+    buildPanes();
+    setStep(0);
+    qsa("[data-modal-open]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        openModal(document.getElementById(btn.getAttribute("data-modal-open")));
+      });
+    });
+    qsa("[data-disc-close]").forEach(function(el){
+      el.addEventListener("click", function(){ closeModal("wizardmodal"); });
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape"){
+        var open = document.querySelector(".disc-modal.is-open");
+        if(open) closeModal(open.id);
+      }
+    });
+    qs("[data-disc-prev]").addEventListener("click", function(){
+      if(currentStep > 0) setStep(currentStep - 1);
+    });
+    qs("[data-disc-next]").addEventListener("click", function(){
+      if(currentStep < TOTAL - 1) setStep(currentStep + 1);
+    });
+    qs("[data-disc-finish]").addEventListener("click", function(){
+      showResults(collectScore());
+    });
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+Done. The deliverable is complete and fully verified.
+
+## Summary
+
+**Created `/tmp/disc-pi-6cn9tcc6/run/index.html`** — a single self-contained DISC personality test (599 lines, 26,680 bytes).
+
+**Requirements met:**
+- ✅ **Self-contained** — inline CSS, JS, SVG; 0 external references; works via `file://` offline; no data transmission (no fetch/XHR)
+- ✅ **Same test data** — 8 steps × 3 cards × 4 items = 96 items, each card has one of each type (c/d/i/s), extracted from the original page
+- ✅ **Drag-to-rank** — Pointer Events (`pointerdown/move/up/cancel/lostpointercapture`) with a 6px threshold + **keyboard ↑/↓** support
+- ✅ **Russian UI**, works in current Chrome/Firefox/Safari (standard web APIs)
+- ✅ **Result screen** — dominant type, description, animated 4-bar score display
+
+**Key bug found & fixed:** `showScreen()` was called with screen names (`"test"`, `"result"`) but compares against element **IDs** (`"testScreen"`, `"resultScreen"`), so the target screen always stayed hidden. Fixed all 3 call sites to use the correct IDs.
+
+**Verified end-to-end in headless Chrome:**
+1. Start screen visible (test/result hidden)
+2. Click "Начать тестирование" → test screen shown, 24 lists + 96 items built
+3. Navigate through all 8 steps
+4. Click "Завершить" → result screen shown
+5. Result: dominant type **C (Соответствие)**, Russian description, score bars **49/51/40/60** — exactly matching independently Node-verified scoring (d:59, i:61, s:53, c:67 → normalized)
+
+The working directory now contains only the deliverable `index.html` (leftover debug files moved to `/tmp/disc-leftovers/`).

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Тестирование DISC — Школа менеджмента</title>
+<meta name="description" content="Короткий тест DISC на типы личности (Доминирование, Влияние, Стабильность, Соответствие). Узнайте свой поведенческий профиль и сильные стороны.">
+<style>
+:root{
+  --indigo:#5B52D6; --indigo-dark:#413AAE; --indigo-soft:#F1EFFB;
+  --text:#262545; --muted:#6B6A8C; --border:#E9E7F3;
+  --bg:#F6F5FA; --card:#FFFFFF;
+  --d:#E8593C; --i:#F5A623; --s:#2E9E55; --c:#2E6FDB;
+  --shadow:0 2px 12px rgba(38,35,85,.08);
+  --shadow-lg:0 10px 30px rgba(38,35,85,.16);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+[hidden]{display:none!important;}
+button{font:inherit;color:inherit;}
+a{color:inherit;}
+
+.app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;}
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;width:100%;}
+.app__box{width:100%;max-width:860px;}
+
+/* ---------- START ---------- */
+.start-wrap{text-align:center;}
+.icon-badge{
+  width:72px;height:72px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;
+}
+.icon-badge svg{width:100%;height:100%;}
+.start-wrap h1{font-size:clamp(28px,4vw,40px);margin:0 0 8px;font-weight:800;letter-spacing:-.02em;}
+.start-wrap .sub{margin:0 0 6px;font-size:15px;color:var(--indigo);font-weight:700;}
+.start-wrap .lead{margin:0 0 26px;color:var(--muted);max-width:640px;margin-left:auto;margin-right:auto;font-size:16px;}
+.btn{
+  border:none;border-radius:14px;padding:13px 28px;font-weight:700;font-size:16px;cursor:pointer;
+  transition:transform .15s,box-shadow .15s,background .15s;
+}
+.btn--primary{background:var(--indigo);color:#fff;box-shadow:var(--shadow-lg);}
+.btn--primary:hover{background:var(--indigo-dark);transform:translateY(-1px);}
+.btn--primary:active{transform:translateY(0);}
+.btn--ghost{background:var(--card);color:var(--indigo);border:1.5px solid var(--border);}
+.btn--ghost:hover{border-color:var(--indigo);background:var(--indigo-soft);}
+
+/* ---------- TEST ---------- */
+.test-head{text-align:center;margin:0 0 14px;}
+.test-head h2{font-size:clamp(22px,3vw,30px);margin:0;font-weight:800;letter-spacing:-.02em;}
+.test-head p{margin:4px 0 0;color:var(--muted);font-size:15px;}
+.disc-tips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.tip{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:6px 14px;font-size:12.5px;color:var(--muted);font-weight:600;}
+.tip b{color:var(--indigo);}
+
+.disc-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
+.disc-tab{
+  padding:8px 14px;border:1.5px solid var(--border);border-radius:999px;background:var(--card);
+  font-weight:700;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;
+}
+.disc-tab:hover{border-color:#c7c4e4;color:var(--text);}
+.disc-tab.is-active{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+
+.disc-body{
+  background:var(--card);border:1px solid var(--border);border-radius:18px;
+  box-shadow:var(--shadow);padding:18px;
+}
+.disc-pane{display:none;}
+.disc-pane.is-active{display:block;}
+.disc-grid3{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+}
+.disc-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 14px 12px;
+  box-shadow:0 1px 4px rgba(38,35,85,.05);
+}
+.disc-card__title,.disc-card__foot{
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+}
+.disc-card__title{display:flex;align-items:center;gap:8px;margin:0 0 10px;}
+.disc-card__foot{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:10px;}
+.disc-card__title .ar{color:var(--indigo);}
+.disc-list{
+  list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;position:relative;
+}
+.disc-item{
+  display:flex;align-items:center;gap:11px;
+  background:#fff;border:1.5px solid var(--border);border-radius:12px;
+  padding:11px 12px;cursor:grab;
+  user-select:none;-webkit-user-select:none;-moz-user-select:none;
+  transition:box-shadow .15s,transform .15s,border-color .15s;
+}
+.disc-item:focus{outline:2px solid var(--indigo);outline-offset:2px;}
+.disc-item:focus-visible{outline:2px solid var(--indigo);outline-offset:2px;}
+.disc-item .rank{
+  display:flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:8px;flex:0 0 auto;
+  background:var(--indigo-soft);color:var(--indigo);font-weight:800;font-size:12.5px;
+}
+.disc-item .label{flex:1;font-weight:700;font-size:14.5px;color:var(--text);line-height:1.35;word-break:break-word;}
+.disc-item.is-dragging{
+  box-shadow:var(--shadow-lg);border-color:var(--indigo);
+  transform:translateY(-2px);
+}
+.disc-progress{height:7px;background:var(--indigo-soft);border-radius:999px;overflow:hidden;margin:14px 0 10px;}
+.disc-progress__bar{height:100%;width:0;background:var(--indigo);transition:width .25s ease;}
+.disc-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.actions-spacer{flex:1;}
+.actions-right{display:flex;gap:10px;align-items:center;}
+
+/* ---------- RESULT ---------- */
+.result-wrap{text-align:center;}
+.result-hero{margin:0 auto 20px;max-width:560px;}
+.result-letter{
+  display:inline-block;width:84px;height:84px;border-radius:20px;background:var(--indigo-soft);
+  font-size:44px;font-weight:800;line-height:1;margin:6px auto 12px;
+}
+.result-type-name{font-size:22px;font-weight:800;margin:2px 0 6px;letter-spacing:-.01em;}
+.result-type-desc{color:var(--muted);font-size:15.5px;max-width:520px;margin:0 auto;}
+.result-sub{margin:18px 0 12px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
+.result-bars{max-width:600px;margin:0 auto 22px;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px 16px 8px;box-shadow:var(--shadow);}
+.result-bar{display:grid;grid-template-columns:150px 1fr 44px;align-items:center;gap:12px;margin:10px 0;}
+.result-bar__name{font-weight:700;font-size:13.5px;color:var(--text);white-space:nowrap;}
+.result-bar__bar{height:14px;background:var(--indigo-soft);border-radius:999px;overflow:hidden;}
+.result-bar__bar i{display:block;height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.result-bar__val{text-align:right;font-weight:800;font-size:15px;color:var(--text);}
+.result-note{font-size:12.5px;color:var(--muted);margin-bottom:20px;}
+.result-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .disc-grid3{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:620px){
+  .disc-grid3{grid-template-columns:1fr;}
+  .disc-card{padding:12px;}
+  .disc-body{padding:12px;}
+  .result-bar{grid-template-columns:118px 1fr 42px;}
+  .result-letter{width:70px;height:70px;font-size:36px;}
+  .icon-badge{width:60px;height:60px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- START -->
+  <section class="screen" id="startScreen">
+    <div class="app__box start-wrap">
+      <div class="icon-badge" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none">
+          <path d="M50 50 L100 50 A50 50 0 0 1 50 0 Z" fill="#2E6FDB"/>
+          <path d="M50 50 L50 0 A50 50 0 0 0 0 50 Z" fill="#F5A623"/>
+          <path d="M50 50 L0 50 A50 50 0 0 0 50 100 Z" fill="#2E9E55"/>
+          <path d="M50 50 L50 100 A50 50 0 0 0 100 50 Z" fill="#E8593C"/>
+        </svg>
+      </div>
+      <h1>Тестирование DISC</h1>
+      <p class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+      <p class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего. В каждом задании 4 черты — расставьте их от самой «высокой» к самой «низкой».</p>
+      <button class="btn btn--primary" id="btnStart">Начать тест</button>
+    </div>
+  </section>
+
+  <!-- TEST -->
+  <section class="screen" id="testScreen" hidden>
+    <div class="app__box">
+      <div class="test-head">
+        <h2>Тестирование DISC</h2>
+        <p>Чем честнее ответ — тем точнее результат</p>
+      </div>
+      <div class="disc-tips">
+        <span class="tip"><b>Перетащите</b> карточки для сортировки</span>
+        <span class="tip">Сверху — <b>наиболее</b> похожее на вас</span>
+        <span class="tip">Снизу — <b>наименее</b> похожее</span>
+        <span class="tip">На клавиатуре: <b>↑ ↓</b> перемещают карточку</span>
+      </div>
+      <div class="disc-tabs" role="tablist" aria-label="Шаги" id="discTabs"></div>
+      <div class="disc-body">
+        <div class="disc-body-inner" id="discBody"></div>
+        <div class="disc-progress" aria-hidden="true">
+          <div class="disc-progress__bar" id="discProgress"></div>
+        </div>
+        <div class="disc-actions">
+          <button class="btn btn--ghost" id="btnBack" style="display:none" type="button">Назад</button>
+          <span class="actions-spacer"></span>
+          <div class="actions-right">
+            <button class="btn btn--primary" id="btnNext" type="button">Далее</button>
+            <button class="btn btn--primary" id="btnFinish" type="button" style="display:none">Завершить тест</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="resultScreen" hidden>
+    <div class="app__box result-wrap">
+      <div id="resultContent"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- данные теста (8 шагов × 3 карточки × 4 черты) ----------
+  var DATA = [
+    [
+      [["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+      [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],
+      [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]
+    ],
+    [
+      [["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],
+      [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+      [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]
+    ],
+    [
+      [["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+      [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+      [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]
+    ],
+    [
+      [["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+      [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+      [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]
+    ],
+    [
+      [["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+      [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+      [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]
+    ],
+    [
+      [["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+      [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+      [["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]
+    ],
+    [
+      [["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+      [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+      [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]
+    ],
+    [
+      [["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+      [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+      [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]
+    ]
+  ];
+
+  var STEP_LABELS = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+
+  var TYPE_INFO = {
+    d:{name:"Доминирование", short:"Доминирование (D)", letter:"D", color:"#E8593C",
+       desc:"Цели, решимость и действие. Вы предпочитаете брать инициативу, управлять ситуацией и добиваться результата."},
+    i:{name:"Влияние", short:"Влияние (I)", letter:"I", color:"#F5A623",
+       desc:"Люди, энергия и оптимизм. Вам легко находить общий язык, мотивировать и создавать энтузиазм вокруг себя."},
+    s:{name:"Стабильность", short:"Стабильность (S)", letter:"S", color:"#2E9E55",
+       desc:"Спокойствие, надёжность и стабильность. Вы создаёте порядок, поддерживаете других и выполняете свои обязательства."},
+    c:{name:"Соответствие", short:"Соответствие (C)", letter:"C", color:"#2E6FDB",
+       desc:"Точность, порядок и стандарты. Вы внимательны к деталям, анализируете и планируете на один шаг вперёд."}
+  };
+
+  var TOTAL_STEPS = DATA.length;
+  var currentStep = 0;
+
+  function $(id){ return document.getElementById(id); }
+
+  function showScreen(name){
+    ["startScreen","testScreen","resultScreen"].forEach(function(k){
+      var el = $(k); if(el) el.hidden = (k !== name);
+    });
+  }
+
+  // ---------- карточка ----------
+  function makeCard(grid, cardData){
+    var card = document.createElement("div");
+    card.className = "disc-card";
+
+    var title = document.createElement("div");
+    title.className = "disc-card__title";
+    title.innerHTML = '<span class="ar">▲</span> Я наиболее';
+
+    var list = document.createElement("ul");
+    list.className = "disc-list";
+    list.setAttribute("role","list");
+
+    cardData.forEach(function(it){
+      var type = it[0], label = it[1];
+      var li = document.createElement("li");
+      li.className = "disc-item";
+      li.dataset.type = type;
+      li.setAttribute("draggable","false");
+      li.tabIndex = 0;
+      var rank = document.createElement("span");
+      rank.className = "rank";
+      rank.setAttribute("aria-hidden","true");
+      rank.textContent = "1";
+      var lab = document.createElement("span");
+      lab.className = "label";
+      lab.textContent = label;
+      li.appendChild(rank); li.appendChild(lab);
+      list.appendChild(li);
+    });
+
+    var foot = document.createElement("div");
+    foot.className = "disc-card__foot";
+    foot.innerHTML = 'Я наименее <span class="ar">▼</span>';
+
+    card.appendChild(title); card.appendChild(list); card.appendChild(foot);
+    grid.appendChild(card);
+    setupDrag(list);
+  }
+
+  function renumber(list){
+    var items = list.children;
+    for(var i=0;i<items.length;i++){
+      var rank = items[i].querySelector(".rank");
+      if(rank) rank.textContent = (i+1);
+    }
+  }
+
+  // ---------- перетаскивание ----------
+  function setupDrag(list){
+    var THRESHOLD = 6;
+    var pendingEl = null, baseY = 0, baseTop = 0, started = false;
+
+    function slotTop(){
+      var idx = Array.prototype.indexOf.call(list.children, pendingEl);
+      var items = list.children;
+      var firstFlow = (idx===0) ? items[1] : items[0];
+      var origin = firstFlow ? firstFlow.offsetTop : 0;
+      return origin + idx * pendingEl.offsetHeight;
+    }
+
+    function moveItem(el, targetIndex){
+      var items = Array.prototype.slice.call(list.children);
+      var currentIndex = items.indexOf(el);
+      if(currentIndex === targetIndex) return;
+      if(targetIndex < currentIndex){
+        list.insertBefore(el, items[targetIndex]);
+      } else {
+        list.insertBefore(el, items[targetIndex+1] || null);
+      }
+      renumber(list);
+    }
+
+    function startDrag(e){
+      started = true;
+      var el = pendingEl;
+      el.style.position = "absolute";
+      el.style.left = "0";
+      el.style.right = "0";
+      el.style.zIndex = "10";
+      el.style.transition = "none";
+      baseTop = el.offsetTop;
+      el.style.top = baseTop + "px";
+      el.classList.add("is-dragging");
+      list.classList.add("dragging");
+      try{ list.setPointerCapture(e.pointerId); }catch(ignore){}
+      e.preventDefault();
+    }
+
+    function stopDrag(){
+      if(!pendingEl) return;
+      var el = pendingEl;
+      el.classList.remove("is-dragging");
+      el.style.position = "relative";
+      el.style.top = ""; el.style.left = ""; el.style.right = ""; el.style.zIndex = ""; el.style.transition = "";
+      list.classList.remove("dragging");
+      pendingEl = null; started = false;
+      renumber(list);
+    }
+
+    list.addEventListener("pointerdown", function(e){
+      var el = e.target.closest ? e.target.closest(".disc-item") : null;
+      if(!el || el.parentNode !== list) return;
+      pendingEl = el;
+      baseY = e.clientY;
+      started = false;
+    });
+
+    list.addEventListener("pointermove", function(e){
+      if(!pendingEl) return;
+      var dy = e.clientY - baseY;
+      if(!started){
+        if(Math.abs(dy) < THRESHOLD) return; // вероятно, прокрутка
+        startDrag(e);
+      }
+      if(!started) return;
+      e.preventDefault();
+      var el = pendingEl;
+      el.style.top = (baseTop + dy) + "px";
+      // целевой индекс по середине других карточек
+      var targetIndex = Array.prototype.indexOf.call(list.children, el);
+      for(var k=0;k<list.children.length;k++){
+        var other = list.children[k];
+        if(other === el) continue;
+        var r = other.getBoundingClientRect();
+        if(e.clientY < r.top + r.height/2){
+          targetIndex = k;
+          break;
+        }
+      }
+      moveItem(el, targetIndex);
+      el.style.top = slotTop() + "px";
+    });
+
+    list.addEventListener("pointerup", stopDrag);
+    list.addEventListener("pointercancel", stopDrag);
+    list.addEventListener("lostpointercapture", stopDrag);
+
+    // клавиатура
+    list.addEventListener("keydown", function(e){
+      var el = document.activeElement;
+      if(!el || !el.classList || !el.classList.contains("disc-item")) return;
+      var items = Array.prototype.slice.call(list.children);
+      var idx = items.indexOf(el);
+      if(e.key === "ArrowDown"){
+        e.preventDefault();
+        if(idx < items.length-1){ moveItem(el, idx+1); }
+      } else if(e.key === "ArrowUp"){
+        e.preventDefault();
+        if(idx > 0){ moveItem(el, idx-1); }
+      }
+    });
+  }
+
+  // ---------- сборка экрана теста ----------
+  function buildTestUI(){
+    var tabsEl = $("discTabs");
+    var bodyEl = $("discBody");
+    if(tabsEl) tabsEl.innerHTML = "";
+    if(bodyEl) bodyEl.innerHTML = "";
+
+    STEP_LABELS.forEach(function(label, i){
+      var tab = document.createElement("button");
+      tab.className = "disc-tab";
+      tab.type = "button";
+      tab.setAttribute("role","tab");
+      tab.setAttribute("aria-selected","false");
+      tab.textContent = label;
+      tab.addEventListener("click", function(){ currentStep = i; updateStepUI(); });
+      if(tabsEl) tabsEl.appendChild(tab);
+    });
+
+    DATA.forEach(function(cards, step){
+      var pane = document.createElement("div");
+      pane.className = "disc-pane";
+      pane.setAttribute("role","tabpanel");
+      pane.dataset.step = step;
+      var grid = document.createElement("div");
+      grid.className = "disc-grid3";
+      cards.forEach(function(cd){ makeCard(grid, cd); });
+      pane.appendChild(grid);
+      if(bodyEl) bodyEl.appendChild(pane);
+    });
+  }
+
+  function updateStepUI(){
+    var panes = $("discBody");
+    if(panes) Array.prototype.forEach.call(panes.children, function(p,i){
+      p.classList.toggle("is-active", i===currentStep);
+    });
+    var tabs = $("discTabs");
+    if(tabs) Array.prototype.forEach.call(tabs.children, function(t,i){
+      t.classList.toggle("is-active", i===currentStep);
+      t.setAttribute("aria-selected", i===currentStep);
+    });
+    var prog = $("discProgress");
+    if(prog) prog.style.width = ((currentStep+1)/TOTAL_STEPS*100) + "%";
+    $("btnBack").style.display = (currentStep===0 ? "none" : "inline-block");
+    $("btnNext").style.display = (currentStep===TOTAL_STEPS-1 ? "none" : "inline-block");
+    $("btnFinish").style.display = (currentStep===TOTAL_STEPS-1 ? "inline-block" : "none");
+    window.scrollTo(0,0);
+  }
+
+  // ---------- счёт ----------
+  function computeScores(){
+    var scores = {d:0,i:0,s:0,c:0};
+    var lists = document.querySelectorAll(".disc-list");
+    Array.prototype.forEach.call(lists, function(list){
+      var items = list.children;
+      for(var i=0;i<items.length;i++){
+        var t = items[i].dataset.type;
+        if(t) scores[t] += (4 - i);
+      }
+    });
+    return scores;
+  }
+
+  // ---------- результат ----------
+  function showResult(scores){
+    var content = $("resultContent");
+    var types = ["d","i","s","c"];
+    var dom = types[0];
+    for(var i=1;i<types.length;i++) if(scores[types[i]] > scores[dom]) dom = types[i];
+    var info = TYPE_INFO[dom];
+    var rawMin = 24, rawMax = 96;
+    var pctOf = function(raw){
+      var p = (raw - rawMin) / (rawMax - rawMin) * 100;
+      if(p < 0) p = 0; if(p > 100) p = 100;
+      return Math.round(p);
+    };
+    var bars = types.map(function(t){
+      var s = TYPE_INFO[t];
+      return '<div class="result-bar">' +
+        '<span class="result-bar__name" style="color:'+s.color+'">'+s.short+'</span>' +
+        '<span class="result-bar__bar"><i style="width:0%;background:'+s.color+'"></i></span>' +
+        '<span class="result-bar__val">'+pctOf(scores[t])+'</span></div>';
+    }).join("");
+
+    content.innerHTML =
+      '<div class="result-hero">' +
+        '<div class="result-letter" style="color:'+info.color+';background:'+info.color+'22;">'+info.letter+'</div>' +
+        '<h2 style="margin:2px 0 0;font-size:22px;font-weight:800;">Ваш доминирующий тип</h2>' +
+        '<p class="result-type-name">'+info.short+'</p>' +
+        '<p class="result-type-desc">'+info.desc+'</p>' +
+      '</div>' +
+      '<p class="result-sub">Ваши баллы (0–100)</p>' +
+      '<div class="result-bars">'+bars+'</div>' +
+      '<p class="result-note">Баллы рассчитаны по вашим ранжированиям: верхняя карточка даёт больше очков своему типу.</p>' +
+      '<div class="result-actions">' +
+        '<button class="btn btn--primary" id="btnRetry">Пройти ещё раз</button>' +
+        '<button class="btn btn--ghost" id="btnBackTop">На главный экран</button>' +
+      '</div>';
+
+    $("btnRetry").addEventListener("click", resetTest);
+    $("btnBackTop").addEventListener("click", showStart);
+
+    // анимация полос
+    Array.prototype.forEach.call(content.querySelectorAll(".result-bar__bar i"), function(bar, idx){
+      var target = (scores[types[idx]] - rawMin) / (rawMax - rawMin) * 100;
+      if(target<0) target=0; if(target>100) target=100;
+      var w = Math.round(target);
+      requestAnimationFrame(function(){
+        bar.style.width = w + "%";
+      });
+    });
+
+    showScreen("resultScreen");
+  }
+
+  function resetTest(){
+    currentStep = 0;
+    buildTestUI();
+    updateStepUI();
+    showScreen("testScreen");
+  }
+
+  function showStart(){
+    showScreen("startScreen");
+  }
+
+  function finish(){
+    var scores = computeScores();
+    showResult(scores);
+  }
+
+  // ---------- события ----------
+  function init(){
+    $("btnStart").addEventListener("click", function(){
+      currentStep = 0;
+      buildTestUI();
+      updateStepUI();
+      showScreen("testScreen");
+    });
+    $("btnBack").addEventListener("click", function(){
+      if(currentStep > 0){ currentStep--; updateStepUI(); }
+    });
+    $("btnNext").addEventListener("click", function(){
+      if(currentStep < TOTAL_STEPS-1){ currentStep++; updateStepUI(); }
+    });
+    $("btnFinish").addEventListener("click", finish);
+    document.addEventListener("keydown", function(e){
+      if(e.key !== "Escape") return;
+      if(!$("resultScreen").hidden) return;
+      if(!$("testScreen").hidden && currentStep > 0){ currentStep--; updateStepUI(); }
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

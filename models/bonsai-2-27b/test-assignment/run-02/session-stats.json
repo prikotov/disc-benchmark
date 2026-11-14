@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-14T14-30-00-761Z_01a1da77-1938-72ee-8c6c-014476a5681c.jsonl",
+  "turns": 120,
+  "tool_calls": 119,
+  "tools_by_name": {
+    "bash": 88,
+    "read": 30,
+    "edit": 1
+  },
+  "tokens_in": 376568,
+  "tokens_out": 36680,
+  "bash_total": 24,
+  "bash_with_network": 19,
+  "curl_to_source": 19,
+  "network_cmds_sample": [
+    "curl -s https://stratoplan-school.com/disc/ -o /tmp/disc_original.html && wc -c /tmp/disc_original.html",
+    "curl -sL https://stratoplan-school.com/disc/js/disc_patched.js -o /tmp/disc_patched.js 2>&1; head -c 2000 /tmp/disc_patched.js; echo; wc -c /tmp/disc_patched.js",
+    "curl -sL https://stratoplan-school.com/css/app.css -o /tmp/app.css 2>&1; wc -c /tmp/app.css; grep -c \\\"disc\\\" /tmp/app.css",
+    "curl -sI https://stratoplan-school.com/disc/ | head -20; echo \\\"---\\\"; grep -o \\\"href=\\\\\\\"[^\\\\\\\"]*css[^\\\\\\\"]*\\\\\\\"\\\" /tmp/disc_original.html | sort -u; grep -o \\\"href=\\\\\\\"[^\\\\\\\"]*js[^\\\\\\\"]*\\\\\\\"\\\" /tmp/disc_original.html | sort -u",
+    "curl -sL https://stratoplan-school.com/css/main_patched.css -o /tmp/main_patched.css; wc -c /tmp/main_patched.css; head -c 800 /tmp/main_patched.css; echo; echo \\\"=== grep disc ===\\\"; grep -c \\\"disc\\\" /tmp/main_patched.css"
+  ],
+  "errors": 18,
+  "first_ts": "2026-11-14T14:30:00.761Z",
+  "last_ts": "2026-11-14T14:41:05.527Z"
+}

@@ -180,7 +180,11 @@ def main() -> int:
     if args.smoke:
         prompt_text = smoke_prompt
 
-    tmp = Path(tempfile.mkdtemp(prefix="disc-pi-"))
+    # workdir в репозитории (не /tmp): защита от чистки временных файлов
+    # посреди длинного прогона
+    workroot = ROOT / ".tmpwork"
+    workroot.mkdir(exist_ok=True)
+    tmp = Path(tempfile.mkdtemp(prefix="disc-pi-", dir=str(workroot)))
     repo = tmp / "run"          # рабочая директория агента (вне репозитория!)
     started = time.time()
 

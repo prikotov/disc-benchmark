@@ -1,0 +1,32 @@
+The deliverable is complete and fully verified. Here's a summary:
+
+## ✅ Deliverable: `/tmp/disc-pi-rauan7qv/run/index.html`
+
+A single, self-contained 64 KB file (1226 lines) that replicates the DISC test from stratoplan-school.com/disc/.
+
+### Verified against requirements (via CDP headless-Chrome functional tests)
+| Check | Result |
+|---|---|
+| **Correct score shown** | ✅ PASS — `D:4, I:-1, S:0, C:-3` (matches independent simulation of the +1/pos0, −1/pos3 rule over all 24 lists) |
+| **Reset to step 0** | ✅ PASS |
+| **No-op drag keeps order** | ✅ PASS (5 px threshold works) |
+| **Modal close + scroll unlock** | ✅ PASS (`overflow-y: hidden` when open, `visible` when closed; `no-scroll` class toggles) |
+
+### Other verified properties
+- **Self-contained** — 0 external `<script src>`, 0 `<link rel=stylesheet>`, no CDNs, no network requests.
+- **Works via `file://`** — all tests loaded the file from disk.
+- **Russian UI** — `lang="ru"`, faithful copy of the original text (including the original `Экспресcivный` Latin-c typo preserved).
+- **Inline SVG icons** — the 3-dot grab handle (`<svg>`) is generated inline.
+- **96 draggable items** across **8 steps × 3 cards × 4 items**.
+- **No email collection / no redirect** — the `apruve` modal and `/result/` redirect are replaced with an in-page result view showing the score.
+- **SortableJS re-implemented inline** — vanilla PointerEvents drag-to-rank (mouse + touch), with `touch-action:none`, center-point hit-testing, and ArrowUp/ArrowDown keyboard support.
+
+### Layout checks (headless at multiple viewport widths)
+- **Desktop (≥1100 px)**: `.disc-progress` and `.disc-actions` are `position:sticky` (`bottom:0`); modal body has `padding-bottom:220px` clearance.
+- **Mobile/tablet (≤1100 px)**: both switch to `position:static`.
+- **No horizontal overflow** at 1440 / 1100 / 765 / 700 / 520 px.
+
+### Scoring algorithm (matches the original)
+`computeScore()` adds `+1` to the `data-type` at position 0 and `−1` at position 3 for each of the 24 lists, then `formatScore()` displays `D:, I:, S:, C:`.
+
+The file is ready to open directly via `file://`.

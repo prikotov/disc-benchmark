@@ -1,0 +1,37 @@
+The final `index.html` file is complete. Here's a summary of what was accomplished:
+
+## ✅ `index.html` — Self-contained DISC Test
+
+**File:** `/tmp/disc-pi-8yav9cef/run/index.html` (61.7 KB)
+
+### What it includes:
+1. **One file, fully offline** — All CSS inlined, all JS inlined, zero external requests. Works via `file://` protocol.
+
+2. **Complete 8-step DISC test**:
+   - 8 steps (Первый → Восьмой) with tab navigation
+   - 3 cards per step, 4 items per card = **96 total items**
+   - Each item has `data-type` (d/i/s/c) for DISC scoring
+   - Progress bar showing completion (1/8 through 8/8)
+   - Prev/Next/Finish buttons
+
+3. **Drag-and-drop ranking** (dual implementation):
+   - HTML5 DnD API (works on all desktop browsers)
+   - Touch event fallback (works on mobile browsers)
+   - Visual feedback: dragging item (opacity 0.55), drop target (dashed outline)
+
+4. **Client-side scoring**:
+   - `collectPayload()` gathers item rankings
+   - `score()` calculates D/I/S/C as `count(majority) - count(minority)`
+   - Result displayed as `D:0, I:0, S:0, C:0` format
+
+5. **Result display**:
+   - In-page result modal with score display
+   - Copy-to-clipboard button (with `is-copied` state)
+   - Back to test button
+   - No external redirect, no email collection
+
+6. **No apruve** — Zero references to the email collection modal.
+
+7. **Icons**: Inline SVG only (copy icon, drag handles). No Font Awesome.
+
+8. **Mobile responsive**: Tab scroll, grid collapse, action bar adjustments at various breakpoints.

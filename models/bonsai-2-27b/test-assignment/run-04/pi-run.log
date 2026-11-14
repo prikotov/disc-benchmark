@@ -1,0 +1,29 @@
+Done. The task is complete — I've built a fully self-contained copy of the DISC test.
+
+## Summary
+
+**Output file:** `/tmp/disc-pi-kf_zytyd/run/index.html` (33,126 bytes, UTF-8, single file)
+
+### Verified end-to-end in headless Chrome via `file://` (offline):
+- ✅ **Loads with zero external references** — no CDN, no `.js`/`.css` includes, no Plausible, no Font Awesome, no external fonts, no raster images
+- ✅ **8-step wizard** — 24 draggable lists (96 items), rendered at runtime
+- ✅ **Modal** opens/closes (CTA button, ✕, Escape), body scroll lock applied/released
+- ✅ **Navigation** — Next/Prev, `Prev` disabled at step 0, `Finish` hidden until step 7
+- ✅ **Real drag-and-drop** works (dispatched PointerEvents moved item `d` to the front of list `dl0`)
+- ✅ **Scoring** — displayed scores `D=+24 I=-8 S=-9 C=-7` exactly match an independent client-side computation (first/last position counts across all 24 lists)
+- ✅ **Results** panel shows dominant type ("D — Доминирование") and type cards with bars
+- ✅ **Reset** returns to step 0, restores original list order, hides results
+- ✅ **Russian UI** throughout
+- ✅ **Mobile** — `@media (max-width:720px)` collapses to single column; `touch-action:none` + `user-select:none` for touch dragging
+
+### Key implementation decisions:
+| Requirement | How handled |
+|---|---|
+| No CDN/external libs | Pure vanilla JS, no dependencies |
+| No analytics | Removed Plausible entirely |
+| No email collection | Removed the `apruve` email modal; results shown inline |
+| Inline SVG only | Single decorative inline SVG in the hero; no raster images |
+| Drag-to-rank | Pointer events (`pointerdown/move/up`) — works on mouse & touch |
+| Self-contained | Everything inline; verified with `file://` protocol |
+
+The `index.html` in the run directory is the sole, complete, ready-to-open deliverable.

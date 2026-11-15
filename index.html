@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бесплатный тест DISC для руководителей</title>
+<style>
+
+  :root{
+    --bg:#f5f6fa; --card:#fff; --ink:#1e2230; --muted:#6a7086;
+    --accent:#4b5cff; --accent2:#ff5c8a; --line:#e5e7f0;
+    --top:#2f6b3a; --bottom:#a7354a;
+    --radius:16px; --shadow:0 12px 34px rgba(20,24,40,.10);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 20px 64px}
+  body.no-scroll{overflow:hidden}
+  .hero{min-height:calc(100vh - 48px);display:flex;flex-direction:column;justify-content:center;text-align:center}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:36px;justify-content:center;color:var(--ink)}
+  .logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#4a5cff,#ff5c8a);display:block;box-shadow:0 6px 16px rgba(75,92,255,.35)}
+  h1{font-size:clamp(28px,5vw,46px);line-height:1.1;margin:0 0 18px;font-weight:800}
+  .lede{font-size:clamp(15px,2.3vw,19px);color:var(--muted);max-width:560px;margin:0 auto 34px}
+  .btn{display:inline-flex;align-items:center;border:0;border-radius:12px;padding:15px 30px;font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font)}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{background:#fff;color:var(--muted);border:1px solid var(--line);padding:12px 20px;font-weight:500}
+  .btn:disabled{opacity:.45;cursor:default}
+  .overlay{position:fixed;inset:0;background:rgba(16,19,30,.55);display:none;z-index:40;overflow:auto;padding:28px 16px}
+  .overlay.open{display:block}
+  .modal{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);max-width:760px;width:100%;margin:0 auto;overflow:hidden}
+  .modal__head{position:relative;padding:22px 26px 16px;border-bottom:1px solid var(--line)}
+  .modal__title{margin:0;font-size:21px;font-weight:800}
+  .modal__sub{margin-top:7px;color:var(--muted);font-size:13.5px}
+  .modal__close{position:absolute;top:16px;right:16px;border:0;background:transparent;cursor:pointer;color:var(--muted);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1}
+  .modal__close:hover{background:var(--bg);color:var(--ink)}
+  .tabs{position:sticky;top:0;background:var(--card);z-index:2}
+  .tabs__inner{display:flex;gap:6px;overflow-x:auto;padding:12px 20px;scrollbar-width:none}
+  .tabs__inner::-webkit-scrollbar{display:none}
+  .tab{flex:none;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--font)}
+  .tab.is-active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .modal__body{padding:10px 22px 6px}
+  .step-hint{font-size:13px;color:var(--muted);margin:0 2px 4px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .qcard{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 12px 14px}
+  .qcard .lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;text-align:center}
+  .qcard .lbl.top{color:var(--top)}
+  .qcard .lbl.bot{color:var(--bottom)}
+  .qcard .num{font-size:12px;color:var(--muted);margin:4px 0 10px;font-weight:600;text-align:center}
+  .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .item{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;user-select:none;font-size:14.5px;position:relative;transition:box-shadow .1s,transform .08s,opacity .15s;cursor:grab}
+  .item:hover{border-color:#c7cdf2}
+  .item.is-drop{box-shadow:0 0 0 2px var(--accent)}
+  .item.is-drag{opacity:.35}
+  .item:active{cursor:grabbing}
+  .item[draggable="true"]{touch-action:none}
+  .handle{flex:none;color:#b3b3b3;display:flex;align-items:center;touch-action:none}
+  .item .txt{flex:1}
+  .modal__foot{display:flex;align-items:center;justify-content:space-between;padding:16px 24px 22px;border-top:1px solid var(--line)}
+  #discNavBtn{display:flex;gap:10px}
+  .progress{position:sticky;top:56px;z-index:1;height:4px;background:var(--line);margin:0}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,#4b5cff,#ff5c8a);width:0;transition:width .35s ease}
+  .result{padding:26px 28px 40px}
+  .result h2{margin:0 0 10px;font-size:24px;font-weight:800}
+  .disclaimer{background:#fbfaf2;border:1px solid #ece6c0;border-radius:12px;padding:18px 20px;color:#5a5136;font-size:14px;margin-top:26px}
+  .disclaimer b{font-weight:800}
+  .scores{display:flex;flex-wrap:wrap;gap:14px;margin:24px 0}
+  .score-chip{flex:1;min-width:130px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px 18px;text-align:center}
+  .score-chip .letter{font-size:15px;font-weight:700;letter-spacing:.08em;color:var(--muted)}
+  .score-chip .val{font-size:34px;font-weight:800;margin-top:3px;display:block}
+  .score-chip .val.pos{color:var(--top)}
+  .score-chip .val.neg{color:var(--bottom)}
+  .score-chip .val.zero{color:var(--muted)}
+  .result__footer{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;align-items:center}
+  .share{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:12px;padding:12px 20px;font-size:14px;cursor:pointer;font-family:var(--font);font-weight:500}
+  .share:hover{border-color:#c7cdf2;color:var(--ink)}
+  .credit{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+  @media (max-width:680px){ .grid{grid-template-columns:1fr} .modal{margin:6px} .score-chip{min-width:calc(50% - 11px)} }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero" id="hero">
+    <span class="brand"><span class="logo"></span>DISC для руководителей</span>
+    <h1>Бесплатный тест DISC для руководителей</h1>
+    <p class="lede">Определите свой поведенческий стиль руководства за пару минут.
+      В каждом вопросе нужно расставить четыре описания в порядке от
+      наиболее похожего на вас до наименее похожего. Results появятся
+      сразу после прохождения — без отправки каких-либо данных.</p>
+    <button class="btn primary" id="btnOpen" type="button">Пройти тест</button>
+  </section>
+
+  <section class="result" id="resultSection" hidden></section>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="wizardTitle">
+    <div class="modal" id="wizardmodal" aria-label="Тестирование DISC">
+      <div class="modal__head">
+        <button class="modal__close" id="discCloseBtn" type="button" aria-label="Закрыть">×</button>
+        <div class="modal__title" id="wizardTitle">Тестирование DISC</div>
+        <div class="modal__sub">Помните — честнее с тестом = точнее результат!</div>
+      </div>
+      <div class="tabs" id="discTabs" aria-label="Шаги прохождения"></div>
+      <div class="progress" aria-hidden="true"><i id="disc-progress"></i></div>
+      <div class="modal__body">
+        <div class="step-hint" id="stepHint"></div>
+        <div class="grid" id="discGrid"></div>
+      </div>
+      <div class="modal__foot">
+        <button class="btn ghost" id="discPrevBtn" type="button" aria-disabled="true">Назад</button>
+        <div id="discNavBtn"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+  var DATA = [
+  {
+    "id": 1,
+    "step": 0,
+    "pos": 1,
+    "list_id": "draggable-list1",
+    "items": [
+      {
+        "type": "i",
+        "text": "Экспресcивный"
+      },
+      {
+        "type": "c",
+        "text": "Покладистый"
+      },
+      {
+        "type": "d",
+        "text": "Волевой"
+      },
+      {
+        "type": "s",
+        "text": "Осторожный"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "step": 0,
+    "pos": 2,
+    "list_id": "draggable-list2",
+    "items": [
+      {
+        "type": "d",
+        "text": "Пылкий"
+      },
+      {
+        "type": "i",
+        "text": "Разговорчивый"
+      },
+      {
+        "type": "s",
+        "text": "Добродушный"
+      },
+      {
+        "type": "c",
+        "text": "Сдержанный"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "step": 0,
+    "pos": 3,
+    "list_id": "draggable-list3",
+    "items": [
+      {
+        "type": "i",
+        "text": "Любитель приключений"
+      },
+      {
+        "type": "c",
+        "text": "Энтузиаст"
+      },
+      {
+        "type": "d",
+        "text": "Исполнитель инструкций"
+      },
+      {
+        "type": "s",
+        "text": "Верный"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "step": 1,
+    "pos": 1,
+    "list_id": "draggable-list4",
+    "items": [
+      {
+        "type": "d",
+        "text": "Настойчивый"
+      },
+      {
+        "type": "c",
+        "text": "Осторожный"
+      },
+      {
+        "type": "i",
+        "text": "Эмоциональный"
+      },
+      {
+        "type": "s",
+        "text": "Удовлетворенный"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "step": 1,
+    "pos": 2,
+    "list_id": "draggable-list5",
+    "items": [
+      {
+        "type": "s",
+        "text": "Довольный"
+      },
+      {
+        "type": "d",
+        "text": "Нетерпеливый"
+      },
+      {
+        "type": "i",
+        "text": "Убедительный"
+      },
+      {
+        "type": "c",
+        "text": "Безропотный"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "step": 1,
+    "pos": 3,
+    "list_id": "draggable-list6",
+    "items": [
+      {
+        "type": "c",
+        "text": "Смиренный"
+      },
+      {
+        "type": "s",
+        "text": "Умеющий слушать"
+      },
+      {
+        "type": "i",
+        "text": "Душа компании"
+      },
+      {
+        "type": "d",
+        "text": "Волевой"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "step": 2,
+    "pos": 1,
+    "list_id": "draggable-list7",
+    "items": [
+      {
+        "type": "c",
+        "text": "Правильный"
+      },
+      {
+        "type": "d",
+        "text": "Первопроходец"
+      },
+      {
+        "type": "s",
+        "text": "Спокойный"
+      },
+      {
+        "type": "i",
+        "text": "Влиятельный"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "step": 2,
+    "pos": 2,
+    "list_id": "draggable-list8",
+    "items": [
+      {
+        "type": "c",
+        "text": "Почтительный"
+      },
+      {
+        "type": "i",
+        "text": "Контактный"
+      },
+      {
+        "type": "d",
+        "text": "Агрессивный"
+      },
+      {
+        "type": "s",
+        "text": "Мягкий"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "step": 2,
+    "pos": 3,
+    "list_id": "draggable-list9",
+    "items": [
+      {
+        "type": "i",
+        "text": "Весельчак"
+      },
+      {
+        "type": "s",
+        "text": "Покорный"
+      },
+      {
+        "type": "c",
+        "text": "Тактичный"
+      },
+      {
+        "type": "d",
+        "text": "Соперничающий"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "step": 3,
+    "pos": 1,
+    "list_id": "draggable-list10",
+    "items": [
+      {
+        "type": "c",
+        "text": "Точный"
+      },
+      {
+        "type": "d",
+        "text": "Доминирующий"
+      },
+      {
+        "type": "s",
+        "text": "Охотный"
+      },
+      {
+        "type": "i",
+        "text": "Притягательный"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "step": 3,
+    "pos": 2,
+    "list_id": "draggable-list11",
+    "items": [
+      {
+        "type": "i",
+        "text": "Уравновешенный"
+      },
+      {
+        "type": "c",
+        "text": "Уступчивый"
+      },
+      {
+        "type": "d",
+        "text": "Идущий на риск"
+      },
+      {
+        "type": "s",
+        "text": "Услужливый"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "step": 3,
+    "pos": 3,
+    "list_id": "draggable-list12",
+    "items": [
+      {
+        "type": "c",
+        "text": "Осмотрительный"
+      },
+      {
+        "type": "s",
+        "text": "Добрососедский"
+      },
+      {
+        "type": "d",
+        "text": "Энергичный"
+      },
+      {
+        "type": "i",
+        "text": "Убедительный"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "step": 4,
+    "pos": 1,
+    "list_id": "draggable-list13",
+    "items": [
+      {
+        "type": "s",
+        "text": "Уравновешенный"
+      },
+      {
+        "type": "i",
+        "text": "Мотивирующий"
+      },
+      {
+        "type": "c",
+        "text": "Щепетильный"
+      },
+      {
+        "type": "d",
+        "text": "Решительный"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "step": 4,
+    "pos": 2,
+    "list_id": "draggable-list14",
+    "items": [
+      {
+        "type": "i",
+        "text": "Уверенный"
+      },
+      {
+        "type": "c",
+        "text": "Готовый к сотрудничеству"
+      },
+      {
+        "type": "s",
+        "text": "Беззаботный"
+      },
+      {
+        "type": "d",
+        "text": "Аргументирующий"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "step": 4,
+    "pos": 3,
+    "list_id": "draggable-list15",
+    "items": [
+      {
+        "type": "s",
+        "text": "Сдержанный"
+      },
+      {
+        "type": "d",
+        "text": "Прямой"
+      },
+      {
+        "type": "c",
+        "text": "Строгий"
+      },
+      {
+        "type": "i",
+        "text": "Убедительный"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "step": 5,
+    "pos": 1,
+    "list_id": "draggable-list16",
+    "items": [
+      {
+        "type": "c",
+        "text": "Застенчивый"
+      },
+      {
+        "type": "d",
+        "text": "Требовательный"
+      },
+      {
+        "type": "s",
+        "text": "Терпеливый"
+      },
+      {
+        "type": "i",
+        "text": "Очаровательный"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "step": 5,
+    "pos": 2,
+    "list_id": "draggable-list17",
+    "items": [
+      {
+        "type": "d",
+        "text": "Неугомонный"
+      },
+      {
+        "type": "c",
+        "text": "Дисциплинированный"
+      },
+      {
+        "type": "i",
+        "text": "Вдохновляющий"
+      },
+      {
+        "type": "s",
+        "text": "Внимательный"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "step": 5,
+    "pos": 3,
+    "list_id": "draggable-list18",
+    "items": [
+      {
+        "type": "s",
+        "text": "Обязательный"
+      },
+      {
+        "type": "i",
+        "text": "Оживленный"
+      },
+      {
+        "type": "d",
+        "text": "Решительный"
+      },
+      {
+        "type": "c",
+        "text": "Точный"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "step": 6,
+    "pos": 1,
+    "list_id": "draggable-list19",
+    "items": [
+      {
+        "type": "c",
+        "text": "Добросовестный"
+      },
+      {
+        "type": "i",
+        "text": "Компанейский"
+      },
+      {
+        "type": "s",
+        "text": "Добрый"
+      },
+      {
+        "type": "d",
+        "text": "Уверенный в себе"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "step": 6,
+    "pos": 2,
+    "list_id": "draggable-list20",
+    "items": [
+      {
+        "type": "c",
+        "text": "Дипломатичный"
+      },
+      {
+        "type": "d",
+        "text": "Отважный"
+      },
+      {
+        "type": "s",
+        "text": "Сочувствующий"
+      },
+      {
+        "type": "i",
+        "text": "Оптимистичный"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "step": 6,
+    "pos": 3,
+    "list_id": "draggable-list21",
+    "items": [
+      {
+        "type": "d",
+        "text": "Настойчивый"
+      },
+      {
+        "type": "i",
+        "text": "Общительный"
+      },
+      {
+        "type": "s",
+        "text": "Постоянный"
+      },
+      {
+        "type": "c",
+        "text": "Организованный"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "step": 7,
+    "pos": 1,
+    "list_id": "draggable-list22",
+    "items": [
+      {
+        "type": "c",
+        "text": "Соглашающийся"
+      },
+      {
+        "type": "s",
+        "text": "Владеющий собой"
+      },
+      {
+        "type": "d",
+        "text": "Шутливый"
+      },
+      {
+        "type": "i",
+        "text": "Настойчивый"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "step": 7,
+    "pos": 2,
+    "list_id": "draggable-list23",
+    "items": [
+      {
+        "type": "i",
+        "text": "Обаятельный"
+      },
+      {
+        "type": "d",
+        "text": "Позитивный"
+      },
+      {
+        "type": "s",
+        "text": "Снисходительный"
+      },
+      {
+        "type": "c",
+        "text": "Требовательный"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "step": 7,
+    "pos": 3,
+    "list_id": "draggable-list24",
+    "items": [
+      {
+        "type": "i",
+        "text": "Коммуникабельный"
+      },
+      {
+        "type": "d",
+        "text": "Смелый"
+      },
+      {
+        "type": "c",
+        "text": "Перфекционист"
+      },
+      {
+        "type": "s",
+        "text": "Сдержанный"
+      }
+    ]
+  }
+];
+  var STEPS = 8;
+  var groups = [];
+  for (var s = 0; s < STEPS; s++) groups.push([]);
+  DATA.forEach(function (q) { groups[q.step].push(q); });
+
+  var qs = function (sel) { return document.querySelector(sel); };
+  var qsa = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+
+  var hero = qs("#hero");
+  var overlay = qs("#overlay");
+  var tabsEl = qs("#discTabs");
+  var gridEl = qs("#discGrid");
+  var hintEl = qs("#stepHint");
+  var progressBar = qs("#disc-progress");
+  var prevBtn = qs("#discPrevBtn");
+  var navBtn = qs("#discNavBtn");
+  var resultSection = qs("#resultSection");
+  var current = 0;
+
+  function openModal () {
+    hero.style.display = "none";
+    resultSection.hidden = true;
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+    render(0);
+    requestAnimationFrame(function () {
+      var t = qs("[data-step='0']"); if (t) t.focus();
+    });
+  }
+  function closeModal () {
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("no-scroll");
+  }
+  function buildTabs () {
+    tabsEl.innerHTML = "";
+    for (var s = 0; s < STEPS; s++) {
+      (function () {
+        var tab = document.createElement("button");
+        tab.className = "tab"; tab.type = "button";
+        tab.setAttribute("aria-selected", "false");
+        tab.setAttribute("data-step", String(s));
+        tab.textContent = "Шаг " + (s + 1);
+        tab.addEventListener("click", function () {
+          var target = parseInt(this.getAttribute("data-step"), 10);
+          if (target <= current) render(target);
+        });
+        tabsEl.appendChild(tab);
+      })();
+    }
+  }
+  function render (step) {
+    current = step;
+    if (!qsa("[data-step]").length) buildTabs();
+    gridEl.innerHTML = "";
+    groups[step].forEach(function (q) { gridEl.appendChild(makeCard(q)); });
+    hintEl.textContent = "Шаг " + (step + 1) + " из " + STEPS + " · вопрос " + (step * 3 + 1) + "-" + (step * 3 + 3);
+    progressBar.style.width = (((step + 1) / STEPS) * 100) + "%";
+    qsa(".tab").forEach(function (b) {
+      var on = (parseInt(b.getAttribute("data-step"), 10) === step);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+      b.classList.toggle("is-active", on);
+      if (on) {
+        setTimeout(function () { b.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" }); }, 200);
+      }
+    });
+    prevBtn.setAttribute("disabled", String(step === 0));
+    navBtn.innerHTML = "";
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "btn primary";
+    b.style.background = "#4b5cff"; b.style.color = "#fff";
+    if (step === STEPS - 1) {
+      b.textContent = "Завершить тест";
+      b.addEventListener("click", finish);
+    } else {
+      b.textContent = "Далее";
+      b.addEventListener("click", function () { if (current < STEPS - 1) render(current + 1); });
+    }
+    navBtn.appendChild(b);
+  }
+  function makeCard (q) {
+    var card = document.createElement("div"); card.className = "qcard";
+    var num = document.createElement("div"); num.className = "num"; num.textContent = "Вопрос " + q.id;
+    var top = document.createElement("div"); top.className = "lbl top"; top.textContent = "Я наиболее";
+    var list = makeList(q.id, q.items);
+    var bot = document.createElement("div"); bot.className = "lbl bot"; bot.textContent = "Я наименее";
+    card.appendChild(num); card.appendChild(top); card.appendChild(list); card.appendChild(bot);
+    return card;
+  }
+  function handle () {
+    var NS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("width", "16"); svg.setAttribute("height", "16");
+    svg.setAttribute("viewBox", "0 0 16 16");
+    for (var yy = 0; yy < 3; yy++)
+      for (var xx = 0; xx < 2; xx++) {
+        var c = document.createElementNS(NS, "circle");
+        c.setAttribute("cx", String(4 + xx * 8));
+        c.setAttribute("cy", String(4 + yy * 4));
+        c.setAttribute("r", "1.3"); c.setAttribute("fill", "#b3b3b3");
+        svg.appendChild(c);
+      }
+    return svg;
+  }
+  function makeList (id, items) {
+    var list = document.createElement("ul");
+    list.className = "list"; list.setAttribute("data-qid", String(id));
+    items.forEach(function (it, i) {
+      var li = document.createElement("li");
+      li.className = "item";
+      li.setAttribute("type", it.type);
+      li.setAttribute("data-order", String(i));
+      li.setAttribute("draggable", "true");
+      li.appendChild(handle());
+      var span = document.createElement("span"); span.className = "txt"; span.textContent = it.text;
+      li.appendChild(span);
+      list.appendChild(li);
+    });
+    attachDrag(list);
+    return list;
+  }
+  function attachDrag (list) {
+    var dragging = null;
+    list.addEventListener("dragstart", function (e) {
+      if (dragging) return;
+      dragging = e.currentTarget;
+      dragging.classList.add("is-drag");
+      try { e.dataTransfer.effectAllowed = "move"; } catch (x) {}
+    });
+    list.addEventListener("dragend", function () {
+      dragging = null;
+      qsa(".is-drop", list).forEach(function (x) { x.classList.remove("is-drop"); });
+    });
+    list.addEventListener("dragover", function (e) {
+      var target = e.currentTarget;
+      if (!dragging || target === dragging || target.nodeName !== "LI") return;
+      e.preventDefault();
+      var rect = target.getBoundingClientRect();
+      var before = e.clientY < rect.top + rect.height / 2;
+      list.insertBefore(dragging, before ? target : target.nextSibling);
+    });
+  }
+  function collect () {
+    var payload = {};
+    qsa(".list").forEach(function (list) {
+      payload[list.getAttribute("data-qid")] = qsa(".item", list).map(function (li) {
+        return { type: li.getAttribute("type"), order: li.getAttribute("data-order") };
+      });
+    });
+    return payload;
+  }
+  function score (payload) {
+    var res = { d: 0, i: 0, s: 0, c: 0 };
+    qsa(".list").forEach(function (list) {
+      var items = qsa(".item", list);
+      items.forEach(function (li, idx) {
+        var t = li.getAttribute("type");
+        if (idx === 0) res[t]++;
+        if (idx === items.length - 1) res[t]--;
+      });
+    });
+    return res;
+  }
+  function finish () {
+    var res = score(collect());
+    hero.style.display = "none";
+    closeModal();
+    renderResult(res);
+    resultSection.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function renderResult (r) {
+    var h = document.createElement("h2");
+    h.textContent = "Ваш DISC-профиль:";
+    resultSection.appendChild(h);
+    var disc = document.createElement("p");
+    disc.className = "disclaimer";
+    disc.innerHTML = "<b>Обратите внимание:</b> мы не даем расшифку ваших индивидуальных результатов. Вместо этого мы помогаем вам использовать Instrument для самооценки и работы с командами, сотрудниками и коллегами.";
+    resultSection.appendChild(disc);
+    var scores = document.createElement("div"); scores.className = "scores";
+    ["d", "i", "s", "c"].forEach(function (k) {
+      var chip = document.createElement("div"); chip.className = "score-chip";
+      var v = r[k];
+      var sig = v > 0 ? "pos" : (v < 0 ? "neg" : "zero");
+      var letter = document.createElement("div"); letter.className = "letter"; letter.textContent = k.toUpperCase();
+      var val = document.createElement("div"); val.className = "val " + sig; val.textContent = v;
+      chip.appendChild(letter); chip.appendChild(val);
+      scores.appendChild(chip);
+    });
+    var line = document.createElement("div");
+    line.setAttribute("style", "font-size:18px;font-weight:700;margin:16px 0");
+    line.textContent = "D " + r.d + ", I " + r.i + ", S " + r.s + ", C " + r.c;
+    scores.appendChild(line);
+    resultSection.appendChild(scores);
+    var footer = document.createElement("div"); footer.className = "result__footer";
+    var restart = document.createElement("button");
+    restart.type = "button"; restart.className = "btn ghost";
+    restart.style.background = "#fff"; restart.style.color = "#6a7086"; restart.style.border = "1px solid #e5e7f0";
+    restart.textContent = "Пройти заново";
+    restart.addEventListener("click", function () { restartTest(); });
+    var share = document.createElement("button");
+    share.type = "button"; share.className = "share";
+    share.textContent = "Поделиться результатами теста";
+    share.addEventListener("click", function () { shareResult(); });
+    footer.appendChild(restart); footer.appendChild(share);
+    resultSection.appendChild(footer);
+  }
+  function shareResult () {
+    var line = resultSection.querySelector("div[style*='font-size:18px']");
+    if (!line) return;
+    var text = "Мой результат теста DISC: " + line.textContent;
+    var btn = resultSection.querySelector(".share");
+    if (btn) {
+      if (navigator && navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
+      var old = btn.textContent;
+      btn.textContent = "Скопировано";
+      setTimeout(function () { btn.textContent = old; }, 1500);
+    }
+  }
+  function restartTest () {
+    qsa(".list").forEach(function (list) {
+      var id = list.getAttribute("data-qid");
+      var q = DATA.filter(function (x) { return String(x.id) === id; })[0];
+      list.innerHTML = "";
+      q.items.forEach(function (it, i) {
+        var li = document.createElement("li");
+        li.className = "item";
+        li.setAttribute("type", it.type);
+        li.setAttribute("data-order", String(i));
+        li.setAttribute("draggable", "true");
+        li.appendChild(handle());
+        var span = document.createElement("span"); span.className = "txt"; span.textContent = it.text;
+        li.appendChild(span);
+        list.appendChild(li);
+      });
+      attachDrag(list);
+    });
+    render(0);
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+    resultSection.hidden = true;
+    hero.style.display = "none";
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    qs("#btnOpen").addEventListener("click", openModal);
+    prevBtn.addEventListener("click", function () { if (current > 0) render(current - 1); });
+    qs("#discCloseBtn").addEventListener("click", closeModal);
+  });
+
+</script>
+</body>
+</html>

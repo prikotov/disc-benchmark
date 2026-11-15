@@ -261,10 +261,10 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
 | `muse-glimmer-ctx100k/` | `muse-glimmer:ctx100k` | off, low, high (дефолт) | 3 |
 | `orcarouter-Qwen3.8-27B-Uncensored-ctx100k/` | `orcarouter/Qwen3.8-27B-Uncensored:ctx100k` | off, on | 3 |
 
-Пробный xhigh huihui вырос до полной тройки (run-10…12, 2026-11-14:
-16,16,16 — качество как low, время ×2–4, вых. токены ×2–4):
-**xhigh/max-уровни в стандартные серии не включаются**; для qwen3.8
-правило то же, отдельный пробный прогон не требуется.
+Пробный xhigh huihui и qwen3.8 — полные тройки (run-10…12 обеих:
+16/16, 16/16 у huihui; 16,16,16 у qwen3.8 — качество как low, время
+×2–4, вых. токены ×2–4): **xhigh/max-уровни в стандартные серии не
+включаются**, отдельные пробы больше не требуются.
 
 Алиас `bonsai-2:ctx100k` создан 2026-11-14 (`POST /api/create`:
 `from bonsai-2:27b` + `parameters: {"num_ctx": 102400}` — блобы весов

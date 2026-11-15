@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-15T05-12-17-850Z_01a1dd9e-dab6-7678-b507-39f3a894a09f.jsonl",
+  "turns": 31,
+  "tool_calls": 30,
+  "tools_by_name": {
+    "bash": 27,
+    "write": 1,
+    "edit": 2
+  },
+  "tokens_in": 110229,
+  "tokens_out": 14955,
+  "bash_total": 7,
+  "bash_with_network": 7,
+  "curl_to_source": 5,
+  "network_cmds_sample": [
+    "cd /tmp && curl -s \\\"https://stratoplan-school.com/disc/\\\" -o disc_page.html && wc -c disc_page.html && echo \\\"---HEAD---\\\" && head -50 disc_page.html",
+    "cd /tmp && curl -s \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o disc_patched.js && wc -c disc_patched.js && curl -s \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" -o app.js && echo \\\"app.js size\\\" && wc -c app.js && curl -s \\\"https://stratoplan-school.com/css/main_patched",
+    "cd /tmp && for f in js/iform.js js/tracker.js js/fab.js css/root.css css/style_main.css; do out=$(echo $f | tr '/' '_'); curl -s \\\"https://stratoplan-school.com/$f\\\" -o \\\"$out\\\" && echo \\\"$out: $(wc -c < $out) bytes\\\"; done",
+    "cd /tmp && for base in \\\"\\\" \\\"/disc\\\"; do echo \\\"=== base '$base' ===\\\"; curl -s \\\"https://stratoplan-school.com$base/js/disc_patched.js?v=0.0.0.6\\\" | file -; curl -s \\\"https://stratoplan-school.com$base/js/app.js?v=0.0.0.1\\\" | file -; done",
+    "cd /tmp && for f in js/disc_patched.js?v=0.0.0.6 js/app.js?v=0.0.0.1 js/tracker.js; do out=$(echo \\\"disc_$f\\\" | tr '/' '_'); curl -s \\\"https://stratoplan-school.com/disc/$f\\\" -o \\\"$out\\\" && echo \\\"$out: $(wc -c < $out) bytes\\\"; done"
+  ],
+  "errors": 2,
+  "first_ts": "2026-11-15T05:12:17.850Z",
+  "last_ts": "2026-11-15T05:16:17.325Z"
+}

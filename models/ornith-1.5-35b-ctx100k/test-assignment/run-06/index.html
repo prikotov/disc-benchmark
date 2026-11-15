@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Тест DISC для руководителей</title>
+<meta name="description" content="Пройдите тест DISC и узнайте свой поведенческий профиль прямо в приложении. Работает офлайн, без отправки данных и внешних запросов." />
+<style>
+*{box-sizing:border-box}
+:root{
+  --blue:#215FCB; --ink:#13181f; --gray:#6a7686; --inksoft:#3e4a5a; --line:#e6e9ef; --soft:#f6f8fc;
+  --blue-d:#174AA3;
+}
+html,body{margin:0;padding:0}
+body{background:#eef3fb;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,"PT Sans","BlinkMacSystemFont",sans-serif;line-height:1.5}
+.wrap{max-width:920px;margin:0 auto;padding:54px 22px 40px;text-align:center}
+.eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--blue);border-radius:999px;padding:5px 13px;margin-bottom:20px}
+h1{font-size:34px;font-weight:800;margin:0 0 12px;line-height:1.15}
+.lead{font-size:17px;color:var(--inksoft);max-width:640px;margin:0 auto 26px}
+.features{display:flex;gap:16px;margin:0 0 26px;text-align:left}
+.feature{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;flex:1}
+.feature h3{margin:0 0 6px;font-size:14px;font-weight:700}
+.feature p{margin:0;font-size:13px;color:var(--gray)}
+.big{background:var(--blue);color:#fff;font-size:18px;font-weight:600;padding:14px 38px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 8px 24px rgba(33,95,203,.28)}
+.big:hover{background:var(--blue-d)}
+button{font-family:inherit}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-thumb{background:#c7d0e0;border-radius:10px}
+
+.modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px}
+.overlay{position:absolute;inset:0;background:rgba(14,24,42,.5)}
+.dialog{position:relative;width:min(820px,100%);max-height:92vh;display:flex;flex-direction:column;background:#fff;border-radius:16px;box-shadow:0 24px 80px rgba(14,24,42,.3);overflow:hidden}
+.d-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:26px;line-height:1;color:#9aa4b2;cursor:pointer;padding:2px 8px;border-radius:8px}
+.d-close:hover{background:var(--soft);color:var(--ink)}
+.d-head{padding:22px 26px 14px}
+.d-title{font-size:22px;font-weight:800;margin:0 0 8px}
+.d-sub{font-size:15px;color:var(--gray);margin:0 0 4px}
+.d-lead{font-size:15px;font-weight:500;margin:0;color:var(--inksoft)}
+.prog{height:6px;background:var(--line);margin:0}
+.prog-bar{height:100%;background:var(--blue);width:12.5%;transition:width .3s ease}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;padding:12px 26px 6px;margin:0}
+.tab{background:var(--soft);border:1px solid var(--line);color:var(--gray);padding:6px 14px;border-radius:999px;font-size:14px;cursor:pointer;transition:all .15s ease}
+.tab:hover{border-color:var(--blue)}
+.tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.m-body{overflow:auto;padding:10px 26px 6px}
+.pane{display:none}
+.pane.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px 12px 16px;background:#fff}
+.card-title{font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--blue);text-align:center;margin-bottom:10px}
+.card-foot{font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--gray);text-align:center;margin-top:10px}
+.sc-list{list-style:none;margin:0;padding:6px;background:var(--soft);border-radius:10px;display:block;font-size:14px}
+.sc-item{display:flex;align-items:center;gap:9px;padding:9px 11px;margin:5px 0;background:#fff;border:1px solid var(--line);border-radius:9px}.sc-item:nth-child(1){border-color:var(--blue)}
+.sc-item:hover{border-color:#c9d5ee}
+.sc-handle{color:#b9c4d6;line-height:0;user-select:none}
+.sc-pos{font-weight:700;color:#9aa4b2}
+.m-actions{display:flex;justify-content:space-between;align-items:center;padding:16px 26px;margin:0}
+.btn{border-radius:10px;padding:11px 24px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid transparent}
+.btn-ghost{background:#fff;color:var(--blue);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--blue)}
+.btn-ghost:disabled{color:#c3cad6;border-color:var(--line);cursor:not-allowed;pointer-events:none}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(33,95,203,.25)}
+.btn-primary:hover{background:var(--blue-d)}
+.nav-right{margin-left:auto}
+
+.res{position:fixed;inset:0;background:#eef3fb;display:none;box-sizing:border-box}
+.res.open{display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:40px 24px}
+.res-card{background:#fff;border-radius:18px;padding:34px 30px;max-width:680px;width:100%;box-shadow:0 24px 64px rgba(33,95,203,.2)}
+.res-card h2{font-size:25px;font-weight:800;margin:0 0 6px}
+.res-sub{color:var(--gray);margin:0 0 22px;font-size:15px}
+.res-line{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 8px}
+.res-line .chip{display:flex;align-items:center;gap:9px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-weight:700}
+.chip-l{font-size:16px}
+.chip-v{font-size:16px}
+.chip-pos{color:#2ec07a}
+.chip-neg{color:#e65840}
+.bars{max-width:600px;margin:14px auto 0}
+.brow{margin:12px 0}
+.b-top{display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:4px}
+.b-track{height:16px;background:var(--line);border-radius:8px;overflow:hidden;position:relative}
+.b-fills{position:absolute;top:0;left:0;right:0;bottom:0}
+.bar{position:absolute;height:100%;transition:width .5s ease}
+.bar.pos{right:0;background:#2ec07a}
+.bar.neg{left:0;background:#e65840}
+.b-center{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#c9d4e8;transform:translateX(-1px)}
+.res-note{color:var(--gray);font-size:13px;margin:22px 0 0;max-width:560px}
+.res-btn{margin-top:18px}
+@media (max-width:720px){
+  .features{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .m-lead,.d-sub{font-size:14px}
+}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="eyebrow">Школа менеджмента Стратоплан</span>
+    <h1>Тест DISC по поведению</h1>
+    <p class="lead">Оцените по четырём осям — Доминация, Влияние, Стабильность и Соответствие и узнайте свой поведенеческий профиль прямо здесь и сейчас — без почты и внешних сервисов; результат остаётся только у вас в браузере.</p>
+    <div class="grid" style="align-items:stretch">
+      <div class="feature"><h3>Быстро и просто</h3><p>Перетащите прилагательные из&nbsp;«наиболее» в&nbsp;«наименее»; 8 кругов вопросов, по&nbsp;пять вариантов ответов.</p></div>
+      <div class="feature"><h3>Сразу результат</h3><p>По&nbsp;завершении увидите свои баллы&nbsp;&mdash; сколько раз попадали в&nbsp;«топ», «блике» и&nbsp;«низ» по&nbsp;осям D, I, S, C.</p></div>
+      <div class="feature"><h3>Никакой рекламы и рассылок</h3><p>Данные не&nbsp;отправляются нигде &mdash; и в&nbsp;этом главная ценность&nbsp;&mdash; вы&nbsp;владеете своим профилем.</p></div>
+    </div>
+    <button class="big" id="open" type="button">Пройти тест</button>
+  </div>
+
+  <div class="modal" id="modal" aria-modal="true" style="display:none" hidden>
+    <div class="overlay" data-close></div>
+    <div class="dialog" role="dialog" aria-labelledby="dTitle">
+      <button class="d-close" type="button" data-close aria-label="Закрыть">×</button>
+      <div class="d-head">
+        <h2 class="d-title" id="dTitle">Тестирование DISC</h2>
+        <p class="d-sub">Помните, что честнее вы с тестом, тем точнее результат!</p>
+        <p class="d-lead">Нажмите на прилагательное и перетащите его в&nbsp;«наименее»&nbsp;— либо используйте стр…ки вкладки в&nbsp;вершине.</p>
+      </div>
+      <div class="prog"><div class="prog-bar" id="prog"></div></div>
+      <div class="tabs" role="tablist" aria-label="Список вопросов">
+        <button class="tab active" data-step="0" type="button">Первый круг</button>
+        <button class="tab" data-step="1" type="button">Второй круг</button>
+        <button class="tab" data-step="2" type="button">Третий круг</button>
+        <button class="tab" data-step="3" type="button">Четвертый круг</button>
+        <button class="tab" data-step="4" type="button">Пятый круг</button>
+        <button class="tab" data-step="5" type="button">Шестой круг</button>
+        <button class="tab" data-step="6" type="button">Седьмой круг</button>
+        <button class="tab" data-step="7" type="button">Восьмой круг</button>
+      </div>
+      <div class="m-body" id="body">
+        <div class="pane active" data-pane="0"></div>
+        <div class="pane" data-pane="1"></div>
+        <div class="pane" data-pane="2"></div>
+        <div class="pane" data-pane="3"></div>
+        <div class="pane" data-pane="4"></div>
+        <div class="pane" data-pane="5"></div>
+        <div class="pane" data-pane="6"></div>
+        <div class="pane" data-pane="7"></div>
+      </div>
+      <div class="m-actions">
+        <button class="btn btn-ghost" id="prev" disabled>Назад</button>
+        <div class="nav-right">
+          <button class="btn btn-primary" id="next" type="button">Далее</button>
+          <button class="btn btn-primary" id="finish" type="button" hidden>Завершить тест</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="res" id="res">
+    <div class="res-card">
+      <h2>Ваш результат теста DISC</h2>
+      <p class="res-sub">Распределение по четырём осям, где <b>+</b> &mdash; сколько раз вы поставили вариант первым, а <b>&minus;</b> — последним. Сумма по всем осям&nbsp;&mdash; ноль.</p>
+      <div class="res-line" id="resLine"></div>
+      <div class="bars" id="resBars"></div>
+      <p class="res-note">Обратите внимание: мы не даем расшифовку вашим индивидуальным результатам. Вместо этого мы помогаем вам использовать этот инструмент для самоанализа и работы с вашими командами, сотрудниками и коллегами.</p>
+      <div style="text-align:center"><button class="btn btn-primary res-btn" id="restart" type="button">Пересдать тест</button></div>
+    </div>
+  </div>
+
+<script>
+var _A = [[[["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],[["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],[["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]], [[["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],[["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],[["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]], [[["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],[["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],[["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]], [[["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],[["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],[["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]], [[["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],[["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],[["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]], [[["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],[["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],[["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]], [[["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],[["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],[["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]], [[["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],[["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],[["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]]]
+var STEPS = 8;
+var current = 0;
+var DRAG = null;
+var DROPPED = {};
+
+var itemsSVG = '<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><circle cx="2" cy="2" r="1.6" fill="currentColor"/><circle cx="16" cy="2" r="1.6" fill="currentColor"/><circle cx="2" cy="6" r="1.6" fill="currentColor"/><circle cx="16" cy="6" r="1.6" fill="currentColor"/><circle cx="2" cy="10" r="1.6" fill="currentColor"/><circle cx="16" cy="10" r="1.6" fill="currentColor"/></svg>';
+
+var labels = {
+  d: ['Доминирование','Дом.'],
+  i: ['Влияние','Вл.'],
+  s: ['Стабильность','Ст.'],
+  c: ['Соответствие','Сам.']
+};
+
+function buildItem(p){
+  /* p = [type, text] */
+  var li = document.createElement('li');
+  li.className = 'sc-item';
+  li.setAttribute('data-type', p[0]);
+  li.appendChild(elSpan('sc-handle'), itemsSVG);
+  li.appendChild(elSpan('sc-pos'));
+  li.appendChild(elText(' '+p[1]+' '));
+  return li;
+}
+function elSpan(cls, html){ var s=document.createElement('span'); s.className=cls; if(html!=null) s.innerHTML=html; return s; }
+function elText(t){ return document.createTextNode(t); }
+
+function buildCard(items){
+  var card=document.createElement('div');
+  card.className='card';
+  var title=document.createElement('div'); title.className='card-title'; title.textContent='Я наиболее'; card.appendChild(title);
+  var ul=document.createElement('ul'); ul.className='sc-list'; ul.style.listStyle='none';
+  items.forEach(function(item){ ul.appendChild(buildItem(item)); });
+  card.appendChild(ul);
+  var foot=document.createElement('div'); foot.className='card-foot'; foot.textContent='Я наименее'; card.appendChild(foot);
+  return card;
+}
+
+function renderPane(n){
+  var pane=document.createElement('div'); 
+  var grid=document.createElement('div'); grid.className='grid';
+  var data = _A[n];
+  data.forEach(function(list){
+    var c = _A[n].length ? buildCard(list) : null;
+    if(c) grid.appendChild(c);
+  });
+  return grid;
+}
+
+function renderAllPanes(){
+  var panes = document.querySelectorAll('.pane');
+  var grid = renderPane(current);
+  panes[0].appendChild(grid);
+  bindGrid(grid);
+  showPane(0);
+}
+
+function showPane(n){
+  var panes=document.querySelectorAll('.pane');
+  panes.forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-pane')==n); });
+  var tabs=document.querySelectorAll('.tab');
+  tabs.forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-step')==n); });
+  var prog=document.getElementById('prog');
+  prog.style.width=((n+1)/STEPS*100)+'%';
+
+  var prev=document.getElementById('prev');
+  var next=document.getElementById('next');
+  var finish=document.getElementById('finish');
+  prev.disabled = (n===0);
+  next.hidden=((n===STEPS-1));
+  finish.hidden=(!(n===STEPS-1));
+}
+
+function openModal(){
+  var m=document.getElementById('modal');
+  m.hidden=false; m.style.display='flex'; m.setAttribute('aria-hidden','false');
+  if(!window.__ran){ renderAllPanes(); window.__ran=true; }
+}
+function closeModal(){
+  var m=document.getElementById('modal');
+  m.hidden=true; m.style.display='none'; m.setAttribute('aria-hidden','true');
+  current=0; showPane(0);
+}
+
+function step(dir){
+  var n=current+dir;
+  if(n<0||n>STEPS-1) return;
+  current=n;
+  showPane(n);
+}
+
+// pointer-based drag & reorder within a list
+function dragFrom(list, x, y){
+  var el = document.elementFromPoint(x,y);
+  while(el && !(el.classList && el.classList.contains('sc-item'))) el=el.parentElement;
+  return el;
+}
+
+function bindGrid(grid){
+  /* touch drag: reorder within its own parent list */
+  grid.addEventListener('touchstart', function(e){
+    var t=e.touches[0];
+    var item=dragFrom(grid,t.clientX,t.clientY);
+    if(!item) return;
+    DRAG=item;
+    var parent=item.parentNode; var list=parent.closest('.sc-list');
+    list._dragStartList=list;
+  }, {passive:true});
+  grid.addEventListener('touchmove', function(e){
+    if(!DRAG) return;
+    e.preventDefault();
+    var x=e.touches[0].clientX, y=e.touches[0].clientY;
+    var target=dragFrom(DRAG.parentNode, x,y);
+    var list=DRAG.parentNode;
+    var items=[].slice.call(list.children);
+    var idx=items.indexOf(DRAG);
+    var mid = y - list.getBoundingClientRect().top;
+    var afterLast = mid > items[idx].getBoundingClientRect().height*items.idx? idx+1 : idx;
+    if(target && target!==DRAG){
+      var ti=items.indexOf(target);
+      if(mid < target.getBoundingClientRect().height/2){
+        list.insertBefore(DRAG, target);
+      } else {
+        list.insertBefore(DRAG, target.nextSibling);
+      }
+    }
+  }, {passive:false});
+  grid.addEventListener('touchend', function(){ DRAG=null; });
+}
+
+function runResult(){
+  var counts={d:0,i:0,s:0,c:0};
+  var lists=document.querySelectorAll('.sc-item');
+  lists.forEach(function(li){
+    var ul=li.parentNode;
+    var items=[].slice.call(ul.children);
+    var pos=items.indexOf(li);
+    var type=li.getAttribute('data-type');
+    if(pos===0) counts[type]=(counts[type]||0)+1;
+    else if(pos===3) counts[type]=(counts[type]||0)-1;
+  });
+
+  var res=document.getElementById('res');
+  var line=document.getElementById('resLine');
+  var bars=document.getElementById('resBars');
+  line.innerHTML='';
+  bars.innerHTML='';
+
+  var order=['d','i','s','c'];
+  order.forEach(function(t){
+    var chp=document.createElement('div');
+    chp.className='chip';
+    var l=document.createElement('div'); l.className='chip-l'; l.textContent=t.toUpperCase();
+    var v=document.createElement('div'); v.className='chip-v '+((counts[t]>=0)?'chip-pos':'chip-neg');
+    v.textContent=(counts[t]>=0?'+':'')+counts[t];
+    chp.appendChild(l); chp.appendChild(v);
+    line.appendChild(chp);
+
+    var row=document.createElement('div'); row.className='brow';
+    var top=document.createElement('div'); top.className='b-top';
+    var name=document.createElement('div'); name.textContent=labels[t][0];
+    var val=document.createElement('div'); val.textContent=(counts[t]>=0?'+':'')+counts[t];
+    top.appendChild(name); top.appendChild(val);
+    var track=document.createElement('div'); track.className='b-track';
+    var center=document.createElement('div'); center.className='b-center';
+    track.appendChild(center);
+    var pos=document.createElement('div'); pos.className='bar pos';
+    var neg=document.createElement('div'); neg.className='bar neg';
+    if(counts[t]>0){
+      pos.style.width=Math.min(counts[t],24)*(100/24/2)+'%';
+    }
+    else if(counts[t]<0){
+      neg.style.width=Math.min(-counts[t],24)*(100/24/2)+'%';
+    }
+    track.appendChild(pos);
+    row.appendChild(top);
+    row.appendChild(track);
+    bars.appendChild(row);
+  });
+}
+function openResult(){ runResult(); document.getElementById('res').classList.add('open'); }
+function closeResult(){ document.getElementById('res').classList.remove('open'); }
+
+document.getElementById('open').addEventListener('click', function(){ openModal(); });
+
+document.querySelectorAll('[data-close]').forEach(function(el){
+  el.addEventListener('click', function(){ closeModal(); });
+});
+
+document.getElementById('next').addEventListener('click', function(){ if(current<STEPS-1){ step(1); } });
+document.getElementById('prev').addEventListener('click', function(){ if(current>0){ step(-1); } });
+document.getElementById('finish').addEventListener('click', function(){ closeModal(); openResult(); window.scrollTo(0,0); });
+
+document.querySelectorAll('.tab').forEach(function(tab){
+  tab.addEventListener('click', function(){ var n=parseInt(tab.getAttribute('data-step'),10); current=n; showPane(n); window.scrollTo(0,0); });
+});
+
+document.getElementById('restart').addEventListener('click', function(){ closeResult(); openModal(); window.scrollTo(0,0); });
+
+// Keyboard: arrow left/right = prev/next
+document.addEventListener('keydown', function(e){
+  if(document.getElementById('modal').hidden) return;
+  if(e.key==='ArrowLeft'){ step(-1); window.scrollTo(0,0); }
+  else if(e.key==='ArrowRight'){ step(1); window.scrollTo(0,0); }
+});
+</script>
+</body>
+</html>

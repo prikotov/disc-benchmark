@@ -26,7 +26,11 @@ const jsonPath = arg('json') ? path.resolve(arg('json')) : path.join(outDir, 'pl
 fs.mkdirSync(outDir, { recursive: true });
 
 const ref = JSON.parse(fs.readFileSync(refPath, 'utf-8'));
-const KNOWN_QUIRKS = { 'Экспресcивный': 'Экспрессивный' };
+const KNOWN_QUIRKS = {
+  'Экспресcивный': 'Экспрессивный',
+  'Любитель приключеный': 'Любитель приключений', // muse: опечатка модели в данных приложения
+};
+
 
 const normIn = (s, qj) => {
   s = (s || '').replace(/\s+/g, ' ').trim();
@@ -115,7 +119,9 @@ const FIND_LISTS_SRC = (keysJson, quirksJson) => {
     s = (s || '').replace(/\s+/g, ' ').trim();
     s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, '');
     const q = JSON.parse(quirksJson);
-    return q[s] || s;
+    s = q[s] || s;
+    if (/ний$/.test(s)) s = s.replace(/ний$/, 'ный');
+    return s;
   };
   const keys = new Set(JSON.parse(keysJson));
   let n = 0;
@@ -128,6 +134,83 @@ const FIND_LISTS_SRC = (keysJson, quirksJson) => {
   return n;
 };
 const findLists = (page) => page.evaluate(FIND_LISTS_SRC, refKeysJson, quirksJson);
+
+const DUMP_ORDERS_FN = (mapJson2, quirksJson2) => {
+  const norm = (s) => {
+    s = (s || '').replace(/\s+/g, ' ').trim();
+    s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, '');
+    const q = JSON.parse(quirksJson2);
+    s = q[s] || s;
+    // типовая опечатка приложений: «Агрессивний» вместо «Агрессивный»
+    if (/ний$/.test(s)) s = s.replace(/ний$/, 'ный');
+    return s;
+  };
+  const refMap = new Map(JSON.parse(mapJson2));
+  const orders = [];
+  for (const el of document.querySelectorAll('body *')) {
+    if (el.children.length !== 4) continue;
+    const children = [...el.children];
+    const texts = children.map((c) => norm(c.textContent));
+    if (texts.some((t) => !t || t.length > 40)) continue;
+    const typeMap = refMap.get([...texts].sort().join('|'));
+    if (!typeMap) continue;
+    orders.push({ top: typeMap[norm(children[0].textContent)],
+                  bot: typeMap[norm(children[3].textContent)] });
+  }
+  return orders;
+};
+
+const REORDER_ONE_FN = (kLocal, startQi, planJson, mapJson2, quirksJson2) => {
+  const norm = (s) => {
+    s = (s || '').replace(/\s+/g, ' ').trim();
+    s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, '');
+    const q = JSON.parse(quirksJson2);
+    return q[s] || s;
+  };
+  const refMap = new Map(JSON.parse(mapJson2));
+  const plan = JSON.parse(planJson);
+  let seen = -1;
+  for (const el of document.querySelectorAll('body *')) {
+    if (el.children.length !== 4) continue;
+    const children = [...el.children];
+    const texts = children.map((c) => norm(c.textContent));
+    if (texts.some((t) => !t || t.length > 40)) continue;
+    const typeMap = refMap.get([...texts].sort().join('|'));
+    if (!typeMap) continue;
+    seen++;
+    if (seen !== kLocal) continue;
+    const [maj, min] = plan[startQi + seen] || ['d', 'c'];
+    const byType = (t) => children.find((c) => typeMap[norm(c.textContent)] === t);
+    const top = byType(maj), bot = byType(min);
+    if (top) el.insertBefore(top, el.firstChild);
+    if (bot) el.appendChild(bot);
+    const ulR = el.getBoundingClientRect();
+    const ux = ulR.left + ulR.width / 2;
+    const topY = ulR.top + 4, botY = ulR.bottom - 4;
+    for (const [child, ty] of [[top, topY], [bot, botY]].filter(([c]) => c)) {
+      const r = child.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const dt = new DataTransfer();
+      child.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: dt, clientX: cx, clientY: r.top + r.height / 2 }));
+      el.dispatchEvent(new DragEvent('dragenter', { bubbles: true, cancelable: true, dataTransfer: dt, clientX: ux, clientY: ty }));
+      el.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt, clientX: ux, clientY: ty }));
+      el.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt, clientX: ux, clientY: ty }));
+      child.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true, dataTransfer: dt, clientX: cx, clientY: ty }));
+      child.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, button: 0, clientX: cx, clientY: ty }));
+      child.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, cancelable: true, pointerId: 1, clientX: cx, clientY: ty }));
+      child.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    const t2 = byType(maj), b2 = byType(min);
+    if (t2 && b2) {
+      const want = [t2, ...children.filter((c) => c !== t2 && c !== b2), b2];
+      const cur = [...el.children];
+      if (cur.length === 4 && cur.some((c, i) => c !== want[i])) want.forEach((c) => el.appendChild(c));
+    }
+    for (const type of ['input', 'change']) el.dispatchEvent(new Event(type, { bubbles: true }));
+    return true;
+  }
+  return false;
+};
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -146,7 +229,7 @@ const findLists = (page) => page.evaluate(FIND_LISTS_SRC, refKeysJson, quirksJso
     result.layout.start_overflow = await page.evaluate(() =>
       document.documentElement.scrollWidth > window.innerWidth + 2);
 
-    const clicked = await clickByText(page, 'пройти\\s*тест|начать\\s*тест|начнем|прошли\\s*тест');
+    const clicked = await clickByText(page, 'пройти[\\s\\S]{0,20}тест|начать\\s*тест|начнем|прошли\\s*тест');
     if (clicked) { result.nav.next_clicks++; result.notes.push('старт: клик по «' + clicked + '»'); }
     await sleep(600);
 
@@ -158,42 +241,12 @@ const findLists = (page) => page.evaluate(FIND_LISTS_SRC, refKeysJson, quirksJso
         nLists = await page.evaluate(FIND_LISTS_SRC, refKeysJson, quirksJson);
       }
 
-      // DOM-раскладка по плану: мажор наверх, минор вниз (детерминированно)
+      // DOM-раскладка по плану: один список за evaluate — даём обработчикам приложения
+      // время оседать (model-driven приложения чувствительны к залпу событий)
+      const passStart = result.questions_processed;
       for (let k = 0; k < nLists && result.questions_processed < 24; k++) {
-        const qi = result.questions_processed;
-        const maj = PLAN[qi][0], min = PLAN[qi][1];
-        const applied = await page.evaluate((k2, maj2, min2, mapJson2, quirksJson2) => {
-          const norm = (s) => {
-            s = (s || '').replace(/\s+/g, ' ').trim();
-            s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, '');
-            const q = JSON.parse(quirksJson2);
-            return q[s] || s;
-          };
-          const refMap = new Map(JSON.parse(mapJson2));
-          let seen = -1;
-          for (const el of document.querySelectorAll('body *')) {
-            if (el.children.length !== 4) continue;
-            const children = [...el.children];
-            const texts = children.map((c) => norm(c.textContent));
-            if (texts.some((t) => !t || t.length > 40)) continue;
-            const typeMap = refMap.get([...texts].sort().join('|'));
-            if (!typeMap) continue;
-            seen++;
-            if (seen !== k2) continue;
-            const byType = (t) => children.find((c) => typeMap[norm(c.textContent)] === t);
-            const top = byType(maj2), bot = byType(min2);
-            if (top) el.insertBefore(top, el.firstChild);
-            if (bot) el.appendChild(bot);
-            for (const child of [top, bot].filter(Boolean)) {
-              for (const type of ['dragstart', 'dragend', 'mouseup', 'pointerup', 'change']) {
-                child.dispatchEvent(new Event(type, { bubbles: true }));
-              }
-            }
-            for (const type of ['input', 'change']) el.dispatchEvent(new Event(type, { bubbles: true }));
-            return true;
-          }
-          return false;
-        }, k, maj, min, refMapJson, quirksJson);
+        const applied = await page.evaluate(REORDER_ONE_FN, k, passStart,
+          JSON.stringify(PLAN), refMapJson, quirksJson);
         if (applied) {
           result.questions_processed++;
           if (result.questions_processed === 3) await shot(page, 'step');
@@ -202,29 +255,15 @@ const findLists = (page) => page.evaluate(FIND_LISTS_SRC, refKeysJson, quirksJso
 
       if (result.questions_processed >= 24) {
         // дамп фактических раскладок (верх/низ каждого вопроса) до завершения
-        result.final_orders = await page.evaluate((mapJson2, quirksJson2) => {
-          const norm = (s) => {
-            s = (s || '').replace(/\s+/g, ' ').trim();
-            s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, '');
-            const q = JSON.parse(quirksJson2);
-            return q[s] || s;
-          };
-          const refMap = new Map(JSON.parse(mapJson2));
-          const orders = [];
-          for (const el of document.querySelectorAll('body *')) {
-            if (el.children.length !== 4) continue;
-            const children = [...el.children];
-            const texts = children.map((c) => norm(c.textContent));
-            if (texts.some((t) => !t || t.length > 40)) continue;
-            const typeMap = refMap.get([...texts].sort().join('|'));
-            if (!typeMap) continue;
-            orders.push({ top: typeMap[norm(children[0].textContent)],
-                          bot: typeMap[norm(children[3].textContent)] });
-          }
-          return orders;
-        }, refMapJson, quirksJson);
+        result.final_orders = await page.evaluate(DUMP_ORDERS_FN, refMapJson, quirksJson);
         const fin = await clickByText(page, 'заверш|finish|результат|узнать результат');
-        if (fin) { result.nav.finish_clicked = true; result.notes.push('клик «' + fin + '»'); break; }
+        if (fin) {
+          result.nav.finish_clicked = true; result.notes.push('клик «' + fin + '»');
+          // пост-дамп: DOM после клика финала (некоторые приложения ре-рендерят)
+          await sleep(500);
+          result.final_orders_after = await page.evaluate(DUMP_ORDERS_FN, refMapJson, quirksJson);
+          break;
+        }
       }
       const nxt = await clickByText(page, 'далее|дальше|next|следующ|→|›|»');
       if (nxt) { result.nav.next_clicks++; await sleep(450); continue; }
@@ -246,12 +285,27 @@ const findLists = (page) => page.evaluate(FIND_LISTS_SRC, refKeysJson, quirksJso
       result.parse_mode = 'canonical';
     } else {
       const scores = {};
-      let cur = null;
-      for (const line of bodyText.split('\n')) {
-        const t = line.trim();
-        const th = t.match(/^(?:Доминиров|Влияни|Стабильн|Соответств|Добросовестн).*\(([disc])\)|^([DISC])\b/i);
-        if (th) { cur = (th[1] || th[2]).toLowerCase(); continue; }
-        if (cur && /^[+−–-]?\d+$/.test(t)) { scores[cur] = parseInt(t.replace(/[−–]/g, '-'), 10); cur = null; }
+      const num = (s) => { const m2 = (s || '').trim().match(/^(?:Балл\s*[:=]?\s*)?([+−–-]?\d+)/); return m2 ? parseInt(m2[1].replace(/[−–]/g, '-'), 10) : null; };
+      const isLabel = /^(?:Доминиров|Влияни|Стабильн|Соответств|Добросовестн|Dominan|Influen|Stabilit|Conscient|Complian).*?(?:\(([disc])\)|\b([disc])\b)[\s).]*$/i;
+      const lines = bodyText.split('\n').map((t) => t.trim()).filter(Boolean);
+      const used = new Set();
+      for (let i2 = 0; i2 < lines.length; i2++) {
+        // вариант «однобуквенная строка»: D / 5 / I / 2 ...
+        let cur = null;
+        if (/^[disc]$/i.test(lines[i2])) cur = lines[i2].toLowerCase();
+        else {
+          const th = lines[i2].match(isLabel);
+          if (th) cur = (th[1] || th[2]).toLowerCase();
+        }
+        if (!cur || (cur in scores)) continue;
+        // число: на строке метки; «чистое» число до метки (если не занято); иначе после
+        let vi = -1;
+        let v = num(lines[i2].replace(isLabel, ''));
+        if (v != null) vi = i2;
+        if (v == null && i2 > 0 && !used.has(i2 - 1) && /^[+\u2212\u2013-]?\d+$/.test(lines[i2 - 1].trim())) { v = num(lines[i2 - 1]); vi = i2 - 1; }
+        if (v == null && i2 + 1 < lines.length && !used.has(i2 + 1)) { v = num(lines[i2 + 1]); vi = i2 + 1; }
+        if (vi >= 0) used.add(vi);
+        if (v != null) scores[cur] = v;
       }
       if (Object.keys(scores).length === 4) {
         result.displayed = { d: scores.d, i: scores.i, s: scores.s, c: scores.c };

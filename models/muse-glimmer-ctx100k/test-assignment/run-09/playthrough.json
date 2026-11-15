@@ -17,9 +17,14 @@
     "start_overflow": false,
     "result_overflow": false
   },
-  "displayed": null,
-  "displayed_match": null,
-  "raw_result_text": "Пройти тест DISC\nВаши результаты DISC\n\nСамый выраженный стиль: Доминирование (D)\n\nДоминирование (D)\nБалл: 24 (нормализовано 100%)\nВлияние (I)\nБалл: 0 (нормализовано 50%)\nСтабильность (S)\nБалл: 0 (нормализовано 50%)\nСоответствие (C)\nБалл: -24 (нормализовано 0%)\nЗакрыть",
+  "displayed": {
+    "d": 0,
+    "i": 0,
+    "s": -24,
+    "c": 24
+  },
+  "displayed_match": false,
+  "raw_result_text": "Пройти тест DISC\nВаши результаты DISC\n\nСамый выраженный стиль: Соответствие (C)\n\nДоминирование (D)\nБалл: 0 (нормализовано 50%)\nВлияние (I)\nБалл: 0 (нормализовано 50%)\nСтабильность (S)\nБалл: -24 (нормализовано 0%)\nСоответствие (C)\nБалл: 24 (нормализовано 100%)\nЗакрыть",
   "screenshots": [
     "start.png",
     "step.png",
@@ -27,25 +32,20 @@
   ],
   "notes": [
     "старт: клик по «Пройти тест DISC»",
-    "клик «Завершить тест»",
-    "баллы D/I/S/C не найдены"
+    "клик «Завершить тест»"
   ],
   "console_errors": [],
-  "incomplete": true,
-  "flow_ok": false,
-  "ux_score": 5,
+  "incomplete": false,
+  "flow_ok": true,
+  "ux_score": 50,
   "final_orders": [
     {
-      "top": "d",
-      "bot": "c"
-    },
-    {
-      "top": "d",
+      "top": "c",
       "bot": "s"
     },
     {
       "top": "d",
-      "bot": "c"
+      "bot": "s"
     },
     {
       "top": "i",
@@ -128,8 +128,103 @@
       "bot": "c"
     },
     {
-      "top": "c",
+      "top": "i",
       "bot": "s"
     }
-  ]
+  ],
+  "final_orders_after": [
+    {
+      "top": "c",
+      "bot": "s"
+    },
+    {
+      "top": "d",
+      "bot": "s"
+    },
+    {
+      "top": "i",
+      "bot": "s"
+    },
+    {
+      "top": "d",
+      "bot": "c"
+    },
+    {
+      "top": "i",
+      "bot": "s"
+    },
+    {
+      "top": "d",
+      "bot": "i"
+    },
+    {
+      "top": "i",
+      "bot": "c"
+    },
+    {
+      "top": "d",
+      "bot": "i"
+    },
+    {
+      "top": "i",
+      "bot": "d"
+    },
+    {
+      "top": "s",
+      "bot": "c"
+    },
+    {
+      "top": "c",
+      "bot": "s"
+    },
+    {
+      "top": "d",
+      "bot": "i"
+    },
+    {
+      "top": "i",
+      "bot": "d"
+    },
+    {
+      "top": "s",
+      "bot": "c"
+    },
+    {
+      "top": "c",
+      "bot": "s"
+    },
+    {
+      "top": "d",
+      "bot": "i"
+    },
+    {
+      "top": "i",
+      "bot": "d"
+    },
+    {
+      "top": "s",
+      "bot": "c"
+    },
+    {
+      "top": "c",
+      "bot": "s"
+    },
+    {
+      "top": "d",
+      "bot": "i"
+    },
+    {
+      "top": "i",
+      "bot": "d"
+    },
+    {
+      "top": "s",
+      "bot": "c"
+    },
+    {
+      "top": "i",
+      "bot": "s"
+    }
+  ],
+  "parse_mode": "per-type"
 }

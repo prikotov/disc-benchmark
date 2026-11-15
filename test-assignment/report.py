@@ -180,10 +180,12 @@ def build_report_html():
                 shots = [f'<figure><img class="shot" src="data:image/png;base64,{b}" alt="{cap}"><figcaption>{cap}</figcaption></figure>' for cap, b in raw]
             uxf = run / "judge-ux.json"
             ux_score = (json.loads(uxf.read_text(encoding="utf-8")).get("verdict") or {}).get("score") if uxf.is_file() else None
+            ptf = run / "playthrough.json"
+            flow_ok = json.loads(ptf.read_text(encoding="utf-8")).get("flow_ok") if ptf.is_file() else None
             gallery.setdefault(model, []).append({
                 "run": r["run"], "thinking": r["thinking"], "score100": score100,
                 "check_passed": r["check_passed"], "shots": shots,
-                "ux_vision": ux_score,
+                "ux_vision": ux_score, "flow_ok": flow_ok, "has_app": has_app,
                 "rel_app": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/index.html" if has_app else None,
             })
     # модели по убыванию лучшего балла, прогоны по имени
@@ -197,6 +199,12 @@ def build_report_html():
         for x in rs:
             cls = "hi" if x["score100"] >= 75 else ("mid" if x["score100"] >= 40 else "lo")
             badge = '<span class="badge pass">✓ PASSED</span>' if x["check_passed"] else '<span class="badge fail">✗ FAILED</span>'
+            if x["has_app"]:
+                flow_badge = ('<span class="badge fpass" title="автопрохождение: тест завершается, баллы на экране">автопрогон ✓</span>'
+                              if x["flow_ok"] else
+                              '<span class="badge ffail" title="автопрохождение: тест не завершается / баллы не совпадают">автопрогон ✗</span>')
+            else:
+                flow_badge = ''
             link = f'<a class="try" href="{x["rel_app"]}" target="_blank">▶ открыть приложение</a>' if x["rel_app"] else '<span class="noapp">нет решения</span>'
             gallery_html.append(f"""
 <div class="gcard {cls}">
@@ -206,6 +214,7 @@ def build_report_html():
     <span class="gscore {cls}">{x["score100"]}/100<small>итог</small></span>
     <span class="gux">{x["ux_vision"] if x["ux_vision"] is not None else "—"}/100<small>vision-UX</small></span>
     {badge}
+    {flow_badge}
     {link}
   </div>
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
@@ -253,6 +262,7 @@ th{{background:#eef0f4}}
 .gux small{{display:block;font-size:9px;color:#999;font-weight:normal;letter-spacing:.04em}}
 .badge{{font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px}}
 .badge.pass{{background:#d4edda;color:#155724}} .badge.fail{{background:#f8d7da;color:#721c24}}
+.badge.fpass{{background:#dbeafe;color:#1e40af}} .badge.ffail{{background:#fee2e2;color:#991b1b}}
 .try{{display:inline-block;background:#123f8c;color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}}
 .try:hover{{background:#0e3270}} .noapp{{color:#999;font-size:13px}}
 figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}

@@ -178,7 +178,7 @@ def build_report_html():
                 if p.is_file():
                     b64 = base64.b64encode(p.read_bytes()).decode()
                     shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
-        cards.append(f"""
+            cards.append(f"""
 <div class="card">
   <h3>{r['model']} · think {r['thinking']} · <span class="run">{r['run']}</span></h3>
   <div class="meta">время {fmt_dur(r['duration_s'])} · exit {r['exit_code']} · токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,} ·

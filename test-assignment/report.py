@@ -198,13 +198,13 @@ def build_report_html():
         gallery_html.append(f'<h2 class="gmodel">{html_mod.escape(m)} <span class="avg">средний {avg:.0f}/100 · лучший {best:.0f}</span></h2>')
         for x in rs:
             cls = "hi" if x["score100"] >= 75 else ("mid" if x["score100"] >= 40 else "lo")
-            badge = '<span class="badge pass">✓ PASSED</span>' if x["check_passed"] else '<span class="badge fail">✗ FAILED</span>'
-            if x["has_app"]:
-                flow_badge = ('<span class="badge fpass" title="автопрохождение: тест завершается, баллы на экране">автопрогон ✓</span>'
-                              if x["flow_ok"] else
-                              '<span class="badge ffail" title="автопрохождение: тест не завершается / баллы не совпадают">автопрогон ✗</span>')
+            # единый статус: работает ли тест до результата
+            if not x["has_app"]:
+                badge = '<span class="badge noapp-b">нет решения</span>'
+            elif x["flow_ok"]:
+                badge = '<span class="badge pass" title="автопрохождение: тест завершается, баллы совпали с эталонной раскладкой">результат ✓</span>'
             else:
-                flow_badge = ''
+                badge = ('<span class="badge fail" title="результат не достигнут: приложение сломано и/или не поддаётся автопрохождению — детали в RUNS.html">результат ✗</span>')
             link = f'<a class="try" href="{x["rel_app"]}" target="_blank">▶ открыть приложение</a>' if x["rel_app"] else '<span class="noapp">нет решения</span>'
             gallery_html.append(f"""
 <div class="gcard {cls}">
@@ -214,7 +214,6 @@ def build_report_html():
     <span class="gscore {cls}">{x["score100"]}/100<small>итог</small></span>
     <span class="gux">{x["ux_vision"] if x["ux_vision"] is not None else "—"}/100<small>vision-UX</small></span>
     {badge}
-    {flow_badge}
     {link}
   </div>
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
@@ -262,7 +261,7 @@ th{{background:#eef0f4}}
 .gux small{{display:block;font-size:9px;color:#999;font-weight:normal;letter-spacing:.04em}}
 .badge{{font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px}}
 .badge.pass{{background:#d4edda;color:#155724}} .badge.fail{{background:#f8d7da;color:#721c24}}
-.badge.fpass{{background:#dbeafe;color:#1e40af}} .badge.ffail{{background:#fee2e2;color:#991b1b}}
+.badge.noapp-b{{background:#e5e7eb;color:#555}}
 .try{{display:inline-block;background:#123f8c;color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}}
 .try:hover{{background:#0e3270}} .noapp{{color:#999;font-size:13px}}
 figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}

@@ -288,16 +288,25 @@ const REORDER_ONE_FN = (kLocal, startQi, planJson, mapJson2, quirksJson2) => {
       for (let i2 = 0; i2 < lines.length; i2++) {
         // вариант «однобуквенная строка»: D / 5 / I / 2 ...
         let cur = null;
-        if (/^[disc]$/i.test(lines[i2])) cur = lines[i2].toLowerCase();
+        let bare = false;
+        if (/^[disc]$/i.test(lines[i2])) { cur = lines[i2].toLowerCase(); bare = true; }
         else {
           const th = lines[i2].match(isLabel);
           if (th) cur = (th[1] || th[2]).toLowerCase();
         }
         if (!cur || (cur in scores)) continue;
-        // число: на строке метки; «чистое» число до метки (если не занято); иначе после
         let vi = -1;
-        let v = num(lines[i2].replace(isLabel, ''));
-        if (v != null) vi = i2;
+        let v = null;
+        if (bare) {
+          // число может стоять через строку: «D / Доминирование / 59 баллов»
+          for (let j = i2 + 1; j < lines.length && j <= i2 + 3; j++) {
+            if (/^[disc]$/i.test(lines[j])) break; // начался следующий тип
+            v = num(lines[j]);
+            if (v != null && !used.has(j)) { vi = j; break; }
+          }
+        }
+        if (v == null) v = num(lines[i2].replace(isLabel, ''));
+        // числом-предком считаем только «чистое» число (иначе украдём балл предыдущего типа)
         if (v == null && i2 > 0 && !used.has(i2 - 1) && /^[+\u2212\u2013-]?\d+$/.test(lines[i2 - 1].trim())) { v = num(lines[i2 - 1]); vi = i2 - 1; }
         if (v == null && i2 + 1 < lines.length && !used.has(i2 + 1)) { v = num(lines[i2 + 1]); vi = i2 + 1; }
         if (vi >= 0) used.add(vi);

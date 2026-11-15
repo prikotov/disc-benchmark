@@ -149,7 +149,146 @@ def cross_report():
     return "\n".join(out) + "\n"
 
 
-def html_report(runs):
+def build_report_html():
+    """Сводный REPORT.html: методика + прогноз + все прогоны со скриншотами."""
+    import base64
+    prompt_data = json.loads((ROOT / "test-assignment" / "prompts" / "prompt.json").read_text(encoding="utf-8"))
+    prompt_text = prompt_data["prompt"]
+
+    by_model: dict[str, list] = {}
+    for mf in sorted(ROOT.glob("models/*/test-assignment/run-*")):
+        if (mf / "run.json").is_file():
+            r = run_row(mf)
+            by_model.setdefault(r["model"], []).append((mf, r))
+
+    cards = []
+    for model, items in by_model.items():
+        for run, r in items:
+            meta = load(run, "run.json")
+            chk = load(run, "check.json")
+            jd = load(run, "judge-tier1.json").get("verdict") or {}
+            esc = html_mod.escape
+            jhtml = (f'<b>судья ярус 1:</b> data {jd.get("data")} · logic {jd.get("logic")} · '
+                     f'ux {jd.get("ux")} · impl {jd.get("impl")} — <b>{jd.get("total")}/16</b>'
+                     f'<div class="notes">{esc((jd.get("notes") or ""))[:700]}</div>'
+                     f'<div class="notes">{esc((jd.get("examples") or ""))[:700]}</div>' if jd else "судья: не выполнялся")
+            shots = []
+            for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
+                p = run / "screenshots" / name
+                if p.is_file():
+                    b64 = base64.b64encode(p.read_bytes()).decode()
+                    shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
+        cards.append(f"""
+<div class="card">
+  <h3>{r['model']} · think {r['thinking']} · <span class="run">{r['run']}</span></h3>
+  <div class="meta">время {fmt_dur(r['duration_s'])} · exit {r['exit_code']} · токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,} ·
+  инструментов {r['tool_calls']} · curl к источнику {r['curl_source']} · контекст {meta.get('context')}/выход {meta.get('max_tokens')}</div>
+  <div class="checks">чек: <b class="{'pass' if r['check_passed'] else 'fail'}">{'PASSED' if r['check_passed'] else 'FAILED'}</b> ·
+  данные {r['data_found']}/{r['data_total']} · пары текст+тип {r['types_correct']}/{r['types_total']} ·
+  внешние запросы: {'нет' if r['external_pass'] else 'ЕСТЬ'} · рендер: {'OK' if r['smoke_ok'] else '—'} ·
+  автопрохождение: {'OK' if r['flow_ok'] else '—'} · совпадение баллов: {r['displayed_match']}</div>
+  <div class="shots">{''.join(shots)}</div>
+  <div class="judge">{jhtml}</div>
+</div>""")
+
+    matrix_rows = "".join(f"<tr><td>{m}</td><td>{lvl}</td><td class='st {cls}'>{st}</td></tr>"
+                          for m, lvl, st, cls in [
+        ("huihui-ai:pi-100k", "off / low / medium (+xhigh проба)", "готово: 9+1 прогонов", "done"),
+        ("qwen3.8:27b-pi-100k", "off / low / medium", "готово: 9 прогонов", "done"),
+        ("ornith-1.5:35b-ctx100k", "off / on", "готово: 3 прогонов", "done"),
+        ("gemma4:26b-pi-100k", "off / on", "готово: 6 прогонов", "done"),
+        ("bonsai-2:ctx100k", "off / low / medium", "готово: 9 прогонов", "done"),
+        ("muse-glimmer:ctx100k", "off / low / high", "готово: 9 прогонов", "done"),
+        ("orcarouter/…:ctx100k", "off / on", "готово: 6 прогонов", "done"),
+        ("gemma4:31b-it-qat-pi-100k", "off / on", "готово: 6 прогонов", "done"),
+        ("gemma4:e2b-ctx100k", "off / on", "готово: 6 прогонов", "done"),
+        ("ornith-1.5:9b", "off / on", "готово: 3 прогонов", "done"),
+        ("волна 2 (остальные вариаты) и волна 3 (облака)", "см. AGENTS.md", "по решению", "todo"),
+    ])
+
+    return f"""<!DOCTYPE html><html lang=ru><head><meta charset=utf-8><title>disc — сводный отчёт</title>
+<style>
+body{{background:#f5f6f8;margin:24px;font-family:system-ui;color:#1c2024;max-width:1100px;margin:auto}}
+h1,h2,h3{{font-family:system-ui}} h2{{border-bottom:2px solid #c9ced8;padding-bottom:4px;margin-top:36px}}
+table{{border-collapse:collapse;background:#fff;width:100%}}
+th,td{{border:1px solid #d0d4dd;padding:6px 10px;font-size:14px;text-align:left}}
+th{{background:#eef0f4}}
+.pass{{color:#0a7d32}} .fail{{color:#b3261e}}
+img.shot{{max-width:340px;border:1px solid #ccc;border-radius:6px}}
+.shots{{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}}
+</style>
+<h1>disc: сводный отчёт — тестирование копирования DISC-теста</h1>
+<p class="small">Обновлено 2026-11-15. Полная методика: reports/METHOD.md · конвенции: AGENTS.md ·
+сестринский workspace: ~/MyProjects/Models. Все скриншоты кликабельны (1:1).</p>
+<div class="toc"><a href="#method">Методика</a><a href="#prompt">Промпт дословно</a><a href="#matrix">Матрица моделей</a><a href="#forecast">Прогноз</a><a href="#runs">Прогоны и результаты</a><a href="#limits">Ограничения</a></div>
+
+<h2 id="method">1. Методика</h2>
+<h3>1.1. Задание и протокол</h3>
+<p>Модель работает <b>агентом в pi</b> с инструментами по умолчанию (bash с сетью, файлы).
+Она получает <b>только текст задания и ссылку на источник</b> — и сама изучает страницу,
+сама скачивает исходники, сама извлекает данные и алгоритм подсчёта, сама строит решение.
+Эталон (снятый с оригинала) и методология агенту недоступны.</p>
+<p>Серия: <b>3 прогона на (модель × уровень мышления)</b>, уровни off/low/default (булевы шкалы — off/on),
+облака — reasoning_effort low. Прогоны изолированы, seed не фиксируется. Стандарт — минимум 3.</p>
+
+<h3>1.2. Запуск pi (дословно)</h3>
+<pre>pi -p \
+  --session-dir &lt;run-XX&gt;/pi-session \\
+  --model &lt;тег&gt; \\
+  --thinking &lt;off|low|medium&gt; \\
+  "&lt;текст задания&gt;"</pre>
+<p>env: <code>PI_CODING_AGENT_DIR=&lt;tmp&gt;/pi-home</code> (изолированный конфиг),
+<code>PI_OFFLINE=1</code> (сам pi в сеть не ходит — сеть использует только инструмент bash агента, например <code>curl</code> к источнику).
+<code>models.json</code> собирается на лету из фактической шкалы модели (<code>/api/show</code> →
+<code>thinkingLevelMap</code>); maxTokens 8192 → 32768 для моделей с энергичным максимумом
+(xhigh/max в шкале); контекст 102400 (теги -pi-100k/-ctx100k). Рабочая директория —
+временный каталог <b>вне репозитория</b>. pi — лидер process group, таймаут 3600 с;
+фоновый наблюдатель /api/ps фиксирует конкуренцию за VRAM.</p>
+
+<h2 id="prompt">2. Промпт дословно (v3)</h2>
+<pre>{prompt_text}</pre>
+<p class="small">История версий: v1 (готовые эталонные данные) и v2 (встроенные исходники) — deprecated.
+Файл: test-assignment/prompts/prompt.json.</p>
+
+<h2 id="matrix">3. Матрица моделей (волна 1)</h2>
+<table><tr><th>модель</th><th>уровни</th><th>статус</th></tr>{matrix_rows}</table>
+
+<h2 id="forecast">4. Прогноз (предрегистрация 2026-11-14, reports/FORECAST.md)</h2>
+<p>Вопрос: переносится ли рейтинг карты знаний (Всего ru, вопросник PHP) на агентную задачу?</p>
+<table><tr><th>место</th><th>прогноз A «слепой перенос рейтинга»</th><th>прогноз B «карта + агентные поправки» (основной)</th></tr>
+<tr><td>1</td><td>huihui (low/medium)</td><td><b>huihui (low)</b></td></tr>
+<tr><td>2</td><td>orca (on)</td><td><b>qwen3.8 (low)</b></td></tr>
+<tr><td>3</td><td>qwen3.8 (low/medium)</td><td><b>orca (on)</b></td></tr>
+<tr><td>4</td><td>ornith (on)</td><td><b>muse-glimmer (high)</b> — вне карты</td></tr>
+<tr><td>5</td><td>ornith (on)</td><td><b>ornith (on)</b> — карта 88.6, агентный трек провальный</td></tr>
+<tr><td>6</td><td>—</td><td><b>gemma4-26b (on)</b> — вне карты, бимодальность</td></tr>
+<tr><td>7</td><td>—</td><td><b>bonsai (low/off)</b> — карта 87.0, агентный трек — дно (ключевой кейс)</td></tr>
+</table>
+<p class="small">Проверка после серии: Spearman рейтинга «Всего»/«Глубины» с фактическим итогом,
+совпадение топ-1, кейс bonsai.</p>
+
+<h2 id="runs">5. Прогоны и результаты</h2>
+<table style="font-size:13px"><tr><th>модель</th><th>прогон</th><th>think</th><th>время</th><th>ток. вх/вых</th><th>чек</th><th>данные</th><th>типы</th><th>поток</th><th>судья</th><th></th></tr>
+</table>
+<table><tr><th>модель</th><th>уровень</th><th>средний /16</th><th>прогоны</th></tr>
+</table>
+<p class="small">Карточки ниже свёрнуты — клик по строке открывает детали, скриншоты (клик — 1:1) и вердикт судьи. Ссылки «открыть ▸» ведут на живое приложение прогона.</p>
+{''.join(cards) if cards else '<p>прогонов пока нет</p>'}
+
+<h2 id="limits">6. Ограничения и политика</h2>
+<ul>
+<li>симуляция drag&drop невоспроизводима на произвольных реализациях (Pointer Events,
+откат SortableJS, скролл-контейнеры) — автопрохождение проверяет поток и рендер,
+логику подсчёта проверяет судья по коду; показанные баллы — справочно;</li>
+<li>рабочие файлы агента (скачанные исходники, тест-скрипты) — не недостаток и не удаляются;</li>
+<li>известные опечатки оригинала (латинская «c») — их исправление плюс модели,
+чекер фиксирует факт (known_quirk_normalized);</li>
+<li>судья яруса 1 — LLM (glm-5.3-flash, не кандидат); ярус 2 — владелец/сильный судья;</li>
+<li>нестандартные события (таймаут, конкуренция VRAM, эскалация thinking) видны в run.json.</li>
+</ul>
+</html>"""
+
+
     import base64
     cards = []
     for run in runs:

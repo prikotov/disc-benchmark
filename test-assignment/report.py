@@ -186,6 +186,7 @@ def build_report_html():
                 "run": r["run"], "thinking": r["thinking"], "score100": score100,
                 "check_passed": r["check_passed"], "shots": shots,
                 "ux_vision": ux_score, "flow_ok": flow_ok, "has_app": has_app,
+                "has_display": json.loads(ptf.read_text(encoding="utf-8")).get("displayed") is not None if ptf.is_file() else False,
                 "rel_app": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/index.html" if has_app else None,
             })
     # модели по убыванию лучшего балла, прогоны по имени
@@ -198,13 +199,19 @@ def build_report_html():
         gallery_html.append(f'<h2 class="gmodel">{html_mod.escape(m)} <span class="avg">средний {avg:.0f}/100 · лучший {best:.0f}</span></h2>')
         for x in rs:
             cls = "hi" if x["score100"] >= 75 else ("mid" if x["score100"] >= 40 else "lo")
-            # единый статус: работает ли тест до результата
+            # PASSED = все тесты прошли: чек (данные+рендер) + автопрохождение завершено
+            # + на экране есть числа результата. Сверку шкал подсчёта делает судья.
+            all_pass = bool(x["check_passed"]) and bool(x["flow_ok"]) and x["has_display"]
             if not x["has_app"]:
-                badge = '<span class="badge noapp-b">нет решения</span>'
-            elif x["flow_ok"]:
-                badge = '<span class="badge pass" title="автопрохождение: тест завершается, баллы совпали с эталонной раскладкой">результат ✓</span>'
+                badge = '<span class="badge fail">✗ FAILED</span>'
+            elif all_pass:
+                badge = '<span class="badge pass" title="все тесты прошли: данные, рендер, автопрохождение, результат отображён">✓ PASSED</span>'
             else:
-                badge = ('<span class="badge fail" title="результат не достигнут: приложение сломано и/или не поддаётся автопрохождению — детали в RUNS.html">результат ✗</span>')
+                fails = []
+                if not x["check_passed"]: fails.append('чек данных/рендера')
+                if not x["flow_ok"]: fails.append('автопрохождение не завершено')
+                elif not x["has_display"]: fails.append('результат не отображён')
+                badge = f'<span class="badge fail" title="не пройдено: {html_mod.escape("; ".join(fails))}">✗ FAILED</span>'
             link = f'<a class="try" href="{x["rel_app"]}" target="_blank">▶ открыть приложение</a>' if x["rel_app"] else '<span class="noapp">нет решения</span>'
             gallery_html.append(f"""
 <div class="gcard {cls}">

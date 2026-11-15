@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import argparse
+import html as html_mod
 import json
 import os
 from pathlib import Path
@@ -184,7 +185,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb();
                 b64 = base64.b64encode(p.read_bytes()).decode()
                 shots.append(f"<figure><img class=\"shot\" src=\"data:image/png;base64,{b64}\" alt=\"{cap}\"><figcaption>{cap} (клик — 1:1)</figcaption></figure>")
         j = (f"<b>судья:</b> data {jd.get('data')} · logic {jd.get('logic')} · ux {jd.get('ux')} · "
-             f"impl {jd.get('impl')} — <b>{jd.get('total')}/16</b><br><i>{notes[:400]}</i>" if jd else "судья: не выполнялся")
+             f"impl {jd.get('impl')} — <b>{jd.get('total')}/16</b><br><i>{html_mod.escape(notes[:400])}</i>" if jd else "судья: не выполнялся")
         cards.append(f"""
 <div style="border:1px solid #d0d4dd;border-radius:10px;padding:14px;margin:14px 0;font-family:system-ui">
   <h2 style="margin:0 0 6px">{r['model']} · think {r['thinking']} · {r['run']}</h2>
@@ -240,9 +241,11 @@ def build_report_html() -> str:
                 if pth.is_file():
                     b64 = base64.b64encode(pth.read_bytes()).decode()
                     shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
+            esc = html_mod.escape
             jhtml = (f'<b>судья ярус 1:</b> data {jd.get("data")} · logic {jd.get("logic")} · '
                      f'ux {jd.get("ux")} · impl {jd.get("impl")} — <b>{jd.get("total")}/16</b>'
-                     f'<div class="notes">{(jd.get("notes") or "")[:500]}</div>' if jd else "судья: не выполнялся")
+                     f'<div class="notes">{esc((jd.get("notes") or ""))[:700]}</div>'
+                     f'<div class="notes">{esc((jd.get("examples") or ""))[:700]}</div>' if jd else "судья: не выполнялся")
             app_link = ""
             if (run / "index.html").is_file():
                 rel = os.path.relpath(run / "index.html", ROOT / "reports")

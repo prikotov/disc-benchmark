@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Агрегация прогонов и отчёты.
 
-- report.py --run <dir>            — свод одного прогона: <run>/summary.md
-                                     + строка в scorecard модели;
-- report.py --all                  — кросс-модельный reports/RUNS.md по всем
-                                     найденным прогонам models/*/test-assignment/run-*.
+- report.py --run <dir>     — свод одного прогона: <run>/summary.md
+                              + строка в scorecard модели;
+- report.py --all           — кросс-модельный reports/RUNS.md;
+- report.py --html          — reports/RUNS.html (скриншоты инлайном, 1:1 по клику);
+- report.py --report        — сводный reports/REPORT.html
+                              (методика + промпт + прогноз + галерея + прогоны).
 
-Источники: run.json, check.json, session-stats.json, вердикты судей (позже).
+Источники: run.json, check.json, session-stats.json, playthrough.json,
+judge-tier1.json, judge-ux.json.
 """
 from __future__ import annotations
 
@@ -37,12 +40,11 @@ def run_row(run: Path) -> dict:
     st = load(run, "session-stats.json")
     pt = load(run, "playthrough.json")
     jd = load(run, "judge-tier1.json").get("verdict") or {}
-    uxj = load(run, "judge-ux.json").get("verdict") or {}
-    pt = load(run, "playthrough.json")
+    uxjf = run / "judge-ux.json"
+    uxj = json.loads(uxjf.read_text(encoding="utf-8")).get("verdict") or {} if uxjf.is_file() else {}
     model = meta.get("model") or run.parts[-3]
     return {
-        "model": model,
-        "run": run.name,
+        "model": model, "run": run.name,
         "thinking": meta.get("thinking"),
         "duration_s": meta.get("duration_s"),
         "exit_code": meta.get("exit_code"),
@@ -52,44 +54,45 @@ def run_row(run: Path) -> dict:
         "tool_calls": st.get("tool_calls") or 0,
         "curl_source": st.get("curl_to_source") or 0,
         "files": len(meta.get("files", [])),
-        "index_html": chk.get("index_html", run.joinpath("index.html").is_file()),
+        "index_html": (run / "index.html").is_file(),
         "external_pass": (chk.get("external") or {}).get("pass"),
         "data_found": (chk.get("data") or {}).get("adjectives_found"),
         "data_total": (chk.get("data") or {}).get("adjectives_total"),
         "types_correct": (chk.get("types") or {}).get("correct"),
-        "types_extracted": (chk.get("types") or {}).get("extracted"),
         "types_total": (chk.get("types") or {}).get("total"),
         "smoke_ok": (chk.get("smoke") or {}).get("ok"),
         "check_passed": chk.get("passed"),
-        "flow_ok": (pt.get("flow_ok"), pt.get("questions_processed")),
-        "screenshots": [str(run / "screenshots" / s) for s in pt.get("screenshots", [])],
+        "flow_ok": pt.get("flow_ok"),
+        "questions_processed": pt.get("questions_processed"),
+        "displayed_match": pt.get("displayed_match"),
+        "ux_score": pt.get("ux_score"),
         "judge": {"data": jd.get("data"), "logic": jd.get("logic"),
                   "ux": jd.get("ux"), "impl": jd.get("impl"),
                   "total": jd.get("total")} if jd else None,
         "ux_judge": uxj.get("score") if isinstance(uxj, dict) else None,
         "ux_judge_notes": (uxj.get("notes") or "")[:300] if isinstance(uxj, dict) else "",
-        "flow_ok": pt.get("flow_ok"),
-        "questions_processed": pt.get("questions_processed"),
-        "drags": pt.get("drags"),
     }
 
 
 def one_run_summary(run: Path) -> str:
     r = run_row(run)
     meta = load(run, "run.json")
-    chk = load(run, "check.json")
+    pt = load(run, "playthrough.json")
     st = load(run, "session-stats.json")
     lines = [
         f"# Прогон: {r['model']} — {r['run']} (thinking {r['thinking']})",
         "",
-        f"- запущен: {meta.get('started_at','—')}, длительность: {fmt_dur(r['duration_s'])}, "
+        f"- запущен: {meta.get('started_at', '—')}, длительность: {fmt_dur(r['duration_s'])}, "
         f"exit: {r['exit_code']}, убит: {'да' if r['killed'] else 'нет'}",
         f"- контекст/бюджет выхода: {meta.get('context')} / {meta.get('max_tokens')}; "
         f"промпт: v{meta.get('prompt_version')} (sha {meta.get('prompt_sha256')})",
-        f"- сессия: {st.get('turns', '—')} ходов, {r['tool_calls']} вызовов инструментов; "
-        f"токены: вх {r['tokens_in']:,} / вых {r['tokens_out']:,}" if st else "- сессия: нет статистики",
-        f"- сеть в bash: {r['curl_source']} обращений к источнику "
-        f"(curl/wget всего {st.get('bash_with_network', '—')})",
+    ]
+    if st:
+        lines.append(f"- сессия: {st.get('turns', '—')} ходов, {r['tool_calls']} вызовов инструментов; "
+                     f"токены: вх {r['tokens_in']:,} / вых {r['tokens_out']:,}")
+        lines.append(f"- сеть в bash: {r['curl_source']} обращений к источнику "
+                     f"(curl/wget всего {st.get('bash_with_network', '—')})")
+    lines += [
         f"- масштаб параллельной нагрузки (VRAM): "
         f"{', '.join(meta.get('ollama_foreign_models', [])) or 'чисто'}",
         "",
@@ -98,16 +101,15 @@ def one_run_summary(run: Path) -> str:
         f"- файлы агента: {r['files']}; index.html: {'есть' if r['index_html'] else 'НЕТ'}",
         f"- самодостаточность (внешние запросы): {'OK' if r['external_pass'] else 'ПРОВАЛ'}",
         f"- данные: прилагательных {r['data_found']}/{r['data_total']}; "
-        f"пар текст+тип верно {r['types_correct']}/{r['types_total']}"
-        + ("" if (chk.get('types') or {}).get('extracted') else " (разметка типов не извлечена автоматически — судьям смотреть руками)"),
+        f"пар текст+тип верно {r['types_correct']}/{r['types_total']}",
         f"- рендер-смоук (headless Chrome): {'OK' if r['smoke_ok'] else 'ПРОВАЛ/не выполнялся'}",
-        f"- автопрохождение (поток): {'OK, вопросов ' + str(r['flow_ok'][1]) if r['flow_ok'][0] else 'не прошло/не выполнялось'};"
-        f" баллы на экране — справочно (симуляция drag&drop не воспроизводима, логику проверяет судья по коду)",
-        f"- скриншоты: {', '.join(r['screenshots']) or '—'}",
-        f"- судья яруса 1: " + (f"data {r['judge']['data']}, logic {r['judge']['logic']}, ux {r['judge']['ux']}, impl {r['judge']['impl']} — **{r['judge']['total']}/16**" if r['judge'] else "не выполнялся"),
+        f"- автопрохождение (поток): {'OK, вопросов ' + str(pt.get('questions_processed')) if pt.get('flow_ok') else '—'}; "
+        f"совпадение баллов с планом: {pt.get('displayed_match')}",
+        f"- судья яруса 1: " + (f"data {r['judge']['data']}, logic {r['judge']['logic']}, "
+                                f"ux {r['judge']['ux']}, impl {r['judge']['impl']} — "
+                                f"**{r['judge']['total']}/16**" if r.get('judge') else "не выполнялся"),
         f"- **итог чека: {'PASSED' if r['check_passed'] else 'FAILED'}**",
         "",
-        "Дальше: судья яруса 2 (обзор + сверка), при расхождениях — доработки в тот же run.",
     ]
     return "\n".join(lines)
 
@@ -145,79 +147,93 @@ def cross_report() -> str:
             f"| {r['model']} | {r['run']} | {r['thinking']} | {fmt_dur(r['duration_s'])} "
             f"| {r['tokens_in']:,} | {r['tokens_out']:,} | {r['tool_calls']} "
             f"| {r['curl_source']} | {r['data_found']}/{r['data_total']} "
-        "\nСравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.")
+            f"| {r['types_correct']}/{r['types_total']} "
+            f"| {'OK' if r['smoke_ok'] else '—'} "
+            f"| {'PASSED' if r['check_passed'] else 'FAILED'} |")
+    out.append("\nСравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.")
     return "\n".join(out) + "\n"
 
 
 def html_report(runs: list[Path]) -> str:
-    """Визуальный отчёт: скриншоты инлайном, чеки, судья — всё в одном файле.
-    Клик по скриншоту — просмотр в масштабе 1:1 (оверлей с прокруткой)."""
+    """Визуальный отчёт RUNS.html: скриншоты инлайном, чеки, судья — 1:1 по клику."""
     import base64
-    head = """<!DOCTYPE html><html lang=ru><meta charset=utf-8><title>disc — прогоны</title>
-<style>
-body{background:#f5f6f8;margin:20px;font-family:system-ui}
-h1{font-family:system-ui}
-img.shot{max-width:420px;border:1px solid #ccc;border-radius:6px;cursor:zoom-in}
-figure{margin:0}
-figcaption{font-size:12px;color:#666;margin-top:2px;font-family:system-ui}
-#lb{display:none;position:fixed;inset:0;background:rgba(10,12,16,.92);overflow:auto;z-index:99;cursor:zoom-out}
-#lb img{max-width:none;display:block;margin:16px auto;cursor:zoom-out}
-#lb .hint{position:fixed;top:10px;right:16px;color:#cfd3da;font-family:system-ui;font-size:13px}
-</style>
-<div id="lb"><div class="hint">масштаб 1:1 · прокрутка — панорама · Esc или клик — закрыть</div><img alt=""></div>
-<script>
-const lb = document.getElementById('lb');
-const lbImg = lb.querySelector('img');
-const openLb = (src) => { lbImg.src = src; lb.style.display = 'block'; document.body.style.overflow = 'hidden'; };
-const closeLb = () => { lb.style.display = 'none'; lbImg.src = ''; document.body.style.overflow = ''; };
-document.addEventListener('click', (e) => {
-  const im = e.target.closest('img.shot');
-  if (im) { openLb(im.src); return; }
-  if (e.target.closest('#lb')) closeLb();
-});
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb(); });
-</script>
-<h1>disc: прогоны копирования DISC-теста</h1>"""
     cards = []
     for run in runs:
         r = run_row(run)
         meta = load(run, "run.json")
-        chk = load(run, "check.json")
         jd = load(run, "judge-tier1.json").get("verdict") or {}
-        uxj = load(run, "judge-ux.json").get("verdict") or {}
-        pt = load(run, "playthrough.json")
-        notes = (jd.get("notes") or "")[:400]
+        esc = html_mod.escape
+        jhtml = (f'<b>судья ярус 1:</b> data {jd.get("data")} · logic {jd.get("logic")} · '
+                 f'ux {jd.get("ux")} · impl {jd.get("impl")} — <b>{jd.get("total")}/16</b>'
+                 f'<div class="notes">{esc((jd.get("notes") or ""))[:700]}</div>'
+                 f'<div class="notes">{esc((jd.get("examples") or ""))[:700]}</div>' if jd else "судья: не выполнялся")
         shots = []
         for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
             p = run / "screenshots" / name
             if p.is_file():
                 b64 = base64.b64encode(p.read_bytes()).decode()
-                shots.append(f"<figure><img class=\"shot\" src=\"data:image/png;base64,{b64}\" alt=\"{cap}\"><figcaption>{cap} (клик — 1:1)</figcaption></figure>")
-        j = (f"<b>судья:</b> data {jd.get('data')} · logic {jd.get('logic')} · ux {jd.get('ux')} · "
-             f"impl {jd.get('impl')} — <b>{jd.get('total')}/16</b><br><i>{html_mod.escape(notes[:400])}</i>" if jd else "судья: не выполнялся")
+                shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
         cards.append(f"""
-<div style="border:1px solid #d0d4dd;border-radius:10px;padding:14px;margin:14px 0;font-family:system-ui">
-  <h2 style="margin:0 0 6px">{r['model']} · think {r['thinking']} · {r['run']}</h2>
-  <div style="color:#555">время {fmt_dur(r['duration_s'])}, exit {r['exit_code']}, токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,},
-  инструментов {r['tool_calls']}, curl к источнику {r['curl_source']}</div>
-  <div style="margin:8px 0">чек: {'<b style="color:#0a7d32">PASSED</b>' if r['check_passed'] else '<b style="color:#b3261e">FAILED</b>'} ·
-  данные {r['data_found']}/{r['data_total']} · типы {r['types_correct']}/{r['types_total']} ·
+<div class="card">
+  <h3>{r['model']} · think {r['thinking']} · <span class="run">{r['run']}</span></h3>
+  <div class="meta">время {fmt_dur(r['duration_s'])} · exit {r['exit_code']} · токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,} ·
+  инструментов {r['tool_calls']} · curl к источнику {r['curl_source']} · контекст {meta.get('context')}/выход {meta.get('max_tokens')}</div>
+  <div class="checks">чек: <b class="{'pass' if r['check_passed'] else 'fail'}">{'PASSED' if r['check_passed'] else 'FAILED'}</b> ·
+  данные {r['data_found']}/{r['data_total']} · пары текст+тип {r['types_correct']}/{r['types_total']} ·
   внешние запросы: {'нет' if r['external_pass'] else 'ЕСТЬ'} · рендер: {'OK' if r['smoke_ok'] else '—'} ·
-  автопрохождение: {'OK ' + str((r['flow_ok'] or (False, 0))[1]) + ' вопр.' if (r['flow_ok'] or (False, 0))[0] else '—'}</div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap">{''.join(shots)}</div>
-  <div style="margin-top:8px">{j}</div>
+  автопрохождение: {'OK' if r['flow_ok'] else '—'} · совпадение баллов: {r['displayed_match']}</div>
+  <div class="shots">{''.join(shots)}</div>
+  <div class="judge">{jhtml}</div>
 </div>""")
-    return head + "\n".join(cards)
+
+    matrix_rows = "".join(f"<tr><td>{m}</td><td>{lvl}</td><td class='st {cls}'>{st}</td></tr>"
+                          for m, lvl, st, cls in [
+        ("huihui-ai:pi-100k", "off / low / medium (+xhigh проба)", "готово: 9+1 прогонов", "done"),
+        ("qwen3.8:27b-pi-100k", "off / low / medium", "готово: 9 прогонов", "done"),
+        ("ornith-1.5:35b-ctx100k", "off / on", "готово: 3 прогонов", "done"),
+        ("gemma4:26b-pi-100k", "off / on", "готово: 6 прогонов", "done"),
+        ("bonsai-2:ctx100k", "off / low / medium", "готово: 9 прогонов", "done"),
+        ("muse-glimmer:ctx100k", "off / low / high", "готово: 9 прогонов", "done"),
+        ("orcarouter/…:ctx100k", "off / on", "готово: 6 прогонов", "done"),
+        ("gemma4:31b-it-qat-pi-100k", "off / on", "готово: 6 прогонов", "done"),
+        ("gemma4:e2b-ctx100k", "off / on", "готово: 6 прогонов", "done"),
+        ("ornith-1.5:9b", "off / on", "готово: 3 прогонов", "done"),
+        ("волна 2 (остальные вариаты) и волна 3 (облака)", "см. AGENTS.md", "по решению", "todo"),
+    ])
+
+    return f"""<!DOCTYPE html><html lang=ru><head><meta charset=utf-8><title>disc — прогоны</title>
+<style>
+body{{background:#f5f6f8;margin:24px;font-family:system-ui;color:#1c2024;max-width:1100px;margin:auto}}
+h1,h2,h3{{font-family:system-ui}} h2{{border-bottom:2px solid #c9ced8;padding-bottom:4px;margin-top:36px}}
+table{{border-collapse:collapse;background:#fff;width:100%}}
+th,td{{border:1px solid #d0d4dd;padding:6px 10px;font-size:14px;text-align:left}}
+th{{background:#eef0f4}}
+.pass{{color:#0a7d32}} .fail{{color:#b3261e}} .st.done{{color:#0a7d32;font-weight:bold}} .st.todo{{color:#8a6d1a}}
+img.shot{{max-width:340px;border:1px solid #ccc;border-radius:6px}}
+.shots{{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}}
+</style>
+<div id="lb"><div class="hint">масштаб 1:1 · прокрутка — панорама · Esc или клик — закрыть</div><img alt=""></div>
+<script>
+const lb = document.getElementById('lb'); const lbImg = lb.querySelector('img');
+const openLb = (src) => {{ lbImg.src = src; lb.style.display = 'block'; document.body.style.overflow = 'hidden'; }};
+const closeLb = () => {{ lb.style.display = 'none'; lbImg.src = ''; document.body.style.overflow = ''; }};
+document.addEventListener('click', (e) => {{
+  const im = e.target.closest('img.shot');
+  if (im) {{ openLb(im.src); return; }}
+  if (e.target.closest('#lb')) closeLb();
+}});
+document.addEventListener('keydown', (e) => {{ if (e.key === 'Escape') closeLb(); }});
+</script>
+<h1>disc: прогоны копирования DISC-теста</h1>
+{''.join(cards)}
+"""
 
 
 def build_report_html() -> str:
     """Сводный REPORT.html: методика + прогноз + все прогоны со скриншотами."""
-    import base64
-
     prompt_data = json.loads((ROOT / "test-assignment" / "prompts" / "prompt.json").read_text(encoding="utf-8"))
     prompt_text = prompt_data["prompt"]
 
-    # --- все прогоны, сгруппированы по моделям ---
     by_model: dict[str, list] = {}
     for mf in sorted(ROOT.glob("models/*/test-assignment/run-*")):
         if (mf / "run.json").is_file():
@@ -225,78 +241,48 @@ def build_report_html() -> str:
             by_model.setdefault(r["model"], []).append((mf, r))
 
     cards = []
-    sum_rows = []
-    ladder_acc: dict = {}
     for model, items in by_model.items():
         for run, r in items:
             meta = load(run, "run.json")
-            lvl_disp = (r.get("thinking") or "?") + (" ⏱" if r.get("killed") else "")
-            jt = (r.get("judge") or {}).get("total")
-            sum_rows.append(
-                f"<tr><td>{r['model']}</td><td>{r['run']}</td><td>{lvl_disp}</td>"
-                f"<td>{fmt_dur(r['duration_s'])}</td><td>{(r['tokens_in'] or 0)//1000}k/{(r['tokens_out'] or 0)//1000}k</td>"
-                f"<td class=\"{'pass' if r['check_passed'] else 'fail'}\">{'PASSED' if r['check_passed'] else 'FAILED'}</td>"
-                f"<td>{r['data_found']}/{r['data_total']}</td><td>{r['types_correct']}/{r['types_total']}</td>"
-                f"<td>{'OK' if r['flow_ok'] else '—'}</td>"
-                f"<td><b>{jt if jt is not None else '—'}</b>/16</td>"
-                f"<td><a href=\"#{r['model'].replace(':', '-')}-{r['run']}\">открыть ▸</a></td></tr>")
-            ladder_acc.setdefault((r['model'], lvl_disp), []).append(jt)
             chk = load(run, "check.json")
-            pt = load(run, "playthrough.json")
             jd = load(run, "judge-tier1.json").get("verdict") or {}
-    uxj = load(run, "judge-ux.json").get("verdict") or {}
-    pt = load(run, "playthrough.json")
-            shots = []
-            for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
-                pth = run / "screenshots" / name
-                if pth.is_file():
-                    b64 = base64.b64encode(pth.read_bytes()).decode()
-                    shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
             esc = html_mod.escape
             jhtml = (f'<b>судья ярус 1:</b> data {jd.get("data")} · logic {jd.get("logic")} · '
                      f'ux {jd.get("ux")} · impl {jd.get("impl")} — <b>{jd.get("total")}/16</b>'
                      f'<div class="notes">{esc((jd.get("notes") or ""))[:700]}</div>'
                      f'<div class="notes">{esc((jd.get("examples") or ""))[:700]}</div>' if jd else "судья: не выполнялся")
-            app_link = ""
-            if (run / "index.html").is_file():
-                rel = os.path.relpath(run / "index.html", ROOT / "reports")
-                app_link = f'<a class="try" href="{rel}" target="_blank" rel="noopener">открыть приложение</a>'
-            flow = f'OK, {pt.get("questions_processed")}/24' if pt.get("flow_ok") else "—"
-            quirk = "<br>+ исправлена известная опечатка оригинала" if chk.get("known_quirk_normalized") else ""
-            status = "⏱ таймаут, " + str(r.get("duration_s")) + "с" if r.get("killed") else str(r.get("duration_s")) + "с"
+            shots = []
+            for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
+                p = run / "screenshots" / name
+                if p.is_file():
+                    b64 = base64.b64encode(p.read_bytes()).decode()
+                    shots.append(f"<figure><img class=\"shot\" src=\"data:image/png;base64,{b64}\" alt=\"{cap}\"><figcaption>{cap} (клик — 1:1)</figcaption></figure>")
             cards.append(f"""
-<details class="card" id="{r['model'].replace(':', '-')}-{r['run']}">
-  <summary><span class="runname">{r['model']}</span> · think {r['thinking']} · {r['run']}
-    <span class="jbadge">судья: {jt if jt is not None else '—'}/16</span><span class="chev">развернуть ▾</span></summary>
-  <div class="meta">время {status} · exit {r['exit_code']} · токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,} ·
+<div class="card">
+  <h3>{r['model']} · think {r['thinking']} · <span class="run">{r['run']}</span></h3>
+  <div class="meta">время {fmt_dur(r['duration_s'])} · exit {r['exit_code']} · токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,} ·
   инструментов {r['tool_calls']} · curl к источнику {r['curl_source']} · контекст {meta.get('context')}/выход {meta.get('max_tokens')}</div>
   <div class="checks">чек: <b class="{'pass' if r['check_passed'] else 'fail'}">{'PASSED' if r['check_passed'] else 'FAILED'}</b> ·
   данные {r['data_found']}/{r['data_total']} · пары текст+тип {r['types_correct']}/{r['types_total']} ·
   внешние запросы: {'нет' if r['external_pass'] else 'ЕСТЬ'} · рендер: {'OK' if r['smoke_ok'] else '—'} ·
-  автопрохождение: {flow}{quirk}</div>
-  <div style="margin:8px 0">{app_link}</div>
+  автопрохождение: {'OK' if r['flow_ok'] else '—'} · совпадение баллов: {r['displayed_match']}</div>
   <div class="shots">{''.join(shots)}</div>
   <div class="judge">{jhtml}</div>
-</details>""")
-
-    # лестницы по моделям × уровням
-    ladder_rows = []
-    for (lmodel, llvl), tots in sorted(ladder_acc.items()):
-        vals = [v for v in tots if v is not None]
-        avg = sum(vals)/len(vals) if vals else 0
-        ladder_rows.append(f"<tr><td>{lmodel}</td><td>{llvl}</td><td><b>{avg:.2f}</b></td>"
-                           f"<td>{', '.join(str(v) if v is not None else '—' for v in tots)}</td></tr>")
+</div>""")
 
     matrix_rows = "".join(f"<tr><td>{m}</td><td>{lvl}</td><td class='st {cls}'>{st}</td></tr>"
                           for m, lvl, st, cls in [
         ("huihui-ai:pi-100k", "off / low / medium (+xhigh проба)", "готово: 9+1 прогонов", "done"),
-        ("qwen3.8:27b-pi-100k", "off / low / medium", "в очереди", "todo"),
-        ("ornith-1.5:35b-ctx100k", "off / on", "в очереди", "todo"),
-        ("gemma4:26b-pi-100k", "off / on", "в очереди", "todo"),
-        ("bonsai-2:ctx100k", "off / low / medium", "в очереди", "todo"),
-        ("muse-glimmer:ctx100k", "off / low / high", "в очереди", "todo"),
-        ("orcarouter/…:ctx100k", "off / on", "в очереди", "todo"),
-        ("волна 2 (малые/вариаты) и волна 3 (облака)", "см. AGENTS.md", "после волны 1", "todo"),
+        ("qwen3.8:27b-pi-100k", "off / low / medium", "готово: 9 прогонов", "done"),
+        ("ornith-1.5:35b-ctx100k", "off / on", "готово: 3 прогонов", "done"),
+        ("gemma4:26b-pi-100k", "off / on", "готово: 6 прогонов", "done"),
+        ("bonsai-2:ctx100k", "off / low / medium", "готово: 9 прогонов", "done"),
+        ("muse-glimmer:ctx100k", "off / low / high", "готово: 9 прогонов", "done"),
+        ("orcarouter/…:ctx100k", "off / on", "готово: 6 прогонов", "done"),
+        ("gemma4:31b-it-qat-pi-100k", "off / on", "готово: 6 прогонов", "done"),
+        ("gemma4:e2b-ctx100k", "off / on", "готово: 6 прогонов", "done"),
+        ("ornith-1.5:9b", "off / on", "готово: 3 прогонов", "done"),
+        ("волна 2 (остальные вариаты) и волна 3 (облака)", "см. AGENTS.md", "по решению", "todo"),
     ])
 
     return f"""<!DOCTYPE html><html lang=ru><head><meta charset=utf-8><title>disc — сводный отчёт</title>
@@ -315,15 +301,11 @@ pre{{background:#101418;color:#d6e2f0;padding:12px;border-radius:8px;overflow:au
 img.shot{{max-width:340px;border:1px solid #ccc;border-radius:6px;cursor:zoom-in}}
 figure{{margin:0}} figcaption{{font-size:12px;color:#666}}
 .judge{{margin-top:8px;font-size:13px;background:#f2f6ff;border-radius:8px;padding:8px}}
-a.try{{display:inline-block;background:#123f8c;color:#fff;padding:6px 14px;border-radius:8px;
-text-decoration:none;font-size:14px;font-family:system-ui}}
-a.try:hover{{background:#0e3270}}
-a.try:before{{content:"▶ ";font-size:12px}}
 .notes{{color:#333;margin-top:4px}}
 .toc a{{margin-right:14px}}
 #lb{{display:none;position:fixed;inset:0;background:rgba(10,12,16,.92);overflow:auto;z-index:99;cursor:zoom-out}}
-#lb img{{max-width:none;display:block;margin:16px auto}}
-#lb .hint{{position:fixed;top:10px;right:16px;color:#cfd3da;font-size:13px}}
+#lb img{{max-width:none;display:block;margin:16px auto;cursor:zoom-out}}
+#lb .hint{{position:fixed;top:10px;right:16px;color:#cfd3da;font-family:system-ui;font-size:13px}}
 .small{{font-size:13px;color:#555}}
 </style>
 <div id="lb"><div class="hint">масштаб 1:1 · прокрутка — панорама · Esc или клик — закрыть</div><img alt=""></div>
@@ -339,7 +321,7 @@ document.addEventListener('click', (e) => {{
 document.addEventListener('keydown', (e) => {{ if (e.key === 'Escape') closeLb(); }});
 </script>
 <h1>disc: сводный отчёт — тестирование копирования DISC-теста</h1>
-<p class="small">Обновлено 2026-11-14. Полная методика: reports/METHOD.md · конвенции: AGENTS.md ·
+<p class="small">Обновлено 2026-11-15. Полная методика: reports/METHOD.md · конвенции: AGENTS.md ·
 сестринский workspace: ~/MyProjects/Models. Все скриншоты кликабельны (1:1).</p>
 <div class="toc"><a href="#method">Методика</a><a href="#prompt">Промпт дословно</a><a href="#matrix">Матрица моделей</a><a href="#forecast">Прогноз</a><a href="#runs">Прогоны и результаты</a><a href="#limits">Ограничения</a></div>
 
@@ -353,13 +335,13 @@ document.addEventListener('keydown', (e) => {{ if (e.key === 'Escape') closeLb()
 облака — reasoning_effort low. Прогоны изолированы, seed не фиксируется. Стандарт — минимум 3.</p>
 
 <h3>1.2. Запуск pi (дословно)</h3>
-<pre>pi -p \
-  --session-dir &lt;run-XX&gt;/pi-session \
-  --model &lt;тег&gt; \
-  --thinking &lt;off|low|medium&gt; \
+<pre>pi -p \\
+  --session-dir &lt;run-XX&gt;/pi-session \\\\
+  --model &lt;тег&gt; \\\\
+  --thinking &lt;off|low|medium&gt; \\\\
   "&lt;текст задания&gt;"</pre>
 <p>env: <code>PI_CODING_AGENT_DIR=&lt;tmp&gt;/pi-home</code> (изолированный конфиг),
-<code>PI_OFFLINE=1</code> (сам pi в сеть не ходит — сеть использует только инструмент bash агента).
+<code>PI_OFFLINE=1</code> (сам pi в сеть не ходит — сеть использует только инструмент bash агента, например <code>curl</code> к источнику).
 <code>models.json</code> собирается на лету из фактической шкалы модели (<code>/api/show</code> →
 <code>thinkingLevelMap</code>); maxTokens 8192 → 32768 для моделей с энергичным максимумом
 (xhigh/max в шкале); контекст 102400 (теги -pi-100k/-ctx100k). Рабочая директория —
@@ -381,7 +363,7 @@ document.addEventListener('keydown', (e) => {{ if (e.key === 'Escape') closeLb()
 <tr><td>2</td><td>orca (on)</td><td><b>qwen3.8 (low)</b></td></tr>
 <tr><td>3</td><td>qwen3.8 (low/medium)</td><td><b>orca (on)</b></td></tr>
 <tr><td>4</td><td>ornith (on)</td><td><b>muse-glimmer (high)</b> — вне карты</td></tr>
-<tr><td>5</td><td>bonsai (low)</td><td><b>ornith (on)</b> — карта 88.6, агентный трек провальный</td></tr>
+<tr><td>5</td><td>ornith (on)</td><td><b>ornith (on)</b> — карта 88.6, агентный трек провальный</td></tr>
 <tr><td>6</td><td>—</td><td><b>gemma4-26b (on)</b> — вне карты, бимодальность</td></tr>
 <tr><td>7</td><td>—</td><td><b>bonsai (low/off)</b> — карта 87.0, агентный трек — дно (ключевой кейс)</td></tr>
 </table>
@@ -417,7 +399,7 @@ document.addEventListener('keydown', (e) => {{ if (e.key === 'Escape') closeLb()
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", help="каталог прогона: summary + scorecard")
-    ap.add_argument("--all", action="store_true", help="кросс-отчёт reports/RUNS.md")
+    ap.add_argument("--all", action="store_true", help="кросс-модельный reports/RUNS.md по всем найденным прогонам models/*/test-assignment/run-*")
     ap.add_argument("--html", action="store_true", help="визуальный reports/RUNS.html (скриншоты инлайном)")
     ap.add_argument("--report", action="store_true", help="сводный reports/REPORT.html (методика+прогноз+прогоны)")
     args = ap.parse_args()
@@ -433,10 +415,6 @@ def main() -> int:
         p = ROOT / "reports" / "RUNS.md"
         p.write_text(cross_report(), encoding="utf-8")
         print(f"reports/RUNS.md обновлён ({p})")
-    if args.report:
-        p = ROOT / "reports" / "REPORT.html"
-        p.write_text(build_report_html(), encoding="utf-8")
-        print(f"reports/REPORT.html обновлён ({p})")
     if args.html:
         runs = sorted(ROOT.glob("models/*/test-assignment/run-*"))
         runs = [r for r in runs if (r / "run.json").is_file()]

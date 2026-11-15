@@ -2,155 +2,81 @@
 
 | модель | прогон | think | длит. | ток. вх | ток. вых | tool | curl→источник | данные | типы | смоук | чек |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| bonsai-2:ctx100k | run-01 | off | 44:51 | 182,842 | 68,244 | 152 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-02 | off | 11:05 | 376,568 | 36,680 | 119 | 19 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-03 | off | 60:00 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-04 | low | 24:23 | 298,552 | 107,911 | 114 | 12 | 81/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-05 | low | 48:28 | 302,760 | 197,221 | 186 | 8 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-06 | low | 20:40 | 157,277 | 104,405 | 90 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-07 | medium | 28:39 | 225,309 | 135,702 | 131 | 8 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-08 | medium | 43:13 | 380,480 | 175,225 | 235 | 9 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| bonsai-2:ctx100k | run-09 | medium | 60:00 | 385,713 | 179,305 | 205 | 11 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:26b-pi-100k | run-01 | off | 0:57 | 56,817 | 8,448 | 15 | 12 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:26b-pi-100k | run-02 | off | 0:47 | 60,019 | 9,782 | 14 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:26b-pi-100k | run-03 | off | 2:24 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:26b-pi-100k | run-04 | medium | 2:57 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:26b-pi-100k | run-05 | medium | 1:25 | 62,014 | 19,141 | 19 | 2 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:26b-pi-100k | run-06 | medium | 0:41 | 30,646 | 10,518 | 11 | 2 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:31b-it-qat-pi-100k | run-01 | off | 4:13 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:31b-it-qat-pi-100k | run-02 | off | 5:06 | 83,344 | 10,774 | 10 | 7 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:31b-it-qat-pi-100k | run-03 | off | 3:46 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:31b-it-qat-pi-100k | run-04 | medium | 5:35 | 76,900 | 12,850 | 11 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:31b-it-qat-pi-100k | run-05 | medium | 4:54 | 66,869 | 11,992 | 15 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:31b-it-qat-pi-100k | run-06 | medium | 7:23 | 164,579 | 14,668 | 21 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:e2b-ctx100k | run-01 | off | 3:03 | 113,841 | 74,225 | 4 | 1 | 0/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:e2b-ctx100k | run-02 | off | 0:01 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:e2b-ctx100k | run-03 | off | 0:08 | 3,878 | 3,856 | 2 | 0 | 0/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:e2b-ctx100k | run-04 | medium | 0:09 | 11,853 | 4,327 | 2 | 0 | 2/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:e2b-ctx100k | run-05 | medium | 0:08 | 5,610 | 3,949 | 2 | 0 | 0/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| gemma4:e2b-ctx100k | run-06 | medium | 0:09 | 4,080 | 4,089 | 2 | 1 | 0/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-01 | low | 10:17 | 115,790 | 56,864 | 74 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-02 | low | 4:55 | 108,365 | 26,921 | 23 | 2 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-03 | low | 6:20 | 102,610 | 38,540 | 23 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-04 | off | 3:36 | 43,470 | 29,706 | 40 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-05 | off | 1:56 | 44,886 | 16,145 | 32 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-06 | off | 3:16 | 40,276 | 22,382 | 39 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-07 | medium | 60:00 | 74,790 | 23,368 | 26 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-08 | medium | 3:30 | 25,943 | 25,867 | 33 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-09 | medium | 4:39 | 31,330 | 29,930 | 43 | 5 | 83/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-10 | xhigh | 19:30 | 126,798 | 102,056 | 97 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-11 | xhigh | 12:11 | 127,014 | 69,169 | 55 | 9 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| huihui-ai:pi-100k | run-12 | xhigh | 17:21 | 177,474 | 83,900 | 82 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-01 | off | 1:39 | 69,897 | 4,936 | 13 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-02 | low | 2:07 | 30,151 | 4,246 | 14 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-03 | low | 0:41 | 28,081 | 2,555 | 3 | 1 | 3/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-04 | high | 3:23 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-05 | high | 3:44 | 67,374 | 12,989 | 34 | 6 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-06 | high | 2:39 | 62,134 | 9,531 | 18 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-07 | off | 1:32 | 82,003 | 4,462 | 10 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-08 | low | 1:15 | 54,073 | 4,056 | 12 | 3 | 83/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-09 | high | 7:44 | 101,517 | 11,967 | 18 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| muse-glimmer:ctx100k | run-10 | off | 1:56 | 58,267 | 6,591 | 18 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-01 | off | 6:39 | 58,748 | 25,550 | 25 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-02 | off | 8:33 | 116,298 | 27,244 | 53 | 9 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-03 | off | 12:51 | 134,179 | 42,223 | 104 | 7 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-04 | medium | 3:27 | 26,833 | 14,495 | 19 | 3 | 83/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-05 | medium | 4:58 | 62,012 | 17,347 | 29 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-06 | medium | 9:03 | 55,028 | 31,135 | 52 | 4 | 82/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:35b-ctx100k | run-01 | medium | 10:55 | 279,933 | 108,862 | 226 | 2 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:35b-ctx100k | run-02 | medium | 15:08 | 372,010 | 119,602 | 182 | 8 | 0/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:35b-ctx100k | run-03 | medium | 12:36 | 247,918 | 141,954 | 161 | 2 | 77/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:35b-ctx100k-tuned | run-04 | medium | 6:36 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:35b-ctx100k-tuned | run-05 | medium | 4:00 | 110,229 | 14,955 | 30 | 5 | 81/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:35b-ctx100k-tuned | run-06 | medium | 9:22 | 254,152 | 96,529 | 120 | 13 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:9b | run-01 | medium | 0:34 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:9b | run-02 | medium | 0:38 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| ornith-1.5:9b | run-03 | medium | 0:18 | 0 | 0 | 0 | 0 | None/None 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-01 | off | 7:43 | 51,188 | 37,154 | 45 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-02 | off | 3:58 | 107,145 | 27,196 | 41 | 7 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-03 | off | 60:00 | 134,756 | 14,326 | 30 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-04 | low | 13:48 | 152,828 | 65,469 | 69 | 10 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-05 | low | 13:40 | 201,356 | 76,862 | 62 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-06 | low | 8:24 | 136,329 | 38,830 | 37 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-07 | medium | 1:26 | 32,870 | 10,483 | 17 | 3 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-08 | medium | 2:46 | 38,456 | 19,481 | 25 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-09 | medium | 2:25 | 25,441 | 18,464 | 25 | 5 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-10 | xhigh | 21:08 | 196,091 | 91,291 | 94 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-11 | xhigh | 9:14 | 99,290 | 51,385 | 39 | 4 | 84/84 
-Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
-| qwen3.8:27b-pi-100k | run-12 | xhigh | 8:22 | 118,597 | 49,644 | 61 | 6 | 84/84 
+| bonsai-2:ctx100k | run-01 | off | 44:51 | 182,842 | 68,244 | 152 | 5 | 84/84 | 96/96 | OK | PASSED |
+| bonsai-2:ctx100k | run-02 | off | 11:05 | 376,568 | 36,680 | 119 | 19 | 84/84 | 96/96 | OK | PASSED |
+| bonsai-2:ctx100k | run-03 | off | 60:00 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| bonsai-2:ctx100k | run-04 | low | 24:23 | 298,552 | 107,911 | 114 | 12 | 81/84 | 93/96 | OK | FAILED |
+| bonsai-2:ctx100k | run-05 | low | 48:28 | 302,760 | 197,221 | 186 | 8 | 84/84 | 96/96 | OK | PASSED |
+| bonsai-2:ctx100k | run-06 | low | 20:40 | 157,277 | 104,405 | 90 | 4 | 84/84 | 96/96 | OK | PASSED |
+| bonsai-2:ctx100k | run-07 | medium | 28:39 | 225,309 | 135,702 | 131 | 8 | 84/84 | 96/96 | OK | PASSED |
+| bonsai-2:ctx100k | run-08 | medium | 43:13 | 380,480 | 175,225 | 235 | 9 | 84/84 | 96/96 | OK | PASSED |
+| bonsai-2:ctx100k | run-09 | medium | 60:00 | 385,713 | 179,305 | 205 | 11 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:26b-pi-100k | run-01 | off | 0:57 | 56,817 | 8,448 | 15 | 12 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:26b-pi-100k | run-02 | off | 0:47 | 60,019 | 9,782 | 14 | 3 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:26b-pi-100k | run-03 | off | 2:24 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| gemma4:26b-pi-100k | run-04 | medium | 2:57 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| gemma4:26b-pi-100k | run-05 | medium | 1:25 | 62,014 | 19,141 | 19 | 2 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:26b-pi-100k | run-06 | medium | 0:41 | 30,646 | 10,518 | 11 | 2 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:31b-it-qat-pi-100k | run-01 | off | 4:13 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| gemma4:31b-it-qat-pi-100k | run-02 | off | 5:06 | 83,344 | 10,774 | 10 | 7 | 84/84 | 0/96 | OK | PASSED |
+| gemma4:31b-it-qat-pi-100k | run-03 | off | 3:46 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| gemma4:31b-it-qat-pi-100k | run-04 | medium | 5:35 | 76,900 | 12,850 | 11 | 3 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:31b-it-qat-pi-100k | run-05 | medium | 4:54 | 66,869 | 11,992 | 15 | 5 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:31b-it-qat-pi-100k | run-06 | medium | 7:23 | 164,579 | 14,668 | 21 | 5 | 84/84 | 96/96 | OK | PASSED |
+| gemma4:e2b-ctx100k | run-01 | off | 3:03 | 113,841 | 74,225 | 4 | 1 | 0/84 | 0/96 | OK | FAILED |
+| gemma4:e2b-ctx100k | run-02 | off | 0:01 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| gemma4:e2b-ctx100k | run-03 | off | 0:08 | 3,878 | 3,856 | 2 | 0 | 0/84 | 0/96 | — | FAILED |
+| gemma4:e2b-ctx100k | run-04 | medium | 0:09 | 11,853 | 4,327 | 2 | 0 | 2/84 | 0/96 | OK | FAILED |
+| gemma4:e2b-ctx100k | run-05 | medium | 0:08 | 5,610 | 3,949 | 2 | 0 | 0/84 | 0/96 | OK | FAILED |
+| gemma4:e2b-ctx100k | run-06 | medium | 0:09 | 4,080 | 4,089 | 2 | 1 | 0/84 | 0/96 | OK | FAILED |
+| huihui-ai:pi-100k | run-01 | low | 10:17 | 115,790 | 56,864 | 74 | 4 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-02 | low | 4:55 | 108,365 | 26,921 | 23 | 2 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-03 | low | 6:20 | 102,610 | 38,540 | 23 | 4 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-04 | off | 3:36 | 43,470 | 29,706 | 40 | 3 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-05 | off | 1:56 | 44,886 | 16,145 | 32 | 3 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-06 | off | 3:16 | 40,276 | 22,382 | 39 | 3 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-07 | medium | 60:00 | 74,790 | 23,368 | 26 | 5 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-08 | medium | 3:30 | 25,943 | 25,867 | 33 | 3 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-09 | medium | 4:39 | 31,330 | 29,930 | 43 | 5 | 83/84 | 95/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-10 | xhigh | 19:30 | 126,798 | 102,056 | 97 | 5 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-11 | xhigh | 12:11 | 127,014 | 69,169 | 55 | 9 | 84/84 | 96/96 | OK | PASSED |
+| huihui-ai:pi-100k | run-12 | xhigh | 17:21 | 177,474 | 83,900 | 82 | 4 | 84/84 | 96/96 | OK | PASSED |
+| muse-glimmer:ctx100k | run-01 | off | 1:39 | 69,897 | 4,936 | 13 | 4 | 84/84 | 96/96 | OK | PASSED |
+| muse-glimmer:ctx100k | run-02 | low | 2:07 | 30,151 | 4,246 | 14 | 5 | 84/84 | 96/96 | OK | PASSED |
+| muse-glimmer:ctx100k | run-03 | low | 0:41 | 28,081 | 2,555 | 3 | 1 | 3/84 | 0/96 | OK | FAILED |
+| muse-glimmer:ctx100k | run-04 | high | 3:23 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| muse-glimmer:ctx100k | run-05 | high | 3:44 | 67,374 | 12,989 | 34 | 6 | 84/84 | 96/96 | OK | PASSED |
+| muse-glimmer:ctx100k | run-06 | high | 2:39 | 62,134 | 9,531 | 18 | 4 | 84/84 | 96/96 | OK | PASSED |
+| muse-glimmer:ctx100k | run-07 | off | 1:32 | 82,003 | 4,462 | 10 | 4 | 84/84 | 0/96 | OK | PASSED |
+| muse-glimmer:ctx100k | run-08 | low | 1:15 | 54,073 | 4,056 | 12 | 3 | 83/84 | 95/96 | OK | FAILED |
+| muse-glimmer:ctx100k | run-09 | high | 7:44 | 101,517 | 11,967 | 18 | 5 | 84/84 | 96/96 | OK | PASSED |
+| muse-glimmer:ctx100k | run-10 | off | 1:56 | 58,267 | 6,591 | 18 | 3 | 84/84 | 96/96 | OK | PASSED |
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-01 | off | 6:39 | 58,748 | 25,550 | 25 | 3 | 84/84 | 96/96 | OK | PASSED |
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-02 | off | 8:33 | 116,298 | 27,244 | 53 | 9 | 84/84 | 96/96 | OK | PASSED |
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-03 | off | 12:51 | 134,179 | 42,223 | 104 | 7 | 84/84 | 96/96 | OK | PASSED |
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-04 | medium | 3:27 | 26,833 | 14,495 | 19 | 3 | 83/84 | 95/96 | OK | FAILED |
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-05 | medium | 4:58 | 62,012 | 17,347 | 29 | 5 | 84/84 | 96/96 | OK | PASSED |
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-06 | medium | 9:03 | 55,028 | 31,135 | 52 | 4 | 82/84 | 94/96 | OK | FAILED |
+| ornith-1.5:35b-ctx100k | run-01 | medium | 10:55 | 279,933 | 108,862 | 226 | 2 | 84/84 | 96/96 | — | FAILED |
+| ornith-1.5:35b-ctx100k | run-02 | medium | 15:08 | 372,010 | 119,602 | 182 | 8 | 0/84 | 0/96 | OK | FAILED |
+| ornith-1.5:35b-ctx100k | run-03 | medium | 12:36 | 247,918 | 141,954 | 161 | 2 | 77/84 | 87/96 | OK | FAILED |
+| ornith-1.5:35b-ctx100k-tuned | run-04 | medium | 6:36 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| ornith-1.5:35b-ctx100k-tuned | run-05 | medium | 4:00 | 110,229 | 14,955 | 30 | 5 | 81/84 | 89/96 | OK | FAILED |
+| ornith-1.5:35b-ctx100k-tuned | run-06 | medium | 9:22 | 254,152 | 96,529 | 120 | 13 | 84/84 | 96/96 | OK | PASSED |
+| ornith-1.5:9b | run-01 | medium | 0:34 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| ornith-1.5:9b | run-02 | medium | 0:38 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| ornith-1.5:9b | run-03 | medium | 0:18 | 0 | 0 | 0 | 0 | None/None | None/None | — | FAILED |
+| qwen3.8:27b-pi-100k | run-01 | off | 7:43 | 51,188 | 37,154 | 45 | 5 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-02 | off | 3:58 | 107,145 | 27,196 | 41 | 7 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-03 | off | 60:00 | 134,756 | 14,326 | 30 | 3 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-04 | low | 13:48 | 152,828 | 65,469 | 69 | 10 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-05 | low | 13:40 | 201,356 | 76,862 | 62 | 5 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-06 | low | 8:24 | 136,329 | 38,830 | 37 | 3 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-07 | medium | 1:26 | 32,870 | 10,483 | 17 | 3 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-08 | medium | 2:46 | 38,456 | 19,481 | 25 | 4 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-09 | medium | 2:25 | 25,441 | 18,464 | 25 | 5 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-10 | xhigh | 21:08 | 196,091 | 91,291 | 94 | 4 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-11 | xhigh | 9:14 | 99,290 | 51,385 | 39 | 4 | 84/84 | 96/96 | OK | PASSED |
+| qwen3.8:27b-pi-100k | run-12 | xhigh | 8:22 | 118,597 | 49,644 | 61 | 6 | 84/84 | 96/96 | OK | PASSED |
+
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.

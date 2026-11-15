@@ -28,7 +28,8 @@ fs.mkdirSync(outDir, { recursive: true });
 const ref = JSON.parse(fs.readFileSync(refPath, 'utf-8'));
 const KNOWN_QUIRKS = {
   'Экспресcивный': 'Экспрессивный',
-  'Любитель приключеный': 'Любитель приключений', // muse: опечатка модели в данных приложения
+  'Любитель приключеный': 'Любитель приключений', // muse/bonsai: опечатка модели в данных приложения
+  'Агрессивний': 'Агрессивный', // muse: опечатка модели в данных приложения
 };
 
 
@@ -119,9 +120,7 @@ const FIND_LISTS_SRC = (keysJson, quirksJson) => {
     s = (s || '').replace(/\s+/g, ' ').trim();
     s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, '');
     const q = JSON.parse(quirksJson);
-    s = q[s] || s;
-    if (/ний$/.test(s)) s = s.replace(/ний$/, 'ный');
-    return s;
+    return q[s] || s;
   };
   const keys = new Set(JSON.parse(keysJson));
   let n = 0;
@@ -140,10 +139,7 @@ const DUMP_ORDERS_FN = (mapJson2, quirksJson2) => {
     s = (s || '').replace(/\s+/g, ' ').trim();
     s = s.replace(/^[^\p{L}]+/u, '').replace(/[^\p{L}]+$/u, '');
     const q = JSON.parse(quirksJson2);
-    s = q[s] || s;
-    // типовая опечатка приложений: «Агрессивний» вместо «Агрессивный»
-    if (/ний$/.test(s)) s = s.replace(/ний$/, 'ный');
-    return s;
+    return q[s] || s;
   };
   const refMap = new Map(JSON.parse(mapJson2));
   const orders = [];
@@ -279,7 +275,7 @@ const REORDER_ONE_FN = (kLocal, startQi, planJson, mapJson2, quirksJson2) => {
     await sleep(1200);
     const bodyText = await page.evaluate(() => document.body.innerText);
     result.raw_result_text = (bodyText || '').slice(-600);
-    let m = bodyText.match(/D\s*[:=–-]\s*(-?\d+)[\s\S]*?I\s*[:=–-]\s*(-?\d+)[\s\S]*?S\s*[:=–-]\s*(-?\d+)[\s\S]*?C\s*[:=–-]\s*(-?\d+)/i);
+    let m = bodyText.match(/D\s*[:=–-]\s*([+\u2212\u2013-]?\d+)[\s\S]*?I\s*[:=–-]\s*([+\u2212\u2013-]?\d+)[\s\S]*?S\s*[:=–-]\s*([+\u2212\u2013-]?\d+)[\s\S]*?C\s*[:=–-]\s*([+\u2212\u2013-]?\d+)/i);
     if (m) {
       result.displayed = { d: +m[1], i: +m[2], s: +m[3], c: +m[4] };
       result.parse_mode = 'canonical';

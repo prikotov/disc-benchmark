@@ -1,0 +1,50 @@
+{
+  "run": "/home/dp/MyProjects/disc/models/orcarouter-Qwen3.8-27B-Uncensored-ctx100k/test-assignment/run-04",
+  "model": "orcarouter/Qwen3.8-27B-Uncensored:ctx100k",
+  "thinking": "medium",
+  "files": [
+    "check.json",
+    "index.html",
+    "judge-run.log",
+    "judge-tier1.json",
+    "pi-run.log",
+    "playthrough.json",
+    "run.json",
+    "screenshots/result.png",
+    "screenshots/start.png",
+    "screenshots/step.png",
+    "session-stats.json",
+    "summary.md"
+  ],
+  "index_html": true,
+  "external": {
+    "pass": true,
+    "findings": [],
+    "urls": []
+  },
+  "data": {
+    "adjectives_total": 84,
+    "adjectives_found": 83,
+    "missing": [
+      "Добродушный"
+    ]
+  },
+  "types": {
+    "extracted": 96,
+    "correct": 95,
+    "total": 96,
+    "mismatches": {
+      "Добродушный -> s": "не хватает ×1",
+      "Добродушний -> s": "лишних ×1"
+    }
+  },
+  "smoke": {
+    "tool": "google-chrome --headless=new --virtual-time-budget=8000",
+    "ran": true,
+    "dom_bytes": 99939,
+    "has_button": true,
+    "uncaught_errors": 0,
+    "ok": true
+  },
+  "passed": false
+}

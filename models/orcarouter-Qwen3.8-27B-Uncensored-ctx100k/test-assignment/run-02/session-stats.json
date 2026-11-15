@@ -1,0 +1,24 @@
+{
+  "session_file": "2026-11-15T06-36-46-457Z_01a1ddec-31f8-73d8-9278-9cdcd1204d2a.jsonl",
+  "turns": 53,
+  "tool_calls": 53,
+  "tools_by_name": {
+    "bash": 51,
+    "read": 2
+  },
+  "tokens_in": 116298,
+  "tokens_out": 27244,
+  "bash_total": 15,
+  "bash_with_network": 9,
+  "curl_to_source": 9,
+  "network_cmds_sample": [
+    "curl -s https://stratoplan-school.com/disc/ | head -200",
+    "curl -s https://stratoplan-school.com/disc/ -o /tmp/disc.html; wc -c /tmp/disc.html; grep -n \\\"wizardmodal\\\\|disc-quiz\\\\|modal\\\" /tmp/disc.html | head -40",
+    "curl -s https://stratoplan-school.com/disc/js/disc_patched.js -o /tmp/disc.js; wc -c /tmp/disc.js",
+    "ls /tmp/disc.css* 2>/dev/null; curl -s https://stratoplan-school.com/disc/ -o /tmp/disc.html; grep -n \\\"disc-\\\" /tmp/disc.css | head -60",
+    "for f in css/root.css css/main_patched.css /assets/css/style_main.css; do echo \\\"== $f\\\"; curl -s \\\"https://stratoplan-school.com/disc$( [ ${f#css} != $f ] && true; echo)\\\" >/dev/null; done; curl -s \\\"https://stratoplan-school.com/disc/css/root.css\\\" -o /tmp/root.css; curl -s \\\"https://stratoplan-sc"
+  ],
+  "errors": 5,
+  "first_ts": "2026-11-15T06:36:46.457Z",
+  "last_ts": "2026-11-15T06:45:20.074Z"
+}

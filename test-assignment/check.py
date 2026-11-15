@@ -54,6 +54,8 @@ def scan_external(html: str) -> tuple[bool, list[str], list[str]]:
         ("EventSource", r"\bEventSource\b"),
         ("form action", r"<form[^>]+action=[\"'](?!#|javascript:)[^\"']+"),
         ("import( внешний", r"\bimport\s*\(\s*[\"'](https?:)?//"),
+        ("автоперенаправление", r"(?:location\.href|window\.location(?:\.href)?|document\.location)\s*=\s*[\"'](https?:)?//"),
+        ("window.open внешний", r"window\.open\s*\(\s*[\"'](https?:)?//"),
         # локальные зависимости: src/href с путями (решение — один файл)
         ("script src локальный", r"<script[^>]+src=[\"'](?!#|data:|javascript:)[^\"']+"),
         ("link href локальный", r"<link[^>]+href=[\"'](?!#|data:)[^\"']+\.(?:css|js)[\"']"),
@@ -67,7 +69,9 @@ def scan_external(html: str) -> tuple[bool, list[str], list[str]]:
         u = m.group(0).rstrip("\\")
         if "w3.org" not in u:  # w3.org — часто в xmlns/svg
             urls.add(u[:120])
-    return (not findings and not urls), findings, sorted(urls)
+    # гейт — автозапросы (findings). Текстовые <a href>-ссылки на источник —
+    # informational (urls): сами по себе сетевых запросов не порождают.
+    return (not findings), findings, sorted(urls)
 
 
 def extract_pairs(html: str) -> Counter:
@@ -190,7 +194,7 @@ def main() -> int:
         # остаётся в отчёте выше; гейт считается по нормализованному виду:
         # латинская «c» в «Экспресcивный» ≡ кириллической.
         KNOWN_QUIRKS = {"Экспресcивный": "Экспрессивный"}
-        norm = lambda s: KNOWN_QUIRKS.get(s, s)
+        norm = lambda s: KNOWN_QUIRKS.get(s, s).replace("ё", "е")  # ё/е — равноценные написания
         ref_norm: Counter = Counter({(norm(t2), tp): n for (t2, tp), n in ref_pairs.items()})
         pairs_norm: Counter = Counter({(norm(t2), tp): n for (t2, tp), n in pairs.items()})
         correct_n = sum((pairs_norm & ref_norm).values())

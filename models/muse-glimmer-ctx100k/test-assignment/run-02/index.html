@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:#f5f7fb;color:#111;line-height:1.4}
+.container{max-width:960px;margin:0 auto;padding:24px}
+h1{font-size:24px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0;overflow-x:auto}
+.tab{padding:8px 12px;border:1px solid #ddd;background:#fff;border-radius:8px;cursor:pointer;white-space:nowrap}
+.tab.is-active{background:#111;color:#fff;border-color:#111}
+.step{display:none}
+.step.is-active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+.card .title{font-weight:600;font-size:13px;margin-bottom:8px}
+.card .foot{font-size:12px;color:#666;margin-top:8px}
+.list{list-style:none;min-height:180px}
+.item{padding:10px 12px;margin:6px 0;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;cursor:grab;user-select:none}
+.item.dragging{opacity:.5}
+.actions{display:flex;gap:12px;margin-top:20px}
+button{padding:10px 16px;border-radius:8px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+button.ghost{background:#fff;color:#111}
+button:disabled{opacity:.5;cursor:not-allowed}
+.result{margin-top:24px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px}
+.bar{height:20px;background:#e5e7eb;border-radius:10px;overflow:hidden;margin:8px 0}
+.bar span{display:block;height:100%;background:#111}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Тест DISC</h1>
+<p>Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+<div class="tabs" id="tabs"></div>
+<div id="steps"></div>
+<div class="actions">
+<button class="ghost" id="prev">Назад</button>
+<button id="next">Далее</button>
+<button id="finish" style="display:none">Завершить тест</button>
+</div>
+<div id="result" class="result" style="display:none"></div>
+</div>
+<script>
+const stepsData = [
+[
+[{type:'i',text:'Экспресcивный'},{type:'c',text:'Покладистый'},{type:'d',text:'Волевой'},{type:'s',text:'Осторожный'}],
+[{type:'d',text:'Пылкий'},{type:'i',text:'Разговорчивый'},{type:'s',text:'Добродушный'},{type:'c',text:'Сдержанный'}],
+[{type:'i',text:'Любитель приключений'},{type:'c',text:'Энтузиаст'},{type:'d',text:'Исполнитель инструкций'},{type:'s',text:'Верный'}]
+],
+[
+[{type:'d',text:'Настойчивый'},{type:'c',text:'Осторожный'},{type:'i',text:'Эмоциональный'},{type:'s',text:'Удовлетворенный'}],
+[{type:'s',text:'Довольный'},{type:'d',text:'Нетерпеливый'},{type:'i',text:'Убедительный'},{type:'c',text:'Безропотный'}],
+[{type:'c',text:'Смиренный'},{type:'s',text:'Умеющий слушать'},{type:'i',text:'Душа компании'},{type:'d',text:'Волевой'}]
+],
+[
+[{type:'c',text:'Правильный'},{type:'d',text:'Первопроходец'},{type:'s',text:'Спокойный'},{type:'i',text:'Влиятельный'}],
+[{type:'c',text:'Почтительный'},{type:'i',text:'Контактный'},{type:'d',text:'Агрессивный'},{type:'s',text:'Мягкий'}],
+[{type:'i',text:'Весельчак'},{type:'s',text:'Покорный'},{type:'c',text:'Тактичный'},{type:'d',text:'Соперничающий'}]
+],
+[
+[{type:'c',text:'Точный'},{type:'d',text:'Доминирующий'},{type:'s',text:'Охотный'},{type:'i',text:'Притягательный'}],
+[{type:'i',text:'Уравновешенный'},{type:'c',text:'Уступчивый'},{type:'d',text:'Идущий на риск'},{type:'s',text:'Услужливый'}],
+[{type:'c',text:'Осмотрительный'},{type:'s',text:'Добрососедский'},{type:'d',text:'Энергичный'},{type:'i',text:'Убедительный'}]
+],
+[
+[{type:'s',text:'Уравновешенный'},{type:'i',text:'Мотивирующий'},{type:'c',text:'Щепетильный'},{type:'d',text:'Решительный'}],
+[{type:'i',text:'Уверенный'},{type:'c',text:'Готовый к сотрудничеству'},{type:'s',text:'Беззаботный'},{type:'d',text:'Аргументирующий'}],
+[{type:'s',text:'Сдержанный'},{type:'d',text:'Прямой'},{type:'c',text:'Строгий'},{type:'i',text:'Убедительный'}]
+],
+[
+[{type:'c',text:'Застенчивый'},{type:'d',text:'Требовательный'},{type:'s',text:'Терпеливый'},{type:'i',text:'Очаровательный'}],
+[{type:'d',text:'Неугомонный'},{type:'c',text:'Дисциплинированный'},{type:'i',text:'Вдохновляющий'},{type:'s',text:'Внимательный'}],
+[{type:'s',text:'Обязательный'},{type:'i',text:'Оживленный'},{type:'d',text:'Решительный'},{type:'c',text:'Точный'}]
+],
+[
+[{type:'c',text:'Добросовестный'},{type:'i',text:'Компанейский'},{type:'s',text:'Добрый'},{type:'d',text:'Уверенный в себе'}],
+[{type:'c',text:'Дипломатичный'},{type:'d',text:'Отважный'},{type:'s',text:'Сочувствующий'},{type:'i',text:'Оптимистичный'}],
+[{type:'d',text:'Настойчивый'},{type:'i',text:'Общительный'},{type:'s',text:'Постоянный'},{type:'c',text:'Организованный'}]
+],
+[
+[{type:'c',text:'Соглашающийся'},{type:'s',text:'Владеющий собой'},{type:'d',text:'Шутливый'},{type:'i',text:'Настойчивый'}],
+[{type:'i',text:'Обаятельный'},{type:'d',text:'Позитивный'},{type:'s',text:'Снисходительный'},{type:'c',text:'Требовательный'}],
+[{type:'i',text:'Коммуникабельный'},{type:'d',text:'Смелый'},{type:'c',text:'Перфекционист'},{type:'s',text:'Сдержанный'}]
+]
+];
+
+const tabsEl=document.getElementById('tabs');
+const stepsEl=document.getElementById('steps');
+const prevBtn=document.getElementById('prev');
+const nextBtn=document.getElementById('next');
+const finishBtn=document.getElementById('finish');
+const resultEl=document.getElementById('result');
+let step=0;
+
+function renderTabs(){
+tabsEl.innerHTML='';
+stepsData.forEach((_,i)=>{
+const b=document.createElement('button');
+b.className='tab'+(i===step?' is-active':'');
+b.textContent=`Шаг ${i+1}`;
+b.onclick=()=>{step=i;update();};
+tabsEl.appendChild(b);
+});
+}
+function renderStep(){
+stepsEl.innerHTML='';
+const lists=stepsData[step];
+const grid=document.createElement('div');
+grid.className='grid';
+lists.forEach(list=>{
+const card=document.createElement('div');
+card.className='card';
+card.innerHTML=`<div class="title">Я наиболее</div><ul class="list"></ul><div class="foot">Я наименее</div>`;
+const ul=card.querySelector('ul');
+list.forEach(item=>{
+const li=document.createElement('li');
+li.className='item';
+li.draggable=true;
+li.dataset.type=item.type;
+li.textContent=item.text;
+ul.appendChild(li);
+});
+grid.appendChild(card);
+});
+stepsEl.appendChild(grid);
+makeDraggable();
+}
+function makeDraggable(){
+document.querySelectorAll('.list').forEach(ul=>{
+ul.querySelectorAll('.item').forEach(li=>{
+li.addEventListener('dragstart',()=>li.classList.add('dragging'));
+li.addEventListener('dragend',()=>li.classList.remove('dragging'));
+});
+ul.addEventListener('dragover',e=>{e.preventDefault();const after=elemAfter(ul,e.clientY);const drag=document.querySelector('.dragging');if(after){ul.insertBefore(drag,after);}else{ul.appendChild(drag);}});
+ul.addEventListener('drop',e=>{e.preventDefault();});
+});
+}
+function elemAfter(container,y){
+const items=[...container.querySelectorAll('.item:not(.dragging)')];
+return items.find(item=>{const rect=item.getBoundingClientRect();return y<rect.top+rect.height/2;});
+}
+function update(){
+renderTabs();
+renderStep();
+prevBtn.disabled=step===0;
+nextBtn.style.display=step===7?'none':'inline-block';
+finishBtn.style.display=step===7?'inline-block':'none';
+resultEl.style.display='none';
+}
+prevBtn.onclick=()=>{if(step>0){step--;update();}};
+nextBtn.onclick=()=>{if(step<7){step++;update();}};
+finishBtn.onclick=()=>{
+const items=[...document.querySelectorAll('.item')];
+const maj=[],min=[];
+items.forEach((li,idx)=>{
+const listIdx=Math.floor(idx/4);
+const pos=idx%4;
+if(pos===0)maj.push(li.dataset.type);
+if(pos===3)min.push(li.dataset.type);
+});
+const count=(arr,ch)=>arr.filter(v=>v===ch).length;
+const score={
+d:count(maj,'d')-count(min,'d'),
+i:count(maj,'i')-count(min,'i'),
+s:count(maj,'s')-count(min,'s'),
+c:count(maj,'c')-count(min,'c')
+};
+const max=Math.max(...Object.values(score));
+const names={d:'Доминирование (D)',i:'Влияние (i)',s:'Стабильность (S)',c:'Сочетаемость (C)'};
+let html='<h2>Ваш результат</h2>';
+for(const k in score){
+const v=score[k];
+const pct=Math.max(0,Math.min(100,(v+12)/24*100));
+html+=`<div><strong>${names[k]}: ${v}</strong></div><div class="bar"><span style="width:${pct}%"></span></div>`;
+}
+resultEl.innerHTML=html;
+resultEl.style.display='block';
+window.scrollTo({top:0,behavior:'smooth'});
+};
+update();
+</script>
+</body>
+</html>

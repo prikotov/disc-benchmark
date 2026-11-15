@@ -44,6 +44,38 @@
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | huihui-ai:pi-100k | run-12 | xhigh | 17:21 | 177,474 | 83,900 | 82 | 4 | 84/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-01 | off | 1:39 | 69,897 | 4,936 | 13 | 4 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-02 | low | 2:07 | 30,151 | 4,246 | 14 | 5 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-03 | low | 0:41 | 28,081 | 2,555 | 3 | 1 | 3/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-04 | high | 3:23 | 0 | 0 | 0 | 0 | None/None 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-05 | high | 3:44 | 67,374 | 12,989 | 34 | 6 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-06 | high | 2:39 | 62,134 | 9,531 | 18 | 4 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-07 | off | 1:32 | 82,003 | 4,462 | 10 | 4 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-08 | low | 1:15 | 54,073 | 4,056 | 12 | 3 | 83/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-09 | high | 7:44 | 101,517 | 11,967 | 18 | 5 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| muse-glimmer:ctx100k | run-10 | off | 1:56 | 58,267 | 6,591 | 18 | 3 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-01 | off | 6:39 | 58,748 | 25,550 | 25 | 3 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-02 | off | 8:33 | 116,298 | 27,244 | 53 | 9 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-03 | off | 12:51 | 134,179 | 42,223 | 104 | 7 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-04 | medium | 3:27 | 26,833 | 14,495 | 19 | 3 | 83/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-05 | medium | 4:58 | 62,012 | 17,347 | 29 | 5 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| orcarouter/Qwen3.8-27B-Uncensored:ctx100k | run-06 | medium | 9:03 | 55,028 | 31,135 | 52 | 4 | 82/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | ornith-1.5:35b-ctx100k | run-01 | medium | 10:55 | 279,933 | 108,862 | 226 | 2 | 84/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | ornith-1.5:35b-ctx100k | run-02 | medium | 15:08 | 372,010 | 119,602 | 182 | 8 | 0/84 

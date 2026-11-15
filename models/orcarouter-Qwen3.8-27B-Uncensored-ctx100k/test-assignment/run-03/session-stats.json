@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-15T06-45-46-947Z_01a1ddf4-7142-772e-a964-8f6047ae684d.jsonl",
+  "turns": 105,
+  "tool_calls": 104,
+  "tools_by_name": {
+    "bash": 85,
+    "read": 5,
+    "write": 1,
+    "edit": 13
+  },
+  "tokens_in": 134179,
+  "tokens_out": 42223,
+  "bash_total": 9,
+  "bash_with_network": 7,
+  "curl_to_source": 7,
+  "network_cmds_sample": [
+    "curl -s https://stratoplan-school.com/disc/ -A \\\"Mozilla/5.0\\\" -o /tmp/disc.html && wc -c /tmp/disc.html",
+    "curl -s \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o /tmp/disc.js && wc -c /tmp/disc.js; curl -s \\\"https://stratoplan-school.com/css/main_patched.css?v=0.0.1.1\\\" -o /tmp/main.css && wc -c /tmp/main.css",
+    "curl -s \\\"https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6\\\" -o /tmp/disc.js && head -c 300 /tmp/disc.js; echo; wc -c /tmp/disc.js",
+    "curl -s \\\"https://stratoplan-school.com/disc/css/main_patched.css?v=0.0.1.1\\\" -o /tmp/main.css && wc -c /tmp/main.css && head -c 500 /tmp/main.css",
+    "grep -n 'font' /tmp/disc.html | head; grep -o 'fonts.googleapis[^\\\"]*' /tmp/disc.html | head; curl -s \\\"https://stratoplan-school.com/disc/css/root.css?v=0.0.0.1\\\" | grep -i font | head"
+  ],
+  "errors": 5,
+  "first_ts": "2026-11-15T06:45:46.947Z",
+  "last_ts": "2026-11-15T06:58:38.284Z"
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DISC тест — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;color:#111}
+header{padding:24px;text-align:center;background:#fff;border-bottom:1px solid #e5e7eb}
+h1{font-size:24px}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+.modes{max-width:900px;margin:32px auto}
+.tabbar{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
+.tab{background:#e5e7eb;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.tab.is-active{background:#111;color:#fff}
+.step{display:none}
+.step.is-active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:16px}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h3{font-size:14px;margin-bottom:8px;color:#555;text-align:center}
+.list{list-style:none;min-height:120px}
+.item{padding:10px 12px;margin:6px 0;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;cursor:grab;user-select:none}
+.item.dragging{opacity:.5}
+.item:hover{background:#eef2ff}
+.foot{font-size:12px;color:#777;text-align:center;margin-top:6px}
+.actions{display:flex;justify-content:space-between;margin-top:24px}
+button{padding:10px 18px;border:none;border-radius:10px;cursor:pointer;font-weight:600}
+.btn-primary{background:#111;color:#fff}
+.btn-ghost{background:#e5e7eb}
+.progress{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin:20px 0}
+.progress > div{height:100%;background:#111;width:12.5%}
+.result{display:none;text-align:center}
+.result.is-active{display:block}
+.bar{display:inline-block;width:80px;height:80px;border-radius:50%;margin:0 12px;position:relative}
+.bar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700}
+.legend{display:flex;justify-content:center;gap:24px;margin-top:12px}
+</style>
+</head>
+<body>
+<header><h1>Тест DISC</h1><p style="margin-top:6px;color:#555">Разместите блоки от наиболее похожего к наименее</p></header>
+<div class="container">
+<div class="modes">
+<div class="tabbar" id="tabbar"></div>
+<div class="progress"><div id="prog"></div></div>
+<div id="steps"></div>
+<div class="actions">
+<button class="btn-ghost" id="prev">Назад</button>
+<button class="btn-primary" id="next">Далее</button>
+<button class="btn-primary" id="finish" style="display:none">Завершить тест</button>
+</div>
+<div class="result" id="result">
+<h2>Ваш профиль DISC</h2>
+<div id="bars"></div>
+<p id="summary" style="margin-top:16px"></p>
+</div>
+</div>
+</div>
+
+<script>
+const stepsData = [
+[
+{list:[{t:'Экспресcивный',k:'i'},{t:'Покладистый',k:'c'},{t:'Волевой',k:'d'},{t:'Осторожный',k:'s'}]},
+{list:[{t:'Пылкий',k:'d'},{t:'Разговорчивый',k:'i'},{t:'Добродушный',k:'s'},{t:'Сдержанный',k:'c'}]},
+{list:[{t:'Любитель приключений',k:'i'},{t:'Энтузиаст',k:'c'},{t:'Исполнитель инструкций',k:'d'},{t:'Верный',k:'s'}]},
+],
+[
+{list:[{t:'Настойчивый',k:'d'},{t:'Осторожный',k:'c'},{t:'Эмоциональный',k:'i'},{t:'Удовлетворенный',k:'s'}]},
+{list:[{t:'Довольный',k:'s'},{t:'Нетерпеливый',k:'d'},{t:'Убедительный',k:'i'},{t:'Безропотный',k:'c'}]},
+{list:[{t:'Смиренный',k:'c'},{t:'Умеющий слушать',k:'s'},{t:'Душа компании',k:'i'},{t:'Волевой',k:'d'}]},
+],
+[
+{list:[{t:'Правильный',k:'c'},{t:'Первопроходец',k:'d'},{t:'Спокойный',k:'s'},{t:'Влиятельный',k:'i'}]},
+{list:[{t:'Почтительный',k:'c'},{t:'Контактный',k:'i'},{t:'Агрессивный',k:'d'},{t:'Мягкий',k:'s'}]},
+{list:[{t:'Весельчак',k:'i'},{t:'Покорный',k:'s'},{t:'Тактичный',k:'c'},{t:'Соперничающий',k:'d'}]},
+],
+[
+{list:[{t:'Точный',k:'c'},{t:'Доминирующий',k:'d'},{t:'Охотный',k:'s'},{t:'Притягательный',k:'i'}]},
+{list:[{t:'Уравновешенный',k:'i'},{t:'Уступчивый',k:'c'},{t:'Идущий на риск',k:'d'},{t:'Услужливый',k:'s'}]},
+{list:[{t:'Осмотрительный',k:'c'},{t:'Добрососедский',k:'s'},{t:'Энергичный',k:'d'},{t:'Убедительный',k:'i'}]},
+],
+[
+{list:[{t:'Уравновешенный',k:'s'},{t:'Мотивирующий',k:'i'},{t:'Щепетильный',k:'c'},{t:'Решительный',k:'d'}]},
+{list:[{t:'Уверенный',k:'i'},{t:'Готовый к сотрудничеству',k:'c'},{t:'Беззаботный',k:'s'},{t:'Аргументирующий',k:'d'}]},
+{list:[{t:'Сдержанный',k:'s'},{t:'Прямой',k:'d'},{t:'Строгий',k:'c'},{t:'Убедительный',k:'i'}]},
+],
+[
+{list:[{t:'Застенчивый',k:'c'},{t:'Требовательный',k:'d'},{t:'Терпеливый',k:'s'},{t:'Очаровательный',k:'i'}]},
+{list:[{t:'Неугомонный',k:'d'},{t:'Дисциплинированный',k:'c'},{t:'Вдохновляющий',k:'i'},{t:'Внимательный',k:'s'}]},
+{list:[{t:'Обязательный',k:'s'},{t:'Оживленный',k:'i'},{t:'Решительный',k:'d'},{t:'Точный',k:'c'}]},
+],
+[
+{list:[{t:'Добросовестный',k:'c'},{t:'Компанейский',k:'i'},{t:'Добрый',k:'s'},{t:'Уверенный в себе',k:'d'}]},
+{list:[{t:'Дипломатичный',k:'c'},{t:'Отважный',k:'d'},{t:'Сочувствующий',k:'s'},{t:'Оптимистичный',k:'i'}]},
+{list:[{t:'Настойчивый',k:'d'},{t:'Общительный',k:'i'},{t:'Постоянный',k:'s'},{t:'Организованный',k:'c'}]},
+],
+[
+{list:[{t:'Соглашающийся',k:'c'},{t:'Владеющий собой',k:'s'},{t:'Шутливый',k:'d'},{t:'Настойчивый',k:'i'}]},
+{list:[{t:'Обаятельный',k:'i'},{t:'Позитивный',k:'d'},{t:'Снисходительный',k:'s'},{t:'Требовательный',k:'c'}]},
+{list:[{t:'Коммуникабельный',k:'i'},{t:'Смелый',k:'d'},{t:'Перфекционист',k:'c'},{t:'Сдержанный',k:'s'}]},
+]
+];
+
+const tabbar=document.getElementById('tabbar');
+const stepsEl=document.getElementById('steps');
+let stepIdx=0;
+
+stepsData.forEach((s,i)=>{
+  const btn=document.createElement('button');
+  btn.className='tab'+(i===0?' is-active':'');
+  btn.textContent=`Шаг ${i+1}`;
+  btn.onclick=()=>go(i);
+  tabbar.appendChild(btn);
+  const wrap=document.createElement('div');
+  wrap.className='step'+(i===0?' is-active':'');
+  wrap.dataset.step=i;
+  const grid=document.createElement('div');
+  grid.className='grid';
+  s.forEach((c,ci)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`<h3>Я наиболее</h3><ul class="list" data-list="${i}-${ci}"></ul><div class="foot">Я наименее</div>`;
+    grid.appendChild(card);
+    const ul=card.querySelector('ul');
+    c.list.forEach(it=>{
+      const li=document.createElement('li');
+      li.className='item';
+      li.draggable=true;
+      li.dataset.type=it.k;
+      li.textContent=it.t;
+      ul.appendChild(li);
+    });
+  });
+  wrap.appendChild(grid);
+  stepsEl.appendChild(wrap);
+});
+
+function go(i){stepIdx=i;document.querySelectorAll('.step').forEach((el,idx)=>el.classList.toggle('is-active',idx===i));document.querySelectorAll('.tab').forEach((el,idx)=>el.classList.toggle('is-active',idx===i));updateUI();}
+function updateUI(){document.getElementById('prog').style.width=(stepIdx+1)/8*100+'%';document.getElementById('prev').disabled=stepIdx===0;document.getElementById('next').style.display=stepIdx===7?'none':'inline-block';document.getElementById('finish').style.display=stepIdx===7?'inline-block':'none';}
+document.getElementById('prev').onclick=()=>{if(stepIdx>0)go(stepIdx-1);};
+document.getElementById('next').onclick=()=>{if(stepIdx<7)go(stepIdx+1);};
+
+document.getElementById('finish').onclick=()=>{
+  const types=['d','i','s','c'];
+  let scores={d:0,i:0,s:0,c:0};
+  document.querySelectorAll('.list').forEach(ul=>{
+    const items=[...ul.children];
+    items.forEach((li,idx)=>{const t=li.dataset.type; if(idx===0) scores[t]+=2; if(idx===3) scores[t]-=2;});
+  });
+  const max=Math.max(...Object.values(scores));
+  const top=Object.entries(scores).filter(([k,v])=>v===max).map(([k])=>k);
+  const bars=document.getElementById('bars');
+  bars.innerHTML='';
+  const colors={d:'#e53935',i:'#fb8c00',s:'#43a047',c:'#1e88e5'};
+  const names={d:'Доминирование',i:'Влияние',s:'Стабильность',c:'Соответствие'};
+  types.forEach(k=>{
+    const v=scores[k];
+    const norm=Math.max(0,Math.min(100,(v+24)/48*100));
+    const b=document.createElement('div');
+    b.className='bar';
+    b.style.background=`conic-gradient(${colors[k]} ${norm}%,#ddd 0)`;
+    b.innerHTML=`<span>${v>=0?'+':''}${v}</span>`;
+    bars.appendChild(b);
+  });
+  document.getElementById('summary').textContent=`${top.map(k=>names[k]).join(', ')} — ваш ведущий стиль.`;
+  document.querySelector('.modes').style.display='none';
+  document.getElementById('result').classList.add('is-active');
+};
+
+// drag drop
+document.addEventListener('dragstart',e=>{if(e.target.classList.contains('item')){e.target.classList.add('dragging');}});
+document.addEventListener('dragend',e=>{if(e.target.classList.contains('item')){e.target.classList.remove('dragging');}});
+document.addEventListener('dragover',e=>{e.preventDefault(); const after=getDragAfterElement(e.currentTarget.closest('ul'),e.clientY); const dragging=document.querySelector('.dragging'); if(dragging && after==null){e.currentTarget.closest('ul').appendChild(dragging)} else if(dragging && after){e.currentTarget.closest('ul').insertBefore(dragging,after)}});
+function getDragAfterElement(container, y){const els=[...container.querySelectorAll('.item:not(.dragging)')]; return els.reduce((closest,child)=>{const box=child.getBoundingClientRect(); const offset=y-box.top-box.height/2; if(offset<0 && offset>closest.offset){return {offset,element:child}} else return closest;},{offset:Number.NEGATIVE_INFINITY}).element;}
+updateUI();
+</script>
+</body>
+</html>

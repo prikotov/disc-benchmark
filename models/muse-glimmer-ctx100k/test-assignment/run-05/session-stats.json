@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-15T06-09-37-399Z_01a1ddd3-5674-7715-8f3e-8bd3afd1e1c5.jsonl",
+  "turns": 35,
+  "tool_calls": 34,
+  "tools_by_name": {
+    "bash": 31,
+    "read": 2,
+    "write": 1
+  },
+  "tokens_in": 67374,
+  "tokens_out": 12989,
+  "bash_total": 6,
+  "bash_with_network": 6,
+  "curl_to_source": 6,
+  "network_cmds_sample": [
+    "curl -sL https://stratoplan-school.com/disc/ -o /tmp/disc_page.html && head -c 20000 /tmp/disc_page.html | head -n 500",
+    "curl -sL https://stratoplan-school.com/disc/ -o /tmp/disc_page.html && grep -i \\\"disc\\\" /tmp/disc_page.html | head -n 200",
+    "curl -sL https://stratoplan-school.com/disc/ -o /tmp/disc_page.html && wc -c /tmp/disc_page.html",
+    "curl -sL https://stratoplan-school.com/disc/js/disc_patched.js -o /tmp/disc_patched.js && wc -c /tmp/disc_patched.js && head -n 500 /tmp/disc_patched.js",
+    "curl -sL https://stratoplan-school.com/disc/result/ -o /tmp/result.html && head -c 20000 /tmp/result.html"
+  ],
+  "errors": 0,
+  "first_ts": "2026-11-15T06:09:37.399Z",
+  "last_ts": "2026-11-15T06:13:20.523Z"
+}

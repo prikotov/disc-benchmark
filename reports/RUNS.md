@@ -32,6 +32,18 @@
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | gemma4:26b-pi-100k | run-06 | medium | 0:41 | 30,646 | 10,518 | 11 | 2 | 84/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:31b-it-qat-pi-100k | run-01 | off | 4:13 | 0 | 0 | 0 | 0 | None/None 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:31b-it-qat-pi-100k | run-02 | off | 5:06 | 83,344 | 10,774 | 10 | 7 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:31b-it-qat-pi-100k | run-03 | off | 3:46 | 0 | 0 | 0 | 0 | None/None 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:31b-it-qat-pi-100k | run-04 | medium | 5:35 | 76,900 | 12,850 | 11 | 3 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:31b-it-qat-pi-100k | run-05 | medium | 4:54 | 66,869 | 11,992 | 15 | 5 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:31b-it-qat-pi-100k | run-06 | medium | 7:23 | 164,579 | 14,668 | 21 | 5 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | huihui-ai:pi-100k | run-01 | low | 10:17 | 115,790 | 56,864 | 74 | 4 | 84/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | huihui-ai:pi-100k | run-02 | low | 4:55 | 108,365 | 26,921 | 23 | 2 | 84/84 

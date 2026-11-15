@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Тест</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --d-color: #ef4444;
+            --i-color: #f59e0b;
+            --s-color: #10b981;
+            --c-color: #3b82f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            margin: 0 0 16px;
+            font-size: 24px;
+        }
+
+        .progress-container {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .step-container {
+            display: none;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        .instruction {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .instruction b {
+            color: var(--text);
+        }
+
+        .disc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .disc-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            user-select: none;
+            font-size: 16px;
+        }
+
+        .disc-item:active {
+            cursor: grabbing;
+        }
+
+        .disc-item.dragging {
+            opacity: 0.5;
+            background: var(--bg);
+            border-color: var(--primary);
+        }
+
+        .handle {
+            display: flex;
+            align-items: center;
+            color: #cbd5e1;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            border: none;
+            flex: 1;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            filter: brightness(1.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .score-card {
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score-card.d { background: var(--d-color); }
+        .score-card.i { background: var(--i-color); }
+        .score-card.s { background: var(--s-color); }
+        .score-card.c { background: var(--c-color); }
+
+        .score-value {
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .score-label {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .final-type {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="test-view">
+        <div class="header">
+            <h1>DISC Тест</h1>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="instruction">
+        Пожалуйста, расставьте характеристики в порядке от <b>наиболее</b> подходящих вам (вверху) до <b>наименее</b> (внизу).
+        </div>
+
+        <div id="steps-container">
+            <!-- Steps will be injected here -->
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-ghost" id="prev-btn" disabled>Назад</button>
+            <button class="btn btn-primary" id="next-btn">Далее</button>
+        </div>
+    </div>
+
+    <div id="results-view" style="display: none;">
+        <div class="results-container">
+            <h1>Ваши результаты</h1>
+            <p>Баллы по четырем измерениям личности:</p>
+            
+            <div class="scores-grid">
+                <div class="score-card d">
+                    <span class="score-label">Доминирование (D)</span>
+                    <span class="score-value" id="val-d">0</span>
+                </div>
+                <div class="score-card i">
+                    <span class="score-label">Влияние (I)</span>
+                    <span class="score-value" id="val-i">0</span>
+                </div>
+                <div class="score-card s">
+                    <span class="score-label">Стабильность (S)</span>
+                    <span class="score-value" id="val-s">0</span>
+                </div>
+                <div class="score-card c">
+                    <span class="score-label">Соответствие (C)</span>
+                    <span class="score-value" id="val-c">0</span>
+                </div>
+            </div>
+
+            <div class="final-type" id="final-type-text"></div>
+            <button class="btn btn-primary" onclick="location.reload()">Пройти заново</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  [
+    { text: "Экспресcивный", type: "i" },
+    { text: "Покладистый", type: "c" },
+    { text: "Волевой", type: "d" },
+    { text: "Осторожный", type: "s" }
+  ],
+  [
+    { text: "Пылкий", type: "d" },
+    { text: "Разговорчивый", type: "i" },
+    { text: "Добродушный", type: "s" },
+    { text: "Сдержанный", type: "c" }
+  ],
+  [
+    { text: "Любитель приключений", type: "i" },
+    { text: "Энтузиаст", type: "c" },
+    { text: "Исполнитель инструкций", type: "d" },
+    { text: "Верный", type: "s" }
+  ],
+  [
+    { text: "Настойчивый", type: "d" },
+    { text: "Осторожный", type: "c" },
+    { text: "Эмоциональный", type: "i" },
+    { text: "Удовлетворенный", type: "s" }
+  ],
+  [
+    { text: "Довольный", type: "s" },
+    { text: "Нетерпеливый", type: "d" },
+    { text: "Убедительный", type: "i" },
+    { text: "Безропотный", type: "c" }
+  ],
+  [
+    { text: "Смиренный", type: "c" },
+    { text: "Умеющий слушать", type: "s" },
+    { text: "Душа компании", type: "i" },
+    { text: "Волевой", type: "d" }
+  ],
+  [
+    { text: "Правильный", type: "c" },
+    { text: "Первопроходец", type: "d" },
+    { text: "Спокойный", type: "s" },
+    { text: "Влиятельный", type: "i" }
+  ],
+  [
+    { text: "Почтительный", type: "c" },
+    { text: "Контактный", type: "i" },
+    { text: "Агрессивный", type: "d" },
+    { text: "Мягкий", type: "s" }
+  ],
+  [
+    { text: "Весельчак", type: "i" },
+    { text: "Покорный", type: "s" },
+    { text: "Тактичный", type: "c" },
+    { text: "Соперничающий", type: "d" }
+  ],
+  [
+    { text: "Точный", type: "c" },
+    { text: "Доминирующий", type: "d" },
+    { text: "Охотный", type: "s" },
+    { text: "Притягательный", type: "i" }
+  ],
+  [
+    { text: "Уравновешенный", type: "i" },
+    { text: "Уступчивый", type: "c" },
+    { text: "Идущий на риск", type: "d" },
+    { text: "Услужливый", type: "s" }
+  ],
+  [
+    { text: "Осмотрительный", type: "c" },
+    { text: "Добрососедский", type: "s" },
+    { text: "Энергичный", type: "d" },
+    { text: "Убедительный", type: "i" }
+  ],
+  [
+    { text: "Уравновешенный", type: "s" },
+    { text: "Мотивирующий", type: "i" },
+    { text: "Щепетильный", type: "c" },
+    { text: "Решительный", type: "d" }
+  ],
+  [
+    { text: "Уверенный", type: "i" },
+    { text: "Готовый к сотрудничеству", type: "c" },
+    { text: "Беззаботный", type: "s" },
+    { text: "Аргументирующий", type: "d" }
+  ],
+  [
+    { text: "Сдержанный", type: "s" },
+    { text: "Прямой", type: "d" },
+    { text: "Строгий", type: "c" },
+    { text: "Убедительный", type: "i" }
+  ],
+  [
+    { text: "Застенчивый", type: "c" },
+    { text: "Требовательный", type: "d" },
+    { text: "Терпеливый", type: "s" },
+    { text: "Очаровательный", type: "i" }
+  ],
+  [
+    { text: "Неугомонный", type: "d" },
+    { text: "Дисциплинированный", type: "c" },
+    { text: "Вдохновляющий", type: "i" },
+    { text: "Внимательный", type: "s" }
+  ],
+  [
+    { text: "Обязательный", type: "s" },
+    { text: "Оживленный", type: "i" },
+    { text: "Решительный", type: "d" },
+    { text: "Точный", type: "c" }
+  ],
+  [
+    { text: "Добросовестный", type: "c" },
+    { text: "Компанейский", type: "i" },
+    { text: "Добрый", type: "s" },
+    { text: "Уверенный в себе", type: "d" }
+  ],
+  [
+    { text: "Дипломатичный", type: "c" },
+    { text: "Отважный", type: "d" },
+    { text: "Сочувствующий", type: "s" },
+    { text: "Оптимистичный", type: "i" }
+  ],
+  [
+    { text: "Настойчивый", type: "d" },
+    { text: "Общительный", type: "i" },
+    { text: "Постоянный", type: "s" },
+    { text: "Организованный", type: "c" }
+  ],
+  [
+    { text: "Соглашающийся", type: "c" },
+    { text: "Владеющий собой", type: "s" },
+    { text: "Шутливый", type: "d" },
+    { text: "Настойчивый", type: "i" }
+  ],
+  [
+    { text: "Обаятельный", type: "i" },
+    { text: "Позитивный", type: "d" },
+    { text: "Снисходительный", type: "s" },
+    { text: "Требовательный", type: "c" }
+  ],
+  [
+    { text: "Коммуникабельный", type: "i" },
+    { text: "Смелый", type: "d" },
+    { text: "Перфекционист", type: "c" },
+    { text: "Сдержанный", type: "s" }
+  ]
+];
+
+let currentStep = 0;
+const totalSteps = QUESTIONS.length;
+
+const userAnswers = QUESTIONS.map(q => [...q]);
+
+function initApp() {
+    const container = document.getElementById('steps-container');
+    
+    QUESTIONS.forEach((q, idx) => {
+        const stepDiv = document.createElement('div');
+        stepDiv.className = `step-container ${idx === 0 ? 'active' : ''}`;
+        stepDiv.id = `step-${idx}`;
+
+        const list = document.createElement('ul');
+        list.className = 'disc-list';
+        list.dataset.step = idx;
+
+        q.forEach((item, itemIdx) => {
+            const li = document.createElement('li');
+            li.className = 'disc-item';
+            li.draggable = true;
+            li.dataset.type = item.type;
+            li.innerHTML = `
+                <div class="handle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M5 4a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm1 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM9 4a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                    </svg>
+                </div>
+                ${item.text}
+            `;
+
+            li.addEventListener('dragstart', () => li.classList.add('dragging'));
+            li.addEventListener('dragend', () => li.classList.remove('dragging'));
+
+            list.appendChild(li);
+        });
+
+        list.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            if (!dragging) return;
+            
+            const bounding = list.getBoundingClientRect();
+            const y = e.clientY - bounding.top;
+            const children = Array.from(list.children);
+            
+            const nextSibling = children.find(child => {
+                const childRect = child.getBoundingClientRect();
+                return y < childRect.top + childRect.height / 2;
+            });
+
+            if (nextSibling) {
+                list.insertBefore(dragging, nextSibling);
+            } else {
+                list.appendChild(dragging);
+            }
+        });
+
+        stepDiv.appendChild(list);
+        container.appendChild(stepDiv);
+    });
+
+    updateUI();
+}
+
+function updateUI() {
+    document.querySelectorAll('.step-container').forEach((el, idx) => {
+        el.classList.toggle('active', idx === currentStep);
+    });
+
+    document.getElementById('prev-btn').disabled = currentStep === 0;
+    document.getElementById('next-btn').textContent = currentStep === totalSteps - 1 ? 'Завершить' : 'Далее';
+
+    const progress = ((currentStep + 1) / totalSteps) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function saveCurrentStepOrder() {
+    const list = document.querySelector(`.disc-list[data-step="${currentStep}"]`);
+    const items = Array.from(list.children);
+    userAnswers[currentStep] = items.map(li => ({
+        type: li.dataset.type,
+        text: li.innerText.trim()
+    }));
+}
+
+function calculateResults() {
+    const scores = { d: 0, i: 0, s: 0, c: 0 };
+
+    userAnswers.forEach(list => {
+        const most = list[0].type;
+        const least = list[3].type;
+        scores[most]++;
+        scores[least]--;
+    });
+
+    return scores;
+}
+
+function showResults() {
+    const scores = calculateResults();
+    document.getElementById('test-view').style.display = 'none';
+    document.getElementById('results-view').style.display = 'block';
+
+    document.getElementById('val-d').textContent = scores.d;
+    document.getElementById('val-i').textContent = scores.i;
+    document.getElementById('val-s').textContent = scores.s;
+    document.getElementById('val-c').textContent = scores.c;
+
+    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const topType = sorted[0][0];
+    
+    const typeNames = {
+        d: "Ваш ведущий тип — Доминирование (Красный)",
+        i: "Ваш ведущий тип — Влияние (Жёлтый)",
+        s: "Ваш ведущий тип — Стабильность (Зелёный)",
+        c: "Ваш ведущий тип — Соответствие (Синий)"
+    };
+
+    document.getElementById('final-type-text').textContent = typeNames[topType];
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+    saveCurrentStepOrder();
+    if (currentStep === totalSteps - 1) {
+        showResults();
+    } else {
+        currentStep++;
+        updateUI();
+    }
+});
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+    currentStep--;
+    updateUI();
+});
+
+initApp();
+</script>
+</body>
+</html>

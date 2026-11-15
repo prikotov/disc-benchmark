@@ -295,7 +295,7 @@ workspace: в git не попадает (шаблон — `.env.local.example`),
 
 | Папка | Тег | Уровни | Зачем |
 |---|---|---|---|
-| `gemma4-31b-it-qat-pi-100k/` | `gemma4:31b-it-qat-pi-100k` | off, on | QAT-квант против 26b |
+| `gemma4-31b-it-qat-pi-100k/` | `gemma4:31b-it-qat-pi-100k` | off, on (готово) | QAT-квант против 26b |
 | `gemma4-e2b-ctx100k/` | `gemma4:e2b-ctx100k` | off, on | пол возможностей (4.6B) |
 | `ornith-1.5-9b/` | `ornith-1.5:9b` | off, on | пол возможностей (9B) |
 | `qwen3.8-nomtp-pi-100k/` | `qwen3.8-nomtp:pi-100k` | low | техвариант: без MTP-слоя |

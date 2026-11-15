@@ -227,6 +227,11 @@ th,td{{border:1px solid #d0d4dd;padding:6px 10px;font-size:14px;text-align:left}
 th{{background:#eef0f4}}
 .pass{{color:#0a7d32}} .fail{{color:#b3261e}}
 /* --- галерея --- */
+.small{{font-size:13px;color:#666}}
+.toc{{margin:14px 0 20px}}
+.toc a{{display:inline-block;margin:2px 16px 2px 0;padding:4px 12px;background:#eef0f4;border-radius:8px;text-decoration:none;color:#123f8c;font-size:14px}}
+.toc a:hover{{background:#dfe3ea}}
+.st.done{{color:#0a7d32;font-weight:600}} .st.todo{{color:#b8860b}}
 .gmodel{{border-bottom:2px solid #c9ced8;padding-bottom:6px;margin-top:40px}}
 .avg{{font-size:13px;font-weight:normal;color:#666;background:#e8eaed;padding:2px 10px;border-radius:12px;vertical-align:middle;margin-left:8px}}
 .gcard{{background:#fff;border:1px solid #d5d8de;border-radius:12px;padding:16px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}}

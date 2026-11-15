@@ -240,6 +240,7 @@ th{{background:#eef0f4}}
 .try{{display:inline-block;background:#123f8c;color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}}
 .try:hover{{background:#0e3270}} .noapp{{color:#999;font-size:13px}}
 figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}
+.shots{{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}}
 .shot{{max-width:440px;border:1px solid #ccc;border-radius:8px;cursor:zoom-in;transition:transform .15s}}
 .shot:hover{{transform:scale(1.02)}}
 #lb{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);overflow:auto;z-index:99;cursor:zoom-out}}

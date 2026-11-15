@@ -5,22 +5,9 @@ h1,h2,h3{font-family:system-ui} h2{border-bottom:2px solid #c9ced8;padding-botto
 table{border-collapse:collapse;background:#fff;width:100%}
 th,td{border:1px solid #d0d4dd;padding:6px 10px;font-size:14px;text-align:left}
 th{background:#eef0f4}
-.pass{color:#0a7d32} .fail{color:#b3261e} .st.done{color:#0a7d32;font-weight:bold} .st.todo{color:#8a6d1a}
+.pass{color:#0a7d32} .fail{color:#b3261e}
 img.shot{max-width:340px;border:1px solid #ccc;border-radius:6px}
-.shots{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 </style>
-<div id="lb"><div class="hint">масштаб 1:1 · прокрутка — панорама · Esc или клик — закрыть</div><img alt=""></div>
-<script>
-const lb = document.getElementById('lb'); const lbImg = lb.querySelector('img');
-const openLb = (src) => { lbImg.src = src; lb.style.display = 'block'; document.body.style.overflow = 'hidden'; };
-const closeLb = () => { lb.style.display = 'none'; lbImg.src = ''; document.body.style.overflow = ''; };
-document.addEventListener('click', (e) => {
-  const im = e.target.closest('img.shot');
-  if (im) { openLb(im.src); return; }
-  if (e.target.closest('#lb')) closeLb();
-});
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb(); });
-</script>
 <h1>disc: прогоны копирования DISC-теста</h1>
 
 <div class="card">

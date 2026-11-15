@@ -203,7 +203,7 @@ def build_report_html():
     {badge}
     {link}
   </div>
-  <div class="gdetail">итог: {x["score100"]}/100 · vision-UX: {x["ux_vision"] if x["ux_vision"] is not None else "—"}/100</div>
+  <div class="gdetail">vision-UX: {x["ux_vision"] if x["ux_vision"] is not None else "—"}/100</div>
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
 

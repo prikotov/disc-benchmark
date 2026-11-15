@@ -174,9 +174,12 @@ def build_report_html():
                 if p.is_file():
                     b64 = base64.b64encode(p.read_bytes()).decode()
                     shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap}</figcaption></figure>')
+            uxf = run / "judge-ux.json"
+            ux_score = (json.loads(uxf.read_text(encoding="utf-8")).get("verdict") or {}).get("score") if uxf.is_file() else None
             gallery.setdefault(model, []).append({
                 "run": r["run"], "thinking": r["thinking"], "score100": score100,
                 "check_passed": r["check_passed"], "shots": shots,
+                "ux_vision": ux_score,
                 "rel_app": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/index.html" if has_app else None,
             })
     # модели по убыванию лучшего балла, прогоны по имени
@@ -200,6 +203,7 @@ def build_report_html():
     {badge}
     {link}
   </div>
+  <div class="gdetail">итог: {x["score100"]}/100 · vision-UX: {x["ux_vision"] if x["ux_vision"] is not None else "—"}/100</div>
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
 
@@ -246,6 +250,7 @@ th{{background:#eef0f4}}
 .try:hover{{background:#0e3270}} .noapp{{color:#999;font-size:13px}}
 figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}
 .shots{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}}
+.gdetail{{font-size:12px;color:#888;margin:2px 0 4px}}
 .noshots{{grid-column:1/-1;color:#999;font-size:13px;background:#f6f7fa;border:1px dashed #ccc;border-radius:8px;padding:18px;text-align:center}}
 .shot{{width:100%;height:auto;display:block;border:1px solid #ccc;border-radius:8px;cursor:zoom-in;transition:transform .15s}}
 .shot:hover{{transform:scale(1.02)}}
@@ -347,11 +352,16 @@ def html_report(runs):
         meta = load(Path(run), "run.json")
         chk = load(Path(run), "check.json")
         jd = load(Path(run), "judge-tier1.json").get("verdict") or {}
+        uxvf = Path(run) / "judge-ux.json"
+        uxv = (json.loads(uxvf.read_text(encoding="utf-8")).get("verdict") or {}) if uxvf.is_file() else {}
         esc = html_mod.escape
         jhtml = (f'<b>судья ярус 1:</b> data {jd.get("data")} · logic {jd.get("logic")} · '
                  f'ux {jd.get("ux")} · impl {jd.get("impl")} — <b>{jd.get("total")}/16</b>'
+                 f' · <b>vision-UX: {uxv.get("score", "—")}/100</b>'
                  f'<div class="notes">{esc((jd.get("notes") or ""))[:700]}</div>'
-                 f'<div class="notes">{esc((jd.get("examples") or ""))[:700]}</div>' if jd else "судья: не выполнялся")
+                 f'<div class="notes">{esc((jd.get("examples") or ""))[:700]}</div>'
+                 + (f'<div class="notes"><b>vision-UX замечания:</b> {esc(" · ".join(uxv.get("issues", []))[:600])}</div>' if uxv.get("issues") else "")
+                 if jd else "судья: не выполнялся")
         shots = []
         for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
             p = Path(run) / "screenshots" / name

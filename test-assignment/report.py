@@ -216,6 +216,7 @@ def main():
     ap.add_argument("--run", help="каталог прогона: summary + scorecard")
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--html", action="store_true")
+    ap.add_argument("--report", action="store_true")
     args = ap.parse_args()
 
     if args.run:
@@ -235,6 +236,10 @@ def main():
         p = ROOT / "reports" / "RUNS.html"
         p.write_text(html_report(runs), encoding="utf-8")
         print(f"reports/RUNS.html обновлён ({p})")
+    if args.report:
+        p = ROOT / "reports" / "REPORT.html"
+        p.write_text(build_report_html(), encoding="utf-8")
+        print(f"reports/REPORT.html обновлён ({p})")
     if not args.run and not args.all and not args.html:
         print("укажите --run <dir> и/или --all и/или --html")
     return 0

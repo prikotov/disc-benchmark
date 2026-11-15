@@ -218,9 +218,9 @@ def build_report_html():
   <div class="ghead">
     <span class="grun">{html_mod.escape(x["run"])}</span>
     <span class="glvl">think: {html_mod.escape(x["thinking"])}</span>
+    {badge}
     <span class="gscore {cls}">{x["score100"]}/100<small>итог</small></span>
     <span class="gux">{x["ux_vision"] if x["ux_vision"] is not None else "—"}/100<small>vision-UX</small></span>
-    {badge}
     {link}
   </div>
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>

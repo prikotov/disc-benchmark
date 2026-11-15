@@ -199,11 +199,11 @@ def build_report_html():
   <div class="ghead">
     <span class="grun">{html_mod.escape(x["run"])}</span>
     <span class="glvl">think: {html_mod.escape(x["thinking"])}</span>
-    <span class="gscore {cls}">{x["score100"]}/100</span>
+    <span class="gscore {cls}">{x["score100"]}/100<small>итог</small></span>
+    <span class="gux">{x["ux_vision"] if x["ux_vision"] is not None else "—"}/100<small>vision-UX</small></span>
     {badge}
     {link}
   </div>
-  <div class="gdetail">vision-UX: {x["ux_vision"] if x["ux_vision"] is not None else "—"}/100</div>
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
 
@@ -242,15 +242,17 @@ th{{background:#eef0f4}}
 .gcard.hi{{border-left:4px solid #22c55e}} .gcard.mid{{border-left:4px solid #f59e0b}} .gcard.lo{{border-left:4px solid #ef4444}}
 .ghead{{display:flex;align-items:center;gap:12px;flex-wrap:wrap}}
 .grun{{font-weight:700;font-size:15px}} .glvl{{color:#555;font-size:12px;background:#eef0f4;padding:2px 8px;border-radius:6px}}
-.gscore{{font-size:22px;font-weight:800;margin-left:auto}}
+.gscore{{font-size:22px;font-weight:800;margin-left:auto;text-align:center;line-height:1.1}}
+.gscore small{{display:block;font-size:9px;color:#999;font-weight:normal;letter-spacing:.04em}}
 .gscore.hi{{color:#16a34a}} .gscore.mid{{color:#f59e0b}} .gscore.lo{{color:#dc2626}}
+.gux{{font-size:16px;font-weight:700;color:#3b5e8c;text-align:center;line-height:1.1}}
+.gux small{{display:block;font-size:9px;color:#999;font-weight:normal;letter-spacing:.04em}}
 .badge{{font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px}}
 .badge.pass{{background:#d4edda;color:#155724}} .badge.fail{{background:#f8d7da;color:#721c24}}
 .try{{display:inline-block;background:#123f8c;color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}}
 .try:hover{{background:#0e3270}} .noapp{{color:#999;font-size:13px}}
 figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}
 .shots{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}}
-.gdetail{{font-size:12px;color:#888;margin:2px 0 4px}}
 .noshots{{grid-column:1/-1;color:#999;font-size:13px;background:#f6f7fa;border:1px dashed #ccc;border-radius:8px;padding:18px;text-align:center}}
 .shot{{width:100%;height:auto;display:block;border:1px solid #ccc;border-radius:8px;cursor:zoom-in;transition:transform .15s}}
 .shot:hover{{transform:scale(1.02)}}

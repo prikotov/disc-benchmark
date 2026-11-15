@@ -37,6 +37,8 @@ def run_row(run: Path) -> dict:
     st = load(run, "session-stats.json")
     pt = load(run, "playthrough.json")
     jd = load(run, "judge-tier1.json").get("verdict") or {}
+    uxj = load(run, "judge-ux.json").get("verdict") or {}
+    pt = load(run, "playthrough.json")
     model = meta.get("model") or run.parts[-3]
     return {
         "model": model,
@@ -64,6 +66,11 @@ def run_row(run: Path) -> dict:
         "judge": {"data": jd.get("data"), "logic": jd.get("logic"),
                   "ux": jd.get("ux"), "impl": jd.get("impl"),
                   "total": jd.get("total")} if jd else None,
+        "ux_judge": uxj.get("score") if isinstance(uxj, dict) else None,
+        "ux_judge_notes": (uxj.get("notes") or "")[:300] if isinstance(uxj, dict) else "",
+        "flow_ok": pt.get("flow_ok"),
+        "questions_processed": pt.get("questions_processed"),
+        "drags": pt.get("drags"),
     }
 
 
@@ -177,7 +184,9 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb();
         meta = load(run, "run.json")
         chk = load(run, "check.json")
         jd = load(run, "judge-tier1.json").get("verdict") or {}
-        notes = (load(run, "judge-tier1.json").get("verdict") or {}).get("notes", "")
+        uxj = load(run, "judge-ux.json").get("verdict") or {}
+        pt = load(run, "playthrough.json")
+        notes = (jd.get("notes") or "")[:400]
         shots = []
         for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
             p = run / "screenshots" / name
@@ -235,6 +244,8 @@ def build_report_html() -> str:
             chk = load(run, "check.json")
             pt = load(run, "playthrough.json")
             jd = load(run, "judge-tier1.json").get("verdict") or {}
+    uxj = load(run, "judge-ux.json").get("verdict") or {}
+    pt = load(run, "playthrough.json")
             shots = []
             for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
                 pth = run / "screenshots" / name

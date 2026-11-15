@@ -321,6 +321,34 @@ const REORDER_ONE_FN = (kLocal, startQi, planJson, mapJson2, quirksJson2) => {
       document.documentElement.scrollWidth > window.innerWidth + 2);
     await shot(page, 'result');
 
+    // некоторые приложения показывают результат мигом и возвращаются на лендинг —
+    // проверяем состояние ПОСЛЕ показа: если виден стартовый CTA и маркеров
+    // результата нет — результат пользователю фактически не отображён
+    const afterInfo = await page.evaluate(() => {
+      const vh = window.innerHeight;
+      const vis = (el) => !!(el && el.offsetParent !== null);
+      const inView = (el) => { const r = el.getBoundingClientRect(); return r.top < vh && r.bottom > 0; };
+      let startOnScreen = false, markerOnScreen = false, markerText = '';
+      for (const el of document.querySelectorAll('button, a, [role=button]')) {
+        if (!vis(el)) continue;
+        if (/пройти\s*(?:онлайн-)?тест|начать\s*тест/i.test(el.textContent || '')) { startOnScreen = inView(el); if (startOnScreen) break; }
+      }
+      for (const el of document.querySelectorAll('body *')) {
+        if (!vis(el)) continue;
+        const own = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join(' ');
+        if (/профиль|балл|dominan|доминир|ваш\s+результат/i.test(own)) {
+          markerOnScreen = inView(el); markerText = own.trim().slice(0, 40); break;
+        }
+      }
+      return { startOnScreen, markerOnScreen, markerText };
+    });
+    result.returned_to_start = afterInfo.startOnScreen;
+    result.result_marker_on_screen = afterInfo.markerOnScreen;
+    if (result.displayed && afterInfo.startOnScreen && !afterInfo.markerOnScreen) {
+      result.notes.push('результат не показан: приложение вернулось на старт / дописало его вне вьюпорта');
+      result.incomplete = true;
+    }
+
     // ---- UX-балл 0–100 ----
     let ux = 0;
     if (!result.incomplete && result.questions_processed >= 24) ux += 30;

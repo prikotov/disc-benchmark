@@ -161,34 +161,46 @@ def build_report_html():
             r = run_row(mf)
             by_model.setdefault(r["model"], []).append((mf, r))
 
-    cards = []
+    # --- галерея: группировка по моделям, балл 0–100, чек, «открыть» ---
+    gallery = {}   # model -> list of dicts
     for model, items in by_model.items():
         for run, r in items:
-            meta = load(run, "run.json")
-            chk = load(run, "check.json")
             jd = load(run, "judge-tier1.json").get("verdict") or {}
-            esc = html_mod.escape
-            jhtml = (f'<b>судья ярус 1:</b> data {jd.get("data")} · logic {jd.get("logic")} · '
-                     f'ux {jd.get("ux")} · impl {jd.get("impl")} — <b>{jd.get("total")}/16</b>'
-                     f'<div class="notes">{esc((jd.get("notes") or ""))[:700]}</div>'
-                     f'<div class="notes">{esc((jd.get("examples") or ""))[:700]}</div>' if jd else "судья: не выполнялся")
+            score100 = round((jd.get("total") or 0) / 16 * 100)
+            has_app = (run / "index.html").is_file()
             shots = []
             for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
                 p = run / "screenshots" / name
                 if p.is_file():
                     b64 = base64.b64encode(p.read_bytes()).decode()
-                    shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
-            cards.append(f"""
-<div class="card">
-  <h3>{r['model']} · think {r['thinking']} · <span class="run">{r['run']}</span></h3>
-  <div class="meta">время {fmt_dur(r['duration_s'])} · exit {r['exit_code']} · токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,} ·
-  инструментов {r['tool_calls']} · curl к источнику {r['curl_source']} · контекст {meta.get('context')}/выход {meta.get('max_tokens')}</div>
-  <div class="checks">чек: <b class="{'pass' if r['check_passed'] else 'fail'}">{'PASSED' if r['check_passed'] else 'FAILED'}</b> ·
-  данные {r['data_found']}/{r['data_total']} · пары текст+тип {r['types_correct']}/{r['types_total']} ·
-  внешние запросы: {'нет' if r['external_pass'] else 'ЕСТЬ'} · рендер: {'OK' if r['smoke_ok'] else '—'} ·
-  автопрохождение: {'OK' if r['flow_ok'] else '—'} · совпадение баллов: {r['displayed_match']}</div>
-  <div class="shots">{''.join(shots)}</div>
-  <div class="judge">{jhtml}</div>
+                    shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap}</figcaption></figure>')
+            gallery.setdefault(model, []).append({
+                "run": r["run"], "thinking": r["thinking"], "score100": score100,
+                "check_passed": r["check_passed"], "shots": shots,
+                "rel_app": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/index.html" if has_app else None,
+            })
+    # модели по убыванию лучшего балла, прогоны по имени
+    sorted_models = sorted(gallery.keys(), key=lambda m: -max(x["score100"] for x in gallery[m]))
+    gallery_html = []
+    for m in sorted_models:
+        rs = sorted(gallery[m], key=lambda x: x["run"])
+        avg = sum(x["score100"] for x in rs) / len(rs)
+        best = max(x["score100"] for x in rs)
+        gallery_html.append(f'<h2 class="gmodel">{html_mod.escape(m)} <span class="avg">средний {avg:.0f}/100 · лучший {best:.0f}</span></h2>')
+        for x in rs:
+            cls = "hi" if x["score100"] >= 75 else ("mid" if x["score100"] >= 40 else "lo")
+            badge = '<span class="badge pass">✓ PASSED</span>' if x["check_passed"] else '<span class="badge fail">✗ FAILED</span>'
+            link = f'<a class="try" href="{x["rel_app"]}" target="_blank">▶ открыть приложение</a>' if x["rel_app"] else '<span class="noapp">нет решения</span>'
+            gallery_html.append(f"""
+<div class="gcard {cls}">
+  <div class="ghead">
+    <span class="grun">{html_mod.escape(x["run"])}</span>
+    <span class="glvl">think: {html_mod.escape(x["thinking"])}</span>
+    <span class="gscore {cls}">{x["score100"]}/100</span>
+    {badge}
+    {link}
+  </div>
+  <div class="shots">{''.join(x["shots"])}</div>
 </div>""")
 
     matrix_rows = "".join(f"<tr><td>{m}</td><td>{lvl}</td><td class='st {cls}'>{st}</td></tr>"
@@ -214,8 +226,25 @@ table{{border-collapse:collapse;background:#fff;width:100%}}
 th,td{{border:1px solid #d0d4dd;padding:6px 10px;font-size:14px;text-align:left}}
 th{{background:#eef0f4}}
 .pass{{color:#0a7d32}} .fail{{color:#b3261e}}
-img.shot{{max-width:340px;border:1px solid #ccc;border-radius:6px}}
-.shots{{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}}
+/* --- галерея --- */
+.gmodel{{border-bottom:2px solid #c9ced8;padding-bottom:6px;margin-top:40px}}
+.avg{{font-size:13px;font-weight:normal;color:#666;background:#e8eaed;padding:2px 10px;border-radius:12px;vertical-align:middle;margin-left:8px}}
+.gcard{{background:#fff;border:1px solid #d5d8de;border-radius:12px;padding:16px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}}
+.gcard.hi{{border-left:4px solid #22c55e}} .gcard.mid{{border-left:4px solid #f59e0b}} .gcard.lo{{border-left:4px solid #ef4444}}
+.ghead{{display:flex;align-items:center;gap:12px;flex-wrap:wrap}}
+.grun{{font-weight:700;font-size:15px}} .glvl{{color:#555;font-size:12px;background:#eef0f4;padding:2px 8px;border-radius:6px}}
+.gscore{{font-size:22px;font-weight:800;margin-left:auto}}
+.gscore.hi{{color:#16a34a}} .gscore.mid{{color:#f59e0b}} .gscore.lo{{color:#dc2626}}
+.badge{{font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px}}
+.badge.pass{{background:#d4edda;color:#155724}} .badge.fail{{background:#f8d7da;color:#721c24}}
+.try{{display:inline-block;background:#123f8c;color:#fff;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px}}
+.try:hover{{background:#0e3270}} .noapp{{color:#999;font-size:13px}}
+figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}
+.shot{{max-width:440px;border:1px solid #ccc;border-radius:8px;cursor:zoom-in;transition:transform .15s}}
+.shot:hover{{transform:scale(1.02)}}
+#lb{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);overflow:auto;z-index:99;cursor:zoom-out}}
+#lb img{{max-width:none;display:block;margin:20px auto}}
+#lb .hint{{position:fixed;top:12px;right:16px;color:#ddd;font-size:14px}}
 </style>
 <h1>disc: сводный отчёт — тестирование копирования DISC-теста</h1>
 <p class="small">Обновлено 2026-11-15. Полная методика: reports/METHOD.md · конвенции: AGENTS.md ·
@@ -268,12 +297,26 @@ img.shot{{max-width:340px;border:1px solid #ccc;border-radius:6px}}
 совпадение топ-1, кейс bonsai.</p>
 
 <h2 id="runs">5. Прогоны и результаты</h2>
-<table style="font-size:13px"><tr><th>модель</th><th>прогон</th><th>think</th><th>время</th><th>ток. вх/вых</th><th>чек</th><th>данные</th><th>типы</th><th>поток</th><th>судья</th><th></th></tr>
-</table>
-<table><tr><th>модель</th><th>уровень</th><th>средний /16</th><th>прогоны</th></tr>
-</table>
-<p class="small">Карточки ниже свёрнуты — клик по строке открывает детали, скриншоты (клик — 1:1) и вердикт судьи. Ссылки «открыть ▸» ведут на живое приложение прогона.</p>
-{''.join(cards) if cards else '<p>прогонов пока нет</p>'}
+<p>Каждая карточка — прогон: скриншоты (клик — 1:1), итоговый балл 0–100, статус чека, ссылка на приложение.
+Модели отсортированы по убыванию лучшего балла.</p>
+{''.join(gallery_html) if gallery_html else '<p>прогонов пока нет</p>'}
+<div id="lb"><div class="hint">1:1 · Esc — закрыть</div><img alt=""></div>
+<script>
+document.querySelectorAll('.shot').forEach(im => {{
+  im.addEventListener('click', () => {{
+    const lb = document.getElementById('lb');
+    lb.querySelector('img').src = im.src;
+    lb.style.display = 'block'; document.body.style.overflow = 'hidden';
+  }});
+}});
+document.getElementById('lb').addEventListener('click', () => {{
+  document.getElementById('lb').style.display = 'none';
+  document.body.style.overflow = '';
+}});
+document.addEventListener('keydown', e => {{
+  if (e.key === 'Escape') {{ document.getElementById('lb').style.display = 'none'; document.body.style.overflow = ''; }}
+}});
+</script>
 
 <h2 id="limits">6. Ограничения и политика</h2>
 <ul>

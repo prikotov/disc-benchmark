@@ -168,12 +168,16 @@ def build_report_html():
             jd = load(run, "judge-tier1.json").get("verdict") or {}
             score100 = round((jd.get("total") or 0) / 16 * 100)
             has_app = (run / "index.html").is_file()
-            shots = []
+            raw = []
             for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
                 p = run / "screenshots" / name
                 if p.is_file():
-                    b64 = base64.b64encode(p.read_bytes()).decode()
-                    shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap}</figcaption></figure>')
+                    raw.append((cap, base64.b64encode(p.read_bytes()).decode()))
+            # дедупликация: если все кадры одинаковые — приложение визуально не менялось
+            if len(raw) > 1 and len({b for _, b in raw}) == 1:
+                shots = [f'<figure><img class="shot" src="data:image/png;base64,{raw[0][1]}" alt="{raw[0][0]}"><figcaption>{raw[0][0]} — вид не менялся за весь тест (приложение не отрисовывает шаги)</figcaption></figure>']
+            else:
+                shots = [f'<figure><img class="shot" src="data:image/png;base64,{b}" alt="{cap}"><figcaption>{cap}</figcaption></figure>' for cap, b in raw]
             uxf = run / "judge-ux.json"
             ux_score = (json.loads(uxf.read_text(encoding="utf-8")).get("verdict") or {}).get("score") if uxf.is_file() else None
             gallery.setdefault(model, []).append({

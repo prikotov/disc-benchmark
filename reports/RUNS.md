@@ -44,6 +44,18 @@
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | gemma4:31b-it-qat-pi-100k | run-06 | medium | 7:23 | 164,579 | 14,668 | 21 | 5 | 84/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:e2b-ctx100k | run-01 | off | 3:03 | 113,841 | 74,225 | 4 | 1 | 0/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:e2b-ctx100k | run-02 | off | 0:01 | 0 | 0 | 0 | 0 | None/None 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:e2b-ctx100k | run-03 | off | 0:08 | 3,878 | 3,856 | 2 | 0 | 0/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:e2b-ctx100k | run-04 | medium | 0:09 | 11,853 | 4,327 | 2 | 0 | 2/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:e2b-ctx100k | run-05 | medium | 0:08 | 5,610 | 3,949 | 2 | 0 | 0/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| gemma4:e2b-ctx100k | run-06 | medium | 0:09 | 4,080 | 4,089 | 2 | 1 | 0/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | huihui-ai:pi-100k | run-01 | low | 10:17 | 115,790 | 56,864 | 74 | 4 | 84/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | huihui-ai:pi-100k | run-02 | low | 4:55 | 108,365 | 26,921 | 23 | 2 | 84/84 
@@ -111,6 +123,12 @@
 | ornith-1.5:35b-ctx100k-tuned | run-05 | medium | 4:00 | 110,229 | 14,955 | 30 | 5 | 81/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | ornith-1.5:35b-ctx100k-tuned | run-06 | medium | 9:22 | 254,152 | 96,529 | 120 | 13 | 84/84 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| ornith-1.5:9b | run-01 | medium | 0:34 | 0 | 0 | 0 | 0 | None/None 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| ornith-1.5:9b | run-02 | medium | 0:38 | 0 | 0 | 0 | 0 | None/None 
+Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
+| ornith-1.5:9b | run-03 | medium | 0:18 | 0 | 0 | 0 | 0 | None/None 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.
 | qwen3.8:27b-pi-100k | run-01 | off | 7:43 | 51,188 | 37,154 | 45 | 5 | 84/84 
 Сравнение с прогнозом (reports/FORECAST.md) — после серии прогонов.

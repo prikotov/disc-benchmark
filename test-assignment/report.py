@@ -200,7 +200,7 @@ def build_report_html():
     {badge}
     {link}
   </div>
-  <div class="shots">{''.join(x["shots"])}</div>
+  <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
 
     matrix_rows = "".join(f"<tr><td>{m}</td><td>{lvl}</td><td class='st {cls}'>{st}</td></tr>"
@@ -246,6 +246,7 @@ th{{background:#eef0f4}}
 .try:hover{{background:#0e3270}} .noapp{{color:#999;font-size:13px}}
 figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}
 .shots{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}}
+.noshots{{grid-column:1/-1;color:#999;font-size:13px;background:#f6f7fa;border:1px dashed #ccc;border-radius:8px;padding:18px;text-align:center}}
 .shot{{width:100%;height:auto;display:block;border:1px solid #ccc;border-radius:8px;cursor:zoom-in;transition:transform .15s}}
 .shot:hover{{transform:scale(1.02)}}
 #lb{{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);overflow:auto;z-index:99;cursor:zoom-out}}
@@ -338,6 +339,7 @@ document.addEventListener('keydown', e => {{
 </html>"""
 
 
+def html_report(runs):
     import base64
     cards = []
     for run in runs:
@@ -392,7 +394,14 @@ table{{border-collapse:collapse;background:#fff;width:100%}}
 th,td{{border:1px solid #d0d4dd;padding:6px 10px;font-size:14px;text-align:left}}
 th{{background:#eef0f4}}
 .pass{{color:#0a7d32}} .fail{{color:#b3261e}}
-img.shot{{max-width:340px;border:1px solid #ccc;border-radius:6px}}
+.card{{background:#fff;border:1px solid #d5d8de;border-radius:10px;padding:14px 18px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}}
+.card h3{{margin:0 0 6px}} .run{{color:#888;font-weight:normal;font-size:13px}}
+.meta{{font-size:12px;color:#888;margin:4px 0}}
+.checks{{font-size:13px;margin:6px 0}}
+.judge{{font-size:13px;background:#f6f7fa;border-radius:8px;padding:8px 12px;margin-top:8px}}
+.notes{{font-size:12px;color:#555;margin-top:4px;white-space:pre-wrap}}
+.shots{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}}
+img.shot{{width:100%;height:auto;display:block;border:1px solid #ccc;border-radius:6px}}
 </style>
 <h1>disc: прогоны копирования DISC-теста</h1>
 {''.join(cards)}

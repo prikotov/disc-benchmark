@@ -14,7 +14,7 @@
 - рендер-смоук (headless Chrome): OK
 - автопрохождение (поток): OK, вопросов 24; баллы на экране — справочно (симуляция drag&drop не воспроизводима, логику проверяет судья по коду)
 - скриншоты: /home/dp/MyProjects/disc/models/qwen3.8-27b-pi-100k/test-assignment/run-09/screenshots/start.png, /home/dp/MyProjects/disc/models/qwen3.8-27b-pi-100k/test-assignment/run-09/screenshots/step.png, /home/dp/MyProjects/disc/models/qwen3.8-27b-pi-100k/test-assignment/run-09/screenshots/result.png
-- судья яруса 1: не выполнялся
+- судья яруса 1: data 4, logic 4, ux 3, impl 4 — **15/16**
 - **итог чека: PASSED**
 
 Дальше: судья яруса 2 (обзор + сверка), при расхождениях — доработки в тот же run.

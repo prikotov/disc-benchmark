@@ -10,7 +10,7 @@
 
 - файлы агента: 1; index.html: есть
 - самодостаточность (внешние запросы): OK
-- данные: прилагательных 84/84; пар текст+тип верно 0/96 (разметка типов не извлечена автоматически — судьям смотреть руками)
+- данные: прилагательных 84/84; пар текст+тип верно 96/96
 - рендер-смоук (headless Chrome): OK
 - автопрохождение (поток): OK, вопросов 24; баллы на экране — справочно (симуляция drag&drop не воспроизводима, логику проверяет судья по коду)
 - скриншоты: /home/dp/MyProjects/disc/models/qwen3.8-27b-pi-100k/test-assignment/run-05/screenshots/start.png, /home/dp/MyProjects/disc/models/qwen3.8-27b-pi-100k/test-assignment/run-05/screenshots/step.png, /home/dp/MyProjects/disc/models/qwen3.8-27b-pi-100k/test-assignment/run-05/screenshots/result.png

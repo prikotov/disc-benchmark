@@ -215,9 +215,22 @@ def build_report_html() -> str:
             by_model.setdefault(r["model"], []).append((mf, r))
 
     cards = []
+    sum_rows = []
+    ladder_acc: dict = {}
     for model, items in by_model.items():
         for run, r in items:
             meta = load(run, "run.json")
+            lvl_disp = (r.get("thinking") or "?") + (" ⏱" if r.get("killed") else "")
+            jt = (r.get("judge") or {}).get("total")
+            sum_rows.append(
+                f"<tr><td>{r['model']}</td><td>{r['run']}</td><td>{lvl_disp}</td>"
+                f"<td>{fmt_dur(r['duration_s'])}</td><td>{(r['tokens_in'] or 0)//1000}k/{(r['tokens_out'] or 0)//1000}k</td>"
+                f"<td class=\"{'pass' if r['check_passed'] else 'fail'}\">{'PASSED' if r['check_passed'] else 'FAILED'}</td>"
+                f"<td>{r['data_found']}/{r['data_total']}</td><td>{r['types_correct']}/{r['types_total']}</td>"
+                f"<td>{'OK' if r['flow_ok'] else '—'}</td>"
+                f"<td><b>{jt if jt is not None else '—'}</b>/16</td>"
+                f"<td><a href=\"#{r['model'].replace(':', '-')}-{r['run']}\">открыть ▸</a></td></tr>")
+            ladder_acc.setdefault((r['model'], lvl_disp), []).append(jt)
             chk = load(run, "check.json")
             pt = load(run, "playthrough.json")
             jd = load(run, "judge-tier1.json").get("verdict") or {}
@@ -238,8 +251,9 @@ def build_report_html() -> str:
             quirk = "<br>+ исправлена известная опечатка оригинала" if chk.get("known_quirk_normalized") else ""
             status = "⏱ таймаут, " + str(r.get("duration_s")) + "с" if r.get("killed") else str(r.get("duration_s")) + "с"
             cards.append(f"""
-<div class="card">
-  <h3>{r['model']} · think {r['thinking']} · <span class="run">{r['run']}</span></h3>
+<details class="card" id="{r['model'].replace(':', '-')}-{r['run']}">
+  <summary><span class="runname">{r['model']}</span> · think {r['thinking']} · {r['run']}
+    <span class="jbadge">судья: {jt if jt is not None else '—'}/16</span><span class="chev">развернуть ▾</span></summary>
   <div class="meta">время {status} · exit {r['exit_code']} · токены вх {r['tokens_in']:,}/вых {r['tokens_out']:,} ·
   инструментов {r['tool_calls']} · curl к источнику {r['curl_source']} · контекст {meta.get('context')}/выход {meta.get('max_tokens')}</div>
   <div class="checks">чек: <b class="{'pass' if r['check_passed'] else 'fail'}">{'PASSED' if r['check_passed'] else 'FAILED'}</b> ·
@@ -249,7 +263,15 @@ def build_report_html() -> str:
   <div style="margin:8px 0">{app_link}</div>
   <div class="shots">{''.join(shots)}</div>
   <div class="judge">{jhtml}</div>
-</div>""")
+</details>""")
+
+    # лестницы по моделям × уровням
+    ladder_rows = []
+    for (lmodel, llvl), tots in sorted(ladder_acc.items()):
+        vals = [v for v in tots if v is not None]
+        avg = sum(vals)/len(vals) if vals else 0
+        ladder_rows.append(f"<tr><td>{lmodel}</td><td>{llvl}</td><td><b>{avg:.2f}</b></td>"
+                           f"<td>{', '.join(str(v) if v is not None else '—' for v in tots)}</td></tr>")
 
     matrix_rows = "".join(f"<tr><td>{m}</td><td>{lvl}</td><td class='st {cls}'>{st}</td></tr>"
                           for m, lvl, st, cls in [
@@ -353,6 +375,15 @@ document.addEventListener('keydown', (e) => {{ if (e.key === 'Escape') closeLb()
 совпадение топ-1, кейс bonsai.</p>
 
 <h2 id="runs">5. Прогоны и результаты</h2>
+<h3>Сводка всех прогонов</h3>
+<table style="font-size:13px"><tr><th>модель</th><th>прогон</th><th>think</th><th>время</th><th>ток. вх/вых</th><th>чек</th><th>данные</th><th>типы</th><th>поток</th><th>судья</th><th></th></tr>
+{''.join(sum_rows)}
+</table>
+<h3>Лестницы по моделям (средний балл судьи на уровень)</h3>
+<table><tr><th>модель</th><th>уровень</th><th>средний /16</th><th>прогоны</th></tr>
+{''.join(ladder_rows)}
+</table>
+<p class="small">Карточки ниже свёрнуты — клик по строке открывает детали, скриншоты (клик — 1:1) и вердикт судьи. Ссылки «открыть ▸» ведут на живое приложение прогона.</p>
 {''.join(cards) if cards else '<p>прогонов пока нет</p>'}
 
 <h2 id="limits">6. Ограничения и политика</h2>

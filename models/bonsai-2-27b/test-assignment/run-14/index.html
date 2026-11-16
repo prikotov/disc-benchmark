@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Короткий тест DISC на типы личности (Dominance, Influence, Stability, Compliance). Узнайте свой поведенческий профиль и сильные стороны. Пройдите тест прямо сейчас." />
+<title>Пройти тест DISC онлайн бесплатно — Типы личности за 5 минут</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#434343;background:#dae3e7;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osmoothing:antialiased}
+h1,h2,h3{font-family:"Segoe UI",sans-serif;font-weight:700;color:#778492}
+a{color:#3aaa64}
+.hero{max-width:960px;margin:0 auto;padding:48px 18px 28px;text-align:center}
+.hero h1{font-size:30px;color:#333;margin:0 0 12px}
+.hero p{max-width:640px;margin:0 auto;color:#556}
+.btn{display:inline-block;border:0;border-radius:8px;padding:12px 24px;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:transform .12s,box-shadow .12s,background .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:#3aaa64;color:#fff}
+.btn-ghost{background:#eef1f5;color:#445}
+.btn-ghost.is-disabled{opacity:.45;pointer-events:none;transform:none!important;box-shadow:none!important}
+.no-scroll{overflow:hidden}
+.modal{position:fixed;inset:0;display:none;z-index:1000;background:rgba(15,23,42,.55)}
+.modal.is-open{display:flex;align-items:center;justify-content:center}
+.modal__dialog{position:relative;margin:auto;width:min(920px,calc(100% - 24px));max-height:94vh;overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 16px 50px rgba(0,0,0,.3)}
+.modal__close{position:absolute;top:10px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.9);cursor:pointer;font-size:20px;line-height:1;display:grid;place-items:center;color:#445}
+.modal__close:hover{background:#fff;color:#000}
+.modal__head{padding:24px 26px 8px;text-align:center}
+.modal__head h2{margin:0 0 4px;font-size:24px;color:#333}
+.modal__head .sub{color:#657;font-size:14px;margin:0}
+.modal__head .lead{color:#2b6cf4;font-weight:600;font-size:14px;margin:2px 0 0}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;padding:14px 20px 6px;background:#fafbfc;border-bottom:1px solid #e4e8ee}
+.tab{flex:1 1 84px;min-width:80px;padding:8px 4px;border:1px solid #cfd6df;border-radius:8px;background:#fff;font-size:12px;color:#556;cursor:pointer;text-align:center;transition:all .12s}
+.tab:hover{background:#eef3fd}
+.tab.is-active{background:#2b6cf4;color:#fff;border-color:#2b6cf4;font-weight:600}
+.modal__body{padding:16px 20px 8px;overflow-y:auto}
+.disc-grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.disc-card{border:1px solid #dfe3ea;border-radius:12px;padding:12px;background:#fff}
+.disc-card__title{margin:0 0 10px;font-size:13px;font-weight:600;color:#334;text-align:center}
+.disc-card__foot{margin:10px 0 0;font-size:12px;color:#889;text-align:center}
+.disc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.disc-item{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 12px;border-radius:8px;background:#f7f9fb;border:1px solid #e2e8f0;cursor:grab;user-select:none;-webkit-user-select:none;transition:background .1s,box-shadow .1s}
+.disc-item:hover{background:#eef3fd;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.disc-item.dragging{opacity:.45}
+.item__type{font-size:11px;font-weight:700;padding:4px 7px;border-radius:6px;color:#fff;height:24px;align-self:flex-start}
+.type-d{background:#e74c3c}
+.type-i{background:#f1c40f;color:#4a3b00}
+.type-s{background:#27ae60}
+.type-c{background:#3498db}
+.progress{height:6px;background:#e6ebf1;border-radius:6px;margin:16px 20px 0;overflow:hidden}
+.progress__bar{height:100%;width:0;background:#2b6cf4;border-radius:6px;transition:width .25s}
+.actions{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:14px 20px 22px;border-top:1px solid #e6ebf1;flex-wrap:wrap}
+.actions .btn-primary{flex:1}
+.results{padding:18px 20px 24px;display:none}
+.results__note{font-size:14px;font-weight:600;color:#334;margin:0 0 12px}
+.results__row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.results__cell{border-radius:10px;padding:12px;text-align:center;font-size:15px;font-weight:700;color:#fff}
+.rc-d{background:#e74c3c}
+.rc-i{background:#f1c40f;color:#4a3b00}
+.rc-s{background:#27ae60}
+.rc-c{background:#3498db}
+.results__hint{font-weight:600;font-size:12px;text-transform:uppercase;color:#b91c1c;margin:0 0 8px;text-align:center}
+.results__code{width:100%;padding:12px;border:1px solid #dfe3ea;border-radius:10px;font-family:Consolas,monospace;font-size:14px;background:#f7f9fb;margin:0}
+.results__copy-row{text-align:center;margin-top:14px}
+@media(max-width:640px){
+.disc-grid3{grid-template-columns:1fr}
+.results__row{grid-template-columns:1fr 1fr}
+.hero h1{font-size:24px}
+.actions{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>Тест DISC — тип вашего поведения</h1>
+  <p>Короткий тест на типы личности (Dominance, Influence, Stability, Compliance). Узнайте свой поведенческий профиль и сильные стороны. Пройдите тест прямо сейчас.</p>
+  <button class="btn btn-primary" id="startBtn" type="button">Пройти тест DISC</button>
+</div>
+
+<div class="modal" id="wizardmodal" aria-hidden="true">
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+    <button class="modal__close" id="closeBtn" type="button" aria-label="Закрыть" aria-hidden="true">×</button>
+    <div class="modal__head">
+      <h2 id="discTitle">Тестирование DISC</h2>
+      <div class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Шаги"></div>
+    <div class="modal__body" id="rootwizard"></div>
+    <div class="progress" aria-hidden="true"><div class="progress__bar" id="progress"></div></div>
+    <div class="actions">
+      <button class="btn btn-ghost" id="prevBtn" type="button">Назад</button>
+      <button class="btn btn-primary" id="nextBtn" type="button">Далее</button>
+      <button class="btn btn-primary" id="finishBtn" type="button" hidden>Завершить тест</button>
+    </div>
+    <div class="results" id="results" hidden>
+      <p class="results__note">Ваш DISC-профиль:</p>
+      <div class="results__row">
+        <div class="results__cell rc-d" id="rD">D:0</div>
+        <div class="results__cell rc-i" id="rI">I:0</div>
+        <div class="results__cell rc-s" id="rS">S:0</div>
+        <div class="results__cell rc-c" id="rC">C:0</div>
+      </div>
+      <p class="results__hint"><span style="color:red;">★</span> Сохраните эту строку в любом удобном для вас месте. Она понадобится вам для расшифровки результатов.</p>
+      <input class="results__code" id="test_results" type="text" readonly placeholder="Код результата теста"/>
+      <div class="results__copy-row">
+        <button class="btn btn-primary" id="copyBtn" type="button">Копировать код</button>
+        <div style="margin-top:14px;"><button class="btn btn-ghost" id="doneBtn" type="button">Готово</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  /* 8 шагов × 3 карточки × 4 блока (data-type: d/i/s/c) */
+  const STEPS = [
+    [[["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],[["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],[["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]],
+    [[["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],[["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],[["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]],
+    [[["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],[["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],[["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]],
+    [[["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],[["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],[["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]],
+    [[["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],[["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],[["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]],
+    [[["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],[["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],[["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]],
+    [[["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],[["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],[["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]],
+    [[["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],[["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],[["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]],
+  ];
+  const N_STEPS = STEPS.length;
+  const el = id => document.getElementById(id);
+  const modal = el('wizardmodal');
+  const tabsEl = el('tabs');
+  const bodyEl = el('rootwizard');
+  const progressEl = el('progress');
+  const prevBtn = el('prevBtn');
+  const nextBtn = el('nextBtn');
+  const finishBtn = el('finishBtn');
+  const resultsEl = el('results');
+  let step = 0;
+  const ordinal = n => ['Первый','Второй','Третий','Четвертый','Пятый','Шестой','Седьмой','Восьмой'][n] || 'Шаг ' + (n+1);
+
+  function buildUI(){
+    tabsEl.innerHTML = '';
+    STEPS.forEach((_, s) => {
+      const b = document.createElement('button');
+      b.className = 'tab' + (s===0 ? ' is-active' : '');
+      b.type='button'; b.role='tab';
+      b.setAttribute('aria-selected', s===0 ? 'true':'false');
+      b.dataset.step = s;
+      b.textContent = ordinal(s);
+      b.addEventListener('click', () => goStep(s));
+      tabsEl.appendChild(b);
+    });
+    bodyEl.innerHTML = '';
+    STEPS.forEach((cards, s) => {
+      const pane = document.createElement('div');
+      pane.className = 'pane' + (s===0 ? ' is-active' : '');
+      pane.dataset.stepPane = s;
+      pane.setAttribute('role','tabpanel');
+      pane.innerHTML = '<div class="disc-grid3">' +
+        cards.map((card, ci) =>
+          '<div class="disc-card"><div class="disc-card__title">Я наиболее</div><ul class="disc-list" data-card="'+ci+'"></ul><div class="disc-card__foot">Я наименее</div></div>'
+        ).join('') + '</div>';
+      cards.forEach((card, ci) => {
+        const list = pane.querySelector('.disc-list[data-card="'+ci+'"]');
+        card.forEach(([type, text]) => {
+          const li = document.createElement('li');
+          li.className = 'disc-item';
+          li.setAttribute('draggable','true');
+          li.dataset.type = type;
+          const txt = document.createElement('span');
+          txt.textContent = text;
+          const badge = document.createElement('span');
+          badge.className = 'item__type type-'+type;
+          badge.textContent = type.toUpperCase();
+          li.appendChild(txt); li.appendChild(badge); list.appendChild(li);
+        });
+      });
+      bodyEl.appendChild(pane);
+    });
+  }
+
+  let dragSrc = null;
+  function bindList(list){
+    list.querySelectorAll('.disc-item').forEach(item => {
+      item.addEventListener('dragstart', onDragStart);
+      item.addEventListener('dragend', onDragEnd);
+      item.addEventListener('dragover', onDragOver);
+      item.addEventListener('drop', onDrop);
+      item.addEventListener('click', onItemTap);
+    });
+    list.addEventListener('dragover', onDragOver);
+    list.addEventListener('dragend', onDragEnd);
+  }
+  function onDragStart(e){e.dataTransfer.effectAllowed='move';dragSrc=e.target;dragSrc.classList.add('dragging')}
+  function onDragEnd(){dragSrc=null}
+  function onDragOver(e){
+    e.preventDefault();
+    if (dragSrc && dragSrc.classList.contains('dragging')){
+      const li=e.target.closest('.disc-item');
+      if (li && li!==dragSrc) insertBefore(li, dragSrc);
+    }
+  }
+  function onDrop(e){
+    e.preventDefault();
+    if (dragSrc && e.target.closest('.disc-item')) insertBefore(e.target.closest('.disc-item'), dragSrc);
+    e.target.classList.remove('dragging');
+  }
+  function insertBefore(target, src){
+    if (src===target || !src.parentNode) return;
+    if (src.classList.contains('dragging')) src.classList.remove('dragging');
+    src.parentNode.insertBefore(src, target);
+  }
+  function onItemTap(e){
+    const li=e.target.closest('.disc-item');
+    if (!li) return;
+    const list=li.parentNode;
+    const items=Array.from(list.children);
+    const i=items.indexOf(li);
+    if (i===0) return;
+    list.insertBefore(items[i-1], li);
+  }
+
+  function goStep(s){if(s<0||s>=N_STEPS)return;step=s;render()}
+  function nextStep(){if(step===N_STEPS-1){showResults();return}goStep(step+1)}
+  function prevStep(){if(step===0)return;goStep(step-1)}
+  function render(){
+    bodyEl.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-active', +p.dataset.stepPane===step));
+    tabsEl.querySelectorAll('.tab').forEach((t,i)=>{
+      t.classList.toggle('is-active', i===step);
+      t.setAttribute('aria-selected', i===step?'true':'false');
+    });
+    progressEl.style.width = ((step+1)/N_STEPS*100)+'%';
+    finishBtn.hidden = !(step===N_STEPS-1);
+    nextBtn.hidden = !(step===N_STEPS-1);
+    prevBtn.classList.toggle('is-disabled', step===0);
+    const active=bodyEl.querySelector('.pane.is-active');
+    if (active) active.querySelectorAll('.disc-list').forEach(bindList);
+  }
+
+  /* баллы по позиции в карточке: 3,2,1,0; суммарно по типу и по шагам */
+  function computeScore(){
+    const score={d:0,i:0,s:0,c:0};
+    bodyEl.querySelectorAll('.pane').forEach(pane=>{
+      const items=Array.from(pane.querySelectorAll('.disc-list .disc-item'));
+      items.forEach((item,idx)=>{
+        const pts=3-idx;
+        const t=item.dataset.type;
+        if (t && t in score) score[t]+=pts;
+      });
+    });
+    return score;
+  }
+
+  function showResults(){
+    const s=computeScore();
+    el('rD').textContent='D:'+s.d;
+    el('rI').textContent='I:'+s.i;
+    el('rS').textContent='S:'+s.s;
+    el('rC').textContent='C:'+s.c;
+    el('test_results').value='D:'+s.d+', I:'+s.i+', S:'+s.s+', C:'+s.c;
+    nextBtn.hidden=true; prevBtn.hidden=true; finishBtn.hidden=true;
+    progressEl.style.width='100%';
+    bodyEl.style.display='none'; bodyEl.style.position='absolute';
+    resultsEl.hidden=false; resultsEl.style.display='block';
+  }
+
+  function copyCode(){
+    const inp=el('test_results');
+    const btn=el('copyBtn');
+    const def=btn.dataset.default ?? btn.textContent;
+    btn.dataset.default=def;
+    const text=inp.value;
+    const fallback=()=>{
+      inp.focus();
+      try{inp.setSelectionRange(0,text.length);document.execCommand('copy')}catch(e){}
+      inp.blur();
+    };
+    const flash=()=>{
+      btn.textContent='Скопировано';
+      btn.classList.add('is-copied');
+      setTimeout(()=>{btn.textContent=def;btn.classList.remove('is-copied')},1500);
+    };
+    if (navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+      navigator.clipboard.writeText(text).finally(flash);
+    } else {fallback();flash();}
+  }
+
+  function openModal(){
+    step=0;
+    bodyEl.style.display='block'; bodyEl.style.position='';
+    resultsEl.hidden=true; resultsEl.style.display='none';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('no-scroll');
+    document.documentElement.classList.add('no-scroll');
+  }
+  function closeModal(){
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('no-scroll');
+    document.documentElement.classList.remove('no-scroll');
+  }
+
+  el('startBtn').addEventListener('click', openModal);
+  el('closeBtn').addEventListener('click', closeModal);
+  nextBtn.addEventListener('click', nextStep);
+  prevBtn.addEventListener('click', prevStep);
+  finishBtn.addEventListener('click', showResults);
+  el('copyBtn').addEventListener('click', copyCode);
+  el('doneBtn').addEventListener('click', closeModal);
+  document.addEventListener('keydown', e=>{if(e.key==='Escape' && modal.classList.contains('is-open')) closeModal()});
+  modal.addEventListener('click', e=>{if(e.target===modal) closeModal()});
+
+  buildUI();
+  render();
+})();
+</script>
+</body>
+</html>

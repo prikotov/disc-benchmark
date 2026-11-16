@@ -29,7 +29,10 @@ def collect():
         thinking = meta.get("thinking", "?")
         # judge total 0-16 → 0-100
         jt = j.get("total", 0) if j else 0
-        score100 = round(jt / 16 * 100)
+        try:
+            score100 = round(float(jt) / 16 * 100)
+        except (TypeError, ValueError):
+            score100 = 0
         runs.append({
             "model": model, "dir": str(mf), "run": mf.name,
             "thinking": thinking, "score100": score100,

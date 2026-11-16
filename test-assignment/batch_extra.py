@@ -37,8 +37,13 @@ def sh(cmd: list[str], timeout: int) -> tuple[int, str]:
 
 
 def main() -> int:
-    # 1) собрать пары (модель × уровень) из существующих прогонов
-    pairs: dict[tuple[str, str], str] = {}
+    # оставшийся хвост: ornith-9b ×2 + qwen3.8 ×8 (остальные 40 уже перенесены из корня)
+    remaining = [("ornith-1.5:9b", "medium"),
+                 ("qwen3.8:27b-pi-100k", "low"), ("qwen3.8:27b-pi-100k", "medium"),
+                 ("qwen3.8:27b-pi-100k", "off"), ("qwen3.8:27b-pi-100k", "xhigh")]
+
+    # папка и текущий максимум для каждой модели — из существующих прогонов
+    folder_of: dict[str, str] = {}
     folder_max: dict[str, int] = {}
     for rj in sorted(ROOT.glob("models/*/test-assignment/run-*/run.json")):
         d = json.loads(rj.read_text(encoding="utf-8"))
@@ -47,20 +52,21 @@ def main() -> int:
         folder = rj.relative_to(ROOT).parts[1]
         runno = int(rj.parts[-2].split("-")[1])
         folder_max[folder] = max(folder_max.get(folder, 0), runno)
-        pairs[(d.get("model"), d.get("thinking"))] = folder
+        folder_of.setdefault(d.get("model"), folder)
 
-    # 2) план: по 2 прогона на пару, нумерация по папке
     plan: list[dict] = []
-    for (model, thinking), folder in sorted(pairs.items()):
-        if not model or not thinking:
+    for model, thinking in remaining:
+        folder = folder_of.get(model)
+        if not folder:
+            log(f"не нашёл папку для {model} — пропуск")
             continue
         for _ in range(2):
             n = folder_max[folder] + 1
-            while (Path(folder) / "test-assignment" / f"run-{n:02d}").exists():
+            while (ROOT / "models" / folder / "test-assignment" / f"run-{n:02d}").exists():
                 n += 1
             folder_max[folder] = n
             plan.append({"model": model, "thinking": thinking,
-                         "dir": str(Path(folder) / "test-assignment" / f"run-{n:02d}")})
+                         "dir": str(ROOT / "models" / folder / "test-assignment" / f"run-{n:02d}")})
 
     log(f"план: {len(plan)} прогонов")
     for p in plan:

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тестирование DISC</title>
+<meta name="description" content="Тест DISC для руководителей: определите свой управленческий стиль. Копия теста школы Stratoplan — одностраничное приложение, работает офлайн.">
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --line: #e3e7ef;
+    --line-strong: #c9d1df;
+    --text: #1a1d24;
+    --muted: #5d6572;
+    --faint: #8a93a3;
+    --accent: #2657c7;
+    --accent-hover: #1f49a6;
+    --accent-soft: #e9effc;
+    --ok-bg: #e4f5ee;
+    --ok: #178a5e;
+    --shadow-card: 0 1px 2px rgba(18,26,43,.05), 0 8px 24px rgba(18,26,43,.06);
+    --shadow-drag: 0 8px 22px rgba(18,26,43,.20);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html, body { overflow-x: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--text);
+    background:
+      radial-gradient(1100px 480px at 50% -10%, #e9effc 0%, rgba(233,239,252,0) 60%),
+      var(--bg);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 { margin: 0; }
+  .screen { display: none; }
+  .screen.is-active { display: block; }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    appearance: none;
+    font: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.2;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { border-color: #aab5c8; background: #fafbfe; }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .btn:disabled:hover { border-color: var(--line-strong); background: var(--card); }
+  .btn--primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(20,40,90,.25);
+  }
+  .btn--primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn--lg { font-size: 16px; padding: 15px 30px; border-radius: 14px; }
+  .btn:focus-visible, .tab:focus-visible, .iconbtn:focus-visible, .item:focus-visible {
+    outline: 2px solid #7d9be0;
+    outline-offset: 2px;
+  }
+
+  /* ---------- start screen ---------- */
+  .screen--start.is-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 48px 16px;
+  }
+  .start-wrap { max-width: 620px; text-align: center; }
+  .start-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 14px;
+    margin-bottom: 22px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .start-badge svg { flex: none; color: var(--accent); }
+  .start-title { font-size: 38px; line-height: 1.15; font-weight: 700; letter-spacing: -.01em; margin-bottom: 14px; }
+  .start-sub { font-size: 17px; color: var(--muted); margin: 0 auto 28px; max-width: 520px; }
+  .start-note { margin: 18px 0 0; font-size: 14px; color: var(--faint); }
+  .start-foot { margin: 34px 0 0; font-size: 13px; color: var(--faint); }
+  .start-foot a { color: var(--accent); text-decoration: none; }
+  .start-foot a:hover { text-decoration: underline; }
+  @media (max-width: 560px) { .start-title { font-size: 30px; } }
+
+  /* ---------- test screen ---------- */
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 30px 20px 60px; }
+  .test-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+  .test-title { font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+  .test-sub { margin: 6px 0 0; font-size: 14.5px; color: var(--muted); }
+  .iconbtn {
+    flex: none;
+    appearance: none;
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease, background-color .15s ease;
+  }
+  .iconbtn:hover { border-color: var(--line-strong); color: var(--text); background: #fafbfe; }
+  .test-lead { margin: 18px 0 12px; font-size: 15px; font-weight: 500; }
+  .test-hint { margin: 0 0 16px; font-size: 13px; color: var(--faint); }
+  .progress { height: 6px; background: #e1e6ef; border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+  .progress__bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #2f63e0, #6f97f2);
+    border-radius: inherit;
+    transition: width .25s ease;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin: 0 0 20px;
+    padding: 2px;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: none;
+    appearance: none;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--muted);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .tab:hover { border-color: var(--line-strong); color: var(--text); }
+  .tab.is-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .pane { display: none; }
+  .pane.is-active { display: block; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 880px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 14px 14px 12px;
+  }
+  .card__title, .card__foot {
+    margin: 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .card__title { margin-bottom: 10px; }
+  .card__foot { margin-top: 10px; }
+
+  .list { list-style: none; margin: 0; padding: 0; }
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 11px 12px 11px 14px;
+    font-size: 15px;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .item + .item { margin-top: 8px; }
+  .item.is-dragging {
+    position: relative;
+    z-index: 30;
+    border-color: #b9c7ea;
+    box-shadow: var(--shadow-drag);
+    cursor: grabbing;
+    background: #fff;
+  }
+  .handle {
+    flex: none;
+    width: 28px; height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #b4bac6;
+    touch-action: none;
+  }
+  .handle svg { display: block; }
+  @media (pointer: coarse) {
+    .item { padding: 12px 12px 12px 14px; font-size: 15.5px; }
+    .handle { width: 38px; height: 38px; color: #99a1b2; }
+    .handle svg { width: 20px; height: 20px; }
+  }
+
+  .actions { display: flex; align-items: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .actions__right { display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+
+  /* ---------- result screen ---------- */
+  .screen--result.is-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 48px 16px;
+  }
+  .result-card {
+    width: 100%;
+    max-width: 560px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--shadow-card);
+    padding: 36px 32px 30px;
+    text-align: center;
+  }
+  .result-ico {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: var(--ok-bg);
+    color: var(--ok);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .result-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .result-p1 { margin: 0; font-size: 15px; color: var(--muted); }
+  .result-score {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    font-variant-numeric: tabular-nums;
+    margin: 12px 0 20px;
+  }
+  .legend {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+    display: grid;
+    gap: 9px;
+    text-align: left;
+  }
+  .legend li { display: flex; align-items: baseline; gap: 10px; font-size: 14px; color: var(--muted); }
+  .legend b {
+    flex: none;
+    width: 24px; height: 24px;
+    border-radius: 7px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 13px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transform: translateY(4px);
+  }
+  .result-note { margin: 0 0 24px; font-size: 13px; color: var(--faint); text-align: left; }
+  .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<main>
+  <!-- ================= стартовый экран ================= -->
+  <section class="screen screen--start is-active" id="screen-start" aria-label="Стартовый экран">
+    <div class="start-wrap">
+      <div class="start-badge">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+        Тест DISC для руководителей
+      </div>
+      <h1 class="start-title">Определите ваш управленческий&nbsp;стиль</h1>
+      <p class="start-sub">Честный ответ на 24 простых вопроса — и вы получите свой профиль D·I·S·C: как вы принимаете решения, влияете на людей и добиваетесь результата.</p>
+      <button type="button" class="btn btn--primary btn--lg" id="btn-start">Пройти тест DISC</button>
+      <p class="start-note">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+      <p class="start-foot">Копия теста школы менеджмента Stratoplan (stratoplan-school.com/disc)</p>
+    </div>
+  </section>
+
+  <!-- ================= экран теста ================= -->
+  <section class="screen" id="screen-test" aria-label="Тест DISC">
+    <div class="wrap">
+      <div class="test-top">
+        <div>
+          <h1 class="test-title">Тестирование DISC</h1>
+          <p class="test-sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+        </div>
+        <button type="button" class="iconbtn" id="btn-close" aria-label="Закрыть тест">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg>
+        </button>
+      </div>
+
+      <p class="test-lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+      <p class="test-hint">Перетаскивайте элементы мышью; на телефоне — за «точечки» справа. Блок можно выбрать и перемещать стрелками вверх/вниз.</p>
+
+      <div class="progress" role="progressbar" aria-label="Прогресс теста" aria-valuemin="0" aria-valuemax="8"><div class="progress__bar" id="progressBar"></div></div>
+
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Шаги теста"></nav>
+
+      <div id="panes"></div>
+
+      <div class="actions">
+        <button type="button" class="btn" id="btn-prev" disabled>
+          <span aria-hidden="true">←&nbsp;</span>Назад
+        </button>
+        <div class="actions__right">
+          <button type="button" class="btn btn--primary" id="btn-next">Далее <span aria-hidden="true">&nbsp;→</span></button>
+          <button type="button" class="btn btn--primary" id="btn-finish" hidden>Завершить тест</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= экран результата ================= -->
+  <section class="screen screen--result" id="screen-result" aria-label="Результат теста">
+    <div class="result-card">
+      <div class="result-ico" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>
+      </div>
+      <h1 class="result-title">Тест завершён</h1>
+      <p class="result-p1">Ваш DISC-профиль:</p>
+      <div class="result-score" id="resultScore">D:0, I:0, S:0, C:0</div>
+      <ul class="legend">
+        <li><b>D</b> Доминирование — настойчивость, решительность, ориентация на результат</li>
+        <li><b>I</b> Влияние — энтузиазм, коммуникабельность, ориентация на людей</li>
+        <li><b>S</b> Стабильность — терпение, надёжность, поддержка команды</li>
+        <li><b>C</b> Соответствие — точность, порядок, внимание к деталям</li>
+      </ul>
+      <p class="result-note"><span aria-hidden="true">✱&nbsp;</span>Обратите внимание: расшифровка индивидуальных результатов — это раздельная работа. Мы помогаем выучить этот инструмент для самоанализа, а также для дальнейшей работы с командой, сотрудниками и коллегами.</p>
+      <div class="result-actions">
+        <button type="button" class="btn btn--primary" id="btn-restart">Пройти ещё раз</button>
+        <button type="button" class="btn" id="btn-home">На главную</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =====================================================================
+   * Данные теста — дословно с источника (24 вопроса, 8 шагов по 3).
+   * Позиция [тип, текст]: служебный тип d/i/s/c используется только для
+   * подсчёта и нигде пользователю не показывается.
+   * =================================================================== */
+
+  const QUESTIONS = [
+    [["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+    [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],
+    [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]],
+    [["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],
+    [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+    [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]],
+    [["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+    [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+    [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]],
+    [["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+    [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+    [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]],
+    [["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+    [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+    [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]],
+    [["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+    [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+    [["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]],
+    [["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+    [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+    [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]],
+    [["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+    [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+    [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]],
+  ];
+
+  /* ---------------- helpers ---------------- */
+  const qsa = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+  const STEP_COUNT = 8;
+  const PER_STEP = 3;
+  const TAB_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+  const HANDLE_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">' +
+    '<circle cx="5.5" cy="4" r="1.3"/><circle cx="10.5" cy="4" r="1.3"/>' +
+    '<circle cx="5.5" cy="8" r="1.3"/><circle cx="10.5" cy="8" r="1.3"/>' +
+    '<circle cx="5.5" cy="12" r="1.3"/><circle cx="10.5" cy="12" r="1.3"/></svg>';
+
+  /* =====================================================================
+   * Экраны
+   * =================================================================== */
+  const screens = {
+    start: document.getElementById("screen-start"),
+    test: document.getElementById("screen-test"),
+    result: document.getElementById("screen-result"),
+  };
+  function show(name) {
+    for (const k in screens) screens[k].classList.toggle("is-active", k === name);
+    window.scrollTo(0, 0);
+  }
+
+  /* =====================================================================
+   * Построение DOM теста (8 шагов × 3 вопроса)
+   * =================================================================== */
+  const tabsEl = document.getElementById("tabs");
+  const panesEl = document.getElementById("panes");
+  const lists = [];                    // все 24 списка, в порядке документа
+  const initialOrder = new Map();      // ul -> исходный порядок элементов
+
+  function buildTest() {
+    for (let s = 0; s < STEP_COUNT; s++) {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "tab";
+      tab.setAttribute("role", "tab");
+      tab.textContent = TAB_NAMES[s];
+      tab.addEventListener("click", function () { setStep(s); });
+      tabsEl.appendChild(tab);
+
+      const pane = document.createElement("div");
+      pane.className = "pane";
+      pane.setAttribute("role", "tabpanel");
+      const grid = document.createElement("div");
+      grid.className = "grid";
+
+      for (let q = 0; q < PER_STEP; q++) {
+        const items = QUESTIONS[s * PER_STEP + q];
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const title = document.createElement("div");
+        title.className = "card__title";
+        title.textContent = "Я наиболее";
+
+        const ul = document.createElement("ul");
+        ul.className = "list";
+        for (const [type, text] of items) {
+          const li = document.createElement("li");
+          li.className = "item";
+          li.tabIndex = 0;
+          li.dataset.type = type;
+          li.textContent = text;
+
+          const handle = document.createElement("span");
+          handle.className = "handle";
+          handle.setAttribute("aria-hidden", "true");
+          handle.innerHTML = HANDLE_SVG;
+          li.appendChild(handle);
+
+          // клавиатурное управление: переместить блок вверх/вниз
+          li.addEventListener("keydown", function (e) {
+            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+              e.preventDefault();
+              moveByKey(li, e.key === "ArrowUp" ? -1 : 1);
+            }
+          });
+          ul.appendChild(li);
+        }
+        initialOrder.set(ul, qsa("li", ul).slice());
+        makeSortable(ul);
+
+        const foot = document.createElement("div");
+        foot.className = "card__foot";
+        foot.textContent = "Я наименее";
+
+        card.appendChild(title);
+        card.appendChild(ul);
+        card.appendChild(foot);
+        grid.appendChild(card);
+        lists.push(ul);
+      }
+      pane.appendChild(grid);
+      panesEl.appendChild(pane);
+    }
+  }
+
+  /* =====================================================================
+   * Шаги: состояние, рендер, навигация (как в оригинале: табы кликабельны,
+   * «Назад» заблокирован на первом шаге, «Далее»/«Завершить» на последнем)
+   * =================================================================== */
+  let step = 0;
+  function setStep(n) {
+    step = Math.max(0, Math.min(STEP_COUNT - 1, n));
+    render();
+  }
+
+  function render() {
+    const tabs = qsa(".tab", tabsEl);
+    const panes = qsa(".pane", panesEl);
+    for (let i = 0; i < tabs.length; i++) {
+      const on = i === step;
+      tabs[i].classList.toggle("is-active", on);
+      tabs[i].setAttribute("aria-selected", on ? "true" : "false");
+    }
+    for (let i = 0; i < panes.length; i++) panes[i].classList.toggle("is-active", i === step);
+
+    document.getElementById("btn-prev").disabled = (step === 0);
+    document.getElementById("btn-next").hidden = (step === STEP_COUNT - 1);
+    document.getElementById("btn-finish").hidden = (step !== STEP_COUNT - 1);
+
+    const bar = document.getElementById("progressBar");
+    bar.style.width = ((step + 1) / STEP_COUNT) * 100 + "%";
+    document.querySelector(".progress").setAttribute("aria-valuenow", String(step + 1));
+  }
+
+  document.getElementById("btn-prev").addEventListener("click", function () { setStep(step - 1); });
+  document.getElementById("btn-next").addEventListener("click", function () { setStep(step + 1); });
+
+  /* =====================================================================
+   * Drag & drop без внешних библиотек (pointer events, работает
+   * на мыши и таче). Мышь — за весь элемент; тач/планшет — за ручку
+   * (''точки'' справа), как в оригинале.
+   * =================================================================== */
+
+  // FLIP-анимация перестроения: соседи плавно занимают новые места
+  function flipChildren(ul, mutate, skip) {
+    const kids = Array.prototype.slice.call(ul.children);
+    const before = new Map(kids.map(function (k) { return [k, k.offsetTop]; }));
+    mutate();
+    for (const k of Array.prototype.slice.call(ul.children)) {
+      if (k === skip) continue;
+      const delta = before.get(k) - k.offsetTop;
+      if (!delta) continue;
+      k.style.transition = "none";
+      k.style.transform = "translateY(" + delta + "px)";
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          k.style.transition = "transform 150ms ease";
+          k.style.transform = "";
+          const done = function () {
+            k.style.transition = "";
+            k.style.transform = "";
+            k.removeEventListener("transitionend", done);
+          };
+          k.addEventListener("transitionend", done);
+        });
+      });
+    }
+  }
+
+  function makeSortable(ul) {
+    let li = null;             // перетаскиваемый элемент
+    let startY = 0;            // координата курсора в начале жеста
+    let grabTop = 0;           // «естественный» top элемента в момент захвата
+    let dy = 0;                // смещение перетаскиваемого элемента
+
+    // vt — визуальная «верх» элемента после этого жеста: соседние сдвигаются,
+    // элемент остаётся под курсором. Инвариант видимой позиции:
+    // слот в момент захвата + сдвиг курсора (см. pointermove), поэтому
+    // компенсация всегда пересчитывается от grabTop, а не от нуля жеста.
+    function reorder(item, vt) {
+      const h = item.offsetHeight;
+      const center = vt + h / 2;
+      const others = Array.prototype.slice.call(ul.children).filter(function (x) { return x !== item; });
+      let want = others.length;
+      for (let k = 0; k < others.length; k++) {
+        if (center < others[k].offsetTop + others[k].offsetHeight / 2) { want = k; break; }
+      }
+      const cur = Array.prototype.slice.call(ul.children).indexOf(item);
+      if (want !== cur) flipChildren(ul, function () {
+        // want — позиция относительно «чужих» элементов; в children перетаскиваемый элемент
+        // смещает индексы: при движении вверх — children[want], при движении вниз — children[want+1]
+        const target = (want < cur) ? ul.children[want] : ul.children[want + 1];
+        ul.insertBefore(item, target);
+      }, item);
+      // после вставки естественное место элемента изменилось — компенсируем смещение
+      dy = vt - item.offsetTop;
+      item.style.transform = "translateY(" + dy + "px)";
+      return dy;
+    }
+
+    ul.addEventListener("pointerdown", function (e) {
+      if (li) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      const item = e.target.closest(".item");
+      if (!item || item.parentElement !== ul) return;
+      // тач/стилус — только за ручку, мышь — за весь элемент
+      if ((e.pointerType === "touch" || e.pointerType === "pen") && !e.target.closest(".handle")) return;
+      e.preventDefault();
+      li = item;
+      startY = e.clientY;
+      grabTop = item.offsetTop;
+      dy = 0;
+      item.classList.add("is-dragging");
+      try { item.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    ul.addEventListener("pointermove", function (e) {
+      if (!li) return;
+      dy = reorder(li, grabTop + (e.clientY - startY));
+    });
+
+    const endDrag = function () {
+      if (!li) return;
+      const el = li;
+      li = null;
+      dy = 0;
+      el.classList.remove("is-dragging");
+      el.style.transform = "";
+      el.focus(); // после клика/драга — можно сразу продолжить клавишами
+    };
+    ul.addEventListener("pointerup", endDrag);
+    ul.addEventListener("pointercancel", endDrag);
+  }
+
+  // перемещение блока клавишатуры (верх/вниз)
+  function moveByKey(item, dir) {
+    const ul = item.parentElement;
+    const target = dir < 0 ? item.previousElementSibling : item.nextElementSibling;
+    if (!target) return;
+    flipChildren(ul, function () {
+      if (dir < 0) ul.insertBefore(item, target);
+      else ul.insertBefore(target, item);
+    });
+    item.focus();
+  }
+
+  /* =====================================================================
+   * Подсчёт — алгоритм оригинала: в каждом списке позиция 1 даёт +1 типу
+   * верхнего, позиция 4 — −1 типу нижнего, средние позиции не влияют.
+   * Итоговый балл типа = сумма по всем 24 спискам.
+   * =================================================================== */
+  function collect() {
+    const payload = [];
+    for (let l = 0; l < lists.length; l++) {
+      const kids = Array.from(lists[l].children);
+      for (let p = 0; p < kids.length; p++) {
+        payload.push({ list: l, pos: p, type: kids[p].dataset.type });
+      }
+    }
+    return payload;
+  }
+
+  function count(arr, ch) {
+    return arr.reduce(function (a, v) { return a + (v === ch ? 1 : 0); }, 0);
+  }
+
+  function score(payload) {
+    const res = {};
+    for (const ch of "disc".split("")) {
+      res[ch] = count(payload.filter(function (x) { return x.pos === 0; }).map(function (x) { return x.type; }), ch)
+              - count(payload.filter(function (x) { return x.pos === 3; }).map(function (x) { return x.type; }), ch);
+    }
+    return res;
+  }
+
+  /* =====================================================================
+   * Финал: результат показываем в том же приложении (email-шаг и
+   * отдельная страница результата из оригинала убраны).
+   * =================================================================== */
+  function finish() {
+    const r = score(collect());
+    document.getElementById("resultScore").textContent =
+      "D:" + r.d + ", I:" + r.i + ", S:" + r.s + ", C:" + r.c;
+    show("result");
+  }
+  document.getElementById("btn-finish").addEventListener("click", finish);
+
+  // «Пройти ещё раз»: восстановить исходный порядок всех списков
+  function restart() {
+    for (const ul of lists) {
+      const initial = initialOrder.get(ul);
+      for (const k of initial) ul.appendChild(k);
+    }
+    setStep(0);
+    show("test");
+  }
+  document.getElementById("btn-restart").addEventListener("click", restart);
+
+  // навигация по экранам
+  document.getElementById("btn-start").addEventListener("click", function () { show("test"); });
+  document.getElementById("btn-close").addEventListener("click", function () { show("start"); });
+  document.getElementById("btn-home").addEventListener("click", function () { show("start"); });
+
+  // Esc — закрыть тест (как в оригинале)
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && screens.test.classList.contains("is-active")) show("start");
+  });
+
+  /* ---------------- init ---------------- */
+  buildTest();
+  render();
+  show("start");
+})();
+</script>
+</body>
+</html>

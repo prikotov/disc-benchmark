@@ -166,7 +166,10 @@ def build_report_html():
     for model, items in by_model.items():
         for run, r in items:
             jd = load(run, "judge-tier1.json").get("verdict") or {}
-            score100 = round((jd.get("total") or 0) / 16 * 100)
+            try:
+                score100 = round(float(jd.get("total") or 0) / 16 * 100)
+            except (TypeError, ValueError):
+                score100 = 0
             has_app = (run / "index.html").is_file()
             raw = []
             for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):

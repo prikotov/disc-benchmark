@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пройти тест DISC онлайн бесплатно — Типы личности за 5 минут</title>
+<meta name="description" content="Тестирование DISC. Разместите блоки в порядке от наиболее похожего на вас до наименее похожего.">
+<style>
+  :root {
+    --bg: #f2f4fb;
+    --card: #ffffff;
+    --ink: #171a26;
+    --muted: #6b7280;
+    --muted-2: #9aa1b5;
+    --line: #e5e7f0;
+    --ghost-line: #d7dbea;
+    --primary: #3452ff;
+    --primary-dark: #2a43e8;
+    --green: #2fb574;
+    --shadow-1: 0 1px 2px rgba(23, 26, 38, .06), 0 12px 32px rgba(23, 26, 38, .08);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    color: var(--ink);
+    line-height: 1.5;
+    background:
+      radial-gradient(1100px 560px at 88% -12%, #e2e9ff 0%, rgba(226, 233, 255, 0) 62%),
+      radial-gradient(900px 500px at -10% 110%, #eceefe 0%, rgba(236, 238, 254, 0) 55%),
+      var(--bg);
+  }
+  [hidden] { display: none !important; }
+  .app { max-width: 1080px; margin: 0 auto; padding: 10px 16px 56px; }
+
+  /* Верхняя строка (бренд) */
+  .site-head {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 20px 16px 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .site-head .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: .2px;
+  }
+  .site-head .brand svg { display: block; }
+  .site-head .sep { width: 4px; height: 4px; border-radius: 50%; background: var(--ghost-line); flex: 0 0 auto; }
+
+  /* Панель */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow-1);
+    padding: clamp(18px, 3.4vw, 32px);
+  }
+
+  /* Кнопки */
+  .disc-btn {
+    appearance: none;
+    font: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 11px 22px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s, border-color .15s, color .15s, transform .05s;
+  }
+  .disc-btn:active { transform: translateY(1px); }
+  .disc-btn:focus-visible,
+  .disc-tab:focus-visible,
+  .copyfield__btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .disc-btn--primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(52, 82, 255, .28);
+  }
+  .disc-btn--primary:hover { background: var(--primary-dark); }
+  .disc-btn--ghost {
+    background: #fff;
+    border-color: var(--ghost-line);
+    color: var(--ink);
+  }
+  .disc-btn--ghost:hover { border-color: #c3c9e2; background: #f7f8ff; }
+  .disc-btn:disabled { opacity: .45; cursor: default; box-shadow: none; }
+
+  /* Стартовый экран */
+  .start { text-align: center; padding: clamp(30px, 6vw, 64px) 16px; }
+  .start__badge { display: inline-flex; margin-bottom: 6px; }
+  .start h1 {
+    font-size: clamp(26px, 4.6vw, 38px);
+    font-weight: 800;
+    letter-spacing: -.4px;
+    margin: 16px 0 8px;
+  }
+  .start .sub,
+  .test-head .sub { color: var(--muted); margin: 0 auto 8px; max-width: 580px; font-size: 15px; }
+  .start .lead,
+  .test-head .lead { margin: 0 auto 26px; max-width: 580px; font-size: 16px; font-weight: 600; color: var(--ink); }
+  .test-head .lead { margin-bottom: 0; }
+
+  /* Заголовок теста */
+  .test-head { margin-bottom: 20px; }
+  .test-head h1 {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 800;
+    letter-spacing: -.2px;
+    margin: 0 0 6px;
+  }
+
+  /* Шаги (вкладки) */
+  .disc-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 2px 14px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: #cdd2ea transparent;
+  }
+  .disc-tabs::-webkit-scrollbar { height: 6px; }
+  .disc-tabs::-webkit-scrollbar-thumb { background: #cdd2ea; border-radius: 999px; }
+  .disc-tab {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    background: #fff;
+    border: 1px solid var(--ghost-line);
+    padding: 8px 15px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .15s, background .15s, border-color .15s, box-shadow .15s;
+  }
+  .disc-tab:hover { color: var(--ink); border-color: #c3c9e2; }
+  .disc-tab.is-active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(52, 82, 255, .3);
+  }
+
+  /* Шаги (панели) */
+  .disc-pane { display: none; }
+  .disc-pane.is-active { display: block; animation: disc-fade .25s ease; }
+  @keyframes disc-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .disc-grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 900px) {
+    .disc-grid3 { grid-template-columns: 1fr; }
+    .disc-card { min-height: 0; }
+  }
+  .disc-card {
+    background: #f8f9fe;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 250px;
+  }
+  .disc-card__title,
+  .disc-card__foot {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 2px 4px;
+  }
+  .disc-card__foot { margin-top: auto; color: var(--muted-2); }
+
+  /* Списки и элементы */
+  .disc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .disc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(23, 26, 38, .04);
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    transition: border-color .15s, box-shadow .15s, opacity .15s;
+  }
+  body.drag-mode-any .disc-item { touch-action: none; }
+  .disc-item:hover { border-color: #c9cff2; box-shadow: 0 3px 10px rgba(23, 26, 38, .08); }
+  .disc-item:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .disc-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: #B3B3B3;
+    cursor: grab;
+    touch-action: none;
+    padding: 2px 0;
+  }
+  .disc-handle svg { display: block; }
+  .disc-item.is-dragging { opacity: .4; border-style: dashed; }
+  .disc-item--ghost {
+    border-color: #b9c3f5;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(23, 26, 38, .22);
+  }
+  body.is-dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+
+  /* Прогресс и действия */
+  .disc-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: #e9ecf9;
+    overflow: hidden;
+    margin: 20px 2px 14px;
+  }
+  .disc-progress__bar {
+    height: 100%;
+    width: 12.5%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #4a6cff, #3452ff);
+    transition: width .35s cubic-bezier(.22, .8, .36, 1);
+  }
+  .disc-actions { display: flex; justify-content: flex-end; gap: 10px; }
+  @media (max-width: 560px) {
+    .disc-actions { flex-direction: column-reverse; }
+    .disc-actions .disc-btn { width: 100%; }
+  }
+
+  /* Результат */
+  .result { text-align: center; padding: clamp(26px, 5vw, 48px) 16px; }
+  .result__icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #e8fbf1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .result__score-title { font-size: 15px; font-weight: 600; color: var(--muted); margin: 0 0 6px; }
+  .result__score {
+    font-size: clamp(26px, 5vw, 36px);
+    font-weight: 800;
+    letter-spacing: .5px;
+    margin: 0 0 20px;
+    font-variant-numeric: tabular-nums;
+  }
+  .disc-note { color: var(--muted); font-size: 14px; max-width: 620px; margin: 0 auto 26px; }
+
+  /* Поле копирования результата */
+  .copyfield {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    max-width: 520px;
+    margin: 8px auto 24px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fafbff;
+  }
+  .copyfield__icon {
+    display: inline-flex;
+    align-items: center;
+    color: #B9B9C7;
+    pointer-events: none;
+    flex: 0 0 auto;
+  }
+  .copyfield__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+  }
+  .result__link-title { margin: 0 0 4px; font-weight: 600; text-align: left; }
+  .copyfield__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: #fff;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .copyfield__btn:hover { background: #2a2f42; border-color: #2a2f42; }
+  .copyfield__btn.is-copied { background: #0c7a43; border-color: #0c7a43; }
+  .copyfield__btn svg { flex: 0 0 auto; }
+
+  .result__restart { margin-top: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .disc-pane.is-active { animation: none; }
+    .disc-progress__bar,
+    .disc-btn,
+    .disc-tab { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <header class="site-head">
+    <span class="brand">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+        <rect x="1" y="1" width="7" height="7" rx="2" fill="#3452ff"/>
+        <rect x="10" y="1" width="7" height="7" rx="2" fill="#f0a63a"/>
+        <rect x="1" y="10" width="7" height="7" rx="2" fill="#2fb574"/>
+        <rect x="10" y="10" width="7" height="7" rx="2" fill="#8f6bff"/>
+      </svg>
+      Стратоплан
+    </span>
+    <span class="sep" aria-hidden="true"></span>
+    <span>Тестирование DISC</span>
+  </header>
+
+  <main class="app">
+    <!-- Стартовый экран -->
+    <section class="panel start" id="startView">
+      <div class="start__badge" aria-hidden="true">
+        <svg width="76" height="76" viewBox="0 0 76 76" focusable="false">
+          <rect x="4" y="4" width="32" height="32" rx="9" fill="#3452ff"/>
+          <rect x="40" y="4" width="32" height="32" rx="9" fill="#f0a63a"/>
+          <rect x="4" y="40" width="32" height="32" rx="9" fill="#2fb574"/>
+          <rect x="40" y="40" width="32" height="32" rx="9" fill="#8f6bff"/>
+          <text x="20" y="27" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="inherit">D</text>
+          <text x="56" y="27" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="inherit">I</text>
+          <text x="20" y="63" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="inherit">S</text>
+          <text x="56" y="63" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="inherit">C</text>
+        </svg>
+      </div>
+      <h1>Тестирование DISC</h1>
+      <p class="sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+      <p class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+      <button class="disc-btn disc-btn--primary" id="btnStart" type="button">Пройти тест DISC</button>
+    </section>
+
+    <!-- Тест -->
+    <section class="panel test" id="testView" hidden>
+      <div class="test-head">
+        <h1>Тестирование DISC</h1>
+        <p class="sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+        <p class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+      </div>
+
+      <div class="disc-tabs" id="discTabs" role="tablist" aria-label="Шаги">
+        <button type="button" class="disc-tab" data-step-btn="0" role="tab" aria-selected="true">Первый</button>
+        <button type="button" class="disc-tab" data-step-btn="1" role="tab" aria-selected="false">Второй</button>
+        <button type="button" class="disc-tab" data-step-btn="2" role="tab" aria-selected="false">Третий</button>
+        <button type="button" class="disc-tab" data-step-btn="3" role="tab" aria-selected="false">Четвертый</button>
+        <button type="button" class="disc-tab" data-step-btn="4" role="tab" aria-selected="false">Пятый</button>
+        <button type="button" class="disc-tab" data-step-btn="5" role="tab" aria-selected="false">Шестой</button>
+        <button type="button" class="disc-tab" data-step-btn="6" role="tab" aria-selected="false">Седьмой</button>
+        <button type="button" class="disc-tab" data-step-btn="7" role="tab" aria-selected="false">Восьмой</button>
+      </div>
+
+      <div class="disc-panes" id="rootwizard">
+        <div class="disc-pane is-active" id="tab0" data-step-pane="0" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list1">
+                <li class="disc-item" data-type="i" tabindex="0">Экспресcивный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Покладистый</li>
+                <li class="disc-item" data-type="d" tabindex="0">Волевой</li>
+                <li class="disc-item" data-type="s" tabindex="0">Осторожный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list2">
+                <li class="disc-item" data-type="d" tabindex="0">Пылкий</li>
+                <li class="disc-item" data-type="i" tabindex="0">Разговорчивый</li>
+                <li class="disc-item" data-type="s" tabindex="0">Добродушный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Сдержанный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list3">
+                <li class="disc-item" data-type="i" tabindex="0">Любитель приключений</li>
+                <li class="disc-item" data-type="c" tabindex="0">Энтузиаст</li>
+                <li class="disc-item" data-type="d" tabindex="0">Исполнитель инструкций</li>
+                <li class="disc-item" data-type="s" tabindex="0">Верный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+        <div class="disc-pane" id="tab1" data-step-pane="1" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list4">
+                <li class="disc-item" data-type="d" tabindex="0">Настойчивый</li>
+                <li class="disc-item" data-type="c" tabindex="0">Осторожный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Эмоциональный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Удовлетворенный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list5">
+                <li class="disc-item" data-type="s" tabindex="0">Довольный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Нетерпеливый</li>
+                <li class="disc-item" data-type="i" tabindex="0">Убедительный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Безропотный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list6">
+                <li class="disc-item" data-type="c" tabindex="0">Смиренный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Умеющий слушать</li>
+                <li class="disc-item" data-type="i" tabindex="0">Душа компании</li>
+                <li class="disc-item" data-type="d" tabindex="0">Волевой</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+        <div class="disc-pane" id="tab2" data-step-pane="2" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list7">
+                <li class="disc-item" data-type="c" tabindex="0">Правильный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Первопроходец</li>
+                <li class="disc-item" data-type="s" tabindex="0">Спокойный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Влиятельный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list8">
+                <li class="disc-item" data-type="c" tabindex="0">Почтительный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Контактный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Агрессивный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Мягкий</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list9">
+                <li class="disc-item" data-type="i" tabindex="0">Весельчак</li>
+                <li class="disc-item" data-type="s" tabindex="0">Покорный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Тактичный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Соперничающий</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+        <div class="disc-pane" id="tab3" data-step-pane="3" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list10">
+                <li class="disc-item" data-type="c" tabindex="0">Точный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Доминирующий</li>
+                <li class="disc-item" data-type="s" tabindex="0">Охотный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Притягательный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list11">
+                <li class="disc-item" data-type="i" tabindex="0">Уравновешенный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Уступчивый</li>
+                <li class="disc-item" data-type="d" tabindex="0">Идущий на риск</li>
+                <li class="disc-item" data-type="s" tabindex="0">Услужливый</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list12">
+                <li class="disc-item" data-type="c" tabindex="0">Осмотрительный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Добрососедский</li>
+                <li class="disc-item" data-type="d" tabindex="0">Энергичный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Убедительный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+        <div class="disc-pane" id="tab4" data-step-pane="4" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list13">
+                <li class="disc-item" data-type="s" tabindex="0">Уравновешенный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Мотивирующий</li>
+                <li class="disc-item" data-type="c" tabindex="0">Щепетильный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Решительный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list14">
+                <li class="disc-item" data-type="i" tabindex="0">Уверенный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Готовый к сотрудничеству</li>
+                <li class="disc-item" data-type="s" tabindex="0">Беззаботный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Аргументирующий</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list15">
+                <li class="disc-item" data-type="s" tabindex="0">Сдержанный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Прямой</li>
+                <li class="disc-item" data-type="c" tabindex="0">Строгий</li>
+                <li class="disc-item" data-type="i" tabindex="0">Убедительный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+        <div class="disc-pane" id="tab5" data-step-pane="5" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list16">
+                <li class="disc-item" data-type="c" tabindex="0">Застенчивый</li>
+                <li class="disc-item" data-type="d" tabindex="0">Требовательный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Терпеливый</li>
+                <li class="disc-item" data-type="i" tabindex="0">Очаровательный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list17">
+                <li class="disc-item" data-type="d" tabindex="0">Неугомонный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Дисциплинированный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Вдохновляющий</li>
+                <li class="disc-item" data-type="s" tabindex="0">Внимательный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list18">
+                <li class="disc-item" data-type="s" tabindex="0">Обязательный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Оживленный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Решительный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Точный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+        <div class="disc-pane" id="tab6" data-step-pane="6" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list19">
+                <li class="disc-item" data-type="c" tabindex="0">Добросовестный</li>
+                <li class="disc-item" data-type="i" tabindex="0">Компанейский</li>
+                <li class="disc-item" data-type="s" tabindex="0">Добрый</li>
+                <li class="disc-item" data-type="d" tabindex="0">Уверенный в себе</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list20">
+                <li class="disc-item" data-type="c" tabindex="0">Дипломатичный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Отважный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Сочувствующий</li>
+                <li class="disc-item" data-type="i" tabindex="0">Оптимистичный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list21">
+                <li class="disc-item" data-type="d" tabindex="0">Настойчивый</li>
+                <li class="disc-item" data-type="i" tabindex="0">Общительный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Постоянный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Организованный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+        <div class="disc-pane" id="tab7" data-step-pane="7" role="tabpanel">
+          <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list22">
+                <li class="disc-item" data-type="c" tabindex="0">Соглашающийся</li>
+                <li class="disc-item" data-type="s" tabindex="0">Владеющий собой</li>
+                <li class="disc-item" data-type="d" tabindex="0">Шутливый</li>
+                <li class="disc-item" data-type="i" tabindex="0">Настойчивый</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list23">
+                <li class="disc-item" data-type="i" tabindex="0">Обаятельный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Позитивный</li>
+                <li class="disc-item" data-type="s" tabindex="0">Снисходительный</li>
+                <li class="disc-item" data-type="c" tabindex="0">Требовательный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list24">
+                <li class="disc-item" data-type="i" tabindex="0">Коммуникабельный</li>
+                <li class="disc-item" data-type="d" tabindex="0">Смелый</li>
+                <li class="disc-item" data-type="c" tabindex="0">Перфекционист</li>
+                <li class="disc-item" data-type="s" tabindex="0">Сдержанный</li>
+              </ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="disc-progress" aria-hidden="true">
+        <div class="disc-progress__bar" id="discProgress"></div>
+      </div>
+
+      <div class="disc-actions">
+        <button class="disc-btn disc-btn--ghost" type="button" data-disc-prev disabled>Назад</button>
+        <button class="disc-btn disc-btn--primary" type="button" data-disc-next>Далее</button>
+        <button class="disc-btn disc-btn--primary" type="button" data-disc-finish hidden>Завершить тест</button>
+      </div>
+    </section>
+
+    <!-- Результат -->
+    <section class="panel result" id="resultView" hidden aria-live="polite">
+      <div class="result__icon" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" focusable="false">
+          <path d="M20 6L9 17l-5-5" stroke="#2fb574" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="result__score-title">Ваш DISC-профиль:</p>
+      <p class="result__score"><span id="discScore">D:0, I:0, S:0, C:0</span></p>
+      <p class="disc-note">* Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем вам научиться использовать этот инструмент для самотестирования, а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</p>
+      <div class="result__link-wrap">
+        <div class="result__link-title">Поделиться результатами теста:</div>
+        <div class="copyfield">
+          <div class="copyfield__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" focusable="false">
+              <path d="M4.22202 19.7777C4.6858 20.2424 5.23687 20.6108 5.84354 20.8617C6.45022 21.1126 7.10051 21.2411 7.75702 21.2397C9.08291 21.2405 10.3548 20.7146 11.293 19.7777L14.121 16.9487L12.707 15.5347L9.87902 18.3637C9.31549 18.9247 8.55269 19.2397 7.75752 19.2397C6.96235 19.2397 6.19955 18.9247 5.63602 18.3637C5.07453 17.8004 4.75923 17.0375 4.75923 16.2422C4.75923 15.4469 5.07453 14.684 5.63602 14.1207L8.46502 11.2927L7.05102 9.87872L4.22202 12.7067C3.28583 13.6452 2.76007 14.9166 2.76007 16.2422C2.76007 17.5678 3.28583 18.8393 4.22202 19.7777ZM19.778 11.2927C20.7132 10.3537 21.2383 9.08247 21.2383 7.75722C21.2383 6.43196 20.7132 5.16069 19.778 4.22172C18.8396 3.28552 17.5681 2.75977 16.2425 2.75977C14.9169 2.75977 13.6455 3.28552 12.707 4.22172L9.87902 7.05072L11.293 8.46472L14.121 5.63572C14.6846 5.07471 15.4474 4.75975 16.2425 4.75975C17.0377 4.75975 17.8005 5.07471 18.364 5.63572C18.9255 6.19899 19.2408 6.96189 19.2408 7.75722C19.2408 8.55255 18.9255 9.31545 18.364 9.87872L15.535 12.7067L16.949 14.1207L19.778 11.2927Z" fill="#B9B9C7"/>
+              <path d="M8.464 16.9498L7.049 15.5358L15.536 7.0498L16.95 8.4648L8.464 16.9498Z" fill="#B9B9C7"/>
+            </svg>
+          </div>
+          <input class="copyfield__input" id="discLink" type="text" value="D:0, I:0, S:0, C:0" readonly>
+          <button class="copyfield__btn" type="button" data-copy="#discLink">
+            <span class="copyfield__btnIcon" aria-hidden="true">
+              <!-- doc icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" focusable="false">
+                <path d="M19 2C19.5304 2 20.0391 2.21071 20.4142 2.58579C20.7893 2.96086 21 3.46957 21 4V16C21 16.5304 20.7893 17.0391 20.4142 17.4142C20.0391 17.7893 19.5304 18 19 18H17V20C17 20.5304 16.7893 21.0391 16.4142 21.4142C16.0391 21.7893 15.5304 22 15 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H7V4C7 3.46957 7.21071 2.96086 7.58579 2.58579C7.96086 2.21071 8.46957 2 9 2H19ZM10 15H8C7.74512 15.0003 7.49997 15.0979 7.31463 15.2728C7.1293 15.4478 7.01777 15.687 7.00283 15.9414C6.98789 16.1958 7.07067 16.4464 7.23426 16.6418C7.39786 16.8373 7.6299 16.9629 7.883 16.993L8 17H10C10.2549 16.9997 10.5 16.9021 10.6854 16.7272C10.8707 16.5522 10.9822 16.313 10.9972 16.0586C11.0121 15.8042 10.9293 15.5536 10.7657 15.3582C10.6021 15.1627 10.3701 15.0371 10.117 15.007L10 15ZM19 4H9V6H15C15.5304 6 16.0391 6.21071 16.4142 6.58579C16.7893 6.96086 17 7.46957 17 8V16H19V4ZM12 11H8C7.73478 11 7.48043 11.1054 7.29289 11.2929C7.10536 11.4804 7 11.7348 7 12C7 12.2652 7.10536 12.5196 7.29289 12.7071C7.48043 12.8946 7.73478 13 8 13H12C12.2652 13 12.5196 12.8946 12.7071 12.7071C12.8946 12.5196 13 12.2652 13 12C13 11.7348 12.8946 11.4804 12.7071 11.2929C12.5196 11.1054 12.2652 11 12 11Z" fill="white"/>
+              </svg>
+            </span>
+            <span class="copyfield__btnText">Copy</span>
+          </button>
+        </div>
+      </div>
+      <button class="disc-btn disc-btn--ghost result__restart" id="btnRestart" type="button">Пройти ещё раз</button>
+    </section>
+  </main>
+
+  <noscript>
+    <p style="text-align:center;font-weight:600">Для прохождения теста включите JavaScript в браузере.</p>
+  </noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  var qs = function (s) { return document.querySelector(s); };
+  var qsa = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  var startView = qs('#startView');
+  var testView = qs('#testView');
+  var resultView = qs('#resultView');
+  var tabsEl = qs('#discTabs');
+  var tabs = qsa('.disc-tab');
+  var panesEl = qs('#rootwizard');
+  var panes = qsa('.disc-pane');
+  var btnPrev = qs('[data-disc-prev]');
+  var btnNext = qs('[data-disc-next]');
+  var btnFinish = qs('[data-disc-finish]');
+  var progressEl = qs('#discProgress');
+  var LAST_STEP = 7;
+  var step = 0;
+
+  /* --- Навигация по шагам --- */
+  function isNarrow() {
+    if (!window.matchMedia) return false;
+    return window.matchMedia('(max-width: 767px)').matches ||
+      (window.matchMedia('(pointer: coarse)').matches &&
+        window.matchMedia('(max-width: 1024px)').matches);
+  }
+
+  function setStep(n) {
+    step = Math.max(0, Math.min(LAST_STEP, n));
+    render();
+  }
+
+  function centerActiveTab() {
+    if (!isNarrow()) return;
+    for (var i = 0; i < tabs.length; i++) {
+      if (Number(tabs[i].dataset.stepBtn) === step) {
+        tabs[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        return;
+      }
+    }
+  }
+
+  function render() {
+    tabs.forEach(function (t) {
+      var is = Number(t.dataset.stepBtn) === step;
+      t.classList.toggle('is-active', is);
+      t.setAttribute('aria-selected', is ? 'true' : 'false');
+    });
+    panes.forEach(function (p) {
+      p.classList.toggle('is-active', Number(p.dataset.stepPane) === step);
+    });
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === LAST_STEP;
+    btnFinish.hidden = step !== LAST_STEP;
+    if (progressEl) progressEl.style.width = ((step + 1) / panes.length) * 100 + '%';
+    centerActiveTab();
+  }
+
+  /* --- Заглушка (ручка) перетаскивания --- */
+  var HANDLE_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true" focusable="false" fill="currentColor"><path d="M5 1.5C5 0.671573 5.67157 0 6.5 0C7.32843 0 8 0.671573 8 1.5C8 2.32843 7.32843 3 6.5 3C5.67157 3 5 2.32843 5 1.5ZM5 6C5 5.17157 5.67157 4.5 6.5 4.5C7.32843 4.5 8 5.17157 8 6C8 6.82843 7.32843 7.5 6.5 7.5C5.67157 7.5 5 6.82843 5 6ZM5 10.5C5 9.67157 5.67157 9 6.5 9C7.32843 9 8 9.67157 8 10.5C8 11.3284 7.32843 12 6.5 12C5.67157 12 5 11.3284 5 10.5ZM11 1.5C11 0.671573 11.6716 0 12.5 0C13.3284 0 14 0.671573 14 1.5C14 2.32843 13.3284 3 12.5 3C11.6716 3 11 2.32843 11 1.5ZM11 6C11 5.17157 11.6716 4.5 12.5 4.5C13.3284 4.5 14 5.17157 14 6C14 6.82843 13.3284 7.5 12.5 7.5C11.6716 7.5 11 6.82843 11 6ZM11 10.5C11 9.67157 11.6716 9 12.5 9C13.3284 9 14 9.67157 14 10.5C14 11.3284 13.3284 12 12.5 12C11.6716 12 11 11.3284 11 10.5Z"/></svg>';
+
+  qsa('.disc-item').forEach(function (li) {
+    var h = document.createElement('span');
+    h.className = 'disc-handle';
+    h.setAttribute('aria-hidden', 'true');
+    h.innerHTML = HANDLE_SVG;
+    li.appendChild(h);
+    if (li.tabIndex === -1) li.setAttribute('tabindex', '0');
+  });
+
+  var initialOrder = qsa('.disc-list').map(function (ul) {
+    return Array.prototype.slice.call(ul.children)
+      .filter(function (li) { return li.tagName === 'LI'; })
+      .map(function (li) {
+        return { type: li.getAttribute('data-type'), text: li.textContent.trim() };
+      });
+  });
+
+  /* --- Подсчёт (как в оригинале): верхний блок +1 своему типу, нижний -1 --- */
+  function collectPayload() {
+    var payload = [];
+    qsa('.disc-list').forEach(function (ul, listIndex) {
+      Array.prototype.slice.call(ul.children).filter(function (li) { return li.tagName === 'LI'; })
+        .forEach(function (li, idx) {
+          payload.push({ list: listIndex, pos: idx, type: li.getAttribute('data-type') });
+        });
+    });
+    return payload;
+  }
+
+  function score(payload) {
+    var maj = [];
+    var min = [];
+    payload.forEach(function (x) {
+      if (x.pos === 0) maj.push(x.type);
+      if (x.pos === 3) min.push(x.type);
+    });
+    var count = function (arr, ch) {
+      return arr.reduce(function (a, v) { return a + (v === ch ? 1 : 0); }, 0);
+    };
+    return {
+      d: count(maj, 'd') - count(min, 'd'),
+      i: count(maj, 'i') - count(min, 'i'),
+      s: count(maj, 's') - count(min, 's'),
+      c: count(maj, 'c') - count(min, 'c')
+    };
+  }
+
+  function formatScore(sc) {
+    return 'D:' + sc.d + ', I:' + sc.i + ', S:' + sc.s + ', C:' + sc.c;
+  }
+
+  function showOnly(view) {
+    [startView, testView, resultView].forEach(function (v) { v.hidden = v !== view; });
+    window.scrollTo(0, 0);
+  }
+
+  /* --- Экраны и кнопки --- */
+  qs('#btnStart').addEventListener('click', function () {
+    setStep(0);
+    showOnly(testView);
+  });
+
+  btnPrev.addEventListener('click', function () { setStep(step - 1); });
+  btnNext.addEventListener('click', function () { setStep(step + 1); });
+
+  tabsEl.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('.disc-tab') : null;
+    if (!btn) return;
+    setStep(Number(btn.dataset.stepBtn));
+  });
+
+  btnFinish.addEventListener('click', function () {
+    var text = formatScore(score(collectPayload()));
+    qs('#discScore').textContent = text;
+    qs('#discLink').value = text;
+    showOnly(resultView);
+  });
+
+  qs('#btnRestart').addEventListener('click', function () {
+    qsa('.disc-list').forEach(function (ul, i) {
+      ul.innerHTML = '';
+      initialOrder[i].forEach(function (it) {
+        var li = document.createElement('li');
+        li.className = 'disc-item';
+        li.setAttribute('data-type', it.type);
+        li.setAttribute('tabindex', '0');
+        li.textContent = it.text;
+        var h = document.createElement('span');
+        h.className = 'disc-handle';
+        h.setAttribute('aria-hidden', 'true');
+        h.innerHTML = HANDLE_SVG;
+        li.appendChild(h);
+        ul.appendChild(li);
+      });
+    });
+    setStep(0);
+    showOnly(testView);
+  });
+
+  /* --- Копирование результата (clipboard + запасной вариант) --- */
+  function setCopyState(btn, on) {
+    btn.classList.toggle('is-copied', on);
+    var label = btn.querySelector('.copyfield__btnText');
+    if (!label) return;
+    if (!btn.dataset.defaultText) btn.dataset.defaultText = label.textContent.trim();
+    label.textContent = on ? 'Скопировано' : btn.dataset.defaultText;
+  }
+
+  document.addEventListener('click', async function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('[data-copy]') : null;
+    if (!btn || btn.dataset.copyBusy === '1') return;
+    var input = document.querySelector(btn.getAttribute('data-copy'));
+    if (!input) return;
+    btn.dataset.copyBusy = '1';
+    var text = input.value || '';
+    var ok = false;
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try { await navigator.clipboard.writeText(text); ok = true; } catch (err) { /* ниже запасной путь */ }
+    }
+    if (!ok) {
+      input.focus();
+      input.select();
+      try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+      input.blur();
+    }
+    if (ok) setCopyState(btn, true);
+    window.setTimeout(function () {
+      setCopyState(btn, false);
+      btn.dataset.copyBusy = '0';
+    }, 1500);
+  }, { passive: true });
+
+  /* --- Перетаскивание (Pointer Events, без внешних библиотек) --- */
+  var dragByHandle = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+  document.body.classList.add(dragByHandle ? 'drag-mode-handle' : 'drag-mode-any');
+
+  var pending = null;
+  var drag = null;
+
+  function addDragListeners() {
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerEnd, { passive: false });
+    window.addEventListener('pointercancel', onPointerEnd, { passive: false });
+  }
+  function removeDragListeners() {
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerEnd);
+    window.removeEventListener('pointercancel', onPointerEnd);
+  }
+
+  function beginDrag(e) {
+    var li = pending.li;
+    var rect = li.getBoundingClientRect();
+    var clone = li.cloneNode(true);
+    clone.classList.remove('is-dragging');
+    clone.classList.add('disc-item--ghost');
+    clone.style.position = 'fixed';
+    clone.style.left = rect.left + 'px';
+    clone.style.top = rect.top + 'px';
+    clone.style.width = rect.width + 'px';
+    clone.style.minWidth = rect.width + 'px';
+    clone.style.maxWidth = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.style.margin = '0';
+    clone.style.zIndex = '80';
+    clone.style.pointerEvents = 'none';
+    document.body.appendChild(clone);
+    li.classList.add('is-dragging');
+    document.body.classList.add('is-dragging');
+    drag = { li: li, clone: clone, list: li.closest('.disc-list'), offX: e.clientX - rect.left, offY: e.clientY - rect.top };
+    pending = null;
+  }
+
+  function onPointerMove(e) {
+    if (pending) {
+      var dx = e.clientX - pending.x;
+      var dy = e.clientY - pending.y;
+      if (dx * dx + dy * dy < 36) return; // порог 6px
+      beginDrag(e);
+    }
+    if (!drag) return;
+    e.preventDefault();
+    drag.clone.style.left = (e.clientX - drag.offX) + 'px';
+    drag.clone.style.top = (e.clientY - drag.offY) + 'px';
+
+    // Живая переупорядочка: правило «до/после по середине элемента» (как в оригинале)
+    var sibs = Array.prototype.slice.call(drag.list.children)
+      .filter(function (n) { return n.tagName === 'LI' && n !== drag.li; });
+    for (var i = 0; i < sibs.length; i++) {
+      var sib = sibs[i];
+      var r = sib.getBoundingClientRect();
+      var before = (e.clientY - r.top) < r.height / 2;
+      // то же правило, что в оригинале: указатель над серединой соседнего — до него, иначе — после
+      var liAfterSib = !(drag.li.compareDocumentPosition(sib) & Node.DOCUMENT_POSITION_FOLLOWING);
+      if (before && liAfterSib) drag.list.insertBefore(drag.li, sib);
+      else if (!before && !liAfterSib) drag.list.insertBefore(drag.li, sib.nextSibling);
+    }
+
+    // Автоскролл контейнера у краёв (удобно на мобильных)
+    if (panesEl.scrollHeight > panesEl.clientHeight + 4) {
+      var pr = panesEl.getBoundingClientRect();
+      var zone = 48;
+      var stepPx = 14;
+      if (e.clientY < pr.top + zone) panesEl.scrollTop -= stepPx;
+      else if (e.clientY > pr.bottom - zone) panesEl.scrollTop += stepPx;
+    }
+  }
+
+  function onPointerEnd() {
+    removeDragListeners();
+    if (drag) {
+      drag.clone.remove();
+      drag.li.classList.remove('is-dragging');
+      drag = null;
+    }
+    pending = null;
+    document.body.classList.remove('is-dragging');
+  }
+
+  panesEl.addEventListener('pointerdown', function (e) {
+    if (drag || pending) return;
+    var li = e.target && e.target.closest ? e.target.closest('.disc-item') : null;
+    if (!li) return;
+    var pane = li.closest('.disc-pane');
+    if (!pane || !pane.classList.contains('is-active')) return;
+    if (dragByHandle) {
+      var handle = e.target.closest('.disc-handle');
+      if (!handle || handle.parentNode !== li) return;
+    } else if (e.pointerType === 'mouse' && e.button !== 0) {
+      return;
+    }
+    pending = { li: li, x: e.clientX, y: e.clientY };
+    addDragListeners();
+  }, { passive: true });
+
+  /* --- Управление с клавиатуры: стрелки вверх/вниз меняют порядок --- */
+  panesEl.addEventListener('keydown', function (e) {
+    var li = e.target && e.target.closest ? e.target.closest('.disc-item') : null;
+    if (!li) return;
+    if (e.key === 'ArrowUp' && li.previousElementSibling) {
+      e.preventDefault();
+      li.parentNode.insertBefore(li, li.previousElementSibling);
+      li.focus();
+    } else if (e.key === 'ArrowDown' && li.nextElementSibling) {
+      e.preventDefault();
+      li.parentNode.insertBefore(li.nextElementSibling, li);
+      li.focus();
+    }
+  });
+
+  render();
+  showOnly(startView);
+})();
+</script>
+</body>
+</html>

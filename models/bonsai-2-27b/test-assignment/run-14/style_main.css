@@ -1,0 +1,191 @@
+:root {
+    --color-button-fab: #0BA5EC    ;
+    --color-button-gradient: #084F8A;
+    --color-button-fab-text: #FFF1DA;
+    --tg-img: url('/assets/img/fab/tg.png');
+    --fb-img: url('/assets/img/fab/fb.png');
+    --email-img: url('/assets/img/fab/ml.png');
+}
+
+    /* Floating Button */
+    .chat-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--color-button-fab);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+  z-index: 100000;
+    }
+
+    .chat-button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Chat button icon */
+    .chat-button i {
+      color: white;
+      font-size: 20px;
+  z-index: 100000;
+    }
+
+    /* Popup Menu */
+    .popup-menu {
+      position: fixed;
+      bottom: 75px;
+      right: 20px;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      display: none;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.5s ease; /* Fade effect */
+  z-index: 10000;
+    }
+
+    .popup-menu.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* Menu items */
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 25px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .menu-item:hover {
+      background-color: #f1f1f1;
+      border-radius: 20px;
+    }
+
+.menu-item a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu-item a:before {
+  content: '';
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+  display: inline-block;
+  background-size: cover;
+}
+
+.tg-link:before {
+  background-image: var(--tg-img);
+}
+
+.fb-link:before {
+  background-image: var(--fb-img);
+}
+
+.email-link:before {
+  background-image: var(--email-img);
+}
+
+/* Сообщение рядом с кнопкой чата */
+.message {
+  position: fixed;
+  bottom: 30px; /* Позиция от нижнего края */
+  right: 100px; /* Позиция от правого края, чтобы находиться рядом с кнопкой чата */
+  background: linear-gradient(135deg, var(--color-button-fab), var(--color-button-gradient));
+  color: var(--color-button-fab-text); /* Цвет текста */
+  padding: 15px 20px; /* Увеличенные отступы для лучшего пространства */
+  border-radius: 20px; /* Более закругленные углы */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: none; /* Скрыто по умолчанию */
+  transition: opacity 0.5s ease, transform 0.3s ease; /* Эффект появления и небольшая трансформация */
+  font-size: 16px; /* Увеличенный размер шрифта */
+  text-align: center; /* Центрированный текст */
+  z-index: 100000; /* Убедитесь, что оно выше других элементов */
+}
+
+/* Стрелка у кнопки */
+.message:before {
+  content: '';
+  position: absolute;
+  bottom: 25%; /* Позиционируем "bubble" в середине сообщения */
+  right: -10px; /* Сместим на 15 пикселей вправо, чтобы указывать на кнопку */
+  width: 0;
+  height: 0;
+  border-left: 10px solid var(--color-button-gradient); /* Цвет стрелки */
+  border-top: 5px solid transparent; /* Верхний треугольник */
+  border-bottom: 5px solid transparent; /* Нижний треугольник */
+}
+    /* Pulsation effect */
+    @keyframes pulsation {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .widget-opener__pulsation {
+      animation: pulsation 2s infinite;
+    }
+
+    .widget-opener__pulsation:nth-of-type(2n) {
+      animation-delay: .5s !important;
+    }
+/* Scroll-to-top button */
+.scroll-to-top {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background-color: var(--color-button-fab);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: none; /* Кнопка скрыта по умолчанию */
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, opacity 0.5s;
+  z-index: 10000;
+}
+
+.scroll-to-top i {
+  color: var(--color-button-fab-text);
+  font-size: 20px;
+  position: absolute;
+  bottom: 75%; /* Позиционируем "bubble" в середине сообщения */
+  left: 25%; /* Центрируем по горизонтали */
+  transform: translateX(-50%); /* Центрируем относительно левой границы */
+  width: 0;
+  height: 0;
+}
+
+.scroll-to-top.show {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-to-top.hide {
+  opacity: 0;
+  transform: translateY(20px);
+}

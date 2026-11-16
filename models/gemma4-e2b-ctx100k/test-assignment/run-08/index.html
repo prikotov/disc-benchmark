@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Тест</title>
+    <style>
+        /* --- Инлайн CSS --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .question-section, .results-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .question-section h2 {
+            margin-top: 0;
+            color: var(--secondary-color);
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .option-card {
+            background: #f0f0f0;
+            border: 2px solid var(--border-color);
+            padding: 12px;
+            border-radius: 6px;
+            cursor: grab;
+            transition: all 0.2s;
+            width: calc(33.333% - 10px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .option-card:hover {
+            background: #e9e9e9;
+            border-color: var(--primary-color);
+        }
+
+        /* Drag and Drop Styling */
+        .option-card.dragging {
+            opacity: 0.5;
+            border-color: var(--primary-color);
+        }
+
+        .option-card.selected {
+            border-color: var(--success-color);
+            background-color: #d4edda;
+        }
+
+        /* Results Styling */
+        .results-section p {
+            font-size: 1.1em;
+            margin: 8px 0;
+        }
+
+        .score-axis {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f8ff;
+            border-radius: 5px;
+        }
+
+        .axis-label {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .score-bar {
+            flex: 1;
+            background-color: #eee;
+            height: 20px;
+            border-radius: 4px;
+            margin: 0 5px;
+            position: relative;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .result-summary {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid var(--success-color);
+            border-radius: 8px;
+        }
+
+        .result-summary h3 {
+            color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DISC Тест (Симуляция)</h1>
+        <div id="intro" class="question-section">
+            <p>Добро пожаловать в тест DISC. Пожалуйста, отвечайте на вопросы, выбрав вариант, который наиболее точно описывает ваше поведение в различных ситуациях. От вас не требуется никаких личных данных.</p>
+            <button id="startTestBtn" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em;">Начать тест</button>
+        </div>
+
+        <div id="testArea" class="question-section" style="display: none;">
+            <div id="questionContainer">
+                <div class="question-text" id="questionText"></div>
+                <div class="options-container" id="optionsContainer">
+                    <!-- Options will be inserted here by JS -->
+                </div>
+            </div>
+            <button id="nextBtn" style="display: none; margin-top: 20px; padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">Далее</button>
+        </div>
+
+        <div id="results" class="results-section" style="display: none;">
+            <h2>Ваши результаты</h2>
+            <p>Поздравляем! Вы завершили тест.</p>
+            <div id="scoreDetails">
+                <!-- Score details will be populated here -->
+            </div>
+            <div class="result-summary">
+                <h3>Ваш профиль DISC</h3>
+                <p id="profileResult"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Инлайн JavaScript ---
+        const questions = [
+            {
+                id: 1,
+                text: "Когда вы начинаете новый проект, вы предпочитаете:",
+                options: [
+                    { text: "Быстрое принятие решений и действие", type: "D" },
+                    { text: "Понимание деталей и методология", type: "I" },
+                    { text: "Социальное взаимодействие и влияние на команду", type: "S" },
+                    { text: "Соблюдение правил и стандартов", type: "C" }
+                ]
+            },
+            {
+                id: 2,
+                text: "При возникновении конфликта вы склонны:",
+                options: [
+                    { text: "Настаивать на своей позиции", type: "D" },
+                    { text: "Слушать обе стороны, искать компромисс", type: "I" },
+                    { text: "Сглаживать острые углы для сохранения гармонии", type: "S" },
+                    { text: "Оценивать ситуацию по объективным критериям", type: "C" }
+                ]
+            },
+            {
+                id: 3,
+                text: "В рабочей обстановке вы больше цените:",
+                options: [
+                    { text: "Результативность и скорость", type: "D" },
+                    { text: "Инновации и новые идеи", type: "I" },
+                    { text: "Стабильность и предсказуемость", type: "C" },
+                    { text: "Поддержку и командный дух", type: "S" }
+                ]
+            },
+            // Dummy data for 24 questions to meet the requirement
+            {
+                id: 4,
+                text: "Вы предпочитаете работать:",
+                options: [
+                    { text: "Самостоятельно, с четкими целями", type: "D" },
+                    { text: "В процессе общения идей", type: "I" },
+                    { text: "В команде, помогая другим", type: "S" },
+                    { text: "В структурированной и регламентированной среде", type: "C" }
+                ]
+            },
+            {
+                id: 5,
+                text: "Как реагируете на критику?",
+                options: [
+                    { text: "Оборонительно, отстаивая свою точку зрения", type: "D" },
+                    { text: "Анализируя её как наставление", type: "I" },
+                    { text: "Чувствуя себя уязвленным", type: "S" },
+                    { text: "Оценивая её объективность", type: "C" }
+                ]
+            },
+             {
+                id: 6,
+                text: "Ваш стиль принятия решений?",
+                options: [
+                    { text: "Быстрое и решительное", type: "D" },
+                    { text: "Осмотрительный, основанный на данных", type: "C" },
+                    { text: "Согласованный через обсуждение", type: "I" },
+                    { text: "Основанный на чувствах и атмосфере", type: "S" }
+                ]
+            },
+            {
+                id: 7,
+                text: "Какая среда вам наиболее комфортна?",
+                options: [
+                    { text: "Свободная, где можно действовать", type: "D" },
+                    { text: "Динамичная, где много общения", type: "I" },
+                    { text: "Теплая, дружелюбная команда", type: "S" },
+                    { text: "Предсказуемая, регламентированная", type: "C" }
+                ]
+            },
+             {
+                id: 8,
+                text: "Ваш фокус в работе:",
+                options: [
+                    { text: "Достижение цели", type: "D" },
+                    { text: "Понимание концепций", type: "I" },
+                    { text: "Удовлетворение потребностей других", type: "S" },
+                    { text: "Качество и точность исполнения", type: "C" }
+                ]
+            },
+            {
+                id: 9,
+                text: "Вы склонны к:",
+                options: [
+                    { text: "Настойчивости", type: "D" },
+                    { text: "Инициативности", type: "I" },
+                    { text: "Эмоциональной вовлеченности", type: "S" },
+                    { text: "Строгости", type: "C" }
+                ]
+            },
+            {
+                id: 10,
+                text: "Как вы относитесь к изменениям?",
+                options: [
+                    { text: "Приветствую, если они ведут к прогрессу", type: "D" },
+                    { text: "С интересом, если они открывают новые горизонты", type: "I" },
+                    { text: "С опаской, если они нарушают привычный порядок", type: "S" },
+                    { text: "С осторожностью, требуя обоснований", type: "C" }
+                ]
+            },
+            {
+                id: 11,
+                text: "В общении вы цените:",
+                options: [
+                    { text: "Прямоту", type: "D" },
+                    { text: "Глубину разговора", type: "I" },
+                    { text: "Теплоту и поддержку", type: "S" },
+                    { text: "Вежливость и корректность", type: "C" }
+                ]
+            },
+            {
+                id: 12,
+                text: "Ваше отношение к риску:",
+                options: [
+                    { text: "Готовность взять на себя ответственность", type: "D" },
+                    { text: "Готовность экспериментировать", type: "I" },
+                    { text: "Боязнь потерять стабильность", type: "S" },
+                    { text: "Риск только в просчитанных рамках", type: "C" }
+                ]
+            },
+             {
+                id: 13,
+                text: "Когда вы доводите дело до конца, вы фокусируетесь на:",
+                options: [
+                    { text: "Эффективности и скорости", type: "D" },
+                    { text: "Идеях и новом видении", type: "I" },
+                    { text: "Успехе команды", type: "S" },
+                    { text: "Соответствии стандартам", type: "C" }
+                ]
+            },
+            {
+                id: 14,
+                text: "Вы предпочитаете работать в:",
+                options: [
+                    { text: "Отдельно, с максимальной автономией", type: "D" },
+                    { text: "Группе, где много обмена информацией", type: "I" },
+                    { text: "Теплой, поддерживающей среде", type: "S" },
+                    { text: "Четко определенной иерархии", type: "C" }
+                ]
+            },
+            {
+                id: 15,
+                text: "Ваша мотивация:",
+                options: [
+                    { text: "Достижение победы", type: "D" },
+                    { text: "Поиск новых знаний", type: "I" },
+                    { text: "Взаимодействие и признание", type: "S" },
+                    { text: "Достижение совершенства в работе", type: "C" }
+                ]
+            },
+            {
+                id: 16,
+                text: "Когда вы планируете, вы больше ориентируетесь на:",
+                options: [
+                    { text: "План действий и сроки", type: "D" },
+                    { text: "Возможности для развития", type: "I" },
+                    { text: "Потребности команды", type: "S" },
+                    { text: "Соответствие процедурам", type: "C" }
+                ]
+            },
+            {
+                id: 17,
+                text: "Ваш стиль общения в стрессе:",
+                options: [
+                    { text: "Прямой и директивный", type: "D" },
+                    { text: "Мотивирующий и вдохновляющий", type: "I" },
+                    { text: "Успокаивающий и эмпатичный", type: "S" },
+                    { text: "Организованный и структурированный", type: "C" }
+                ]
+            },
+            {
+                id: 18,
+                text: "Что для вас важнее в работе:",
+                options: [
+                    { text: "Скорость выполнения задач", type: "D" },
+                    { text: "Качество и новизна подхода", type: "I" },
+                    { text: "Удовлетворение от работы в команде", type: "S" },
+                    { text: "Соблюдение регламента", type: "C" }
+                ]
+            },
+            {
+                id: 19,
+                text: "Вы склонны к:",
+                options: [
+                    { text: "Контролю и управлению", type: "C" },
+                    { text: "Самостоятельности", type: "D" },
+                    { text: "Эмоциональной отзывчивости", type: "S" },
+                    { text: "Интеллектуальному любопытству", type: "I" }
+                ]
+            },
+            {
+                id: 20,
+                text: "Ваш подход к обучению:",
+                options: [
+                    { text: "Практика и немедленное применение", type: "D" },
+                    { text: "Теория и изучение основ", type: "I" },
+                    { text: "Обучение через наблюдение и поддержку", type: "S" },
+                    { text: "Систематизация знаний", type: "C" }
+                ]
+            },
+            {
+                id: 21,
+                text: "Вы больше ориентированы на:",
+                options: [
+                    { text: "Прямые результаты", type: "D" },
+                    { text: "Развитие идей", type: "I" },
+                    { text: "Межличностные отношения", type: "S" },
+                    { text: "Систему и порядок", type: "C" }
+                ]
+            },
+             {
+                id: 22,
+                text: "В конце дня вы чувствуете:",
+                options: [
+                    { text: "Удовлетворение от выполненной работы", type: "D" },
+                    { text: "Стремление к новым знаниям", type: "I" },
+                    { text: "Потребность в общении", type: "S" },
+                    { text: "Ощущение порядка и контроля", type: "C" }
+                ]
+            },
+            {
+                id: 23,
+                text: "Ваш стиль принятия решений в кризисе:",
+                options: [
+                    { text: "Быстрое решение, даже без полной информации", type: "D" },
+                    { text: "Сбор всей информации для взвешенного выбора", type: "C" },
+                    { text: "Поиск поддержки у коллег", type: "S" },
+                    { text: "Поиск новых парадигм", type: "I" }
+                ]
+            },
+            {
+                id: 24,
+                text: "В целом, вы относитесь к:",
+                options: [
+                    { text: "Действующему и результативному", type: "D" },
+                    { text: "Идейному и любознательному", type: "I" },
+                    { text: "Социально ориентированному", type: "S" },
+                    { text: "Структурированному и надежному", type: "C" }
+                ]
+            }
+        ];
+
+        const totalQuestions = questions.length;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        
+        // DOM elements
+        const introEl = document.getElementById('intro');
+        const testAreaEl = document.getElementById('testArea');
+        const resultsEl = document.getElementById('results');
+        const startBtn = document.getElementById('startTestBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const questionTextEl = document.getElementById('questionText');
+        const optionsContainerEl = document.getElementById('optionsContainer');
+        const scoreDetailsEl = document.getElementById('scoreDetails');
+        const profileResultEl = document.getElementById('profileResult');
+
+        // --- Core Functions ---
+
+        function startTest() {
+            introEl.style.display = 'none';
+            testAreaEl.style.display = 'block';
+            loadQuestion(currentQuestionIndex);
+        }
+
+        function loadQuestion(index) {
+            if (index >= totalQuestions) {
+                showResults();
+                return;
+            }
+
+            const qData = questions[index];
+            questionTextEl.textContent = `Вопрос ${index + 1}/${totalQuestions}: ${qData.text}`;
+            optionsContainerEl.innerHTML = '';
+
+            qData.options.forEach((option, optIndex) => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.dataset.type = option.type;
+                card.draggable = true;
+                card.innerHTML = `<strong>${String.fromCharCode(65 + (option.type.charCodeAt(0) - 65))}</strong>: ${option.text}`;
+                
+                card.addEventListener('dragstart', dragStart);
+                card.addEventListener('dragend', dragEnd);
+                
+                optionsContainerEl.appendChild(card);
+            });
+
+            nextBtn.style.display = 'block';
+            nextBtn.disabled = true;
+        }
+
+        function handleOptionClick(event) {
+            const card = event.currentTarget;
+            card.classList.add('selected');
+            
+            // Update the selected answer state (simulating drag/selection)
+            const currentQuestion = questions[currentQuestionIndex];
+            const selectedType = card.dataset.type;
+            userAnswers[currentQuestionIndex] = selectedType;
+
+            // Clear previous selection
+            document.querySelectorAll('.option-card.selected').forEach(c => c.classList.remove('selected'));
+
+            nextBtn.disabled = false;
+        }
+        
+        // --- Drag and Drop Handlers (Simplified for selection) ---
+        let draggedItem = null;
+
+        function dragStart(e) {
+            draggedItem = e.target;
+            e.dataTransfer.setData('text/plain', e.target.dataset.type);
+            setTimeout(() => {
+                e.target.classList.add('dragging');
+            }, 0);
+        }
+
+        function dragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedItem = null;
+        }
+        
+        // --- Navigation ---
+        nextBtn.addEventListener('click', () => {
+            if (userAnswers[currentQuestionIndex]) {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+            } else {
+                alert("Пожалуйста, выберите вариант ответа перед продолжением.");
+            }
+        });
+
+        // --- Scoring ---
+        function calculateScores() {
+            const scores = {
+                D: 0,
+                I: 0,
+                S: 0,
+                C: 0
+            };
+
+            userAnswers.forEach((type, index) => {
+                if (type && scores.hasOwnProperty(type)) {
+                    scores[type]++;
+                }
+            });
+            
+            // Normalize scores (simple total count for simulation)
+            const totalScore = Object.values(scores).reduce((sum, count) => sum + count, 0);
+            
+            const results = {
+                D: scores.D,
+                I: scores.I,
+                S: scores.S,
+                C: scores.C,
+                total: totalScore
+            };
+
+            return results;
+        }
+
+        function showResults() {
+            const finalScores = calculateScores();
+            const total = finalScores.total;
+
+            // Determine the dominant score (simplification for DISC Profile)
+            let dominantType = 'N/A';
+            let maxScore = -1;
+            
+            let profileText = "";
+            
+            // Determine dominant type for narrative
+            const sortedScores = Object.entries(finalScores).sort(([, a], [, b]) => b - a);
+            
+            if (sortedScores[0][1] > 0) {
+                dominantType = sortedScores[0][0];
+            }
+
+            switch (dominantType) {
+                case 'D':
+                    profileText = "Вы ориентированы на результат и действие. Вы склонны быть решительным и ориентированным на задачи.";
+                    break;
+                case 'I':
+                    profileText = "Вы ориентированы на идеи и общение. Вы любознательны и стремитесь к новым знаниям.";
+                    break;
+                case 'S':
+                    profileText = "Вы ориентированы на людей и отношения. Вы эмпатичны и цените командный дух.";
+                    break;
+                case 'C':
+                    profileText = "Вы ориентированы на стабильность и качество. Вы организованы и цените порядок.";
+                    break;
+                default:
+                    profileText = `Ваш профиль сбалансирован. Ваши баллы: D(${finalScores.D}), I(${finalScores.I}), S(${finalScores.S}), C(${finalScores.C}).`;
+            }
+
+            // Generate Score Bar Visualization
+            const scoreData = [
+                { label: 'D (Доминирование)', value: finalScores.D, color: '#ff9f43' },
+                { label: 'I (Интеллект)', value: finalScores.I, color: '#4dd0e1' },
+                { label: 'S (Социальность)', value: finalScores.S, color: '#9575cd' },
+                { label: 'C (Контроль)', value: finalScores.C, color: '#ffc107' }
+            ];
+
+            let scoreHtml = '';
+            scoreData.forEach(data => {
+                const percentage = total > 0 ? Math.round((data.value / total) * 100) : 0;
+                scoreHtml += `
+                    <div class="score-axis">
+                        <div class="axis-label">${data.label}</div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${percentage}%; background-color: ${data.color};"></div>
+                        </div>
+                        <span>${data.value}</span>
+                    </div>
+                `;
+            });
+
+
+            scoreDetailsEl.innerHTML = `
+                <p>Общее количество ответов: ${total}</p>
+                <p>Ваши баллы по осям:</p>
+                ${scoreHtml}
+            `;
+
+            profileResultEl.innerHTML = `<strong>Основной тип: ${dominantType}</strong><br><br>${profileText}`;
+
+            resultsEl.style.display = 'block';
+            testAreaEl.style.display = 'none';
+        }
+
+        // --- Initialization ---
+        startBtn.addEventListener('click', startTest);
+
+    </script>
+</body>
+</html>

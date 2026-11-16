@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тест DISC — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;color:#111;line-height:1.4}
+header{background:#0d1b2a;color:#fff;padding:16px 20px;text-align:center;font-weight:600}
+main{max-width:960px;margin:0 auto;padding:20px}
+h1{font-size:22px;margin-bottom:8px}
+p.sub{color:#555;margin-bottom:20px}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:20px;margin-bottom:20px}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.step-btn{flex:1;min-width:90px;padding:10px 6px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:13px;cursor:pointer}
+.step-btn.is-active{background:#0d1b2a;color:#fff;border-color:#0d1b2a}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:800px){.grid3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid3{grid-template-columns:1fr}}
+.list-card{border:1px solid #e5e7eb;border-radius:10px;padding:10px;background:#fafafa}
+.list-title{font-weight:600;font-size:13px;margin-bottom:6px;color:#333}
+.list-foot{font-size:12px;color:#888;margin-top:6px;text-align:center}
+.disc-list{list-style:none;display:flex;flex-direction:column;gap:6px;min-height:140px}
+.disc-item{background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 10px;cursor:grab;user-select:none}
+.disc-item.dragging{opacity:.5}
+.disc-item.is-over{outline:2px dashed #0d1b2a}
+.actions{display:flex;justify-content:space-between;margin-top:20px}
+button.btn{padding:10px 18px;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+.btn-primary{background:#0d1b2a;color:#fff}
+.btn-ghost{background:#eee}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.progress{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-bottom:16px}
+.progress>div{height:100%;background:#0d1b2a;width:12.5%}
+.result{display:none;text-align:center}
+.result.show{display:block}
+.result h2{margin:12px 0}
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.score-card{padding:16px;border-radius:10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.score-card .type{font-weight:700;font-size:18px}
+.score-card .val{font-size:28px;margin:6px 0}
+.legend{font-size:12px;color:#666;margin-top:20px}
+</style>
+</head>
+<body>
+<header>Тест DISC — Школа менеджмента Stratoplan</header>
+<main>
+<div class="card">
+<h1>Тестирование DISC</h1>
+<p class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!<br>Разместите блоки в порядке от наиболее похожего на вас до наименее похожего.</p>
+<div class="progress"><div id="progressBar"></div></div>
+<div class="steps" id="steps"></div>
+<div id="panes"></div>
+<div class="actions">
+<button class="btn btn-ghost" id="prevBtn">Назад</button>
+<button class="btn btn-primary" id="nextBtn">Далее</button>
+<button class="btn btn-primary" id="finishBtn" style="display:none">Завершить тест</button>
+</div>
+<div class="result" id="result">
+<h2>Ваш профиль DISC</h2>
+<div class="score-grid" id="scoreGrid"></div>
+<p class="legend">D — Доминирование, I — Влияние, S — Стабильность, C — Соответствие</p>
+<button class="btn btn-primary" id="restartBtn">Пройти заново</button>
+</div>
+</div>
+</main>
+<script>
+const stepsData = [
+{ id:0, lists:[
+[{t:'i',txt:'Экспресcивный'},{t:'c',txt:'Покладистый'},{t:'d',txt:'Волевой'},{t:'s',txt:'Осторожный'}],
+[{t:'d',txt:'Пылкий'},{t:'i',txt:'Разговорчивый'},{t:'s',txt:'Добродушный'},{t:'c',txt:'Сдержанный'}],
+[{t:'i',txt:'Любитель приключений'},{t:'c',txt:'Энтузиаст'},{t:'d',txt:'Исполнитель инструкций'},{t:'s',txt:'Верный'}]
+]},
+{ id:1, lists:[
+[{t:'d',txt:'Настойчивый'},{t:'c',txt:'Осторожный'},{t:'i',txt:'Эмоциональный'},{t:'s',txt:'Удовлетворенный'}],
+[{t:'s',txt:'Довольный'},{t:'d',txt:'Нетерпеливый'},{t:'i',txt:'Убедительный'},{t:'c',txt:'Безропотный'}],
+[{t:'c',txt:'Смиренный'},{t:'s',txt:'Умеющий слушать'},{t:'i',txt:'Душа компании'},{t:'d',txt:'Волевой'}]
+]},
+{ id:2, lists:[
+[{t:'c',txt:'Правильный'},{t:'d',txt:'Первопроходец'},{t:'s',txt:'Спокойный'},{t:'i',txt:'Влиятельный'}],
+[{t:'c',txt:'Почтительный'},{t:'i',txt:'Контактный'},{t:'d',txt:'Агрессивный'},{t:'s',txt:'Мягкий'}],
+[{t:'i',txt:'Весельчак'},{t:'s',txt:'Покорный'},{t:'c',txt:'Тактичный'},{t:'d',txt:'Соперничающий'}]
+]},
+{ id:3, lists:[
+[{t:'c',txt:'Точный'},{t:'d',txt:'Доминирующий'},{t:'s',txt:'Охотный'},{t:'i',txt:'Притягательный'}],
+[{t:'i',txt:'Уравновешенный'},{t:'c',txt:'Уступчивый'},{t:'d',txt:'Идущий на риск'},{t:'s',txt:'Услужливый'}],
+[{t:'c',txt:'Осмотрительный'},{t:'s',txt:'Добрососедский'},{t:'d',txt:'Энергичный'},{t:'i',txt:'Убедительный'}]
+]},
+{ id:4, lists:[
+[{t:'s',txt:'Уравновешенный'},{t:'i',txt:'Мотивирующий'},{t:'c',txt:'Щепетильный'},{t:'d',txt:'Решительный'}],
+[{t:'i',txt:'Уверенный'},{t:'c',txt:'Готовый к сотрудничеству'},{t:'s',txt:'Беззаботный'},{t:'d',txt:'Аргументирующий'}],
+[{t:'s',txt:'Сдержанный'},{t:'d',txt:'Прямой'},{t:'c',txt:'Строгий'},{t:'i',txt:'Убедительный'}]
+]},
+{ id:5, lists:[
+[{t:'c',txt:'Застенчивый'},{t:'d',txt:'Требовательный'},{t:'s',txt:'Терпеливый'},{t:'i',txt:'Очаровательный'}],
+[{t:'d',txt:'Неугомонный'},{t:'c',txt:'Дисциплинированный'},{t:'i',txt:'Вдохновляющий'},{t:'s',txt:'Внимательный'}],
+[{t:'s',txt:'Обязательный'},{t:'i',txt:'Оживленный'},{t:'d',txt:'Решительный'},{t:'c',txt:'Точный'}]
+]},
+{ id:6, lists:[
+[{t:'c',txt:'Добросовестный'},{t:'i',txt:'Компанейский'},{t:'s',txt:'Добрый'},{t:'d',txt:'Уверенный в себе'}],
+[{t:'c',txt:'Дипломатичный'},{t:'d',txt:'Отважный'},{t:'s',txt:'Сочувствующий'},{t:'i',txt:'Оптимистичный'}],
+[{t:'d',txt:'Настойчивый'},{t:'i',txt:'Общительный'},{t:'s',txt:'Постоянный'},{t:'c',txt:'Организованный'}]
+]},
+{ id:7, lists:[
+[{t:'c',txt:'Соглашающийся'},{t:'s',txt:'Владеющий собой'},{t:'d',txt:'Шутливый'},{t:'i',txt:'Настойчивый'}],
+[{t:'i',txt:'Обаятельный'},{t:'d',txt:'Позитивный'},{t:'s',txt:'Снисходительный'},{t:'c',txt:'Требовательный'}],
+[{t:'i',txt:'Коммуникабельный'},{t:'d',txt:'Смелый'},{t:'c',txt:'Перфекционист'},{t:'s',txt:'Сдержанный'}]
+]}
+];
+const stepsEl=document.getElementById('steps');
+const panesEl=document.getElementById('panes');
+const progressBar=document.getElementById('progressBar');
+let currentStep=0;
+stepsData.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='step-btn'+(i===0?' is-active':'');
+  b.textContent=i+1;
+  b.dataset.step=i;
+  stepsEl.appendChild(b);
+  b.onclick=()=>{currentStep=i; render();}
+});
+function renderStepPane(stepIdx){
+  const step=stepsData[stepIdx];
+  const wrap=document.createElement('div');
+  wrap.className='grid3';
+  step.lists.forEach((list,liIdx)=>{
+    const card=document.createElement('div');
+    card.className='list-card';
+    card.innerHTML=`<div class="list-title">Я наиболее</div><ul class="disc-list" data-list="${stepIdx}-${liIdx}"></ul><div class="list-foot">Я наименее</div>`;
+    const ul=card.querySelector('ul');
+    list.forEach(item=>{
+      const li=document.createElement('li');
+      li.className='disc-item';
+      li.draggable=true;
+      li.dataset.type=item.t;
+      li.textContent=item.txt;
+      ul.appendChild(li);
+    });
+    wrap.appendChild(card);
+  });
+  return wrap;
+}
+function render(){
+  panesEl.innerHTML='';
+  const pane=renderStepPane(currentStep);
+  pane.style.display=currentStep===currentStep?'':'none';
+  panesEl.appendChild(pane);
+  document.querySelectorAll('.step-btn').forEach((b,i)=>b.classList.toggle('is-active',i===currentStep));
+  progressBar.style.width=`${((currentStep+1)/stepsData.length)*100}%`;
+  document.getElementById('prevBtn').disabled=currentStep===0;
+  document.getElementById('nextBtn').style.display=currentStep===stepsData.length-1?'none':'inline-block';
+  document.getElementById('finishBtn').style.display=currentStep===stepsData.length-1?'inline-block':'none';
+  enableDnD();
+}
+function enableDnD(){
+  document.querySelectorAll('.disc-list').forEach(ul=>{
+    [...ul.children].forEach(li=>{
+      li.ondragstart=e=>{li.classList.add('dragging');e.dataTransfer.effectAllowed='move';};
+      li.ondragend=()=>li.classList.remove('dragging');
+      li.ondragover=e=>{e.preventDefault();li.classList.add('is-over')};
+      li.ondragleave=()=>li.classList.remove('is-over');
+      li.ondrop=e=>{
+        e.preventDefault();
+        const dragging=document.querySelector('.dragging');
+        if(dragging && dragging!==li){
+          const rect=li.getBoundingClientRect();
+          const before=e.clientY<rect.top+rect.height/2;
+          ul.insertBefore(dragging, before?li:li.nextSibling);
+        }
+        li.classList.remove('is-over');
+      };
+    });
+  });
+}
+document.getElementById('prevBtn').onclick=()=>{if(currentStep>0){currentStep--;render();}};
+document.getElementById('nextBtn').onclick=()=>{if(currentStep<stepsData.length-1){currentStep++;render();}};
+document.getElementById('finishBtn').onclick=finishTest;
+document.getElementById('restartBtn').onclick=()=>{document.getElementById('result').classList.remove('show');panesEl.parentElement.style.display='block';currentStep=0;render();};
+function finishTest(){
+  const maj=[],min=[];
+  document.querySelectorAll('.disc-list').forEach(ul=>{
+    [...ul.children].forEach((li,i)=>{const t=li.dataset.type; if(i===0)maj.push(t); if(i===3)min.push(t);});
+  });
+  const count=(arr,ch)=>arr.filter(v=>v===ch).length;
+  const scores={d:count(maj,'d')-count(min,'d'), i:count(maj,'i')-count(min,'i'), s:count(maj,'s')-count(min,'s'), c:count(maj,'c')-count(min,'c')};
+  const vals=['d','i','s','c'];
+  const max=Math.max(...Object.values(scores));
+  const top=vals.filter(v=>scores[v]===max);
+  const grid=document.getElementById('scoreGrid');
+  grid.innerHTML='';
+  vals.forEach(v=>{
+    const card=document.createElement('div');
+    card.className='score-card';
+    card.innerHTML=`<div class="type">${v.toUpperCase()}</div><div class="val">${scores[v]}</div>`;
+    if(top.includes(v)) card.style.border='2px solid #0d1b2a';
+    grid.appendChild(card);
+  });
+  panesEl.parentElement.style.display='none';
+  document.getElementById('result').classList.add('show');
+}
+render();
+</script>
+</body>
+</html>

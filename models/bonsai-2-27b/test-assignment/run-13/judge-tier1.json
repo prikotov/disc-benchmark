@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-15T20:44:53.108374+00:00",
+  "duration_s": 31.9,
+  "exit_code": 0,
+  "prompt_chars": 52911,
+  "verdict": {
+    "data": 4,
+    "logic": 4,
+    "ux": 4,
+    "impl": 2,
+    "total": 14,
+    "notes": "Все 24 вопроса перенесены посимвольно, подсчёт строго по алгоритму оригинала (позиция 1 = +1, позиция 4 = −1, разность типов), поток полный и рабочий. Минус — в index.html оставлена неснятая токен-логика (makeToken, AES-GCM, sessionStorage) — мёртвый код против требования адаптации; внешняя ссылка — только href, офлайн-ограничения соблюдены.",
+    "examples": "DATA: {t:'i', x:'Экспресcивный'} с латинской 'c'; 96 data-type не видны пользователю. LOGIC: 'if(idx===0) maj.push(type); else if(idx===lis.length-1) min.push(type)'; контроль: top=d/bot=c во всех 24 → D:24, остальные 0. UX: prevBtn.disabled=(s===0); тач только за '.handle'; прогресс ((s+1)/STEPS*100)%. IMPL: makeToken() с crypto.subtle.encrypt + sessionStorage.setItem('disc.token',...) — неснятая токен-логика; TAB_NAMES 'Семьмой' — опечатка."
+  }
+}

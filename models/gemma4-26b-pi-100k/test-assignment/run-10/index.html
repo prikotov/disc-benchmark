@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест DISC</title>
+    <style>
+        :root {
+            --primary: #268AC5;
+            --bg: #f4f7f9;
+            --text: #333;
+            --card-bg: #ffffff;
+            --accent: #e74c3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #app {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 { margin-top: 0; font-size: 1.5rem; }
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .question-container {
+            margin-bottom: 30px;
+        }
+        .instruction {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .sortable-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sortable-item {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 8px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s, background 0.2s;
+            user-select: none;
+        }
+        .sortable-item.is-dragging {
+            opacity: 0.5;
+            background: #eef;
+        }
+        .sortable-item:active { cursor: grabbing; }
+        .handle {
+            margin-right: 12px;
+            color: #ccc;
+            font-size: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        .btn-prev { background: #ddd; color: #333; }
+        .btn-next { background: var(--primary); color: white; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .result-item {
+            text-align: left;
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .result-score {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="test-screen" class="card">
+        <h1 id="step-title">Тест DISC</h1>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <p class="instruction">Расставьте прилагательные в порядке убывания: сверху то, что подходит вам больше всего, снизу — то, что меньше всего.</p>
+        
+        <div id="question-area" class="question-container">
+            <ul id="sortable-list" class="sortable-list"></ul>
+        </div>
+
+        <div class="controls">
+            <button id="btn-prev" class="btn-prev" disabled>Назад</button>
+            <button id="btn-next" class="btn-next">Далее</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="card hidden">
+        <h1>Ваш результат</h1>
+        <div id="results-content"></div>
+        <button onclick="location.reload()" class="btn-next" style="margin-top: 20px;">Пройти еще раз</button>
+    </div>
+</div>
+
+<script>
+const questions = [
+    {items: [{text: 'Экспресcивный', type: 'i'}, {text: 'Покладистый', type: 'c'}, {text: 'Волевой', type: 'd'}, {text: 'Осторожный', type: 's'}]},
+    {items: [{text: 'Пылкий', type: 'd'}, {text: 'Разговорчивый', type: 'i'}, {text: 'Добродушный', type: 's'}, {text: 'Сдержанный', type: 'c'}]},
+    {items: [{text: 'Любитель приключений', type: 'i'}, {text: 'Энтузиаст', type: 'c'}, {text: 'Исполнитель инструкций', type: 'd'}, {text: 'Верный', type: 's'}]},
+    {items: [{text: 'Настойчивый', type: 'd'}, {text: 'Осторожный', type: 'c'}, {text: 'Эмоциональный', type: 'i'}, {text: 'Удовлетворенный', type: 's'}]},
+    {items: [{text: 'Довольный', type: 's'}, {text: 'Нетерпеливый', type: 'd'}, {text: 'Убедительный', type: 'i'}, {text: 'Безропотный', type: 'c'}]},
+    {items: [{text: 'Смиренный', type: 'c'}, {text: 'Умеющий слушать', type: 's'}, {text: 'Душа компании', type: 'i'}, {text: 'Волевой', type: 'd'}]},
+    {items: [{text: 'Правильный', type: 'c'}, {text: 'Первопроходец', type: 'd'}, {text: 'Спокойный', type: 's'}, {text: 'Влиятельный', type: 'i'}]},
+    {items: [{text: 'Почтительный', type: 'c'}, {text: 'Контактный', type: 'i'}, {text: 'Агрессивный', type: 'd'}, {text: 'Мягкий', type: 's'}]},
+    {items: [{text: 'Весельчак', type: 'i'}, {text: 'Покорный', type: 's'}, {text: 'Тактичный', type: 'c'}, {text: 'Соперничающий', type: 'd'}]},
+    {items: [{text: 'Точный', type: 'c'}, {text: 'Доминирующий', type: 'd'}, {text: 'Охотный', type: 's'}, {text: 'Притягательный', type: 'i'}]},
+    {items: [{text: 'Уравновешенный', type: 'i'}, {text: 'Уступчивый', type: 'c'}, {text: 'Идущий на риск', type: 'd'}, {text: 'Услужливый', type: 's'}]},
+    {items: [{text: 'Осмотрительный', type: 'c'}, {text: 'Добрососедский', type: 's'}, {text: 'Энергичный', type: 'd'}, {text: 'Убедительный', type: 'i'}]},
+    {items: [{text: 'Уравновешенный', type: 's'}, {text: 'Мотивирующий', type: 'i'}, {text: 'Щепетильный', type: 'c'}, {text: 'Решительный', type: 'd'}]},
+    {items: [{text: 'Уверенный', type: 'i'}, {text: 'Готовый к сотрудничеству', type: 'c'}, {text: 'Беззаботный', type: 's'}, {text: 'Аргументирующий', type: 'd'}]},
+    {items: [{text: 'Сдержанный', type: 's'}, {text: 'Прямой', type: 'd'}, {text: 'Строгий', type: 'c'}, {text: 'Убедительный', type: 'i'}]},
+    {items: [{text: 'Застенчивый', type: 'c'}, {text: 'Требовательный', type: 'd'}, {text: 'Терпеливый', type: 's'}, {text: 'Очаровательный', type: 'i'}]},
+    {items: [{text: 'Неугомонный', type: 'd'}, {text: 'Дисциплинированный', type: 'c'}, {text: 'Вдохновляющий', type: 'i'}, {text: 'Внимательный', type: 's'}]},
+    {items: [{text: 'Обязательный', type: 's'}, {text: 'Оживленный', type: 'i'}, {text: 'Решительный', type: 'd'}, {text: 'Точный', type: 'c'}]},
+    {items: [{text: 'Добросовестный', type: 'c'}, {text: 'Компанейский', type: 'i'}, {text: 'Добрый', type: 's'}, {text: 'Уверенный в себе', type: 'd'}]},
+    {items: [{text: 'Дипломатичный', type: 'c'}, {text: 'Отважный', type: 'd'}, {text: 'Сочувствующий', type: 's'}, {text: 'Оптимистичный', type: 'i'}]},
+    {items: [{text: 'Настойчивый', type: 'd'}, {text: 'Общительный', type: 'i'}, {text: 'Постоянный', type: 's'}, {text: 'Организованный', type: 'c'}]},
+    {items: [{text: 'Соглашающийся', type: 'c'}, {text: 'Владеющий собой', type: 's'}, {text: 'Шутливый', type: 'd'}, {text: 'Настойчивый', type: 'i'}]},
+    {items: [{text: 'Обаятельный', type: 'i'}, {text: 'Позитивный', type: 'd'}, {text: 'Снисходительный', type: 's'}, {text: 'Требовательный', type: 'c'}]},
+    {items: [{text: 'Коммуникабельный', type: 'i'}, {text: 'Смелый', type: 'd'}, {text: 'Перфекционист', type: 'c'}, {text: 'Сдержанный', type: 's'}]}
+];
+
+let currentStep = 0;
+let userAnswers = [];
+
+const sortableList = document.getElementById('sortable-list');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const progressBar = document.getElementById('progress-bar');
+const testScreen = document.getElementById('test-screen');
+const resultScreen = document.getElementById('result-screen');
+const resultsContent = document.getElementById('results-content');
+
+function initQuestion(step) {
+    sortableList.innerHTML = '';
+    const question = questions[step];
+    const itemsToRender = userAnswers[step] || question.items;
+
+    itemsToRender.forEach((item) => {
+        const li = document.createElement('li');
+        li.className = 'sortable-item';
+        li.draggable = true;
+        li.dataset.type = item.type;
+        li.innerHTML = `<span class="handle">☰</span> ${item.text}`;
+        
+        li.addEventListener('dragstart', handleDragStart);
+        li.addEventListener('dragover', handleDragOver);
+        li.addEventListener('drop', handleDrop);
+        li.addEventListener('dragend', handleDragEnd);
+
+        sortableList.appendChild(li);
+    });
+
+    btnPrev.disabled = step === 0;
+    btnNext.textContent = step === questions.length - 1 ? 'Завершить' : 'Далее';
+    progressBar.style.width = `${((step + 1) / questions.length) * 100}%`;
+}
+
+let dragSrcEl = null;
+
+function handleDragStart(e) {
+    dragSrcEl = this;
+    this.classList.add('is-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) e.preventDefault();
+    return false;
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) e.stopPropagation();
+    if (dragSrcEl !== this) {
+        const allItems = Array.from(sortableList.children);
+        const fromIdx = allItems.indexOf(dragSrcEl);
+        const toIdx = allItems.indexOf(this);
+        if (fromIdx < toIdx) {
+            this.after(dragSrcEl);
+        } else {
+            this.before(dragSrcEl);
+        }
+    }
+    return false;
+}
+
+function handleDragEnd() {
+    this.classList.remove('is-dragging');
+    saveCurrentAnswer();
+}
+
+function saveCurrentAnswer() {
+    const currentItems = Array.from(sortableList.children).map(li => ({
+        text: li.innerText.replace('☰ ', '').trim(),
+        type: li.dataset.type
+    }));
+    userAnswers[currentStep] = currentItems;
+}
+
+btnNext.addEventListener('click', () => {
+    saveCurrentAnswer();
+    if (currentStep < questions.length - 1) {
+        currentStep++;
+        initQuestion(currentStep);
+    } else {
+        showResults();
+    }
+});
+
+btnPrev.addEventListener('click', () => {
+    saveCurrentAnswer();
+    if (currentStep > 0) {
+        currentStep--;
+        initQuestion(currentStep);
+    }
+});
+
+function showResults() {
+    testScreen.classList.add('hidden');
+    resultScreen.classList.remove('hidden');
+
+    const scores = { d: 0, i: 0, s: 0, c: 0 };
+    userAnswers.forEach(answer => {
+        if (answer.length >= 1) {
+            const majType = answer[0].type;
+            scores[majType]++;
+        }
+        if (answer.length >= 4) {
+            const minType = answer[3].type;
+            scores[minType]--;
+        }
+    });
+
+    const labels = {
+        d: 'Доминирование (Dominance)',
+        i: 'Влияние (Influence)',
+        s: 'Стабильность (Stability)',
+        c: 'Соответствие (Compliance)'
+    };
+
+    resultsContent.innerHTML = '';
+    Object.keys(scores).forEach(key => {
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.innerHTML = `
+            <div>${labels[key]}</div>
+            <div class="result-score">${scores[key]}</div>
+        `;
+        resultsContent.appendChild(div);
+    });
+}
+
+initQuestion(0);
+</script>
+</body>
+</html>

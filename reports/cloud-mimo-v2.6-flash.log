@@ -277,3 +277,101 @@ PASSED
 [15:01:10]   cwd=/home/dp/MyProjects/disc/.tmpwork/disc-pi-ihrbgwqf/run
   pi-home=/home/dp/MyProjects/disc/.tmpwork/disc-pi-ihrbgwqf/pi-home (изолирован)
   лог (live): /home/dp/MyProjects/disc/models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-07/pi-run.log
+[15:13:29] pi завершился: код=0, убит=нет, время=00:12:18
+[15:13:29] артефакты агента: 1 файл (ов); index.html: True
+[15:13:29] сессия: 1 файл(ов) JSONL, последний: 2026-11-16T15-01-11-100Z_01a1e4e0-5b3c-7715-8c26-91b31358f678.jsonl
+[22:13:29]   runner: rc=0
+{
+  "run": "/home/dp/MyProjects/disc/models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-07",
+  "model": "mimo-v2.6-flash",
+  "thinking": "high",
+  "files": [
+    "index.html",
+    "pi-run.log",
+    "run.json"
+  ],
+  "index_html": true,
+  "external": {
+    "pass": true,
+    "findings": [],
+    "urls": []
+  },
+  "data": {
+    "adjectives_total": 84,
+    "adjectives_found": 84,
+    "missing": []
+  },
+  "smoke": {
+    "tool": "google-chrome --headless=new --virtual-time-budget=8000",
+    "ran": true,
+    "dom_bytes": 88725,
+    "has_button": true,
+    "uncaught_errors": 0,
+    "ok": true
+  },
+  "passed": true
+}
+типы (пары текст+тип): 96 / 96
+PASSED
+[22:13:30]   check: rc=0
+{
+  "ran": true,
+  "flow_ok": true,
+  "ux_score": 50,
+  "questions_processed": 24,
+  "steps": 0,
+  "displayed": {
+    "d": 5,
+    "i": 2,
+    "s": -3,
+    "c": -4
+  },
+  "expected": {
+    "d": 5,
+    "i": 2,
+    "s": -3,
+    "c": -4
+  },
+  "displayed_match": true,
+  "console_errors": 0,
+  "screenshots": 3,
+  "notes": [
+    "клик «Завершить тест»"
+  ]
+}
+[22:13:36]   playthrough: rc=0
+{
+  "data": 4,
+  "logic": 4,
+  "ux": 4,
+  "impl": 4,
+  "total": 16,
+  "notes": "Полное и точное воспроизведение: все 24 вопроса посимвольно (чекер 84/84 прилагательных, 96/96 типов, включая известный кворк «Экспресcивный» с латинской c и ошибочные назначения типов вроде «Энтузиаст»→c), подсчёт строго по алгоритму оригинала, поток и ограничения соблюдены безупречно.",
+  "examples": "DATA: разметка идентична эталону и по порядку (draggable-list1..24, 8 шагов × 3 карточки), типы только в data-type, пользователю не показываются; чекер: adjectives 84/84, mismatches пуст. LOGIC: collectScore() — idx===0 → maj.push(type) (+1), idx===3 → min.push(type) (−1), балл = count(maj,ch)−count(min,ch); средние позиции игнорируются. Ручная проверка по раскладке из playthrough.json: d-топ в Q1,2,3,5,7,9,13,17,21 (9), d-низ в Q10,14,18,22 (4) → D:5; c-топ Q12,16,20,24 (4), c-низ Q1,3,5,8,11,15,19,23 (8) → C:−4; аналогично I:2, S:−3 — совпадает с выведенным «D:5, I:2, S:-3, C:-4». UX: старт → 8 шагов (табы «Первый…Восьмой», прогресс-бар (step+1)/8) → результат с дисклеймером «* Обратите внимание…» и «Пройти тест заново»; btnPrev.disabled при step===0; подписи «Я наиболее»/«Я наименее», «Назад»/«Далее»/«Завершить тест»; тач только за .item__handle (touch-action:none), pointer events + pointercancel + автоскролл; playthrough: 24 вопроса, 0 dead ends, 0 console errors, flow_ok. IMPL: один файл, CSS/JS инлайн, ни одного внешнего URL (check.external pass, urls []), свой drag&drop вместо SortableJS, работает с file://, email-шаг/токен/маркетинг отсутствуют, плюс доступность (tablist, aria-selected, клавиатурный перенос Enter/стрелки/Esc) и restart через snapshot initialHTML; код чистый, без мёртвых кусков (класс .is-drop используется, пустой .list.is-drop — тривиальная косметика)."
+}
+[22:14:11]   judge: rc=0
+{
+  "score": 87,
+  "issues": [
+    "Стартовый экран не показан/отсутствует отдельный экран с заголовком-приглашением — тест открывается сразу с первого шага",
+    "Инструкция мелким бледным шрифтом, ключевые правила клавиатуры плохо читаются",
+    "Отрицательные шкалы (S:-3, C:-4) на результате непривычны и могут путать пользователя без визуализации динамики",
+    "Кнопка «Назад» на первом шаге выглядит активной, хотя не Disabled явно",
+    "Малозаметный индикатор прогресса (тонкая полоска) при 8 блоках — стоит дублировать счётчиком",
+    "Нет визуального выделения типа-лидера на экране резуль
+[22:14:24]   judge_ux: rc=0
+[22:14:24] [high #4/4] RUN → models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-08
+[15:14:25] каталог pi: ctx=1048576, maxTokens=131072, уровни=['high', 'off']
+[15:14:25] провайдер xiaomi-token-plan-sgp: карта уровней {'off': 'off', 'minimal': None, 'low': None, 'medium': None, 'high': 'high', 'xhigh': None, 'max': None}
+[15:14:25] pi-home: models-store.json (каталог pi) + auth.json; models.json не пишем
+[15:14:25] запуск: pi -p --provider xiaomi-token-plan-sgp --model mimo-v2.6-flash --thinking high (ctx 1048576)
+[15:14:25]   cwd=/home/dp/MyProjects/disc/.tmpwork/disc-pi-skiu0qbz/run
+  pi-home=/home/dp/MyProjects/disc/.tmpwork/disc-pi-skiu0qbz/pi-home (изолирован)
+  лог (live): /home/dp/MyProjects/disc/models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-08/pi-run.log
+остановка pi (signal 15): убиваю группу 3990420
+[16:04:26] pi завершился: код=143, убит=да, время=00:50:01
+[16:04:26] артефакты агента: 0 файл (ов); index.html: False
+[16:04:26] сессия: 1 файл(ов) JSONL, последний: 2026-11-16T15-14-25-227Z_01a1e4ec-794a-71f8-b580-0ac999a74935.jsonl
+[23:04:26]   runner: rc=143
+[23:04:26]   нет index.html — пропуск проверок
+[23:04:26] ГОТОВО: серия mimo-v2.6-flash завершена

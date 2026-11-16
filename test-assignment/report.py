@@ -185,12 +185,36 @@ def build_report_html():
             ux_score = (json.loads(uxf.read_text(encoding="utf-8")).get("verdict") or {}).get("score") if uxf.is_file() else None
             ptf = run / "playthrough.json"
             flow_ok = json.loads(ptf.read_text(encoding="utf-8")).get("flow_ok") if ptf.is_file() else None
+            # финал без решения: последний ответ ассистента — текст без tool-вызова
+            final_text = None
+            ss_dir = run / "pi-session"
+            ss_files = sorted(ss_dir.glob("*.jsonl")) if ss_dir.is_dir() else []
+            if ss_files and not has_app:
+                last_a = None
+                for ln in ss_files[0].read_text(encoding="utf-8", errors="ignore").splitlines():
+                    try:
+                        d = json.loads(ln)
+                    except Exception:
+                        continue
+                    msg = d.get("message") or {}
+                    if msg.get("role") == "assistant":
+                        last_a = msg
+                if last_a:
+                    content = last_a.get("content")
+                    txt = next((c.get("text") for c in content or []
+                                if isinstance(c, dict) and c.get("type") == "text"), None)
+                    has_call = isinstance(content, list) and any(
+                        isinstance(c, dict) and c.get("type") == "toolCall" for c in content)
+                    if txt and txt.strip() and not has_call:
+                        final_text = " ".join(txt.split())[:200]
             gallery.setdefault(model, []).append({
                 "run": r["run"], "thinking": r["thinking"], "score100": score100,
                 "check_passed": r["check_passed"], "shots": shots,
                 "ux_vision": ux_score, "flow_ok": flow_ok, "has_app": has_app,
                 "has_display": json.loads(ptf.read_text(encoding="utf-8")).get("displayed") is not None if ptf.is_file() else False,
                 "rel_app": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/index.html" if has_app else None,
+                "final_text": final_text,
+                "rel_dir": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/",
             })
     # модели по убыванию лучшего балла; прогоны по уровню мышления (off → max), затем по имени
     level_rank = {"off": 0, "minimal": 1, "low": 2, "medium": 3, "high": 4, "xhigh": 5, "max": 6}
@@ -220,6 +244,9 @@ def build_report_html():
                 elif not x["has_display"]: fails.append('результат не отображён')
                 badge = f'<span class="badge fail" title="не пройдено: {html_mod.escape("; ".join(fails))}">✗ FAILED</span>'
             link = f'<a class="try" href="{x["rel_app"]}" target="_blank">▶ открыть приложение</a>' if x["rel_app"] else '<span class="noapp">нет решения</span>'
+            dlink = f'<a class="dirlink" href="{x["rel_dir"]}" target="_blank">📁 папка прогона</a>'
+            fin = (f'<div class="final-note">финал без решения: «{html_mod.escape(x["final_text"])}»</div>'
+                   if x.get("final_text") else '')
             gallery_html.append(f"""
 <div class="gcard {cls}">
   <div class="ghead">
@@ -229,7 +256,9 @@ def build_report_html():
     <span class="gscore {cls}">{x["score100"]}/100<small>итог</small></span>
     <span class="gux">{x["ux_vision"] if x["ux_vision"] is not None else "—"}/100<small>vision-UX</small></span>
     {link}
+    {dlink}
   </div>
+  {fin}
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
         gallery_html.append('</div>')
@@ -268,6 +297,9 @@ th{{background:#eef0f4}}
 .avg{{font-size:13px;font-weight:normal;color:#666;background:#e8eaed;padding:2px 10px;border-radius:12px;vertical-align:middle;margin-left:8px}}
 .gcard{{background:#fff;border:1px solid #d5d8de;border-radius:12px;padding:16px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}}
 .gcard.hi{{border-left:4px solid #22c55e}} .gcard.mid{{border-left:4px solid #f59e0b}} .gcard.lo{{border-left:4px solid #ef4444}}
+.dirlink{{font-size:12px;color:#6b7280;text-decoration:none;border:1px solid #d5d8de;border-radius:6px;padding:3px 8px}}
+.dirlink:hover{{color:#111;border-color:#9aa0aa}}
+.final-note{{font-size:13px;color:#7c2d12;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:6px 10px;margin:8px 0 0}}
 .ghead{{display:flex;align-items:center;gap:12px;flex-wrap:wrap}}
 .grun{{font-weight:700;font-size:15px}} .glvl{{color:#555;font-size:12px;background:#eef0f4;padding:2px 8px;border-radius:6px}}
 .gscore{{font-size:22px;font-weight:800;margin-left:auto;text-align:center;line-height:1.1}}

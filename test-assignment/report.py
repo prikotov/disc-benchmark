@@ -30,19 +30,16 @@ def fmt_dur(s):
     return f"{m}:{sec:02d}"
 
 
-# справочные ставки USD за 1М токенов (вход, выход, кэш-рид) для моделей без
-# каталожного тарифа; deepseek — точный тариф api.deepseek.com из каталога pi
-_REF_RATES = [
-    ("deepseek", 0.30, 1.20, 0.006),
-    ("mimo", 0.30, 1.20, 0.006),
-    ("qwen3.8", 0.30, 1.20, 0.03),
-    ("orcarouter", 0.30, 1.20, 0.03),
-    ("huihui", 0.30, 1.20, 0.03),
-    ("bonsai", 0.30, 1.20, 0.03),
-    ("muse", 0.30, 1.20, 0.03),
-    ("gemma4", 0.20, 0.80, 0.02),
-    ("ornith", 0.20, 0.80, 0.02),
-]
+# Методика стоимости — из ~/MyProjects/Models:
+#   облака — по токенам (TARIFFS_USD runner_ru_cloud.py; deepseek $0.30 вх /
+#   $0.006 кэш / $1.20 вых — опубликованный тариф api.deepseek.com, оф-пик ×0.5);
+#   локальные — железо: LOCAL_KWH×RUB_KWH + амортизация (build_report.py:
+#   LOCAL_KWH=0.55, RUB_KWH=7.07, AMORT_RUB_H=31.96 ₽/ч), RUB_USD=85.15.
+_CLOUD_TARIFFS = {
+    "deepseek-v4.1-flash-1017": (0.30, 1.20, 0.006),   # вх, вых, кэш $/1M — публичный тариф
+    "mimo-v2.6-flash": (0.30, 1.20, 0.006),            # справочно: класс deepseek-flash, публичного тарифа нет
+}
+LOCAL_USD_HOUR = round((0.55 * 7.07 + 31.96) / 85.15, 3)   # ≈ $0.42/ч
 
 
 def fmt_tok(n):
@@ -67,6 +64,7 @@ def run_row(run):
     model = meta.get("model") or run.parts[-3]
     return {
         "model": model, "run": run.name,
+        "provider": meta.get("provider") or "ollama",
         "thinking": meta.get("thinking"),
         "duration_s": meta.get("duration_s"),
         "exit_code": meta.get("exit_code"),
@@ -235,30 +233,19 @@ def build_report_html():
                         tin += (u.get("input") or 0) + (u.get("cacheWrite") or 0)
                         tout += u.get("output") or 0
                         tcache += u.get("cacheRead") or 0
-            # цена: сначала каталожный тариф провайдера, иначе справочная ставка класса модели
-            catalog_cost = None
-            for prov_models in (_catalog_store.values() if _catalog_store else []):
-                for m in prov_models.get("models", []):
-                    if m.get("id") == r["model"]:
-                        c = m.get("cost") or {}
-                        if c.get("input") or c.get("output"):
-                            catalog_cost = c
-                        break
-                if catalog_cost:
-                    break
-            def _price(cin, cout, ccache, star):
-                p = (tin / 1e6 * cin + tcache / 1e6 * ccache + tout / 1e6 * cout)
-                return f"${p:.2f}{star}"
-            if catalog_cost:
-                price_str = _price(catalog_cost.get("input") or 0, catalog_cost.get("output") or 0,
-                                   catalog_cost.get("cacheRead") or 0, star="")
+            # цена: облака — по токенам (публичные тарифы API), локальные — железо+электричество
+            if r.get("provider") == "ollama":
+                price_str = (f"${duration_s / 3600 * LOCAL_USD_HOUR:.2f} (железо)"
+                             if duration_s else "—")
             else:
-                price_str = None
-                for key, cin, cout, ccache in _REF_RATES:
-                    if key in r["model"].lower():
-                        price_str = _price(cin, cout, ccache, star="*")
-                        break
-                price_str = price_str or "—"
+                tariff = _CLOUD_TARIFFS.get(r["model"])
+                if tariff:
+                    cin, cout, ccache = tariff
+                    p = tin / 1e6 * cin + tout / 1e6 * cout + tcache / 1e6 * ccache
+                    star = "" if r["model"].startswith("deepseek") else "*"   # * — справочная ставка
+                    price_str = f"${p:.2f}{star}"
+                else:
+                    price_str = "—"
 
             # финал без решения: последний ответ ассистента — текст без tool-вызова
             final_text = None
@@ -333,7 +320,7 @@ def build_report_html():
     <span class="gux">{x["ux_vision"] if x["ux_vision"] is not None else "—"}/100<small>vision-UX</small></span>
     {link}
   </div>
-  <div class="gmeta" title="цены: каталожный тариф провайдера; * — справочная ставка USD/1М токенов (вход, выход, кэш-рид)">⏱ {fmt_dur(x["duration_s"])} · вх {fmt_tok(x["tin"])} · вых {fmt_tok(x["tout"])} · кэш {fmt_tok(x["tcache"])} · {x["price_str"]}</div>
+  <div class="gmeta" title="цены: облака — по публичным тарифам API за 1М токенов (* — справочная ставка, публичного тарифа нет); локальные — электричество + амортизация железа (методика ~/MyProjects/Models)">⏱ {fmt_dur(x["duration_s"])} · вх {fmt_tok(x["tin"])} · вых {fmt_tok(x["tout"])} · кэш {fmt_tok(x["tcache"])} · {x["price_str"]}</div>
   {fin}
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")

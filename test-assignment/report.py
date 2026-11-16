@@ -30,6 +30,16 @@ def fmt_dur(s):
     return f"{m}:{sec:02d}"
 
 
+def fmt_tok(n):
+    if not n:
+        return "0"
+    if n >= 1_000_000:
+        return f"{n/1_000_000:.1f}M"
+    if n >= 1_000:
+        return f"{n/1_000:.0f}k"
+    return str(n)
+
+
 def run_row(run):
     run = Path(run)
     meta = load(run, "run.json")
@@ -150,6 +160,12 @@ def cross_report():
 
 
 def build_report_html():
+    global _catalog_store
+    try:
+        _catalog_store = json.loads(
+            (Path.home() / ".pi" / "agent" / "models-store.json").read_text(encoding="utf-8"))
+    except Exception:
+        _catalog_store = {}
     """Сводный REPORT.html: методика + прогноз + все прогоны со скриншотами."""
     import base64
     prompt_data = json.loads((ROOT / "test-assignment" / "prompts" / "prompt.json").read_text(encoding="utf-8"))
@@ -185,6 +201,43 @@ def build_report_html():
             ux_score = (json.loads(uxf.read_text(encoding="utf-8")).get("verdict") or {}).get("score") if uxf.is_file() else None
             ptf = run / "playthrough.json"
             flow_ok = json.loads(ptf.read_text(encoding="utf-8")).get("flow_ok") if ptf.is_file() else None
+            # метрики: время, токены (вх/вых/кэш), цена по каталогу pi
+            duration_s = None
+            try:
+                duration_s = json.loads((run / "run.json").read_text(encoding="utf-8")).get("duration_s")
+            except Exception:
+                pass
+            tin = tout = tcache = 0
+            ss_dir = run / "pi-session"
+            ss_files = sorted(ss_dir.glob("*.jsonl")) if ss_dir.is_dir() else []
+            if ss_files:
+                for ln in ss_files[0].read_text(encoding="utf-8", errors="ignore").splitlines():
+                    try:
+                        u = (json.loads(ln).get("message") or {}).get("usage")
+                    except Exception:
+                        continue
+                    if u:
+                        tin += (u.get("input") or 0) + (u.get("cacheWrite") or 0)
+                        tout += u.get("output") or 0
+                        tcache += u.get("cacheRead") or 0
+            catalog_cost = None
+            for prov_models in (_catalog_store.values() if _catalog_store else []):
+                for m in prov_models.get("models", []):
+                    if m.get("id") == r["model"]:
+                        catalog_cost = m.get("cost")
+                        break
+                if catalog_cost:
+                    break
+            if catalog_cost and (catalog_cost.get("input") or catalog_cost.get("output")):
+                price = (tin / 1e6 * (catalog_cost.get("input") or 0)
+                         + tcache / 1e6 * (catalog_cost.get("cacheRead") or 0)
+                         + tout / 1e6 * (catalog_cost.get("output") or 0))
+                price_str = f"${price:.2f}"
+            elif catalog_cost:
+                price_str = "$0 (подписка)"
+            else:
+                price_str = "локально"
+
             # финал без решения: последний ответ ассистента — текст без tool-вызова
             final_text = None
             ss_dir = run / "pi-session"
@@ -215,6 +268,8 @@ def build_report_html():
                 "rel_app": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/index.html" if has_app else None,
                 "final_text": final_text,
                 "rel_dir": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/",
+                "duration_s": duration_s, "tin": tin, "tout": tout, "tcache": tcache,
+                "price_str": price_str,
             })
     # модели по убыванию лучшего балла; прогоны по уровню мышления (off → max), затем по имени
     level_rank = {"off": 0, "minimal": 1, "low": 2, "medium": 3, "high": 4, "xhigh": 5, "max": 6}
@@ -258,6 +313,7 @@ def build_report_html():
     {link}
     {dlink}
   </div>
+  <div class="gmeta">⏱ {fmt_dur(x["duration_s"])} · вх {fmt_tok(x["tin"])} · вых {fmt_tok(x["tout"])} · кэш {fmt_tok(x["tcache"])} · {x["price_str"]}</div>
   {fin}
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
@@ -300,6 +356,7 @@ th{{background:#eef0f4}}
 .dirlink{{font-size:12px;color:#6b7280;text-decoration:none;border:1px solid #d5d8de;border-radius:6px;padding:3px 8px}}
 .dirlink:hover{{color:#111;border-color:#9aa0aa}}
 .final-note{{font-size:13px;color:#7c2d12;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:6px 10px;margin:8px 0 0}}
+.gmeta{{font-size:12px;color:#6b7280;margin:6px 0 0;font-variant-numeric:tabular-nums}}
 .ghead{{display:flex;align-items:center;gap:12px;flex-wrap:wrap}}
 .grun{{font-weight:700;font-size:15px}} .glvl{{color:#555;font-size:12px;background:#eef0f4;padding:2px 8px;border-radius:6px}}
 .gscore{{font-size:22px;font-weight:800;margin-left:auto;text-align:center;line-height:1.1}}

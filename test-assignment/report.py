@@ -202,6 +202,7 @@ def build_report_html():
         best = max(x["score100"] for x in rs)
         n_pass = sum(1 for x in rs if bool(x["check_passed"]) and bool(x["flow_ok"]) and x["has_display"])
         pct = round(n_pass * 100 / len(rs)) if rs else 0
+        gallery_html.append('<div class="mblock">')
         gallery_html.append(f'<h2 class="gmodel">{html_mod.escape(m)} <span class="avg">средний {avg:.0f}/100 · лучший {best:.0f} · PASSED {pct}% ({n_pass} из {len(rs)})</span></h2>')
         for x in rs:
             cls = "hi" if x["score100"] >= 75 else ("mid" if x["score100"] >= 40 else "lo")
@@ -231,6 +232,7 @@ def build_report_html():
   </div>
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
+        gallery_html.append('</div>')
 
     matrix_rows = "".join(f"<tr><td>{m}</td><td>{lvl}</td><td class='st {cls}'>{st}</td></tr>"
                           for m, lvl, st, cls in [
@@ -261,7 +263,8 @@ th{{background:#eef0f4}}
 .toc a{{display:inline-block;margin:2px 16px 2px 0;padding:4px 12px;background:#eef0f4;border-radius:8px;text-decoration:none;color:#123f8c;font-size:14px}}
 .toc a:hover{{background:#dfe3ea}}
 .st.done{{color:#0a7d32;font-weight:600}} .st.todo{{color:#b8860b}}
-.gmodel{{border-bottom:2px solid #c9ced8;padding-bottom:6px;margin-top:40px}}
+.mblock{{}}
+.gmodel{{position:sticky;top:0;z-index:5;margin:40px 0 0;padding:10px 12px 8px;background:#f4f5f7;border-bottom:2px solid #c9ced8;box-shadow:0 2px 6px rgba(0,0,0,.07)}}
 .avg{{font-size:13px;font-weight:normal;color:#666;background:#e8eaed;padding:2px 10px;border-radius:12px;vertical-align:middle;margin-left:8px}}
 .gcard{{background:#fff;border:1px solid #d5d8de;border-radius:12px;padding:16px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}}
 .gcard.hi{{border-left:4px solid #22c55e}} .gcard.mid{{border-left:4px solid #f59e0b}} .gcard.lo{{border-left:4px solid #ef4444}}

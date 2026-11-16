@@ -1,0 +1,17 @@
+{
+  "note": "Матрица участников анкеты. doc_levels — лестница по документации (AGENTS.md, REPORT.html); фактические уровни раннер перепроверяет через /api/show (thinking.values) и запрашивает только существующие. Булевы шкалы -> off/on. decision-модели уровней мышления не имеют.",
+  "models": [
+    {"tag": "qwen3.8:27b-pi-100k", "folder": "qwen3.8-27b-pi-100k", "provider": "chat", "doc_levels": ["off", "low", "medium", "xhigh"]},
+    {"tag": "huihui-ai:pi-100k", "folder": "huihui-ai-pi-100k", "provider": "chat", "doc_levels": ["off", "low", "medium", "xhigh"]},
+    {"tag": "bonsai-2:ctx100k", "folder": "bonsai-2-27b", "provider": "chat", "doc_levels": ["off", "low", "medium", "xhigh"]},
+    {"tag": "muse-glimmer:ctx100k", "folder": "muse-glimmer-ctx100k", "provider": "chat", "doc_levels": ["off", "low", "high"]},
+    {"tag": "ornith-1.5:35b-ctx100k", "folder": "ornith-1.5-35b-ctx100k", "provider": "chat", "doc_levels": ["off", "on"]},
+    {"tag": "ornith-1.5:9b", "folder": "ornith-1.5-9b", "provider": "chat", "doc_levels": ["off", "on"]},
+    {"tag": "gemma4:26b-pi-100k", "folder": "gemma4-26b-pi-100k", "provider": "chat", "doc_levels": ["off", "on"]},
+    {"tag": "gemma4:31b-it-qat-pi-100k", "folder": "gemma4-31b-it-qat-pi-100k", "provider": "chat", "doc_levels": ["off", "on"]},
+    {"tag": "gemma4:e2b-ctx100k", "folder": "gemma4-e2b-ctx100k", "provider": "chat", "doc_levels": ["off", "on"]},
+    {"tag": "orcarouter/Qwen3.8-27B-Uncensored:ctx100k", "folder": "orcarouter-Qwen3.8-27B-Uncensored-ctx100k", "provider": "chat", "doc_levels": ["off", "on"]},
+    {"tag": "clef", "folder": "clef", "provider": "decision", "doc_levels": [null]},
+    {"tag": "clef-flash", "folder": "clef-flash", "provider": "decision", "doc_levels": [null]}
+  ]
+}

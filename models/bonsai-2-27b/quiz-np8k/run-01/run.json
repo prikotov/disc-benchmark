@@ -1,0 +1,276 @@
+{
+  "model": "bonsai-2:ctx100k",
+  "folder": "bonsai-2-27b",
+  "provider": "chat",
+  "thinking": {
+    "requested": "off",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "xhigh"
+    ],
+    "sent": false,
+    "note": "think=false"
+  },
+  "options": {
+    "num_ctx": 16384,
+    "num_predict": 8192
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T17:34:15.767196+00:00",
+  "duration_s": 2.6,
+  "error": null,
+  "usage": {
+    "prompt_eval_count": 605,
+    "eval_count": 318,
+    "eval_duration": 2519141000,
+    "prompt_eval_duration": 60230000,
+    "load_duration": 468582,
+    "total_duration": 2584225820
+  },
+  "ps_snapshot": [
+    "bonsai-2:ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "{\n  \"1\": \"Жёлтый и Синий\",\n  \"2\": \"Жёлтый и Синий (или Красный и Синий)\",\n  \"3\": \"Красный\",\n  \"4\": \"Синий\",\n  \"5\": \"Красный\",\n  \"6\": \"Синий\",\n  \"7\": \"Синий\",\n  \"8\": \"Синий\",\n  \"9\": \"Красный\",\n  \"10\": \"Жёлтый\",\n  \"11\": \"Синий\",\n  \"12\": \"Синий\",\n  \"13\": \"Жёлтый\",\n  \"14\": \"Красный\",\n  \"15\": \"Жёлтый\",\n  \"16\": \"Жёлтый (или Красный)\",\n  \"17\": \"Красный\",\n  \"18\": \"Все четыре (Красный, Жёлтый, Синий, Зелёный)\",\n  \"19\": \"Красный (или Жёлтый)\",\n  \"20\": \"Жёлтый\",\n  \"21\": \"Красный\",\n  \"22\": \"Синий (или Зелёный)\",\n  \"23\": \"Синий\",\n  \"24\": \"Зависит от контекста, но в бизнес-среде часто Красный и Жёлтый\"\n}",
+  "thinking_raw": null,
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый и Синий",
+      "2": "Жёлтый и Синий (или Красный и Синий)",
+      "3": "Красный",
+      "4": "Синий",
+      "5": "Красный",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Синий",
+      "9": "Красный",
+      "10": "Жёлтый",
+      "11": "Синий",
+      "12": "Синий",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Жёлтый (или Красный)",
+      "17": "Красный",
+      "18": "Все четыре (Красный, Жёлтый, Синий, Зелёный)",
+      "19": "Красный (или Жёлтый)",
+      "20": "Жёлтый",
+      "21": "Красный",
+      "22": "Синий (или Зелёный)",
+      "23": "Синий",
+      "24": "Зависит от контекста, но в бизнес-среде часто Красный и Жёлтый"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 15,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 3,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "blue"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый и Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Жёлтый и Синий (или Красный и Синий)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 5,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Жёлтый (или Красный)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 17,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "Все четыре (Красный, Жёлтый, Синий, Зелёный)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Красный (или Жёлтый)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 22,
+        "answer": "Синий (или Зелёный)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 24,
+        "answer": "Зависит от контекста, но в бизнес-среде часто Красный и Жёлтый"
+      }
+    ]
+  }
+}

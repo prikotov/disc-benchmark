@@ -1,0 +1,264 @@
+{
+  "model": "muse-glimmer:ctx100k",
+  "folder": "muse-glimmer-ctx100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "low",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "high",
+      "max"
+    ],
+    "sent": "low",
+    "note": "think=low"
+  },
+  "options": {
+    "num_ctx": 16384,
+    "num_predict": 8192
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T17:49:29.934158+00:00",
+  "duration_s": 10.7,
+  "error": null,
+  "usage": {
+    "prompt_eval_count": 566,
+    "eval_count": 638,
+    "eval_duration": 7690321000,
+    "prompt_eval_duration": 171532000,
+    "load_duration": 2726250164,
+    "total_duration": 10597089355
+  },
+  "ps_snapshot": [],
+  "ollama_contention": false,
+  "raw": "{\"1\": \"жёлтый и зелёный\", \"2\": \"красный и синий\", \"3\": \"красный\", \"4\": \"синий\", \"5\": \"жёлтый\", \"6\": \"синий\", \"7\": \"синий\", \"8\": \"синий\", \"9\": \"красный\", \"10\": \"красный\", \"11\": \"зелёный\", \"12\": \"зелёный\", \"13\": \"жёлтый\", \"14\": \"красный\", \"15\": \"жёлтый\", \"16\": \"синий\", \"17\": \"синий\", \"18\": \"красный, жёлтый, зелёный и синий\", \"19\": \"жёлтый\", \"20\": \"жёлтый\", \"21\": \"красный\", \"22\": \"зелёный\", \"23\": \"синий\", \"24\": \"нет однозначного ответа\"}",
+  "thinking_raw": "Небольшой блиц-тест... Need answer JSON.\n\nWe need map DISC colors: красный=Dominance D, жёлтый=Influence I, зелёный=Steadiness S, синий=Conscientiousness C.\n\nInterpret questions.\n\n1 совместимы в социальном плане? likely yellow + green? Social = I+S? Or yellow+red? Might be жёлтый и зелёный. Maybe жёлтый и красный? Social compatibility = I and S.\n\n2 совместимы в совместной работе? D + C? Or all? Possibly красный и синий? Or зелёный и синий? Hmm.\n\nNeed plausible answers. Might be generic.\n\nLet's assign:\n\n1. жёлтый и зелёный (социальный)\n2. красный и синий? Or красный и зелёный? Might be синий и зелёный\n3. красный\n4. синий (хирург - точность)\n5. жёлтый\n6. синий (организован)\n7. синий\n8. синий or зелёный? пунктуальность - синий\n9. красный (игнорирует правила)\n10. красный? or жёлтый? апробирует новые технологии - жёлтый? красный? maybe красный\n11. зелёный (держит обиды)\n12. зелёный? or красный? болезненнее на личную критику - зелёный? Might be красный. Let's pick зелёный\n13. жёлтый (менее организован но знает где инфо)\n14. красный\n15. жёлтый\n16. красный? or синий? сложные задачи - синий? Let's pick красный\n17. синий? легко судит - красный? Maybe синий\n18. combination - красный, жёлтый, зелёный, синий (все четыре) or красный+синий+жёлтый\n19. жёлтый\n20. жёлтый\n21. красный\n22. зелёный\n23. синий\n24. нет однозначного ответа\n\nProvide JSON.\n\n",
+  "parsed": {
+    "answers": {
+      "1": "жёлтый и зелёный",
+      "2": "красный и синий",
+      "3": "красный",
+      "4": "синий",
+      "5": "жёлтый",
+      "6": "синий",
+      "7": "синий",
+      "8": "синий",
+      "9": "красный",
+      "10": "красный",
+      "11": "зелёный",
+      "12": "зелёный",
+      "13": "жёлтый",
+      "14": "красный",
+      "15": "жёлтый",
+      "16": "синий",
+      "17": "синий",
+      "18": "красный, жёлтый, зелёный и синий",
+      "19": "жёлтый",
+      "20": "жёлтый",
+      "21": "красный",
+      "22": "зелёный",
+      "23": "синий",
+      "24": "нет однозначного ответа"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 17,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "жёлтый и зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "красный и синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "красный, жёлтый, зелёный и синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 24,
+        "answer": "нет однозначного ответа"
+      }
+    ]
+  }
+}

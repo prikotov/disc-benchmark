@@ -36,9 +36,14 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent          # quiz/
 ROOT = HERE.parent                              # корень worktree
 
-NUM_CTX = 16384
-NUM_PREDICT = 8192
+NUM_CTX = 65536
+NUM_PREDICT = 32768
 CALL_TIMEOUT = 1200          # 20 мин на вызов
+# Бюджет 32768 — правило AGENTS.md для моделей с энергичным максимумом в
+# шкале: при 8192 thinking выжигает весь бюджет до начала ответа (наблюдалось
+# в первом прогоне серии: bonsai@low — 30к символов thinking, content пуст,
+# eval_count впритык 8192). num_ctx 65536 — запас, чтобы thinking успел
+# израсходовать бюджет без усечения промпта.
 RETRIES = 2                  # только транспортные ошибки
 KEEP_ALIVE = "10m"           # внутри блока модель держится загруженной
 
@@ -139,29 +144,55 @@ COLOR_RE = {
     "green":  r"\b(?:зелен\w*|стабил\w*|постоян\w*|green)\b",
     "blue":   r"\b(?:син(?:ь|ий|яя|ее|ие|его|ему|им|их|ими|юю)\b|\bпослуш\w*|\bсоответ\w*|\bаналит\w*|\bblue\b)",
 }
-LETTER_MAP = {"d": "red", "k": "red", "i": "yellow", "y": "yellow",
-              "s": "green", "c": "blue"}
+LETTER_MAP = {"d": "red", "i": "yellow", "s": "green", "c": "blue"}
 CYR_MAP = {"к": "red", "д": "red", "ж": "yellow", "з": "green", "с": "blue"}
 
 
-def find_colors(answer: str) -> tuple[list, list]:
-    """(цвета, неоднозначные[]) в ответе: слова-стемы всегда; одиночная буква —
-    только если весь ответ это одна буква. Латиница d/i/s/c и кириллица
-    к/д/ж/з/с мапятся однозначно (глиф c/с = синий и в C, и в «синий»)."""
+def find_colors(answer: str) -> list:
+    """Цвета в ответе: слова-стемы всегда; если цветовых слов нет —
+    одиночные буквы: ответ из <=8 токенов с отдельными латинскими d/i/s/c
+    (кириллические одиночные «с»/«к» — предлоги, не мапим вне правила
+    «весь ответ — одна буква»)."""
     n = norm_text(answer)
     colors = []
     for color, pat in COLOR_RE.items():
         if re.search(pat, n):
             colors.append(color)
-    ambiguous = []
-    if not colors and len(n) <= 2:
-        ch = n.strip()
-        if ch:
-            if ch in LETTER_MAP:
-                colors.append(LETTER_MAP[ch])
-            elif ch in CYR_MAP:
+    if not colors:
+        tokens = n.split()
+        if len(tokens) <= 8:
+            for tok in tokens:
+                if tok in LETTER_MAP:
+                    colors.append(LETTER_MAP[tok])
+        if not colors and len(n) <= 2:
+            ch = n.strip()
+            if ch in CYR_MAP:
                 colors.append(CYR_MAP[ch])
-    return colors, ambiguous
+    return colors
+
+
+# «нет однозначного ответа» и семья (для Q24 — это ключ; для остальных
+# вопросов — отказ отвечать по ключу)
+NO_ANSWER_RE = re.compile(
+    r"\bнеоднозначн\w*|\bодногозначн\w*"   # вторая — опечатка моделей «одногозначного»
+    r"|\bнет\b[^.]{0,40}\b(?:однозначн\w*|одногозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b"
+    r"|\b(?:однозначн\w*|одногозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b[^.]{0,40}\b(?:ответа?\b[^.]{0,10})?(?:нет|нельзя)\b"
+    r"|\b(?:зависит|по-разному|разное|нельзя)\b"
+    r"|\bнедостаточно (?:данных|информации)\b"
+    r"|\b(?:смешанн\w*|смешени\w*|индивидуальн\w*)\b|\bсмес[ьи]\b"
+    r"|\bу всех\b[^.]{0,20}\bразн\w*"
+    r"|\bу каждого\b")
+# «не применимо, я ИИ» — самоотвод, не «нет однозначного ответа»
+REFUSAL_RE = re.compile(
+    r"\bне\s?применимо\b"
+    r"|\b(?:я|как)\s+(?:ии|языковая модель|модель|лм)\b"
+    r"|\bличный вопрос\b"
+    r"|\bу меня нет (?:круга|знакомых|друзей)\b")
+# «все вышеперечисленные»/«любые»/«все четыре» — ответ «любой из вариантов»
+ALL_OPT_RE = re.compile(
+    r"\b(?:любые?|любой из них|любой вариант"
+    r"|все (?:вышеперечисленные|вышеуказанные|профили|варианты|четыре|сразу)"
+    r"|сочетание (?:всех|разн\w*)|комбинация всех|микс всех|смесь всех)\b")
 
 
 def match_answer(q: dict, answer: str) -> dict:
@@ -173,15 +204,33 @@ def match_answer(q: dict, answer: str) -> dict:
     n = norm_text(ans)
     if n == key_norm:
         return {"verdict": "correct", "matched": "exact"}
-    if norm_text(ans) in [norm_text(a) for a in q.get("aliases", [])]:
+    if n in [norm_text(a) for a in q.get("aliases", [])]:
         return {"verdict": "correct", "matched": "alias"}
-    colors, amb = find_colors(ans)
+    no_answer = bool(NO_ANSWER_RE.search(n))
+    refusal = bool(REFUSAL_RE.search(n))
+    all_opt = bool(ALL_OPT_RE.search(n))
+    colors = find_colors(ans)
+    if q["kind"] == "none":
+        # ключ Q24 — «нет однозначного ответа»: семья таких формулировок — зачёт
+        if no_answer or all_opt:
+            return {"verdict": "correct", "matched": "no-single-answer"}
+        if refusal:
+            return {"verdict": "incorrect", "flag": "refusal"}
+        if colors:
+            return {"verdict": "incorrect", "colors": colors}
+        return {"verdict": "unparsed"}
+    if refusal:
+        return {"verdict": "incorrect", "flag": "refusal"}
+    if no_answer:
+        return {"verdict": "incorrect", "flag": "no-answer"}
+    if all_opt and not (q["kind"] == "book" and q["n"] == 18):
+        # «любые»/«все вышеперечисленные» — не по ключу; для Q18 «все четыре»
+        # и есть ключ, дженерик ниже разберётся
+        return {"verdict": "incorrect", "flag": "all-option"}
     if q["kind"] == "color":
         key_color = {norm_text(v): k for k, v in
                      {"red": "Красный", "yellow": "Желтый", "green": "Зеленый", "blue": "Синий"}.items()}[
                      norm_text(q["key"])]
-        if amb:
-            return {"verdict": "incorrect", "flag": "ambiguous-letter", "colors": colors}
         if len(colors) == 1:
             if colors[0] == key_color:
                 return {"verdict": "correct", "matched": "color-token"}
@@ -202,24 +251,19 @@ def match_answer(q: dict, answer: str) -> dict:
             if colors == ["green"]:
                 return {"verdict": "incorrect", "flag": "near", "colors": colors}
         if q["n"] == 18:
-            if re.search(r"\b(?:смеш\w*|смес\w*|микс\w*|комбинац\w*|сочетани\w*)\b", n) \
+            if re.search(r"\b(?:смеш\w*|смес\w*|микс\w*|комбинац\w*|сочетани\w*|команд\w*|сбалансированн\w*)\b", n) \
                     and re.search(r"\b(?:все|всех|четыре)\b", n):
                 return {"verdict": "correct", "matched": "generic"}
             if set(colors) == {"red", "yellow", "green", "blue"}:
                 return {"verdict": "correct", "matched": "all-four-colors"}
-            if n in [norm_text(a) for a in ["смешение всех", "смесь всех", "все четыре"]]:
+            if re.search(r"\bвсе четыре\b", n):
+                return {"verdict": "correct", "matched": "generic"}
+            if n in [norm_text(a) for a in ["смешение всех", "смесь всех"]]:
                 return {"verdict": "correct", "matched": "generic"}
         # назван конкретный другой набор цветов
         if colors:
             return {"verdict": "incorrect", "colors": colors}
         return {"verdict": "unparsed"}
-    # kind == none: ключ «нет однозначного ответа»
-    if re.search(r"\bнет\b.*\b(?:однозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b", n) \
-            or re.search(r"\b(?:однозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b.*\bнет\b", n) \
-            or re.search(r"\b(?:зависит|по-разному|нельзя (?:сказать|определить))\b", n):
-        return {"verdict": "correct", "matched": "generic"}
-    if colors:
-        return {"verdict": "incorrect", "colors": colors}
     return {"verdict": "unparsed"}
 
 
@@ -458,9 +502,10 @@ def run_chat_block(tag: str, folder: str, levels: list, runs: int, prompt_ver: i
             try:
                 resp = chat_call(tag, prompt, think)
                 content, thinking, usage = resp["content"], resp["thinking"], resp["usage"]
+                done_reason = resp.get("done_reason")
                 error = None
             except RuntimeError as e:
-                content, thinking, usage, error = "", None, {}, str(e)
+                content, thinking, usage, done_reason, error = "", None, {}, None, str(e)
                 log(f"  прогон прерван: {e}")
             duration = round(time.monotonic() - t0, 1)
             answers, flags = parse_chat_answers(content)
@@ -472,7 +517,8 @@ def run_chat_block(tag: str, folder: str, levels: list, runs: int, prompt_ver: i
                 "options": {"num_ctx": NUM_CTX, "num_predict": NUM_PREDICT},
                 "prompt_version": prompt_ver, "prompt_sha256": prompt_sha,
                 "started_utc": datetime.now(timezone.utc).isoformat(),
-                "duration_s": duration, "error": error, "usage": usage,
+                "duration_s": duration, "error": error,
+                "done_reason": done_reason, "usage": usage,
                 "ps_snapshot": ps, "ollama_contention": bool(contention),
                 "raw": content, "thinking_raw": thinking,
                 "parsed": {"answers": {str(k): v for k, v in sorted(answers.items())}, **flags},

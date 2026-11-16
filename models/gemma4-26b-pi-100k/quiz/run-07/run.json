@@ -1,0 +1,257 @@
+{
+  "model": "gemma4:26b-pi-100k",
+  "folder": "gemma4-26b-pi-100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T19:18:00.966848+00:00",
+  "duration_s": 16.3,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 633,
+    "eval_count": 5200,
+    "eval_duration": 16222766000,
+    "prompt_eval_duration": 37841000,
+    "load_duration": 1039977,
+    "total_duration": 16291760155
+  },
+  "ps_snapshot": [
+    "gemma4:26b-pi-100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"Жёлтый и зелёный\",\n  \"2\": \"Сочетание всех профилей\",\n  \"3\": \"Красный\",\n  \"4\": \"Синий\",\n  \"5\": \"Жёлтый\",\n  \"6\": \"Синий\",\n  \"7\": \"Синий\",\n  \"8\": \"Синий\",\n  \"9\": \"Красный\",\n  \"10\": \"Красный\",\n  \"11\": \"Зелёный\",\n  \"12\": \"Зелёный\",\n  \"13\": \"Жёлтый\",\n  \"14\": \"Красный\",\n  \"15\": \"Жёлтый\",\n  \"16\": \"Красный\",\n  \"17\": \"Красный\",\n  \"18\": \"Сочетание всех профилей\",\n  \"19\": \"Жёлтый\",\n  \"20\": \"Жёлтый\",\n  \"21\": \"Красный\",\n  \"22\": \"Зелёный\",\n  \"23\": \"Синий\",\n  \"24\": \"Нет однозначного ответа\"\n}\n```",
+  "thinking_raw": "DISC behavioral model (Red, Yellow, Green, Blue).\n24 questions describing behaviors/traits.\nJSON object with question numbers as keys and the profile (color/combination/ambiguous) as values. No text outside the JSON.\n\n    *   *Red (Dominance):* Direct, decisive, results-oriented, competitive, impatient, likes control, risk-taker.\n    *   *Yellow (Influence):* Enthusiastic, outgoing, persuasive, sociable, optimistic, spontaneous, avoids details, dislikes routine.\n    *   *Green (Steadiness):* Patient, loyal, supportive, empathetic, reliable, hates conflict, resists sudden change, good listener.\n    *   *Blue (Compliance):* Analytical, precise, detail-oriented, logical, systematic, follows rules, perfectionist, cautious.\n\n    *   *Q1: Which profiles are socially compatible?*\n        *   Analysis: Yellow (social) and Green (supportive/steady) tend to get along. Red and Blue are often more task-oriented/solitary. However, \"compatible\" is subjective. Usually, Yellow/Green or combinations. Let's look for a common interpretation. Yellow/Green is a safe bet for \"social compatibility\".\n        *   *Refined:* Yellow and Green.\n\n    *   *Q2: Which profiles are compatible in joint work?*\n        *   Analysis: This is broad. Red/Blue (task-oriented) or Yellow/Green (people-oriented). A common high-performing combo is Red/Blue or a mix of all. Since it asks \"which profiles\", it could be a mix. Often, Red-Blue is the \"dream team\" for efficiency. Or Red-Yellow for speed. But without a specific context, it's \"ambiguous\" or \"combination\". Let's consider Red/Blue (complementary skills). Or simply \"All profiles can be compatible\". Let's go with \"Combination\" or \"Red and Blue\" (complementary). Actually, in many DISC training sessions, they say any combination *can* work if understood. Let's try \"Combination of all profiles\" or a specific pairing like \"Red and Blue\". Let's look closer at the question: \"compatible in joint work\". Usually, Red and Blue complement each other's weaknesses.\n        *   *Decision:* Combination (or Red and Blue). Let's say \"Combination\".\n\n    *   *Q3: Which profile would always want to lead a project?*\n        *   Analysis: Red (Dominance).\n\n    *   *Q4: Which profile would be the best surgeon?*\n        *   Analysis: Blue (Precision/Compliance) is the obvious choice for a surgeon. Red could be, but Blue's focus on accuracy is key.\n        *   *Decision:* Blue.\n\n    *   *Q5: Which profile enjoys the role of a speaker the most?*\n        *   Analysis: Yellow (Influence).\n\n    *   *Q6: Which profile most often knows where they saved an email from the boss?*\n        *   Analysis: Blue (systematic/organized/detail-oriented).\n\n    *   *Q7: Which profile tries to run more tests or gather more info before making a decision?*\n        *   Analysis: Blue (analytical/cautious).\n\n    *   *Q8: Which profile always arrives on time and can be relied upon?*\n        *   Analysis: Green (Steady/Reliable) or Blue (Disciplined). Green is known for being dependable and steady. Blue is known for being punctual/accurate. Usually, Green is the \"reliable\" one in a social/support sense, but Blue is the \"methodical\" one. Let's go with Green or Blue. Green is often the \"steady\" one. Let's say Green.\n\n    *   *Q9: Which profile repeatedly breaks rules just to get the job done?*\n        *   Analysis: Red (Results-oriented/Dominant).\n\n    *   *Q10: Which profile is most likely to try new technologies or methods if it speeds up work?*\n        *   Analysis: Red (efficiency) or Yellow (novelty). Red is driven by results/speed. Yellow is driven by excitement. \"Speeds up work\" points to Red.\n        *   *Decision:* Red.\n\n    *   *Q11: Which profile remembers criticism the longest?*\n        *   Analysis: Green (sensitive to harmony/conflict) or Blue (takes logic/accuracy personally if wrong). Green is often the most sensitive to emotional shifts.\n        *   *Decision:* Green.\n\n    *   *Q12: Which profile reacts most painfully to personal criticism?*\n        *   Analysis: Green (seeks harmony, hates conflict) or Yellow (needs approval). Green is generally more sensitive to the relationship aspect of criticism.\n        *   *Decision:* Green.\n\n    *   *Q13: Which profile is least organized but knows where to get the info?*\n        *   Analysis: Yellow (spontaneous, social, knows \"people\").\n\n    *   *Q14: Which profile wants to always make decisions?*\n        *   Analysis: Red.\n\n    *   *Q15: Which profile is most likely to follow the latest fashion?*\n        *   Analysis: Yellow.\n\n    *   *Q16: Which profile is most likely to take on complex tasks?*\n        *   Analysis: Red (challenge/competition) or Blue (analytical depth). Red loves the challenge, Blue loves the complexity. Usually, Red is the one \"grabbing\" the task.\n        *   *Decision:* Red.\n\n    *   *Q17: Which profile judges others easily?*\n        *   Analysis: Red (direct/blunt) or Blue (standard-driven). Red is more likely to be perceived as judgmental/critical in a direct way.\n        *   *Decision:* Red.\n\n    *   *Q18: Which combination forms the most successful team?*\n        *   Analysis: This is subjective and a \"trick\" question. In management theory, a mix of all four is best.\n        *   *Decision:* Combination of all profiles.\n\n    *   *Q19: Which profile is most likely to be the most talkative?*\n        *   Analysis: Yellow.\n\n    *   *Q20: Which profile perceives a new idea fastest?*\n        *   Analysis: Yellow (enthusiastic/open) or Red (quick to act). Yellow is more about the \"idea\" aspect.\n        *   *Decision:* Yellow.\n\n    *   *Q21: Which profile might delegate a task but will still do it themselves?*\n        *   Analysis: Red (doesn't trust others to do it as well/fast) or Blue (perfectionist). Red is the \"I'll just do it myself to get it done right/fast\" type.\n        *   *Decision:* Red.\n\n    *   *Q22: Which profile would be the best listener?*\n        *   Analysis: Green.\n\n    *   *Q23: Which profile won't miss a single point in the instructions?*\n        *   Analysis: Blue.\n\n    *   *Q24: Which profile is most often found in your circle of friends?*\n        *   Analysis: This is a personal question. The user is asking *me* (the AI). Since I am an AI, I don't have a circle of friends.\n        *   *Decision:* Нет однозначного ответа (No unambiguous answer).\n\n    1. Yellow and Green (Socially compatible)\n    2. Combination (Red/Blue or all) -> \"Сочетание всех профилей\"\n    3. Red\n    4. Blue\n    5. Yellow\n    6. Blue\n    7. Blue\n    8. Green\n    9. Red\n    10. Red\n    11. Green\n    12. Green\n    13. Yellow\n    14. Red\n    15. Yellow\n    16. Red\n    17. Red\n    18. Combination (All)\n    19. Yellow\n    20. Yellow\n    21. Red\n    22. Green\n    23. Blue\n    24. Нет однозначного ответа (Personal question)\n\n    *Refining Q18/Q2:*\n    Q18: \"Combination of all profiles\" is the standard management answer.\n    Q2: \"Combination of all profiles\" is also safer, though Red/Blue are often paired for task completion. Let's use \"Сочетание\" or specific colors.\n\n    *Refining Q11/12:*\n    Green is sensitive, Blue is perfectionist. Criticism of a Blue's *work* is painful; criticism of a Green's *person/harmony* is painful. Usually, Green is the \"sensitive\" profile in DISC.\n\n    *Refining Q8:*\n    Green is stable/reliable. Blue is punctual/precise. Green fits \"can be relied upon\" (emotional/social reliability) better in many contexts, but Blue is \"dependable\" in tasks. Let's stick to Green for \"reliability/steadiness\".\n\n    *Refining Q10:*\n    Red (speed) vs Yellow (novelty). \"To speed up work\" is a Red driver.\n\n    1. Жёлтый и зелёный\n    2. Сочетание всех профилей\n    3. Красный\n    4. Синий\n    5. Жёлтый\n    6. Синий\n    7. Синий\n    8. Зелёный\n    9. Красный\n    10. Красный\n    11. Зелёный\n    12. Зелёный\n    13. Жёлтый\n    14. Красный\n    15. Жёлтый\n    16. Красный\n    17. Красный\n    18. Сочетание всех профилей\n    19. Жёлтый\n    20. Жёлтый\n    21. Красный\n    22. Зелёный\n    23. Синий\n    24. Нет однозначного ответа\n\n    *Self-Correction on Q21:*\n    \"Might delegate but will do it himself\". This is a classic trait of Red (Dominance - wants it done *now* and *their* way) or Blue (Compliance - nobody does it as precisely). However, Red's impatience often leads to \"forgetting\" the delegate and just doing it.\n\n    *Self-Correction on Q1:*\n    Socially compatible: Yellow (sociable) and Green (supportive/calm).\n\n    *Final Check of the JSON requirements:*\n    Strictly JSON, no extra text.\n\n    *One last look at Q17:*\n    \"Easily judges others\". Red is blunt. Blue is critical of errors. Red is the most \"judgmental\" in temperament.\n\n    *One last look at Q13:*\n    \"Least organized but knows where to get info\". Yellow is definitely the least organized (spontaneous) and knows people/places.\n\n    *One last look at Q2:*\n    \"Compatible in joint work\". Red and Blue are often considered the \"power duo\" for tasks, but a \"Combination\" of all is the holistic answer. I will use \"Сочетание всех профилей\".\n\n    *Wait, looking at Q18:* \"Combination of which profiles forms the most successful team?\" -> All.\n    *Looking at Q2:* \"Which profiles are compatible in joint work?\" -> This is usually answered as \"All\" or \"Red and Blue\". I will use \"Сочетание всех профилей\" for 18 and \"Сочетание всех профилей\" or \"Любые сочетания\" for 2. Let's go with \"Сочетание всех профилей\" for both to be safe, as DISC emphasizes that any mix can work if managed.\n\n    *Wait, looking at Q1:* \"Socially compatible\". Yellow/Green.\n\n    *Final sequence construction:*\n    1. Жёлтый и зелёный\n    2. Сочетание всех профилей\n    3. Красный\n    4. Синий\n    5. Жёлтый\n    6. Синий\n    7. Синий\n    8. Зелёный\n    9. Красный\n    10. Красный\n    11. Зелёный\n    12. Зелёный\n    13. Жёлтый\n    14. Красный\n    15. Жёлтый\n    16. Красный\n    17. Красный\n    18. Сочетание всех профилей\n    19. Жёлтый\n    20. Жёлтый\n    21. Красный\n    22. Зелёный\n    23. Синий\n    24. Нет однозначного ответа\n\n    *Double check Q10:* \"Try new technologies... if it speeds up work\". Red is the \"speed/efficiency\" driver. Yellow is the \"newness/fun\" driver. Red is the better fit for the \"work\" aspect.\n\n    *Double check Q21:* \"Could delegate but will do it themselves\". Red is known for this due to impatience. Blue is known for this due to perfectionism. Red is more characteristic of the \"get it done\" attitude.\n\n    *Double check Q11/12:* Green is the most sensitive to relationship/harmony issues.\n\n    *Double check Q4:* Blue is the \"surgeon\" (precision).\n\n    *Double check Q17:* Red (direct/confrontational).\n\n    *Double check Q18:* A team with all 4 profiles is the most balanced and successful.\n\n    *Double check Q24:* Since I am an AI, I don't have a circle of friends.\n\n    *Wait, Q8:* \"Always arrives on time\". Blue is actually the most likely to be strictly punctual due to rule-following/precision. Green is \"steady/reliable\" in person, but Blue is \"punctual\" in time. However, in many DISC tests, Green is the \"dependable\" one. Let's reconsider. Blue is highly systematic. If the question is about *time*, Blue is the strongest candidate. Let's use \"Синий\" for 8. Actually, let's stick to the core traits: Red (Action), Yellow (Influence), Green (Steadiness/Reliability), Blue (Precision/Structure). \"Reliability\" is Green. \"Punctuality\" is Blue. \"Always comes on time\" is a behavior of structure. Let's go with Blue.\n    *Re-evaluating Q8:* If the answer is one color, Blue fits \"on time\" and \"reliable/predictable\" perfectly.\n\n    *Let's re-check Q6/7/8/23:* These are all \"Blue\" traits.\n    6: Knows where email is (Blue)\n    7: Tests/Info before decision (Blue)\n    8: On time/Reliable (Blue)\n    23: Doesn't miss points (Blue)\n    This makes sense. Blue is the \"data/detail/process\" profile.\n\n    *Let's re-check Q3/9/10/14/16/17/21:* These are all \"Red\" traits.\n    3: Lead (Red)\n    9: Breaks rules to get it done (Red)\n    10: Speed up work (Red)\n    14: Make decisions (Red)\n    16: Complex tasks (Red)\n    17: Judge others (Red)\n    21: Do it themselves (Red)\n\n    *Let's re-check Q5/13/15/19/20:* These are all \"Yellow\" traits.\n    5: Speaker (Yellow)\n    13: Disorganized but knows where info is (Yellow - via people)\n    15: Fashion (Yellow)\n    19: Talkative (Yellow)\n    20: New idea (Yellow)\n\n    *Let's re-check Q11/12/22:* These are all \"Green\" traits.\n    11: Remembers criticism (Green)\n    12: Reaction to criticism (Green)\n    22: Listener (Green)\n\n    *Final check of the logic:*\n    1. Yellow/Green (Social) - Correct.\n    2. Combination (Work) - Correct.\n    3. Red (Leader) - Correct.\n    4. Blue (Surgeon) - Correct.\n    5. Yellow (Speaker) - Correct.\n    6. Blue (Organized/Email) - Correct.\n    7. Blue (Data/Test) - Correct.\n    8. Blue (Punctual) - Correct.\n    9. Red (Rule breaker for results) - Correct.\n    10. Red (Efficiency/Speed) - Correct.\n    11. Green (Sensitive/Remembers) - Correct.\n    12. Green (Sensitive/Criticism) - Correct.\n    13. Yellow (Spontaneous/Social) - Correct.\n    14. Red (Decisions) - Correct.\n    15. Yellow (Fashion) - Correct.\n    16. Red (Challenge/Complexity) - Correct.\n    17. Red (Judgmental/Direct) - Correct.\n    18. Combination (Successful team) - Correct.\n    19. Yellow (Talkative) - Correct.\n    20. Yellow (New ideas) - Correct.\n    21. Red (Impatient delegation) - Correct.\n    22. Green (Listener) - Correct.\n    23. Blue (Instructions) - Correct.\n    24. No unambiguous answer - Correct.\n\n    *One small change:* Q8. Is it Blue or Green? \"Always arrives on time and in this regard can be relied upon\". Blue is about precision. Green is about stability. In many models, Blue is the one you set your watch by. Green is the one you know will show up to help you move house. \"On time\" is specifically a Blue trait (order/structure).\n\n    *Wait, Q18 again:* \"Combination of which profiles forms the most successful team?\" Usually, it's not just a combination, it's \"all four\". I'll write \"Сочетание всех четырех профилей\".\n\n    *Wait, Q1:* \"Socially compatible\". Yellow and Green is the standard.\n\n    *Wait, Q2:* \"Compatible in joint work\". Red and Blue are often called the \"productive\" pair, but the most *compatible* (in terms of not clashing over personality) might be Yellow and Green. However, in a business context, Red and Blue are the most functional. But since the question is \"Which profiles...\", it implies a selection. \"Сочетание всех профилей\" is the most professional answer.\n\n    *Let's finalize the list.*\n\n    1. Жёлтый и зелёный\n    2. Сочетание всех профилей\n    3. Красный\n    4. Синий\n    5. Жёлтый\n    6. Синий\n    7. Синий\n    8. Синий\n    9. Красный\n    10. Красный\n    11. Зелёный\n    12. Зелёный\n    13. Жёлтый\n    14. Красный\n    15. Жёлтый\n    16. Красный\n    17. Красный\n    18. Сочетание всех профилей\n    19. Жёлтый\n    20. Жёлтый\n    21. Красный\n    22. Зелёный\n    23. Синий\n    24. Нет однозначного ответа\n\n    *Wait, Q17:* Red is direct, but Blue is the one who judges based on \"correctness\". However, Red is \"judgmental\" of people's competence. I'll stick with Red.\n\n    *Wait, Q21:* \"Could delegate but will do it himself\". This is very Red.\n\n    *Wait, Q13:* \"Least organized but knows where to get info\". Yellow knows *who* has the info.\n\n    *Wait, Q18:* \"Combination of which profiles forms the most successful team?\". Answer: \"Сочетание всех четырех профилей\".\n\n    *Double check Q2:* \"Compatible in joint work\". Let's look for a specific pair. Red-Blue is efficient. Yellow-Green is harmonious. A \"Combination\" is the most logical answer for a test like this.\n\n    *Final Polish of the JSON.*\n\n    1. \"Жёлтый и зелёный\"\n    2. \"Сочетание всех профилей\"\n    3. \"Красный\"\n    4. \"Синий\"\n    5. \"Жёлтый\"\n    6. \"Синий\"\n    7. \"Синий\"\n    8. \"Синий\"\n    9. \"Красный\"\n    10. \"Красный\"\n    11. \"Зелёный\"\n    12. \"Зелёный\"\n    13. \"Жёлтый\"\n    14. \"Красный\"\n    15. \"Жёлтый\"\n    16. \"Красный\"\n    17. \"Красный\"\n    18. \"Сочетание всех профилей\"\n    19. \"Жёлтый\"\n    20. \"Жёлтый\"\n    21. \"Красный\"\n    22. \"Зелёный\"\n    23. \"Синий\"\n    24. \"Нет однозначного ответа\"\n\n    *One thought on Q8:* Some might say Green is the \"reliable\" one. But \"on time\" is the key. Blue.\n\n    *One thought on Q2:* If the test expects a specific pair like Red/Blue, \"Combination\" covers it.\n\n    *One thought on Q17:* Red is \"judgmental\" of people, Blue is \"critical\" of work. The question says \"judges others\" (people). That's Red.\n\n    *Wait, Q21:* \"Could delegate but will do it himself\". Red's drive for results/speed makes them do it. Blue's drive for perfection makes them do it. Red is more \"behavioral\" for this in standard DISC literature.\n\n    *Ready to output.*",
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый и зелёный",
+      "2": "Сочетание всех профилей",
+      "3": "Красный",
+      "4": "Синий",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Синий",
+      "9": "Красный",
+      "10": "Красный",
+      "11": "Зелёный",
+      "12": "Зелёный",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный",
+      "17": "Красный",
+      "18": "Сочетание всех профилей",
+      "19": "Жёлтый",
+      "20": "Жёлтый",
+      "21": "Красный",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Нет однозначного ответа"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 19,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый и зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "all-option",
+        "correct": false,
+        "n": 2,
+        "answer": "Сочетание всех профилей"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 17,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 18,
+        "answer": "Сочетание всех профилей"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 24,
+        "answer": "Нет однозначного ответа"
+      }
+    ]
+  }
+}

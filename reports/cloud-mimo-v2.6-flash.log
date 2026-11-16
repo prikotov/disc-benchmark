@@ -39,3 +39,116 @@
 [12:05:06]   cwd=/home/dp/MyProjects/disc/.tmpwork/disc-pi-lp7qkzvw/run
   pi-home=/home/dp/MyProjects/disc/.tmpwork/disc-pi-lp7qkzvw/pi-home (изолирован)
   лог (live): /home/dp/MyProjects/disc/models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-03/pi-run.log
+остановка pi (signal 15): убиваю группу 3846808
+[12:44:45] pi завершился: код=143, убит=да, время=00:39:38
+[12:44:45] артефакты агента: 0 файл (ов); index.html: False
+[12:44:45] сессия: 1 файл(ов) JSONL, последний: 2026-11-16T12-05-07-011Z_01a1e43f-2942-73be-a2e8-866ccc1cc92a.jsonl
+[19:44:57] === СЕРИЯ mimo-v2.6-flash (xiaomi-token-plan-sgp): уровни [high] × 1 (параметры из каталога pi)
+[19:44:57] [high #1/1] RUN → models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-04
+[12:44:57] каталог pi: ctx=1048576, maxTokens=131072, уровни=['high', 'off']
+[12:44:57] провайдер xiaomi-token-plan-sgp: карта уровней {'off': 'off', 'minimal': None, 'low': None, 'medium': None, 'high': 'high', 'xhigh': None, 'max': None}
+[12:44:57] pi-home: models-store.json (каталог pi) + auth.json; models.json не пишем
+[12:44:57] запуск: pi -p --provider xiaomi-token-plan-sgp --model mimo-v2.6-flash --thinking high (ctx 1048576)
+[12:44:57]   cwd=/home/dp/MyProjects/disc/.tmpwork/disc-pi-b7z_38ae/run
+  pi-home=/home/dp/MyProjects/disc/.tmpwork/disc-pi-b7z_38ae/pi-home (изолирован)
+  лог (live): /home/dp/MyProjects/disc/models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-04/pi-run.log
+[12:58:35] pi завершился: код=0, убит=нет, время=00:13:37
+[12:58:35] артефакты агента: 17 файл (ов); index.html: True
+[12:58:35] сессия: 1 файл(ов) JSONL, последний: 2026-11-16T12-44-57-806Z_01a1e463-a44e-70ca-b5f6-6e976ef470e5.jsonl
+[19:58:35]   runner: rc=0
+{
+  "run": "/home/dp/MyProjects/disc/models/mimo-v2.6-flash-xiaomi-plan/test-assignment/run-04",
+  "model": "mimo-v2.6-flash",
+  "thinking": "high",
+  "files": [
+    "build.py",
+    "index.html",
+    "pi-run.log",
+    "run.json",
+    "shot-mobile-result.png",
+    "shot-mobile-wizard.png",
+    "shot-mobile-wizard2.png",
+    "shot-mobile.png",
+    "shot-result.png",
+    "shot-wizard.png",
+    "smoke.js",
+    "smoke_mobile.js",
+    "study/css_main_patched.css",
+    "study/css_root.css",
+    "study/disc_modal.html",
+    "study/disc_page.html",
+    "study/disc_patched.js",
+    "study/questions.json",
+    "study/result_page.html"
+  ],
+  "index_html": true,
+  "external": {
+    "pass": true,
+    "findings": [],
+    "urls": []
+  },
+  "data": {
+    "adjectives_total": 84,
+    "adjectives_found": 84,
+    "missing": []
+  },
+  "smoke": {
+    "tool": "google-chrome --headless=new --virtual-time-budget=8000",
+    "ran": true,
+    "dom_bytes": 94066,
+    "has_button": true,
+    "uncaught_errors": 0,
+    "ok": true
+  },
+  "passed": true
+}
+типы (пары текст+тип): 96 / 96
+PASSED
+[19:58:35]   check: rc=0
+{
+  "ran": true,
+  "flow_ok": true,
+  "ux_score": 50,
+  "questions_processed": 24,
+  "steps": 0,
+  "displayed": {
+    "d": 5,
+    "i": 2,
+    "s": -3,
+    "c": -4
+  },
+  "expected": {
+    "d": 5,
+    "i": 2,
+    "s": -3,
+    "c": -4
+  },
+  "displayed_match": true,
+  "console_errors": 0,
+  "screenshots": 3,
+  "notes": [
+    "старт: клик по «Пройти онлайн-тест»",
+    "клик «Завершить тест»"
+  ]
+}
+[19:58:42]   playthrough: rc=0
+{
+  "data": 4,
+  "logic": 4,
+  "ux": 4,
+  "impl": 4,
+  "total": 16,
+  "notes": "Полное и точное воспроизведение: все 84 прилагательных посимвольно и в исходном порядке, типы 96/96 верны (записи 'лишних ×N' в check.json — лишь дубли извлечения из разметки, не ошибки типов). Подсчёт строго по алгоритму оригинала. Поток, адаптации и офлайн-ограничения выполнены безупречно.",
+  "examples": "DATA: список1 'Экспресcивный/Покладистый/Волевой/Осторожный' с латинской 'c' сохранён; 8 панелей × 3 списка × 4 item'а, порядок list_id 1–24 совпадает с эталоном; типы только в data-type, пользователю не видны. LOGIC: score(): 'if (x.pos === 0) maj.push(...); if (x.pos === 3) min.push(...)' — позиция 1 = +1, позиция 4 = −1, средние не учитываются; балл = разность; контроль: раскладка final_orders (d-мажор ×5 с c/i-минорами и т.д.) даёт D:5, I:2, S:−3, C:−4, сумма = 0 — сходится; smoke/autoplay: displayed_match=true. UX: старт-экран → 8 шагов → результат; табы 'Первый…Восьмой' с автоскроллом к активному, прогресс-бар ((step+1)/8*100%), btnPrev.disabled на шаге 0, 'Назад/Далее/Завершить тест', подписи 'Я наиболее'/'Я наименее', дисклеймер и легенда на результате, ресторт сбрасывает порядок (resetOrder); drag за ручку на таче (coarse → draggable только у .disc-handle), pointer capture + HTML5 DnD fallback, автоскролл при драге, keyboard ArrowUp/Down; playthrough flow_ok, 0 dead_ends, 0 console errors. IMPL: один файл, CSS/JS инлайн, external findings пусты,SortableJS заменён собственной реализацией place() на pointer events; email-шага, токенов, шифрования и отправки нет — результат рендерится в setView('result'); маркетинг перенесён как hero-блок без сетевых ресурсов; код чистый, с IIFE, 'use strict', без мёртвых кусков; работает офлайн (smoke ok, file://)."
+}
+[19:59:06]   judge: rc=0
+{
+  "score": 78,
+  "issues": [
+    "Заголовок результата «Ваш DISC-профиль:» обрывается двоеточием и не называет доминирующий тип — стоит вывести итог типом (например «DI»)",
+    "Баллы показаны в негативных значениях (S:-3, C:-4) и ряд шкал растут влево от центра — без пояснений рядом с шкалами может сбивать; подпись с методикой мелкая и спрятана внизу",
+    "На шаге теста заголовки «Я наиболее» повторяются трижды без нумерации групп — сложно понять связь с вкладками «Первый…Восьмой»",
+    "Прогресс-бар очень мал и не показывает номер шага (1 из 8)",
+    "Кнопка «Далее» доступна до полного ра
+[19:59:20]   judge_ux: rc=0
+[19:59:20] ГОТОВО: серия mimo-v2.6-flash завершена

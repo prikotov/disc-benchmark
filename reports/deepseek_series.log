@@ -220,3 +220,205 @@ PASSED
 [13:32:43]   runner: rc=1
 [13:32:43]   нет index.html — пропуск проверок
 [13:32:43] ГОТОВО: серия deepseek-v4.1-flash-1017 завершена
+[13:45:12] [low] RUN → models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-03
+[06:45:12] энергичный максимум в карте уровней (max): maxTokens поднят до 32768
+[06:45:12] провайдер qwen-token-plan-individual: карта уровней {'off': None, 'minimal': None, 'low': 'low', 'medium': None, 'high': 'high', 'xhigh': None, 'max': 'max'} (поддержаны: ['low', 'high', 'max'])
+[06:45:12] запуск: pi -p --provider qwen-token-plan-individual --model deepseek-v4.1-flash-1017 --thinking low (ctx 102400)
+[06:45:12]   cwd=/home/dp/MyProjects/disc/.tmpwork/disc-pi-ow37tz0w/run
+  pi-home=/home/dp/MyProjects/disc/.tmpwork/disc-pi-ow37tz0w/pi-home (изолирован)
+  лог (live): /home/dp/MyProjects/disc/models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-03/pi-run.log
+[06:50:58] pi завершился: код=0, убит=нет, время=00:05:46
+[06:50:58] артефакты агента: 6 файл (ов); index.html: True
+[06:50:58] сессия: 1 файл(ов) JSONL, последний: 2026-11-16T06-45-12-318Z_01a1e31a-45fd-758d-a8bd-891a8123652d.jsonl
+[13:50:58]   runner: rc=0
+{
+  "run": "/home/dp/MyProjects/disc/models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-03",
+  "model": "deepseek-v4.1-flash-1017",
+  "thinking": "low",
+  "files": [
+    "check.json",
+    "index.html",
+    "page.html",
+    "pi-run.log",
+    "run.json",
+    "src/app.js",
+    "src/disc_patched.js",
+    "src/result.html"
+  ],
+  "index_html": true,
+  "external": {
+    "pass": true,
+    "findings": [],
+    "urls": []
+  },
+  "data": {
+    "adjectives_total": 84,
+    "adjectives_found": 84,
+    "missing": []
+  },
+  "smoke": {
+    "tool": "google-chrome --headless=new --virtual-time-budget=8000",
+    "ran": true,
+    "dom_bytes": 120275,
+    "has_button": true,
+    "uncaught_errors": 0,
+    "ok": true
+  },
+  "passed": true
+}
+типы (пары текст+тип): 96 / 96
+PASSED
+[13:50:58]   check: rc=0
+{
+  "ran": true,
+  "flow_ok": true,
+  "ux_score": 50,
+  "questions_processed": 24,
+  "steps": 0,
+  "displayed": {
+    "d": 5,
+    "i": 2,
+    "s": -3,
+    "c": -4
+  },
+  "expected": {
+    "d": 5,
+    "i": 2,
+    "s": -3,
+    "c": -4
+  },
+  "displayed_match": true,
+  "console_errors": 0,
+  "screenshots": 3,
+  "notes": [
+    "старт: клик по «Начать тест»",
+    "клик «Завершить тест»"
+  ]
+}
+[13:51:05]   playthrough: rc=0
+{
+  "data": 4,
+  "logic": 4,
+  "ux": 4,
+  "impl": 4,
+  "total": 16,
+  "notes": "Полное и точное воспроизведение: все 84 прилагательных и 96 типов совпадают с эталоном посимвольно, алгоритм подсчёта строго оригинальный, поток и ограничения соблюдены.",
+  "examples": "data: QUESTIONS содержит все 24 блока в исходном порядке, включая «Экспресcивный» с латинской c (Q1) и кривые типы оригинала («Энтузиаст»→c, «Шутливый»→d); check.json: adjectives 84/84, types 96/96. logic: computeScores() берёт items[0] (+1) и items[last] (−1) из DOM-порядка, средние не учитываются; контрольный пример — раскладка автопрогона D:5 I:2 S:-3 C:-4 сходится с эталонным пересчётом, инвариант суммы 0 выполняется (+1 и −1 на каждый блок); вывод «D:x, I:y, S:z, C:w» в scoreLine. ux: старт → 8 шагов (3 вопроса на шаг, табы, прогресс-бар с процентами) → результат с дисклеймером («Тест не оценивает личность…»); «Назад» disabled на шаге 1, «Завершить тест» только на 8-м; drag мышью за всю строку, тач только за ручку (pointerType!=='mouse' требует .drag-handle) + клавиатурные стрелки и aria-live; playthrough: 24 вопроса обработано, 0 тупиков, 0 ошибок консоли. impl: один файл, инлайн CSS/JS, сортировка — собственная pointer-реализация с ghost-элементом и автоскроллом у краёв, без SortableJS/CDN/fetch/форм; email-шага, токенов и маркетинга нет; код чистый, ES-модульный IIFE, escapeHTML, accessibilty (sr-only, aria), адаптив 960/720/390px; escapeHTML + статические данные исключают XSS."
+}
+[13:51:29]   judge: rc=0
+{
+  "score": 88,
+  "issues": [
+    "Стартовый экран: макет-превью с колонками 'Волевой/Покладистый' частично перекрыт декоративным стеклом, элементы в тени слабо различимы",
+    "В стартовом превью блок 'Я НАИМЕНЕЕ' выглядит обрезанным нижней границей карточки",
+    "На шаге блоки 01–03 визуально идентичны (заголовки 'Я НАИБОЛЕЕ' дублируются), без подписей различий между колонками — пользователю не очевидно, что это три разных блока вопросов",
+    "Прогресс-бар '13%' не согласуется с шагом 1 из 8 (несинхронизированные индикаторы прогресса)",
+    "Тайп-метка 'D:5, I:2, S:-3, C:-4' моноширинным 
+[13:51:44]   judge_ux: rc=0
+[13:51:44] [high] RUN → models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-04
+[06:51:44] энергичный максимум в карте уровней (max): maxTokens поднят до 32768
+[06:51:44] провайдер qwen-token-plan-individual: карта уровней {'off': None, 'minimal': None, 'low': 'low', 'medium': None, 'high': 'high', 'xhigh': None, 'max': 'max'} (поддержаны: ['low', 'high', 'max'])
+[06:51:44] запуск: pi -p --provider qwen-token-plan-individual --model deepseek-v4.1-flash-1017 --thinking high (ctx 102400)
+[06:51:44]   cwd=/home/dp/MyProjects/disc/.tmpwork/disc-pi-j7c4mpa3/run
+  pi-home=/home/dp/MyProjects/disc/.tmpwork/disc-pi-j7c4mpa3/pi-home (изолирован)
+  лог (live): /home/dp/MyProjects/disc/models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-04/pi-run.log
+[06:58:59] pi завершился: код=0, убит=нет, время=00:07:14
+[06:58:59] артефакты агента: 10 файл (ов); index.html: True
+[06:58:59] сессия: 1 файл(ов) JSONL, последний: 2026-11-16T06-51-45-143Z_01a1e320-4476-70f7-aa51-8ce148d4e788.jsonl
+[13:58:59]   runner: rc=0
+{
+  "run": "/home/dp/MyProjects/disc/models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-04",
+  "model": "deepseek-v4.1-flash-1017",
+  "thinking": "high",
+  "files": [
+    "disc.js",
+    "index.html",
+    "main.css",
+    "page.html",
+    "pi-run.log",
+    "questions.json",
+    "result.html",
+    "run.json",
+    "shots/desktop.png",
+    "shots/mobile.png",
+    "shots/result.png",
+    "shots/resultmobile.png"
+  ],
+  "index_html": true,
+  "external": {
+    "pass": true,
+    "findings": [],
+    "urls": []
+  },
+  "data": {
+    "adjectives_total": 84,
+    "adjectives_found": 84,
+    "missing": []
+  },
+  "smoke": {
+    "tool": "google-chrome --headless=new --virtual-time-budget=8000",
+    "ran": true,
+    "dom_bytes": 120576,
+    "has_button": true,
+    "uncaught_errors": 0,
+    "ok": true
+  },
+  "passed": true
+}
+типы (пары текст+тип): 96 / 96
+PASSED
+[13:58:59]   check: rc=0
+{
+  "ran": true,
+  "flow_ok": false,
+  "ux_score": 5,
+  "questions_processed": 0,
+  "steps": 0,
+  "displayed": null,
+  "expected": {
+    "d": 5,
+    "i": 2,
+    "s": -3,
+    "c": -4
+  },
+  "displayed_match": null,
+  "console_errors": 0,
+  "screenshots": 2,
+  "notes": [
+    "навигация остановилась: шаг 7, обработано 0",
+    "баллы D/I/S/C не найдены"
+  ]
+}
+[13:59:11]   playthrough: rc=0
+{
+  "data": 4,
+  "logic": 4,
+  "ux": 4,
+  "impl": 4,
+  "total": 16,
+  "notes": "Все 84 прилагательных и 96 типов совпадают с эталоном посимвольно (check.json: missing=[], mismatches={}), включая латинскую «c» в «Экспресcивный» (строка 344). Порядок вопросов и группировка 8×3 соблюдены (24 списка data-list=1..24). Подсчёт строго по алгоритму. Поток полный; автопрохождение не дошло до клика «Завершить тест», но шаг 8 отрендерился корректно с кнопкой, есть снимок result.png, console_errors=[] — это артефакт автоматизации, а не приложения.",
+  "examples": "data: «Экспресcивный» с латинской c сохранён; типы скрыты от пользователя (только data-type в атрибутах). logic: computeScore() — items[0].data-type +=1, items[items.length-1] -=1, средние позиции не учитываются; сумма по всем спискам всегда 0 (инвариант), вывод 'D:'+r.d+', I:'+r.i+', S:'+r.s+', C:'+r.c точно как в оригинале; ручная проверка: раскладка list1 (i,c,d,s) даёт i+1, s−1 — корректно. ux: старт → 8 табов-шагов → результат; prevBtn.disabled на шаге 0; прогресс-бар width=(step+1)/8; подписи «Я наиболее»/«Я наименее», «Назад»/«Далее»/«Завершить тест»; touch — только за .item__grip (pointerType!=='mouse' && !byGrip → return); дисклеймер в result__note дословно; «Пройти заново» восстанавливает initialOrder. impl: один файл, CSS/JS инлайн, grep по http/fetch/XHR пуст, drag&drop своя pointer-реализация + HTML5-fallback, email-шаг и токены отсутствуют, код структурирован (секции-комментарии), dead code нет."
+}
+[13:59:48]   judge: rc=0
+{
+  "score": 78,
+  "issues": [
+    "Из трёх заявленных скриншотов фактически представлены только шаги с вопросами (шаг 1 и шаг 8): стартовый экран и экран результата не видны, оценить их нельзя",
+    "Оба скриншота почти идентичны — возможно, дублирование или ошибка при снятии экранов",
+    "Пункты «Я НАИМЕНЕЕ» визуально пусты/свёрнуты — на скриншоте не видно содержимого нижней зоны, неясно, заполнена ли она",
+    "Нумерация пунктов (1–4) частично зелёная, частично красная — логика раскраски неочевидна пользователю",
+    "Подсказка про клавиатуру (1, ↓, Home, End) мелкая и перегружает нижнюю ч
+[14:00:05]   judge_ux: rc=0
+[14:00:05] [max] RUN → models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-05
+[07:00:05] энергичный максимум в карте уровней (max): maxTokens поднят до 32768
+[07:00:05] провайдер qwen-token-plan-individual: карта уровней {'off': None, 'minimal': None, 'low': 'low', 'medium': None, 'high': 'high', 'xhigh': None, 'max': 'max'} (поддержаны: ['low', 'high', 'max'])
+[07:00:05] запуск: pi -p --provider qwen-token-plan-individual --model deepseek-v4.1-flash-1017 --thinking max (ctx 102400)
+[07:00:05]   cwd=/home/dp/MyProjects/disc/.tmpwork/disc-pi-jfgz_117/run
+  pi-home=/home/dp/MyProjects/disc/.tmpwork/disc-pi-jfgz_117/pi-home (изолирован)
+  лог (live): /home/dp/MyProjects/disc/models/deepseek-v4.1-flash-1017-qwen-plan/test-assignment/run-05/pi-run.log
+[07:05:40] pi завершился: код=1, убит=нет, время=00:05:34
+[07:05:40] артефакты агента: 6 файл (ов); index.html: False
+[07:05:40] сессия: 1 файл(ов) JSONL, последний: 2026-11-16T07-00-05-329Z_01a1e327-e650-756c-84aa-2518bc1ad123.jsonl
+[14:05:40]   runner: rc=1
+[14:05:40]   нет index.html — пропуск проверок
+[14:05:40] ГОТОВО: серия deepseek-v4.1-flash-1017 завершена

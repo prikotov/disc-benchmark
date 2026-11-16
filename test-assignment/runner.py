@@ -216,6 +216,12 @@ def main() -> int:
         compat_extra = json.loads(args.compat) if args.compat else {"supportsDeveloperRole": False}
         scale = sorted({v for v in thinking_level_map.values() if v})
         supported = [k for k, v in thinking_level_map.items() if v]
+        # то же правило «энергичного максимума», что и для ollama:
+        # шкала поддерживаемых уровней доходит до xhigh/max -> бюджет вывода x4
+        top = next((cand for cand in reversed(PI_LEVELS_RANKED) if cand in supported), None)
+        if top in ("xhigh", "max") and args.max_tokens == 8192:
+            args.max_tokens = 32768
+            log(f"энергичный максимум в карте уровней ({top}): maxTokens поднят до 32768")
         log(f"провайдер {args.provider}: карта уровней {thinking_level_map} (поддержаны: {supported})")
 
     meta: dict = {

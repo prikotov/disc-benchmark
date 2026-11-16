@@ -161,7 +161,15 @@ class PiRun:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--model", required=True, help="ollama-тег (например huihui-ai:pi-100k)")
+    ap.add_argument("--model", required=True, help="ollama-тег (например huihui-ai:pi-100k) или id облачной модели")
+    ap.add_argument("--provider", default="ollama",
+                    help="провайдер pi (ollama | имя провайдера из models.json, например qwen-token-plan-individual)")
+    ap.add_argument("--base-url", default=None, help="baseUrl провайдера (обязателен при --provider != ollama)")
+    ap.add_argument("--api-key", default=None, help="API-ключ провайдера (обязателен при --provider != ollama)")
+    ap.add_argument("--level-map", default=None,
+                    help="JSON thinkingLevelMap из каталога pi (по умолчанию: полная шкала reasoning_effort)")
+    ap.add_argument("--compat", default=None,
+                    help="JSON compat-блока из каталога pi (thinkingFormat и др.)")
     ap.add_argument("--results", required=True, help="каталог результатов run-XX")
     ap.add_argument("--thinking", default=DEFAULT_THINKING, choices=PI_CHOICES)
     ap.add_argument("--context", type=int, default=DEFAULT_CONTEXT)
@@ -188,18 +196,31 @@ def main() -> int:
     repo = tmp / "run"          # рабочая директория агента (вне репозитория!)
     started = time.time()
 
-    scale = model_thinking_values(args.model)
-    if scale:
-        _, eager = thinking_map_for(scale)
-        if args.max_tokens == 8192 and eager:
-            args.max_tokens = 32768
-            log("энергичный максимум в шкале модели: maxTokens поднят до 32768")
+    if args.provider == "ollama":
+        scale = model_thinking_values(args.model)
+        if scale:
+            _, eager = thinking_map_for(scale)
+            if args.max_tokens == 8192 and eager:
+                args.max_tokens = 32768
+                log("энергичный максимум в шкале модели: maxTokens поднят до 32768")
+        else:
+            log("внимание: thinking-шкала модели пуста — reasoning-флаг не ставим")
+        thinking_level_map = thinking_map_for(scale)[0] if scale else None
     else:
-        log("внимание: thinking-шкала модели пуста — reasoning-флаг не ставим")
+        if not args.base_url or not args.api_key:
+            ap.error("для --provider != ollama нужны --base-url и --api-key")
+        # облачный провайдер: карта уровней и compat — из каталога pi (models-store.json)
+        thinking_level_map = json.loads(args.level_map) if args.level_map else {
+            "off": "none", "minimal": "none", "low": "low", "medium": "medium",
+            "high": "high", "xhigh": "xhigh", "max": "xhigh"}
+        compat_extra = json.loads(args.compat) if args.compat else {"supportsDeveloperRole": False}
+        scale = sorted({v for v in thinking_level_map.values() if v})
+        supported = [k for k, v in thinking_level_map.items() if v]
+        log(f"провайдер {args.provider}: карта уровней {thinking_level_map} (поддержаны: {supported})")
 
     meta: dict = {
         "model": args.model,
-        "provider": "ollama",
+        "provider": args.provider,
         "thinking": args.thinking,
         "thinking_scale": scale,
         "context": args.context,
@@ -216,12 +237,15 @@ def main() -> int:
     pi_home = tmp / "pi-home"
     pi_home.mkdir()
     entry = {"id": args.model, "contextWindow": args.context, "maxTokens": args.max_tokens}
+    if args.provider != "ollama":
+        entry["compat"] = compat_extra
     if scale:
         entry["reasoning"] = True
-        entry["thinkingLevelMap"] = thinking_map_for(scale)[0]
-    providers = {"ollama": {"baseUrl": f"{ollama_base_url()}/v1",
-                            "api": "openai-completions", "apiKey": "ollama",
-                            "models": [entry]}}
+        entry["thinkingLevelMap"] = thinking_level_map
+    providers = {args.provider: {"baseUrl": args.base_url or f"{ollama_base_url()}/v1",
+                                 "api": "openai-completions",
+                                 "apiKey": args.api_key or "ollama",
+                                 "models": [entry]}}
     (pi_home / "models.json").write_text(
         json.dumps({"providers": providers}, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -254,17 +278,19 @@ def main() -> int:
     run: PiRun | None = None
     try:
         repo.mkdir()
-        threading.Thread(target=watch_ollama_foreign, daemon=True).start()
+        if args.provider == "ollama":
+            threading.Thread(target=watch_ollama_foreign, daemon=True).start()
 
         cmd = ["pi", "-p",
                "--session-dir", str(results / "pi-session"),
+               "--provider", args.provider,
                "--model", args.model,
                "--thinking", args.thinking,
                prompt_text]
         env = {**dict(os.environ),
                "PI_CODING_AGENT_DIR": str(pi_home),
                "PI_OFFLINE": "1"}
-        log(f"запуск: pi -p --model {args.model} --thinking {args.thinking} (ctx {args.context})")
+        log(f"запуск: pi -p --provider {args.provider} --model {args.model} --thinking {args.thinking} (ctx {args.context})")
         log(f"  cwd={repo}\n  pi-home={pi_home} (изолирован)\n  лог (live): {results / 'pi-run.log'}")
 
         run = PiRun(cmd, repo, env, results / "pi-run.log")

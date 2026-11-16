@@ -1,0 +1,1023 @@
+# -*- coding: utf-8 -*-
+"""Сборка index.html: данные вопросов -> статическая разметка + логика."""
+import json, html
+
+Q = json.load(open('questions.json', encoding='utf-8'))
+
+GRIP = ('<svg class="item__grip-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
+        '<circle cx="6" cy="4" r="1.5" fill="currentColor"/><circle cx="10" cy="4" r="1.5" fill="currentColor"/>'
+        '<circle cx="6" cy="8" r="1.5" fill="currentColor"/><circle cx="10" cy="8" r="1.5" fill="currentColor"/>'
+        '<circle cx="6" cy="12" r="1.5" fill="currentColor"/><circle cx="10" cy="12" r="1.5" fill="currentColor"/>'
+        '</svg>')
+
+
+def panes():
+    out = []
+    for s in range(8):
+        chunk = Q[s * 3:(s + 1) * 3]
+        cards = []
+        for lst in chunk:
+            items = ''.join(
+                '          <li class="item" data-type="%s" tabindex="0">'
+                '<span class="item__grip">%s</span>'
+                '<span class="item__num" aria-hidden="true"></span>'
+                '<span class="item__text">%s</span>'
+                '</li>\n' % (it['type'], GRIP, html.escape(it['text'], quote=False))
+                for it in lst['items']
+            )
+            cards.append(
+                '        <div class="card">\n'
+                '          <div class="card__title">Я наиболее</div>\n'
+                '          <ul class="list" aria-label="Блок: расположите качества по порядку">\n'
+                '%s'
+                '          </ul>\n'
+                '          <div class="card__foot">Я наименее</div>\n'
+                '        </div>\n' % items
+            )
+        active = ' is-active' if s == 0 else ''
+        out.append(
+            '      <section class="pane%s" id="pane-%d" data-pane="%d" role="tabpanel" aria-labelledby="tab-%d">\n'
+            '        <div class="grid">\n%s        </div>\n'
+            '      </section>\n' % (active, s, s, s, ''.join(cards))
+        )
+    return ''.join(out)
+
+
+TABS = ['Первый', 'Второй', 'Третий', 'Четвертый', 'Пятый', 'Шестой', 'Седьмой', 'Восьмой']
+tabs_html = ''.join(
+    '<button class="tab%s" type="button" role="tab" id="tab-%d" aria-selected="%s" '
+    'aria-controls="pane-%d" tabindex="%s" data-step="%d">%s</button>\n'
+    % (' is-active' if i == 0 else '', i, 'true' if i == 0 else 'false', i,
+       '0' if i == 0 else '-1', i, t)
+    for i, t in enumerate(TABS)
+)
+
+HTML = r'''<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Тест DISC — типы личности за 5 минут</title>
+<style>
+  :root{
+    --ink:#131722;
+    --ink-2:#3c4557;
+    --muted:#6b7488;
+    --line:#e3e7f0;
+    --line-2:#eef1f7;
+    --bg:#f6f8fc;
+    --card:#ffffff;
+    --accent:#5a4bf5;
+    --accent-2:#8a7dff;
+    --accent-ink:#ffffff;
+    --d:#e2574c;
+    --i:#e39a25;
+    --s:#2f9e73;
+    --c:#3679d6;
+    --radius:16px;
+    --shadow:0 24px 60px -18px rgba(17,22,40,.45);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  html.no-scroll,html.no-scroll body{overflow:hidden}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+    color:var(--ink);
+    background:#0e1220;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,p,ul{margin:0}
+  button{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid rgba(90,75,245,.55);outline-offset:2px}
+
+  /* ---------- страница ---------- */
+  .page{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    color:#fff;
+    background:
+      radial-gradient(1100px 620px at 78% -12%, rgba(122,104,255,.55), transparent 62%),
+      radial-gradient(760px 520px at 8% 8%, rgba(58,140,255,.35), transparent 60%),
+      radial-gradient(900px 700px at 50% 118%, rgba(228,90,150,.18), transparent 65%),
+      linear-gradient(175deg,#0d1120 0%,#151a2e 55%,#10131f 100%);
+  }
+  .header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:20px clamp(16px,4vw,56px);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em}
+  .brand__mark{
+    width:34px;height:34px;border-radius:10px;
+    display:grid;place-items:center;
+    background:linear-gradient(145deg,var(--accent-2),var(--accent));
+    box-shadow:0 8px 18px -8px rgba(90,75,245,.9);
+  }
+  .brand__mark svg{display:block;width:18px;height:18px}
+  .brand__text{font-size:15px}
+  .brand__text span{color:rgba(255,255,255,.55);font-weight:500}
+
+  .hero{
+    flex:1;
+    display:grid;
+    place-items:center;
+    padding:clamp(24px,5vw,64px) clamp(16px,4vw,56px) clamp(40px,7vw,88px);
+  }
+  .hero__inner{max-width:820px;text-align:center}
+  .badges{
+    list-style:none;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    padding:0;
+    margin:0 0 26px;
+  }
+  .badges li{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:500;
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.06);
+    color:rgba(255,255,255,.9);
+  }
+  .badges svg{width:16px;height:16px;flex:none;color:#b9aeff}
+
+  .hero h1{
+    font-size:clamp(30px,5.4vw,58px);
+    line-height:1.06;
+    letter-spacing:-.02em;
+    font-weight:800;
+    margin:0 0 18px;
+    text-wrap:balance;
+  }
+  .hero h1 em{
+    display:block;
+    font-style:normal;
+    color:#bfb6ff;
+  }
+  .hero__lead{
+    font-size:clamp(15px,1.7vw,19px);
+    color:rgba(255,255,255,.72);
+    max-width:52ch;
+    margin:0 auto 32px;
+  }
+  .hero__note{
+    margin-top:18px;
+    font-size:13px;
+    color:rgba(255,255,255,.45);
+  }
+
+  /* ---------- кнопки ---------- */
+  .btn{
+    --btn-bg:transparent;
+    --btn-fg:#fff;
+    --btn-bd:transparent;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:44px;
+    padding:11px 22px;
+    border-radius:12px;
+    border:1px solid var(--btn-bd);
+    background:var(--btn-bg);
+    color:var(--btn-fg);
+    font-weight:600;
+    font-size:15px;
+    line-height:1;
+    cursor:pointer;
+    text-decoration:none;
+    transition:transform .14s ease,box-shadow .18s ease,background .18s ease,opacity .18s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn--primary{
+    --btn-bg:linear-gradient(145deg,var(--accent-2),var(--accent));
+    --btn-fg:var(--accent-ink);
+    box-shadow:0 14px 30px -12px rgba(90,75,245,.85);
+  }
+  .hero .btn--primary:hover{box-shadow:0 18px 34px -12px rgba(120,104,255,.95)}
+  .btn--ghost{
+    --btn-bg:#fff;
+    --btn-fg:var(--ink);
+    --btn-bd:var(--line);
+    box-shadow:0 1px 2px rgba(20,26,45,.04);
+  }
+  .btn--ghost:hover{--btn-bd:#cfd6e6;background:#fbfcff}
+  .btn--light{
+    --btn-bg:rgba(255,255,255,.1);
+    --btn-fg:#fff;
+    --btn-bd:rgba(255,255,255,.22);
+  }
+  .btn--light:hover{background:rgba(255,255,255,.18)}
+  .btn--lg{min-height:54px;padding:16px 34px;font-size:17px;border-radius:14px}
+  .btn--sm{min-height:38px;padding:8px 16px;font-size:13px;border-radius:10px}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;box-shadow:none}
+  .btn[hidden]{display:none !important}
+
+  /* ---------- модалка ---------- */
+  .modal{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .modal.is-open{display:flex}
+  .modal__overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(9,12,22,.62);
+    -webkit-backdrop-filter:blur(6px);
+    backdrop-filter:blur(6px);
+    animation:fade .18s ease-out;
+  }
+  .modal__dialog{
+    position:relative;
+    z-index:1;
+    width:min(1060px,100%);
+    max-height:min(94vh,900px);
+    display:flex;
+    flex-direction:column;
+    background:#fff;
+    color:var(--ink);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    animation:pop .2s ease-out;
+  }
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes pop{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:none}}
+  .modal__close{
+    position:absolute;
+    top:14px;right:14px;
+    z-index:3;
+    width:38px;height:38px;
+    display:grid;place-items:center;
+    border:1px solid var(--line);
+    border-radius:50%;
+    background:rgba(255,255,255,.94);
+    color:var(--muted);
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .modal__close:hover{background:#f3f5fb;color:var(--ink);border-color:#d3daea}
+  .modal__close svg{width:16px;height:16px}
+
+  /* ---------- визард ---------- */
+  .wizard{display:flex;flex-direction:column;min-height:0;flex:1}
+  .wizard__head{
+    padding:26px clamp(18px,3vw,32px) 14px;
+    padding-right:66px;
+  }
+  .wizard__title{font-size:clamp(20px,2.4vw,26px);font-weight:800;letter-spacing:-.01em}
+  .wizard__sub{font-size:13px;color:var(--muted);margin-top:6px}
+  .wizard__lead{font-size:14px;color:var(--ink-2);margin-top:10px}
+
+  .tabs{
+    display:flex;
+    gap:8px;
+    padding:0 clamp(18px,3vw,32px) 14px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    border-bottom:1px solid var(--line-2);
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:none;
+    padding:8px 15px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink-2);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease;
+  }
+  .tab:hover{border-color:#cfd6e6;background:#fbfcff}
+  .tab.is-active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+    box-shadow:0 8px 18px -10px rgba(90,75,245,.9);
+  }
+
+  .wizard__scroll{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    padding:20px clamp(18px,3vw,32px) 8px;
+    overscroll-behavior:contain;
+  }
+  .pane{display:none}
+  .pane.is-active{display:block;animation:panefade .18s ease-out}
+  @keyframes panefade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+  }
+  .card{
+    display:flex;
+    flex-direction:column;
+    padding:14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:linear-gradient(180deg,#fbfcff,#f6f8fd);
+  }
+  .card__title{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+  .card__foot{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:auto;
+    padding-top:10px;
+  }
+  .list{
+    list-style:none;
+    counter-reset:rank;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin:10px 0 0;
+    padding:0;
+  }
+  .item{
+    counter-increment:rank;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:11px;
+    background:#fff;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:0 1px 2px rgba(20,26,45,.04);
+    transition:border-color .14s ease,box-shadow .14s ease,background .14s ease;
+    will-change:transform;
+  }
+  .item:hover{border-color:#cbd3e6}
+  .item__grip{
+    flex:none;
+    display:grid;
+    place-items:center;
+    width:16px;height:20px;
+    color:#b9c1d4;
+    touch-action:none;
+    cursor:grab;
+  }
+  .item__grip svg{display:block}
+  .item__num{
+    flex:none;
+    width:20px;height:20px;
+    border-radius:50%;
+    display:grid;place-items:center;
+    font-size:11px;
+    font-weight:700;
+    color:var(--muted);
+    background:#eef1f8;
+  }
+  .item__num::before{content:counter(rank)}
+  .item:first-child .item__num{background:rgba(90,75,245,.12);color:var(--accent)}
+  .item:last-child .item__num{background:#f2f4f9;color:#8d96a9}
+  .item__text{font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+  .item.is-dragging{
+    border-color:var(--accent);
+    background:#fff;
+    box-shadow:0 16px 32px -14px rgba(38,43,75,.55);
+    cursor:grabbing;
+    position:relative;
+    z-index:5;
+  }
+  .item.is-dragging .item__num{background:var(--accent);color:#fff}
+  .list.is-reordering .item{cursor:grabbing}
+  .list.is-reordering .item:not(.is-dragging){background:#fdfdff}
+  html.dnd-active,html.dnd-active *{cursor:grabbing !important}
+
+  /* ---------- прогресс / кнопки ---------- */
+  .wizard__foot{
+    flex:none;
+    padding:12px clamp(18px,3vw,32px) 18px;
+    border-top:1px solid var(--line-2);
+    background:#fff;
+  }
+  .progress{
+    height:5px;
+    border-radius:999px;
+    background:#edf0f7;
+    overflow:hidden;
+    margin-bottom:14px;
+  }
+  .progress__bar{
+    height:100%;
+    width:12.5%;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--accent-2),var(--accent));
+    transition:width .22s ease;
+  }
+  .actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .actions__spacer{flex:1}
+  .actions__hint{font-size:12px;color:var(--muted)}
+
+  /* ---------- результат ---------- */
+  .result{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    padding:clamp(24px,4vw,40px) clamp(20px,4vw,40px) clamp(22px,3vw,30px);
+  }
+  .result[hidden]{display:none}
+  .result__tag{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--s);
+    background:rgba(47,158,115,.1);
+    border-radius:999px;
+    padding:6px 12px;
+  }
+  .result__tag svg{width:14px;height:14px}
+  .result h2{
+    font-size:clamp(22px,3vw,30px);
+    letter-spacing:-.01em;
+    margin:16px 0 8px;
+  }
+  .result__scoreline{
+    font-size:clamp(20px,2.6vw,26px);
+    font-weight:800;
+    letter-spacing:.01em;
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 16px;
+    display:inline-block;
+    margin-bottom:6px;
+  }
+  .bars{display:flex;flex-direction:column;gap:16px;margin:26px 0 6px;max-width:640px}
+  .bar__head{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .bar__letter{
+    width:24px;height:24px;border-radius:7px;
+    display:grid;place-items:center;
+    font-size:12px;font-weight:800;color:#fff;
+  }
+  .bar__letter--d{background:var(--d)}
+  .bar__letter--i{background:var(--i)}
+  .bar__letter--s{background:var(--s)}
+  .bar__letter--c{background:var(--c)}
+  .bar__name{font-size:14px;font-weight:600;color:var(--ink-2)}
+  .bar__value{
+    margin-left:auto;
+    font-size:14px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);
+  }
+  .bar__track{
+    position:relative;
+    height:10px;
+    border-radius:999px;
+    background:#eef1f8;
+    overflow:hidden;
+  }
+  .bar__zero{
+    position:absolute;
+    left:50%;top:0;bottom:0;
+    width:1px;
+    background:#d4dae8;
+    transform:translateX(-.5px);
+  }
+  .bar__fill{
+    position:absolute;
+    top:0;bottom:0;
+    border-radius:999px;
+    transition:left .5s cubic-bezier(.2,.8,.2,1),width .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .bar__fill--d{background:var(--d)}
+  .bar__fill--i{background:var(--i)}
+  .bar__fill--s{background:var(--s)}
+  .bar__fill--c{background:var(--c)}
+  .result__hint{
+    font-size:13px;
+    color:var(--muted);
+    max-width:62ch;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid var(--line-2);
+  }
+  .result__actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:22px;
+  }
+  .result__actions .btn{flex:1 1 180px}
+
+  /* ---------- адаптив ---------- */
+  @media (max-width:900px){
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:760px){
+    .modal{padding:0}
+    .modal__dialog{
+      width:100%;
+      max-height:none;
+      height:100%;
+      border-radius:0;
+    }
+    .modal__close{top:10px;right:10px}
+    .wizard__head{padding-top:20px;padding-right:60px}
+    .wizard__sub{display:none}
+    .grid{grid-template-columns:1fr;gap:12px}
+    .card{padding:12px}
+    .item{padding:11px 12px}
+    .actions__hint{display:none}
+    .result__actions .btn{flex:1 1 100%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="header">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l4-6 4 3 4-7"/>
+        </svg>
+      </span>
+      <span class="brand__text">Stratoplan <span>· DISC</span></span>
+    </div>
+    <button class="btn btn--light btn--sm" type="button" data-open>Пройти тест</button>
+  </header>
+
+  <main class="hero">
+    <div class="hero__inner">
+      <ul class="badges">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3 4.7-5"/></svg>
+          Бесплатный тест
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+          5 минут на прохождение
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7"/><path d="M2 8.5 12 4l10 4.5H2Z"/><path d="M12 8.5V21"/></svg>
+          Баллы сразу на экране
+        </li>
+      </ul>
+
+      <h1>Бесплатный тест DISC <em>для руководителей</em></h1>
+      <p class="hero__lead">Определите ваш управленческий стиль за 5 минут: расставьте качества по порядку — от самого похожего на вас до самого непохожего.</p>
+      <button class="btn btn--primary btn--lg" type="button" data-open>Пройти онлайн-тест</button>
+      <p class="hero__note">24 блока · 8 шагов · без регистрации и без отправки данных</p>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="wizardmodal" aria-hidden="true">
+  <div class="modal__overlay" data-close></div>
+
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+    <button class="modal__close" type="button" data-close aria-label="Закрыть">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>
+    </button>
+
+    <div class="wizard" id="wizard">
+      <div class="wizard__head">
+        <h2 class="wizard__title" id="discTitle">Тестирование DISC</h2>
+        <div class="wizard__sub">Помните — чем честнее вы с тестом, тем точнее результаты!</div>
+        <div class="wizard__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Шаги">
+__TABS__      </div>
+
+      <div class="wizard__scroll" id="wizardScroll">
+__PANES__      </div>
+
+      <div class="wizard__foot">
+        <div class="progress" aria-hidden="true"><div class="progress__bar" id="discProgress"></div></div>
+        <div class="actions">
+          <button class="btn btn--ghost" type="button" data-prev>Назад</button>
+          <span class="actions__hint">Шаг <span id="stepNow">1</span> из 8</span>
+          <span class="actions__spacer"></span>
+          <button class="btn btn--primary" type="button" data-next>Далее</button>
+          <button class="btn btn--primary" type="button" data-finish hidden>Завершить тест</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="result" id="resultView" hidden>
+      <span class="result__tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3 4.7-5"/></svg>
+        Тест завершён
+      </span>
+      <h2>Ваш DISC-профиль:</h2>
+      <div class="result__scoreline" id="resultScore">D:0, I:0, S:0, C:0</div>
+      <div class="bars" id="resultBars"></div>
+      <p class="result__hint">Балл по шкале — это число выборов в позиции «Я наиболее» минус число выборов в позиции «Я наименее» по всем 24 блокам. Значения могут быть отрицательными.</p>
+      <div class="result__actions">
+        <button class="btn btn--ghost" type="button" data-close>Закрыть</button>
+        <button class="btn btn--primary" type="button" data-restart>Пройти заново</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<noscript>
+  <p style="color:#fff;padding:20px;text-align:center">Для прохождения теста включите JavaScript.</p>
+</noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  var modal = document.getElementById('wizardmodal');
+  if (!modal) return;
+
+  var wizard = document.getElementById('wizard');
+  var resultView = document.getElementById('resultView');
+  var scrollBox = document.getElementById('wizardScroll');
+  var tabsBox = wizard.querySelector('.tabs');
+  var progress = document.getElementById('discProgress');
+  var stepNow = document.getElementById('stepNow');
+
+  var tabs = Array.prototype.slice.call(wizard.querySelectorAll('.tab'));
+  var panes = Array.prototype.slice.call(wizard.querySelectorAll('.pane'));
+  var lists = Array.prototype.slice.call(wizard.querySelectorAll('.list'));
+  var prevBtn = wizard.querySelector('[data-prev]');
+  var nextBtn = wizard.querySelector('[data-next]');
+  var finishBtn = wizard.querySelector('[data-finish]');
+
+  var TYPE_NAMES = { d: 'Доминирование', i: 'Влияние', s: 'Стабильность', c: 'Соответствие' };
+  var STEPS = 8;
+
+  // исходный порядок качеств — для перезапуска
+  var initialOrder = lists.map(function (ul) { return Array.prototype.slice.call(ul.children); });
+
+  var step = 0;
+  var isOpen = false;
+  var lastFocus = null;
+  var showingResult = false;
+
+  var isMobile = function () {
+    return window.matchMedia('(max-width: 760px)').matches;
+  };
+
+  /* ---------- модальное окно ---------- */
+  function openModal() {
+    if (isOpen) return;
+    isOpen = true;
+    lastFocus = document.activeElement;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('no-scroll');
+    render();
+    var closeBtn = modal.querySelector('.modal__close');
+    if (closeBtn) closeBtn.focus({ preventScroll: true });
+    requestAnimationFrame(function () { centerActiveTab('auto'); });
+  }
+
+  function closeModal() {
+    if (!isOpen) return;
+    isOpen = false;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('no-scroll');
+    if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus({ preventScroll: true });
+  }
+
+  /* ---------- шаги ---------- */
+  function render() {
+    tabs.forEach(function (t, i) {
+      var on = i === step;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    panes.forEach(function (p, i) {
+      p.classList.toggle('is-active', i === step);
+    });
+    prevBtn.disabled = step === 0;
+    nextBtn.hidden = step === STEPS - 1;
+    finishBtn.hidden = step !== STEPS - 1;
+    progress.style.width = ((step + 1) / STEPS * 100) + '%';
+    if (stepNow) stepNow.textContent = String(step + 1);
+  }
+
+  function setStep(n, scrollTop) {
+    step = Math.max(0, Math.min(STEPS - 1, n));
+    render();
+    if (scrollTop && scrollBox) {
+      scrollBox.scrollTo({ top: 0, behavior: isMobile() ? 'smooth' : 'auto' });
+    }
+    if (isMobile()) requestAnimationFrame(function () { centerActiveTab('smooth'); });
+  }
+
+  function centerActiveTab(behavior) {
+    if (!tabsBox || !tabsBox.scrollWidth) return;
+    var active = tabs[step];
+    if (!active) return;
+    var boxRect = tabsBox.getBoundingClientRect();
+    var tabRect = active.getBoundingClientRect();
+    var target = tabsBox.scrollLeft + (tabRect.left - boxRect.left) + tabRect.width / 2 - tabsBox.clientWidth / 2;
+    var max = Math.max(0, tabsBox.scrollWidth - tabsBox.clientWidth);
+    target = Math.min(Math.max(0, target), max);
+    if (Math.abs(tabsBox.scrollLeft - target) < 2) return;
+    tabsBox.scrollTo({ left: target, behavior: behavior || 'smooth' });
+  }
+
+  /* ---------- перетаскивание ---------- */
+  function itemsOf(ul) {
+    return Array.prototype.slice.call(ul.children).filter(function (el) {
+      return el.classList.contains('item');
+    });
+  }
+
+  function initSortable(ul) {
+    var dragEl = null;
+    var startY = 0;
+    var pointerId = null;
+    var moving = false;
+
+    var coarse = window.matchMedia('(pointer: coarse)').matches;
+
+    function onDown(e) {
+      if (dragEl) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      var li = e.target.closest ? e.target.closest('.item') : null;
+      if (!li || li.parentElement !== ul) return;
+      if (coarse && !e.target.closest('.item__grip')) return;
+
+      dragEl = li;
+      startY = e.clientY;
+      pointerId = e.pointerId;
+      moving = false;
+
+      if (ul.setPointerCapture) {
+        try { ul.setPointerCapture(pointerId); } catch (err) {}
+      }
+      ul.addEventListener('pointermove', onMove);
+      ul.addEventListener('pointerup', onUp);
+      ul.addEventListener('pointercancel', onUp);
+    }
+
+    function onMove(e) {
+      if (!dragEl || e.pointerId !== pointerId) return;
+      if (!moving) {
+        if (Math.abs(e.clientY - startY) < 4) return;
+        moving = true;
+        dragEl.classList.add('is-dragging');
+        ul.classList.add('is-reordering');
+        document.documentElement.classList.add('dnd-active');
+      }
+      if (e.cancelable) e.preventDefault();
+
+      var y = e.clientY;
+      var others = itemsOf(ul).filter(function (el) { return el !== dragEl; });
+      var ref = null;
+      for (var i = 0; i < others.length; i++) {
+        var r = others[i].getBoundingClientRect();
+        if (y < r.top + r.height / 2) { ref = others[i]; break; }
+      }
+      if (ref) {
+        if (dragEl.nextElementSibling !== ref) ul.insertBefore(dragEl, ref);
+      } else if (dragEl !== ul.lastElementChild) {
+        ul.appendChild(dragEl);
+      }
+    }
+
+    function onUp(e) {
+      if (e && pointerId !== null && e.pointerId !== pointerId) return;
+      if (ul.releasePointerCapture && pointerId !== null) {
+        try { ul.releasePointerCapture(pointerId); } catch (err) {}
+      }
+      ul.removeEventListener('pointermove', onMove);
+      ul.removeEventListener('pointerup', onUp);
+      ul.removeEventListener('pointercancel', onUp);
+      if (dragEl) {
+        dragEl.classList.remove('is-dragging');
+        ul.classList.remove('is-reordering');
+      }
+      document.documentElement.classList.remove('dnd-active');
+      dragEl = null;
+      pointerId = null;
+      moving = false;
+    }
+
+    ul.addEventListener('pointerdown', onDown);
+
+    // клавиатура: стрелки меняют позицию выбранного качества
+    ul.addEventListener('keydown', function (e) {
+      var li = e.target.closest ? e.target.closest('.item') : null;
+      if (!li || li.parentElement !== ul) return;
+      var key = e.key;
+      if (key !== 'ArrowUp' && key !== 'ArrowDown' && key !== 'Home' && key !== 'End') return;
+      e.preventDefault();
+      var all = itemsOf(ul);
+      var idx = all.indexOf(li);
+      if (idx < 0) return;
+      if (key === 'ArrowUp' && idx > 0) ul.insertBefore(li, all[idx - 1]);
+      else if (key === 'ArrowDown' && idx < all.length - 1) ul.insertBefore(all[idx + 1], li);
+      else if (key === 'Home' && idx > 0) ul.insertBefore(li, all[0]);
+      else if (key === 'End' && idx < all.length - 1) ul.appendChild(li);
+      else return;
+      li.focus({ preventScroll: true });
+    });
+  }
+
+  lists.forEach(initSortable);
+
+  /* ---------- подсчёт ---------- */
+  function collectScore() {
+    var maj = [];
+    var min = [];
+    lists.forEach(function (ul) {
+      var items = itemsOf(ul);
+      if (items.length < 4) return;
+      maj.push(items[0].getAttribute('data-type'));
+      min.push(items[3].getAttribute('data-type'));
+    });
+    var count = function (arr, t) {
+      var n = 0;
+      for (var i = 0; i < arr.length; i++) if (arr[i] === t) n++;
+      return n;
+    };
+    return {
+      d: count(maj, 'd') - count(min, 'd'),
+      i: count(maj, 'i') - count(min, 'i'),
+      s: count(maj, 's') - count(min, 's'),
+      c: count(maj, 'c') - count(min, 'c')
+    };
+  }
+
+  function formatScore(score) {
+    return 'D:' + score.d + ', I:' + score.i + ', S:' + score.s + ', C:' + score.c;
+  }
+
+  function renderBars(score) {
+    var box = document.getElementById('resultBars');
+    if (!box) return;
+    box.textContent = '';
+    var max = 24;
+    ['d', 'i', 's', 'c'].forEach(function (t) {
+      var v = score[t];
+      var pct = Math.min(50, Math.abs(v) / max * 50);
+      var fill = document.createElement('span');
+      fill.className = 'bar__fill bar__fill--' + t;
+      fill.style.width = pct + '%';
+      fill.style.left = v >= 0 ? '50%' : (50 - pct) + '%';
+
+      var record = document.createElement('div');
+      record.className = 'bar';
+      record.innerHTML =
+        '<div class="bar__head">' +
+          '<span class="bar__letter bar__letter--' + t + '">' + t.toUpperCase() + '</span>' +
+          '<span class="bar__name"></span>' +
+          '<span class="bar__value"></span>' +
+        '</div>' +
+        '<div class="bar__track"><span class="bar__zero"></span></div>';
+      record.querySelector('.bar__name').textContent = TYPE_NAMES[t];
+      record.querySelector('.bar__value').textContent = String(v);
+      record.querySelector('.bar__track').appendChild(fill);
+      box.appendChild(record);
+    });
+  }
+
+  function showResult() {
+    var score = collectScore();
+    var scoreLine = document.getElementById('resultScore');
+    if (scoreLine) scoreLine.textContent = formatScore(score);
+    renderBars(score);
+
+    showingResult = true;
+    wizard.hidden = true;
+    resultView.hidden = false;
+    resultView.scrollTop = 0;
+
+    var heading = resultView.querySelector('h2');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus({ preventScroll: true });
+    }
+  }
+
+  function resetTest() {
+    lists.forEach(function (ul, i) {
+      while (ul.firstChild) ul.removeChild(ul.firstChild);
+      initialOrder[i].forEach(function (li) { ul.appendChild(li); });
+    });
+    showingResult = false;
+    resultView.hidden = true;
+    wizard.hidden = false;
+    setStep(0, true);
+    var closeBtn = modal.querySelector('.modal__close');
+    if (closeBtn) closeBtn.focus({ preventScroll: true });
+  }
+
+  /* ---------- обработчики ---------- */
+  Array.prototype.slice.call(document.querySelectorAll('[data-open]')).forEach(function (b) {
+    b.addEventListener('click', function (e) {
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  modal.addEventListener('click', function (e) {
+    var close = e.target.closest ? e.target.closest('[data-close]') : null;
+    if (close) {
+      e.preventDefault();
+      closeModal();
+    }
+  });
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { setStep(Number(t.getAttribute('data-step')), false); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      var i = Number(t.getAttribute('data-step'));
+      var next = e.key === 'ArrowRight' ? (i + 1) % tabs.length : (i - 1 + tabs.length) % tabs.length;
+      setStep(next, true);
+      tabs[next].focus();
+    });
+  });
+
+  prevBtn.addEventListener('click', function () { setStep(step - 1, true); });
+  nextBtn.addEventListener('click', function () { setStep(step + 1, true); });
+  finishBtn.addEventListener('click', showResult);
+  var restartBtn = modal.querySelector('[data-restart]');
+  if (restartBtn) restartBtn.addEventListener('click', resetTest);
+
+  document.addEventListener('keydown', function (e) {
+    if (!isOpen) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    // удержание фокуса внутри диалога
+    if (e.key !== 'Tab') return;
+    var dialog = modal.querySelector('.modal__dialog');
+    var focusable = Array.prototype.slice.call(dialog.querySelectorAll(
+      'button:not([disabled]):not([hidden]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )).filter(function (el) {
+      return el.offsetParent !== null || el === document.activeElement;
+    });
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  // стартовое состояние
+  render();
+})();
+</script>
+</body>
+</html>
+'''
+
+HTML = HTML.replace('__TABS__', tabs_html).replace('__PANES__', panes())
+open('index.html', 'w', encoding='utf-8').write(HTML)
+print('index.html generated:', len(HTML), 'bytes')

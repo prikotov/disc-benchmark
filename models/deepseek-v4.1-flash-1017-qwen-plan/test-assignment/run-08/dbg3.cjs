@@ -1,0 +1,24 @@
+const path=require('path');
+const puppeteer=require('/home/dp/.npm-global/lib/node_modules/puppeteer-core');
+(async()=>{
+const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:'new',args:['--no-sandbox']});
+const p=await b.newPage();
+p.on('pageerror',e=>console.log('PAGEERROR:',e.message));
+const state=()=>p.evaluate(()=>({intro:document.getElementById('screenIntro').hidden,test:document.getElementById('screenTest').hidden,res:document.getElementById('screenResult').hidden,step:document.querySelector('.pane.is-active').dataset.step}));
+await p.setViewport({width:1280,height:900});
+await p.goto('file://'+path.resolve('index.html'),{waitUntil:'load'});
+console.log('load', await state());
+await p.click('#startBtn'); await new Promise(r=>setTimeout(r,200));
+console.log('start', await state());
+await p.evaluate(()=>{for(let i=0;i<10;i++){const n=document.getElementById('btnNext');if(n.hidden)break;n.click();}});
+await new Promise(r=>setTimeout(r,200));
+console.log('last step', await state());
+await p.click('#btnFinish'); await new Promise(r=>setTimeout(r,500));
+console.log('finish', await state());
+await p.click('#btnRestart'); await new Promise(r=>setTimeout(r,300));
+console.log('restart', await state());
+await p.setViewport({width:390,height:844,isMobile:true,hasTouch:true,deviceScaleFactor:2});
+await new Promise(r=>setTimeout(r,300));
+console.log('viewport', await state());
+await b.close();
+})();

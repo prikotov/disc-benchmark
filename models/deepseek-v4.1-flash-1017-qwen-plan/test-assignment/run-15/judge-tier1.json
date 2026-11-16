@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-16T10:03:10.352876+00:00",
+  "duration_s": 21.1,
+  "exit_code": 0,
+  "prompt_chars": 142710,
+  "verdict": {
+    "data": 4,
+    "logic": 4,
+    "ux": 4,
+    "impl": 4,
+    "total": 16,
+    "notes": "Полное и точное воспроизведение: все 24 вопроса посимвольно (включая латинскую «c» в «Экспресcивный»), порядок и группировка 8×3 сохранены; подсчёт строго по алгоритму (позиция 1 = +1, позиция 4 = −1, разность по типам); поток полный, тач за ручку, один офлайн-файл без внешних запросов.",
+    "examples": "data: разметка содержит id draggable-list1..24 с теми же прилагательными и data-type; check.json: adjectives 84/84, types correct 96/96; «Экспресcивный» сохранён с латинской c — известный quirk воспроизведён. logic: computeScore() — items.forEach((li,pos)=>{if(pos===0)maj.push(type); if(pos===3)min.push(type)}) затем d=count(maj,'d')−count(min,'d') и т.д.; ручная проверка на контрольной раскладке (все d наверх, все c вниз) даёт D:+24, C:−24, S/I:0 — совпадает с эталонным пересчётом; инвариант суммы = 0 выполняется. ux: старт→8 шагов→результат, табы «Первый…Восьмой», prevBtn.disabled = step === 0, прогресс-бар (step+1)/8*100, подписи «Я наиболее»/«Я наименее», «Назад/Далее/Завершить тест», дисклеймер на результате; pointerdown: if (e.pointerType==='touch' && !handle) return — тач строго за ручку, плюс native HTML5 drag fallback и клавиатурное перемещение (ArrowUp/Down); playthrough: flow_ok, 0 console errors, displayed_match. impl: один index.html, CSS/JS инлайн, drag&drop — собственная pointer-реализация с placeholder и автоскроллом (SortableJS не используется); email-шага, редиректа, токенов, форм нет; check.json external: pass, findings []; рабочие файлы агента (page.html, disc_patched.js и др.) не штрафуются."
+  }
+}

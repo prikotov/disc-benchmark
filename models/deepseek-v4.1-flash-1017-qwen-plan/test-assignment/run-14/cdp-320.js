@@ -1,0 +1,21 @@
+const {spawn}=require('child_process'); const path=require('path'),fs=require('fs'),os=require('os');
+const PORT=9338, userDir=fs.mkdtempSync(path.join(os.tmpdir(),'disc-chrome-'));
+const chrome=spawn('google-chrome',['--headless=new','--no-sandbox','--disable-gpu','--hide-scrollbars','--disable-dev-shm-usage','--no-first-run',`--remote-debugging-port=${PORT}`,`--user-data-dir=${userDir}`,'about:blank'],{stdio:'ignore'});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{
+ const targets=await (async()=>{for(let i=0;i<100;i++){try{const r=await fetch(`http://127.0.0.1:${PORT}/json`);if(r.ok)return await r.json()}catch{}await sleep(100)}throw Error('no')})();
+ const ws=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl); const pending=new Map();let seq=0;const events=[];
+ await new Promise((res,rej)=>{ws.onopen=res;ws.onerror=rej});
+ ws.onmessage=e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(Error(JSON.stringify(m.error))):p.resolve(m.result)}}else events.push(m)};
+ const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}))});
+ const ev=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true,userGesture:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value};
+ await send('Runtime.enable');await send('Page.enable');await send('Emulation.setDeviceMetricsOverride',{width:320,height:700,deviceScaleFactor:2,mobile:true,screenWidth:320,screenHeight:700});
+ await send('Page.navigate',{url:'file://'+path.resolve('index.html')});await sleep(900);
+ console.log(JSON.stringify(await ev(`(()=>{const r=el=>{const b=el.getBoundingClientRect();return{x:+b.x.toFixed(1),y:+b.y.toFixed(1),w:+b.width.toFixed(1),h:+b.height.toFixed(1)}};return {innerW:innerWidth,scrollW:document.documentElement.scrollWidth,bodyW:document.body.scrollWidth,shell:r(document.querySelector('.test-shell')),card:r(document.querySelector('.disc-card')),item:r(document.querySelector('.disc-item')),handle:r(document.querySelector('.disc-handle')),tabs:r(document.querySelector('#steps')),tabsScrollW:document.querySelector('#steps').scrollWidth,actions:r(document.querySelector('.disc-actions')),header:r(document.querySelector('.site-header')),title:r(document.querySelector('.test-title')),overflows:[...document.querySelectorAll('body *')].filter(el=>el.getBoundingClientRect().right>innerWidth+0.5).slice(0,10).map(el=>el.className||el.tagName)}})()`),null,2));
+ await ev(`document.querySelector('[data-step-btn="7"]').click()`);await sleep(400);
+ console.log('LAST',JSON.stringify(await ev(`(()=>{const r=el=>{const b=el.getBoundingClientRect();return{x:+b.x.toFixed(1),y:+b.y.toFixed(1),w:+b.width.toFixed(1),h:+b.height.toFixed(1)}};return {step:document.querySelector('#rootwizard').dataset.step,scrollLeft:document.querySelector('#steps').scrollLeft,activeTab:r(document.querySelector('.disc-tab.is-active')),tabs:r(document.querySelector('#steps')),finish:r(document.querySelector('#finish-btn'))}})()`),null,2));
+ await ev(`document.querySelector('#finish-btn').click()`);await sleep(300);
+ console.log('RESULT',JSON.stringify(await ev(`(()=>{const r=el=>{const b=el.getBoundingClientRect();return{x:+b.x.toFixed(1),y:+b.y.toFixed(1),w:+b.width.toFixed(1),h:+b.height.toFixed(1)}};return {scrollW:document.documentElement.scrollWidth,shell:r(document.querySelector('.result-shell')),score:r(document.querySelector('.score-string')),grid:r(document.querySelector('.score-grid')),cards:[...document.querySelectorAll('.score-card')].map(r),overflows:[...document.querySelectorAll('body *')].filter(el=>el.getBoundingClientRect().right>innerWidth+0.5).slice(0,10).map(el=>el.className||el.tagName)}})()`),null,2));
+ const errors=events.filter(e=>['Runtime.exceptionThrown','Log.entryAdded'].includes(e.method)); console.log('ERRORS',JSON.stringify(errors.map(e=>({m:e.method,p:e.params})),null,2));
+ ws.close();chrome.kill('SIGKILL');
+})().catch(e=>{console.error(e);chrome.kill('SIGKILL');process.exit(1)});

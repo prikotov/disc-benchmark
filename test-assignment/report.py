@@ -30,6 +30,21 @@ def fmt_dur(s):
     return f"{m}:{sec:02d}"
 
 
+# справочные ставки USD за 1М токенов (вход, выход, кэш-рид) для моделей без
+# каталожного тарифа; deepseek — точный тариф api.deepseek.com из каталога pi
+_REF_RATES = [
+    ("deepseek", 0.30, 1.20, 0.006),
+    ("mimo", 0.30, 1.20, 0.006),
+    ("qwen3.8", 0.30, 1.20, 0.03),
+    ("orcarouter", 0.30, 1.20, 0.03),
+    ("huihui", 0.30, 1.20, 0.03),
+    ("bonsai", 0.30, 1.20, 0.03),
+    ("muse", 0.30, 1.20, 0.03),
+    ("gemma4", 0.20, 0.80, 0.02),
+    ("ornith", 0.20, 0.80, 0.02),
+]
+
+
 def fmt_tok(n):
     if not n:
         return "0"
@@ -220,23 +235,30 @@ def build_report_html():
                         tin += (u.get("input") or 0) + (u.get("cacheWrite") or 0)
                         tout += u.get("output") or 0
                         tcache += u.get("cacheRead") or 0
+            # цена: сначала каталожный тариф провайдера, иначе справочная ставка класса модели
             catalog_cost = None
             for prov_models in (_catalog_store.values() if _catalog_store else []):
                 for m in prov_models.get("models", []):
                     if m.get("id") == r["model"]:
-                        catalog_cost = m.get("cost")
+                        c = m.get("cost") or {}
+                        if c.get("input") or c.get("output"):
+                            catalog_cost = c
                         break
                 if catalog_cost:
                     break
-            if catalog_cost and (catalog_cost.get("input") or catalog_cost.get("output")):
-                price = (tin / 1e6 * (catalog_cost.get("input") or 0)
-                         + tcache / 1e6 * (catalog_cost.get("cacheRead") or 0)
-                         + tout / 1e6 * (catalog_cost.get("output") or 0))
-                price_str = f"${price:.2f}"
-            elif catalog_cost:
-                price_str = "$0 (подписка)"
+            def _price(cin, cout, ccache, star):
+                p = (tin / 1e6 * cin + tcache / 1e6 * ccache + tout / 1e6 * cout)
+                return f"${p:.2f}{star}"
+            if catalog_cost:
+                price_str = _price(catalog_cost.get("input") or 0, catalog_cost.get("output") or 0,
+                                   catalog_cost.get("cacheRead") or 0, star="")
             else:
-                price_str = "локально"
+                price_str = None
+                for key, cin, cout, ccache in _REF_RATES:
+                    if key in r["model"].lower():
+                        price_str = _price(cin, cout, ccache, star="*")
+                        break
+                price_str = price_str or "—"
 
             # финал без решения: последний ответ ассистента — текст без tool-вызова
             final_text = None
@@ -299,21 +321,19 @@ def build_report_html():
                 elif not x["has_display"]: fails.append('результат не отображён')
                 badge = f'<span class="badge fail" title="не пройдено: {html_mod.escape("; ".join(fails))}">✗ FAILED</span>'
             link = f'<a class="try" href="{x["rel_app"]}" target="_blank">▶ открыть приложение</a>' if x["rel_app"] else '<span class="noapp">нет решения</span>'
-            dlink = f'<a class="dirlink" href="{x["rel_dir"]}" target="_blank">📁 папка прогона</a>'
             fin = (f'<div class="final-note">финал без решения: «{html_mod.escape(x["final_text"])}»</div>'
                    if x.get("final_text") else '')
             gallery_html.append(f"""
 <div class="gcard {cls}">
   <div class="ghead">
-    <span class="grun">{html_mod.escape(x["run"])}</span>
+    <a class="grun" href="{x["rel_dir"]}" target="_blank" title="открыть папку прогона">{html_mod.escape(x["run"])}</a>
     <span class="glvl">think: {html_mod.escape(x["thinking"])}</span>
     {badge}
     <span class="gscore {cls}">{x["score100"]}/100<small>итог</small></span>
     <span class="gux">{x["ux_vision"] if x["ux_vision"] is not None else "—"}/100<small>vision-UX</small></span>
     {link}
-    {dlink}
   </div>
-  <div class="gmeta">⏱ {fmt_dur(x["duration_s"])} · вх {fmt_tok(x["tin"])} · вых {fmt_tok(x["tout"])} · кэш {fmt_tok(x["tcache"])} · {x["price_str"]}</div>
+  <div class="gmeta" title="цены: каталожный тариф провайдера; * — справочная ставка USD/1М токенов (вход, выход, кэш-рид)">⏱ {fmt_dur(x["duration_s"])} · вх {fmt_tok(x["tin"])} · вых {fmt_tok(x["tout"])} · кэш {fmt_tok(x["tcache"])} · {x["price_str"]}</div>
   {fin}
   <div class="shots">{''.join(x["shots"]) or '<div class="noshots">решение не создано — скриншотов нет</div>'}</div>
 </div>""")
@@ -353,8 +373,6 @@ th{{background:#eef0f4}}
 .avg{{font-size:13px;font-weight:normal;color:#666;background:#e8eaed;padding:2px 10px;border-radius:12px;vertical-align:middle;margin-left:8px}}
 .gcard{{background:#fff;border:1px solid #d5d8de;border-radius:12px;padding:16px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}}
 .gcard.hi{{border-left:4px solid #22c55e}} .gcard.mid{{border-left:4px solid #f59e0b}} .gcard.lo{{border-left:4px solid #ef4444}}
-.dirlink{{font-size:12px;color:#6b7280;text-decoration:none;border:1px solid #d5d8de;border-radius:6px;padding:3px 8px}}
-.dirlink:hover{{color:#111;border-color:#9aa0aa}}
 .final-note{{font-size:13px;color:#7c2d12;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:6px 10px;margin:8px 0 0}}
 .gmeta{{font-size:12px;color:#6b7280;margin:6px 0 0;font-variant-numeric:tabular-nums}}
 .ghead{{display:flex;align-items:center;gap:12px;flex-wrap:wrap}}

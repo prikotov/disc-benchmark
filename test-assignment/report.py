@@ -192,14 +192,17 @@ def build_report_html():
                 "has_display": json.loads(ptf.read_text(encoding="utf-8")).get("displayed") is not None if ptf.is_file() else False,
                 "rel_app": f"../models/{run.parent.parent.name}/test-assignment/{run.name}/index.html" if has_app else None,
             })
-    # модели по убыванию лучшего балла, прогоны по имени
+    # модели по убыванию лучшего балла; прогоны по уровню мышления (off → max), затем по имени
+    level_rank = {"off": 0, "minimal": 1, "low": 2, "medium": 3, "high": 4, "xhigh": 5, "max": 6}
     sorted_models = sorted(gallery.keys(), key=lambda m: -max(x["score100"] for x in gallery[m]))
     gallery_html = []
     for m in sorted_models:
-        rs = sorted(gallery[m], key=lambda x: x["run"])
+        rs = sorted(gallery[m], key=lambda x: (level_rank.get(x["thinking"], 9), x["run"]))
         avg = sum(x["score100"] for x in rs) / len(rs)
         best = max(x["score100"] for x in rs)
-        gallery_html.append(f'<h2 class="gmodel">{html_mod.escape(m)} <span class="avg">средний {avg:.0f}/100 · лучший {best:.0f}</span></h2>')
+        n_pass = sum(1 for x in rs if bool(x["check_passed"]) and bool(x["flow_ok"]) and x["has_display"])
+        pct = round(n_pass * 100 / len(rs)) if rs else 0
+        gallery_html.append(f'<h2 class="gmodel">{html_mod.escape(m)} <span class="avg">средний {avg:.0f}/100 · лучший {best:.0f} · PASSED {pct}% ({n_pass} из {len(rs)})</span></h2>')
         for x in rs:
             cls = "hi" if x["score100"] >= 75 else ("mid" if x["score100"] >= 40 else "lo")
             # PASSED = все тесты прошли: чек (данные+рендер) + автопрохождение завершено

@@ -165,7 +165,8 @@ def main() -> int:
     ap.add_argument("--provider", default="ollama",
                     help="провайдер pi (ollama | имя провайдера из models.json, например qwen-token-plan-individual)")
     ap.add_argument("--base-url", default=None, help="baseUrl провайдера (обязателен при --provider != ollama)")
-    ap.add_argument("--api-key", default=None, help="API-ключ провайдера (обязателен при --provider != ollama)")
+    ap.add_argument("--api-key", default=None,
+                    help="API-ключ провайдера (по умолчанию берётся из ~/.pi/agent/auth.json)")
     ap.add_argument("--level-map", default=None,
                     help="JSON thinkingLevelMap из каталога pi (по умолчанию: полная шкала reasoning_effort)")
     ap.add_argument("--compat", default=None,
@@ -183,6 +184,13 @@ def main() -> int:
     results = Path(args.results).resolve()
     results.mkdir(parents=True, exist_ok=True)
 
+    if args.provider != "ollama" and not args.api_key:
+        auth_path = Path.home() / ".pi" / "agent" / "auth.json"
+        try:
+            args.api_key = json.loads(auth_path.read_text(encoding="utf-8"))[args.provider]["key"]
+        except Exception as e:
+            ap.error(f"ключ провайдера {args.provider} не найден в {auth_path}: {e}")
+
     prompt_data, prompt_text = load_prompt()
     smoke_prompt = "Создай в текущем каталоге файл answer.txt с текстом 'ok' (без кавычек) и заверши работу."
     if args.smoke:
@@ -196,6 +204,24 @@ def main() -> int:
     repo = tmp / "run"          # рабочая директория агента (вне репозитория!)
     started = time.time()
 
+    catalog_entry = None
+    if args.provider != "ollama":
+        # облачный провайдер: все параметры модели берём из каталога pi
+        # (models-store.json) — контекст, maxTokens, карта уровней, compat.
+        # Явные --context/--max-tokens не задаём: pi знает лучше.
+        store_path = Path.home() / ".pi" / "agent" / "models-store.json"
+        try:
+            store = json.loads(store_path.read_text(encoding="utf-8"))
+            for m in store.get(args.provider, {}).get("models", []):
+                if m["id"] == args.model:
+                    catalog_entry = m
+                    break
+        except Exception as e:
+            log(f"внимание: каталог pi не прочитан ({e}) — откат на ручную конфигурацию")
+        if catalog_entry is None and not (args.base_url and args.api_key):
+            ap.error(f"модель {args.model} не найдена в каталоге pi ({store_path}); "
+                     "задайте --base-url и --api-key вручную")
+
     if args.provider == "ollama":
         scale = model_thinking_values(args.model)
         if scale:
@@ -207,22 +233,25 @@ def main() -> int:
             log("внимание: thinking-шкала модели пуста — reasoning-флаг не ставим")
         thinking_level_map = thinking_map_for(scale)[0] if scale else None
     else:
-        if not args.base_url or not args.api_key:
-            ap.error("для --provider != ollama нужны --base-url и --api-key")
-        # облачный провайдер: карта уровней и compat — из каталога pi (models-store.json)
-        thinking_level_map = json.loads(args.level_map) if args.level_map else {
-            "off": "none", "minimal": "none", "low": "low", "medium": "medium",
-            "high": "high", "xhigh": "xhigh", "max": "xhigh"}
-        compat_extra = json.loads(args.compat) if args.compat else {"supportsDeveloperRole": False}
-        scale = sorted({v for v in thinking_level_map.values() if v})
-        supported = [k for k, v in thinking_level_map.items() if v]
-        # то же правило «энергичного максимума», что и для ollama:
-        # шкала поддерживаемых уровней доходит до xhigh/max -> бюджет вывода x4
-        top = next((cand for cand in reversed(PI_LEVELS_RANKED) if cand in supported), None)
-        if top in ("xhigh", "max") and args.max_tokens == 8192:
-            args.max_tokens = 32768
-            log(f"энергичный максимум в карте уровней ({top}): maxTokens поднят до 32768")
-        log(f"провайдер {args.provider}: карта уровней {thinking_level_map} (поддержаны: {supported})")
+        thinking_level_map = catalog_entry.get("thinkingLevelMap") if catalog_entry else (
+            json.loads(args.level_map) if args.level_map else {
+                "off": "none", "minimal": "none", "low": "low", "medium": "medium",
+                "high": "high", "xhigh": "xhigh", "max": "xhigh"})
+        compat_extra = catalog_entry.get("compat") if catalog_entry else (
+            json.loads(args.compat) if args.compat else {"supportsDeveloperRole": False})
+        scale = sorted({v for v in thinking_level_map.values() if v}) if thinking_level_map else []
+        if catalog_entry:
+            args.context = catalog_entry.get("contextWindow", args.context)
+            args.max_tokens = catalog_entry.get("maxTokens", args.max_tokens)
+            log(f"каталог pi: ctx={args.context}, maxTokens={args.max_tokens}, "
+                f"уровни={sorted(k for k, v in thinking_level_map.items() if v)}")
+        else:
+            supported = [k for k, v in (thinking_level_map or {}).items() if v]
+            top = next((cand for cand in reversed(PI_LEVELS_RANKED) if cand in supported), None)
+            if top in ("xhigh", "max") and args.max_tokens == 8192:
+                args.max_tokens = 32768
+                log(f"энергичный максимум в карте уровней ({top}): maxTokens поднят до 32768")
+        log(f"провайдер {args.provider}: карта уровней {thinking_level_map}")
 
     meta: dict = {
         "model": args.model,
@@ -242,18 +271,27 @@ def main() -> int:
     # models.json на лету
     pi_home = tmp / "pi-home"
     pi_home.mkdir()
-    entry = {"id": args.model, "contextWindow": args.context, "maxTokens": args.max_tokens}
-    if args.provider != "ollama":
-        entry["compat"] = compat_extra
-    if scale:
-        entry["reasoning"] = True
-        entry["thinkingLevelMap"] = thinking_level_map
-    providers = {args.provider: {"baseUrl": args.base_url or f"{ollama_base_url()}/v1",
-                                 "api": "openai-completions",
-                                 "apiKey": args.api_key or "ollama",
-                                 "models": [entry]}}
-    (pi_home / "models.json").write_text(
-        json.dumps({"providers": providers}, ensure_ascii=False, indent=2), encoding="utf-8")
+    if catalog_entry is not None:
+        # каталог решает всё: копируем models-store.json, ключ кладём в auth.json
+        shutil.copy2(Path.home() / ".pi" / "agent" / "models-store.json",
+                     pi_home / "models-store.json")
+        (pi_home / "auth.json").write_text(
+            json.dumps({args.provider: {"type": "api_key", "key": args.api_key}},
+                       ensure_ascii=False), encoding="utf-8")
+        log("pi-home: models-store.json (каталог pi) + auth.json; models.json не пишем")
+    else:
+        entry = {"id": args.model, "contextWindow": args.context, "maxTokens": args.max_tokens}
+        if args.provider != "ollama":
+            entry["compat"] = compat_extra
+        if scale:
+            entry["reasoning"] = True
+            entry["thinkingLevelMap"] = thinking_level_map
+        providers = {args.provider: {"baseUrl": args.base_url or f"{ollama_base_url()}/v1",
+                                     "api": "openai-completions",
+                                     "apiKey": args.api_key or "ollama",
+                                     "models": [entry]}}
+        (pi_home / "models.json").write_text(
+            json.dumps({"providers": providers}, ensure_ascii=False, indent=2), encoding="utf-8")
 
     run_holder: dict[str, PiRun] = {}
     stop_watch = threading.Event()

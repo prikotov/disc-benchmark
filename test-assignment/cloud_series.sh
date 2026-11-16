@@ -1,13 +1,13 @@
 #!/bin/bash
 # Универсальная серия для облачных провайдеров pi: RUNS прогонов на каждый уровень LEVELS.
-# Параметры модели (ctx, maxTokens, level-map, compat) — из каталога pi (models-store.json),
-# ничего не зажимаем: рекомендуемые настройки провайдера.
+# Все параметры модели (ctx, maxTokens, карта уровней, compat) pi берёт сам из своего
+# каталога (models-store.json) — от серии нужны только провайдер, модель, уровень, задача.
 # Использование (env):
-#   MODEL, PROVIDER, DIR, LEVELS, RUNS, CTX, MAXTOK, LEVEL_MAP, COMPAT, LOG
+#   MODEL, PROVIDER, DIR, LEVELS, RUNS, LOG
 cd /home/dp/MyProjects/disc
 API_KEY=$(python3 -c "import json,sys; print(json.load(open('/home/dp/.pi/agent/auth.json'))['$PROVIDER']['key'])")
 ts() { date "+%H:%M:%S"; }
-echo "[$(ts)] === СЕРИЯ $MODEL ($PROVIDER): уровни [$LEVELS] × $RUNS, ctx=$CTX, maxTokens=$MAXTOK" >> $LOG
+echo "[$(ts)] === СЕРИЯ $MODEL ($PROVIDER): уровни [$LEVELS] × $RUNS (параметры из каталога pi)" >> $LOG
 for LVL in $LEVELS; do
   for i in $(seq 1 $RUNS); do
     N=1
@@ -20,9 +20,6 @@ for LVL in $LEVELS; do
       --api-key "$API_KEY" \
       --model "$MODEL" \
       --thinking "$LVL" \
-      --level-map "$LEVEL_MAP" \
-      --compat "$COMPAT" \
-      --context "$CTX" --max-tokens "$MAXTOK" \
       --results "$D" >> $LOG 2>&1
     RC=$?
     echo "[$(ts)]   runner: rc=$RC" >> $LOG

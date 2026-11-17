@@ -1,5 +1,5 @@
 {
-  "note": "Матрица участников английской анкеты (quiz-en). Без облачных — по решению владельца локальные идут первыми.",
+  "note": "Матрица участников английской анкеты (quiz-en): локальные chat + decision + облачные (deepseek low; glm low/high/max).",
   "models": [
     {
       "tag": "qwen3.8:27b-pi-100k",
@@ -104,6 +104,26 @@
       "provider": "chat",
       "doc_levels": [
         "off"
+      ]
+    },
+    {
+      "tag": "deepseek-flash",
+      "folder": "deepseek-flash",
+      "provider": "cloud",
+      "cloud_provider": "deepseek",
+      "doc_levels": [
+        "low"
+      ]
+    },
+    {
+      "tag": "glm-5.3-flash",
+      "folder": "glm-5.3-flash",
+      "provider": "cloud",
+      "cloud_provider": "zai",
+      "doc_levels": [
+        "low",
+        "high",
+        "max"
       ]
     },
     {

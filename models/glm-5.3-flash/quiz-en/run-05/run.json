@@ -1,0 +1,267 @@
+{
+  "model": "glm-5.3-flash",
+  "folder": "glm-5.3-flash",
+  "provider": "cloud",
+  "lang": "en",
+  "cloud_provider": "zai",
+  "thinking": {
+    "requested": "low",
+    "scale": [
+      "low",
+      "high",
+      "max"
+    ],
+    "sent": "low",
+    "note": "шкала low/high/max (docs.z.ai, дефолт max); off не существует — «thinking cannot be disabled», запрошенный off провайдер выполняет как минимальное мышление (низведён к low); medium — legacy, не запускаем"
+  },
+  "options": {
+    "thinking": {
+      "type": "enabled"
+    },
+    "reasoning_effort": "low"
+  },
+  "model_version": "glm-5.3-flash",
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:27:37.866438+00:00",
+  "duration_s": 7.6,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 479,
+    "cached_tokens": 0,
+    "completion_tokens": 312,
+    "reasoning_tokens": 13
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Yellow and Red (both extroverted, task/socially outgoing)",
+      "2": "Red and Yellow, or Green and Blue (profiles sharing pace/extroversion complement each other)",
+      "3": "Red",
+      "4": "Blue (precise, methodical, detail-oriented)",
+      "5": "Yellow (loves the spotlight and an audience)",
+      "6": "Blue",
+      "7": "Blue (wants thorough information before deciding)",
+      "8": "Green (or Blue)",
+      "9": "Red (bends rules to achieve results quickly)",
+      "10": "Yellow (or Red — spontaneous, open to new approaches)",
+      "11": "Green (takes criticism personally, sensitive)",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow (flashy, attention-seeking style)",
+      "15": "Red (or Yellow)",
+      "16": "Red",
+      "17": "No single answer — a balanced mix of Red, Yellow, Green and Blue is ideal",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red (difficulty letting go of control)",
+      "21": "Green",
+      "22": "Blue (or Green — follows instructions carefully)",
+      "23": "No single answer — depends on the individual person's social circle"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 15,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 4,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow and Red (both extroverted, task/socially outgoing)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red and Yellow, or Green and Blue (profiles sharing pace/extroversion complement each other)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue (precise, methodical, detail-oriented)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow (loves the spotlight and an audience)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue (wants thorough information before deciding)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Green (or Blue)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "Red (bends rules to achieve results quickly)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Yellow (or Red — spontaneous, open to new approaches)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "Green (takes criticism personally, sensitive)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow (flashy, attention-seeking style)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 15,
+        "answer": "Red (or Yellow)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 17,
+        "answer": "No single answer — a balanced mix of Red, Yellow, Green and Blue is ideal"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 20,
+        "answer": "Red (difficulty letting go of control)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 22,
+        "answer": "Blue (or Green — follows instructions carefully)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer — depends on the individual person's social circle"
+      }
+    ]
+  }
+}

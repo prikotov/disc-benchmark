@@ -508,6 +508,22 @@ CLOUD_PROVIDERS = {
         "thinking": lambda lvl: {"reasoning_effort": lvl} if lvl else {},
         "doc_levels_note": "reasoning_effort, минимум low (off не существует)",
     },
+    "alibabacloud": {
+        # подписка alibabacloud (Model Studio token plan); паттерн сестринского
+        # workspace (knowledge-map/runner_cloud.py). Ключ pi-auth.
+        # ВАЖНО (карточка qwen4-max-preview): при транспорте без enable_thinking
+        # запрошенный off эскалируется в low — прямой вызов передаёт
+        # enable_thinking=False честно.
+        "url": "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1/chat/completions",
+        "key": "pi-auth:qwen-token-plan-individual",
+        "tariff": None,                       # квота подписки
+        "scale": ("off", "low", "medium", "high"),
+        "thinking": lambda lvl: ({"enable_thinking": False} if lvl == "off"
+                                 else {"reasoning_effort": lvl} if lvl else {}),
+        "doc_levels_note": ("docs Model Studio: reasoning_effort low/medium/xhigh "
+                            "(дефолт xhigh; max/high→xhigh); off — enable_thinking=False "
+                            "(эквивалент none)"),
+    },
     "zai": {
         # подписка z.ai (coding plan); паттерн сестринского workspace
         # (~/MyProjects/Models/knowledge-map/runner_cloud.py)

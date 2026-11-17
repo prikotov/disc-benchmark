@@ -1,0 +1,269 @@
+{
+  "model": "qwen4-max-preview",
+  "folder": "qwen4-max-preview",
+  "provider": "cloud",
+  "lang": "en",
+  "cloud_provider": "alibabacloud",
+  "thinking": {
+    "requested": "high",
+    "scale": [
+      "off",
+      "low",
+      "medium",
+      "high"
+    ],
+    "sent": "high",
+    "note": "docs Model Studio: reasoning_effort low/medium/xhigh (дефолт xhigh; max/high→xhigh); off — enable_thinking=False (эквивалент none)"
+  },
+  "options": {
+    "reasoning_effort": "high"
+  },
+  "model_version": "qwen4.0-max-preview",
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T03:14:20.952648+00:00",
+  "duration_s": 56.5,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 534,
+    "cached_tokens": 512,
+    "completion_tokens": 2332,
+    "reasoning_tokens": 1811
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Yellow + Green — both are people-oriented, warm and relationship-focused, so they click socially.",
+      "2": "Red + Blue — both are task-oriented (results + accuracy) and respect each other's focus on getting things done properly.",
+      "3": "Red — the dominant, decisive type wants control and the leadership seat.",
+      "4": "Blue — precision, procedure, high standards and attention to detail (a Red-Blue blend adds the decisiveness needed under pressure).",
+      "5": "Yellow — loves the spotlight, an audience and talking.",
+      "6": "Blue — systematic, orderly filing and records.",
+      "7": "Blue — needs data, analysis and verification before committing.",
+      "8": "Blue — punctuality is a rule and a matter of respect (Green is also dependable, but Blue is clock-precise).",
+      "9": "Red — results matter more than the rulebook.",
+      "10": "Red — will take risks and try untested shortcuts if it gets the result (Yellow supplies the novel ideas).",
+      "11": "Green — takes things personally, internalises hurt and remembers it for years.",
+      "12": "Yellow — chaotic desk, but a huge network and knows who/where to ask.",
+      "13": "Red — decides fast and wants the authority to decide.",
+      "14": "Yellow — image-conscious, expressive, trend-following.",
+      "15": "Red — thrives on challenge, competition and obstacles to conquer.",
+      "16": "Red — snap judgments, fast and blunt conclusions about people (Blue judges too, but only after analysis against its standards).",
+      "17": "All four together — Red drives, Yellow energises/sells, Green supports and stabilises, Blue ensures quality; no single pair is 'best'.",
+      "18": "Yellow — talkative, expressive, thinks out loud.",
+      "19": "Yellow — quick, intuitive, enthusiastic about new ideas (Red is equally fast but filters for usefulness).",
+      "20": "Blue — perfectionist; can't trust anyone else to do it to standard, so re-does it (Red may also interfere out of impatience).",
+      "21": "Green — patient, empathetic, genuinely listens.",
+      "22": "Blue — reads and follows every step, including the last one.",
+      "23": "No single answer — it depends on the individual; people tend to gather others similar (or complementary) to their own profile."
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 15,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 6,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow + Green — both are people-oriented, warm and relationship-focused, so they click socially."
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red + Blue — both are task-oriented (results + accuracy) and respect each other's focus on getting things done properly."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 3,
+        "answer": "Red — the dominant, decisive type wants control and the leadership seat."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Blue — precision, procedure, high standards and attention to detail (a Red-Blue blend adds the decisiveness needed under pressure)."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow — loves the spotlight, an audience and talking."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue — systematic, orderly filing and records."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue — needs data, analysis and verification before committing."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Blue — punctuality is a rule and a matter of respect (Green is also dependable, but Blue is clock-precise)."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "Red — results matter more than the rulebook."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Red — will take risks and try untested shortcuts if it gets the result (Yellow supplies the novel ideas)."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "Green — takes things personally, internalises hurt and remembers it for years."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow — chaotic desk, but a huge network and knows who/where to ask."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 13,
+        "answer": "Red — decides fast and wants the authority to decide."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow — image-conscious, expressive, trend-following."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 15,
+        "answer": "Red — thrives on challenge, competition and obstacles to conquer."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Red — snap judgments, fast and blunt conclusions about people (Blue judges too, but only after analysis against its standards)."
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "All four together — Red drives, Yellow energises/sells, Green supports and stabilises, Blue ensures quality; no single pair is 'best'."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow — talkative, expressive, thinks out loud."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow — quick, intuitive, enthusiastic about new ideas (Red is equally fast but filters for usefulness)."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Blue — perfectionist; can't trust anyone else to do it to standard, so re-does it (Red may also interfere out of impatience)."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "Green — patient, empathetic, genuinely listens."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue — reads and follows every step, including the last one."
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer — it depends on the individual; people tend to gather others similar (or complementary) to their own profile."
+      }
+    ]
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "model": "qwen4-max-preview",
+  "folder": "qwen4-max-preview",
+  "provider": "cloud",
+  "lang": "ru",
+  "cloud_provider": "alibabacloud",
+  "thinking": {
+    "requested": "high",
+    "scale": [
+      "off",
+      "low",
+      "medium",
+      "high"
+    ],
+    "sent": "high",
+    "note": "docs Model Studio: reasoning_effort low/medium/xhigh (дефолт xhigh; max/high→xhigh); off — enable_thinking=False (эквивалент none)"
+  },
+  "options": {
+    "reasoning_effort": "high"
+  },
+  "model_version": "qwen4.0-max-preview",
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-17T03:09:22.710106+00:00",
+  "duration_s": 33.4,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 615,
+    "cached_tokens": 512,
+    "completion_tokens": 1499,
+    "reasoning_tokens": 995
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Красный+жёлтый (оба быстрые, экстравертные) и зелёный+синий (оба спокойные, интровертные); также тёплая пара жёлтый+зелёный",
+      "2": "Дополняющие (противоположные) пары: красный+зелёный и жёлтый+синий — сильный темп/результат плюс надёжность, идеи плюс точность",
+      "3": "Красный",
+      "4": "Синий (в идеале синий+красный: точность плюс решительность)",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Зелёный и синий (зелёный — по привычной рутине, синий — по правилу точности)",
+      "9": "Красный",
+      "10": "Красный (жёлтый тоже пробует новое, но ради новизны, а не ради скорости)",
+      "11": "Зелёный",
+      "12": "Зелёный (жёлтый болезненно реагирует на публичное отвержение, но личный укол глубже задевает зелёного)",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный (вызов); синий — если задача сложная аналитически",
+      "17": "Синий (высокие стандарты, критичность); красный судит быстро, но по результату",
+      "18": "Все четыре цвета в балансе — прежде всего связки красный+зелёный и жёлтый+синий",
+      "19": "Жёлтый",
+      "20": "Жёлтый (красный тоже схватывает быстро, но оценивает через пользу)",
+      "21": "Синий («хочешь сделать хорошо — сделай сам»)",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Однозначного ответа нет: зависит от конкретного круга общения (статистически в популяции чаще встречается зелёный)"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 14,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 7,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Красный+жёлтый (оба быстрые, экстравертные) и зелёный+синий (оба спокойные, интровертные); также тёплая пара жёлтый+зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Дополняющие (противоположные) пары: красный+зелёный и жёлтый+синий — сильный темп/результат плюс надёжность, идеи плюс точность"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Синий (в идеале синий+красный: точность плюс решительность)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Зелёный и синий (зелёный — по привычной рутине, синий — по правилу точности)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный (жёлтый тоже пробует новое, но ради новизны, а не ради скорости)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Зелёный (жёлтый болезненно реагирует на публичное отвержение, но личный укол глубже задевает зелёного)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Красный (вызов); синий — если задача сложная аналитически"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Синий (высокие стандарты, критичность); красный судит быстро, но по результату"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "Все четыре цвета в балансе — прежде всего связки красный+зелёный и жёлтый+синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый (красный тоже схватывает быстро, но оценивает через пользу)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 21,
+        "answer": "Синий («хочешь сделать хорошо — сделай сам»)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Однозначного ответа нет: зависит от конкретного круга общения (статистически в популяции чаще встречается зелёный)"
+      }
+    ]
+  }
+}

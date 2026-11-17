@@ -381,7 +381,7 @@ table.matrix td.na{color:#9aa7b3}
         f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}"
         f"{' <span class=\'bm\'>📘</span>' if RU_TO_EN[q['n']] and KEYS['en']['questions'][RU_TO_EN[q['n']] - 1]['kind'] in ('book', 'none') else ''}</th>"
         for q in KEYS["ru"]["questions"])
-    parts.append("<tr><th class='model'>№ en →</th><th></th>" + en_head + "</tr>")
+    parts.append("<tr><th class='model'></th><th>№ en →</th>" + en_head + "</tr>")
     for g in gs_all:
         lang = g[1]
         rates = mx[lang][g]
@@ -550,7 +550,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
                   f"{q['n']}{'' if q['kind'] == 'color' else '📘'}"
                   for q in KEYS["ru"]["questions"]) + " |",
               "|---|---|" + "---|" * len(KEYS["ru"]["questions"]),
-              "| **№ en →** | | " + en_head + " |"]
+              "|  | **№ en →** | " + en_head + " |"]
     for g in sorted(groups, key=sort_key):
         lang = g[1]
         rates = mx[lang][g]

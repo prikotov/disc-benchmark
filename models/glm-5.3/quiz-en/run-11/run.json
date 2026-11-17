@@ -1,0 +1,259 @@
+{
+  "model": "glm-5.3",
+  "folder": "glm-5.3",
+  "provider": "cloud",
+  "lang": "en",
+  "cloud_provider": "zai",
+  "thinking": {
+    "requested": "high",
+    "scale": [
+      "low",
+      "high",
+      "max"
+    ],
+    "sent": "high",
+    "note": "шкала low/high/max (docs.z.ai, дефолт max); off не существует — «thinking cannot be disabled», запрошенный off провайдер выполняет как минимальное мышление (низведён к low); medium — legacy, не запускаем"
+  },
+  "options": {
+    "thinking": {
+      "type": "enabled"
+    },
+    "reasoning_effort": "high"
+  },
+  "model_version": "glm-5.3",
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T05:40:54.393056+00:00",
+  "duration_s": 76.5,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 479,
+    "cached_tokens": 448,
+    "completion_tokens": 4502,
+    "reasoning_tokens": 4171
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Yellow + Green (both people-oriented, so they naturally connect on a social level; Red + Blue connect on the task level instead)",
+      "2": "Red + Blue (complementary task-orientation: Red drives and decides, Blue analyzes and ensures quality)",
+      "3": "Red",
+      "4": "Blue",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Green (Blue is also punctual, but Green's hallmark is dependability and keeping commitments)",
+      "9": "Red",
+      "10": "Yellow (Red a close second — both embrace unproven approaches; Yellow out of curiosity, Red for results)",
+      "11": "Green (avoids conflict, so the hurt never gets resolved and lingers longest)",
+      "12": "Yellow (least organized, but a great networker who knows exactly who to ask)",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "No single pairing — the best team is a balanced mix of all four colors (drive + ideas + harmony + quality)",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red",
+      "21": "Green",
+      "22": "Blue",
+      "23": "No single answer — as an AI I don't have a social circle (though Green is usually cited as the most common profile in the general population)"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 2,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow + Green (both people-oriented, so they naturally connect on a social level; Red + Blue connect on the task level instead)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red + Blue (complementary task-orientation: Red drives and decides, Blue analyzes and ensures quality)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Green (Blue is also punctual, but Green's hallmark is dependability and keeping commitments)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Yellow (Red a close second — both embrace unproven approaches; Yellow out of curiosity, Red for results)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "Green (avoids conflict, so the hurt never gets resolved and lingers longest)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow (least organized, but a great networker who knows exactly who to ask)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 17,
+        "answer": "No single pairing — the best team is a balanced mix of all four colors (drive + ideas + harmony + quality)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 20,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer — as an AI I don't have a social circle (though Green is usually cited as the most common profile in the general population)"
+      }
+    ]
+  }
+}

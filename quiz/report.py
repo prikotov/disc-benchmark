@@ -165,14 +165,14 @@ def build_html(groups: dict, runs: list[dict], out: Path,
                failed_counts: dict | None = None) -> None:
     total_runs = len(runs)
     parts = []
-    LEGEND = ("<div class='muted legend'>📘 — вопросы с особым ключом (не «сложные», а особые по смыслу): "
-              "Q1/Q2 — ключ-утверждение викторины («двое жёлтых» социально, «зелёный с любым» "
+    LEGEND = ("<div class='muted legend'>📘 — вопросы, у которых эталонный ответ — не одиночный цвет (это не «сложные» вопросы, а особые по смыслу): "
+              "Q1/Q2 — эталонный ответ — утверждение викторины («двое жёлтых» социально, «зелёный с любым» "
               "в работе), не следующий из стандартных DISC-ассоциаций — стандартная методология "
               "совместимость в DISC-фольклоре подаётся комбинацией двух цветов (состав пар у моделей разный), поэтому промахи массовые; "
-              "Q18 — ключ самоочевиден («успешная команда — все цвета»), модели отвечают верно; "
+              "Q18 — эталонный ответ самоочевиден («успешная команда — все цвета»), модели отвечают верно; "
               "Q24 — вопрос повышенной сложности: верный ответ — констатация отсутствия "
-              "единственного ответа (модели в основном справляются). В промпте источник ключей "
-              "не упоминается.</div>")
+              "единственного ответа (модели в основном справляются). В промпте источник эталонных "
+              "ответов не упоминается.</div>")
     parts = []
     parts.append("""<!doctype html><html lang="ru"><head><meta charset="utf-8">
 <title>disc quiz: анкета DISC — своды (ru + en)</title><style>
@@ -328,7 +328,7 @@ table.matrix td.na{color:#9aa7b3}
         mx = matrix_rows(groups, lang)
         parts.append(f"<h2>Матрица «{label}»: модель × уровень × вопрос</h2>"
                      "<div class='muted'>ячейка — доля верных ответов на вопрос по прогонам "
-                     "группы, 0–100 (наведение — точные «верных/всего»); 📘 — ключ — правило курса</div>")
+                     "группы, 0–100 (наведение — точные «верных/всего»); 📘 — эталонный ответ — не одиночный цвет (расшифровка под таблицей)</div>")
         parts.append("<table class='matrix'><tr><th class='model'>модель @ уровень</th>")
         for q in KEYS[lang]["questions"]:
             mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
@@ -361,10 +361,10 @@ table.matrix td.na{color:#9aa7b3}
         parts.append(f"<h2>Сложность вопросов — {lang} (все прогоны языка)</h2><table><tr>"
                      "<th>вопрос</th>")
         for q in KEYS[lang]["questions"]:
-            mark = " <span title='ключ — правило курса'>📘</span>" \
+            mark = " <span title='эталонный ответ — не одиночный цвет'>📘</span>" \
                 if q["kind"] in ("book", "none") else ""
             parts.append(f"<th class='num'>{q['n']}{mark}</th>")
-        parts.append("<th>цвет ключа</th></tr>")
+        parts.append("<th>эталон</th></tr>")
         correct_row, color_row = [], []
         for q in KEYS[lang]["questions"]:
             okc, tot = q_correct[q["n"]]
@@ -375,7 +375,7 @@ table.matrix td.na{color:#9aa7b3}
             cc = {"D": "#c62828", "I": "#f9a825", "S": "#2e7d32", "C": "#1565c0"}.get(c, "#999")
             color_row.append(f"<td class='num' style='background:{cc};color:#fff'>{c if c != '—' else '—'}</td>")
         parts.append("<tr><td>верных</td>" + "".join(correct_row) + "<td></td></tr>")
-        parts.append("<tr><td>ключ</td>" + "".join(color_row) + "<td></td></tr>")
+        parts.append("<tr><td>эталон</td>" + "".join(color_row) + "<td></td></tr>")
         parts.append("</table>" + LEGEND)
 
     # точность по цветам, по языкам

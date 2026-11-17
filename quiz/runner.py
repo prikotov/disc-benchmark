@@ -520,9 +520,10 @@ CLOUD_PROVIDERS = {
         "scale": ("off", "low", "medium", "high"),
         "thinking": lambda lvl: ({"enable_thinking": False} if lvl == "off"
                                  else {"reasoning_effort": lvl} if lvl else {}),
-        "doc_levels_note": ("docs Model Studio: reasoning_effort low/medium/xhigh "
-                            "(дефолт xhigh; max/high→xhigh); off — enable_thinking=False "
-                            "(эквивалент none)"),
+        "doc_levels_note": ("ШКАЛА ЗАВИСИТ ОТ МОДЕЛИ (доки 2026-11-17): qwen4-max — "
+                            "low/high/xhigh (дефолт high; medium→high); qwen4-max-preview — "
+                            "low/medium/xhigh (дефолт xhigh; high недокументирован, "
+                            "фактически ≈medium). off — enable_thinking=False"),
     },
     "zai": {
         # подписка z.ai (coding plan); паттерн сестринского workspace

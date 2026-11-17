@@ -14,8 +14,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -165,8 +166,57 @@ def lang_level(groups: dict, folder: str, lang: str, best: dict) -> str:
     return "?"
 
 
-def build_html(groups: dict, runs: list[dict], out: Path,
-               failed_counts: dict | None = None) -> None:
+def norm_answer(s: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"[^0-9a-zа-яё ]+", " ",
+                  str(s).lower().replace("ё", "е"))).strip()[:48]
+
+
+def compute_problems(groups: dict) -> list:
+    """Вопросы с суммарной долей верных <50% (ru + en) + статистика по группам."""
+    stats = {}  # (n_ru, lang) -> статистика вопроса на языке
+    for q in KEYS["ru"]["questions"]:
+        n_ru = q["n"]
+        for lang, lookup in (("ru", n_ru), ("en", RU_TO_EN[n_ru])):
+            if lookup is None:
+                continue
+            ok = tot = 0
+            perfect = []
+            dist = Counter()
+            raw = {}
+            for g, rs in groups.items():
+                if g[1] != lang:
+                    continue
+                g_ok = g_tot = 0
+                for r in rs:
+                    x = r["verdict"]["per_question"][lookup - 1]
+                    g_tot += 1
+                    g_ok += bool(x.get("correct"))
+                    ans = (x.get("chosen") if r["provider"] == "decision"
+                           else x.get("answer")) or "∅"
+                    k = norm_answer(ans)
+                    dist[k] += 1
+                    raw[k] = str(ans).strip()[:60]
+                tot += g_tot
+                ok += g_ok
+                if g_tot and g_ok == g_tot:
+                    perfect.append(f"{g[0]} {g[1]}@{g[2]}")
+            stats[(n_ru, lang)] = {"ok": ok, "tot": tot,
+                                   "rate": ok / tot if tot else None,
+                                   "perfect": perfect, "dist": dist, "raw": raw}
+    problems = []
+    for q in KEYS["ru"]["questions"]:
+        s_ru = stats.get((q["n"], "ru"))
+        s_en = stats.get((q["n"], "en"))
+        ok = (s_ru["ok"] if s_ru else 0) + (s_en["ok"] if s_en else 0)
+        tot = (s_ru["tot"] if s_ru else 0) + (s_en["tot"] if s_en else 0)
+        if tot and ok / tot < 0.5:
+            problems.append((q, s_ru, s_en, ok / tot))
+    problems.sort(key=lambda x: x[3])
+    return problems
+
+
+def build_html(groups: dict, runs: list[dict], out: Path, failed_counts: dict | None = None,
+               problems: list | None = None) -> None:
     total_runs = len(runs)
     parts = []
     parts.append("""<!doctype html><html lang="ru"><head><meta charset="utf-8">
@@ -352,44 +402,47 @@ table.matrix td.na{color:#9aa7b3}
                      f"<span class='muted'>@ {g[1]} @ {g[2]}</span></td>" + "".join(cells) + "</tr>")
     parts.append("</table>")
 
-    # сложность вопросов: ru и en в одной таблице (столбцы по нумерации ru)
-    q_stat = {lang: defaultdict(lambda: [0, 0]) for lang in ("ru", "en")}
-    for r in runs:
-        for x in r["verdict"]["per_question"]:
-            q_stat[r["_lang"]][x["n"]][0] += 1 if x.get("correct") else 0
-            q_stat[r["_lang"]][x["n"]][1] += 1
-    parts.append("<h2>Сложность вопросов — ru и en (сопоставлены)</h2><table><tr>"
-                 "<th>вопрос ru</th>")
-    for q in KEYS["ru"]["questions"]:
-        mark = " <span title='эталонный ответ не однозначный'>📘</span>" \
-            if q["kind"] in ("book", "none") else ""
-        parts.append(f"<th class='num'>{q['n']}{mark}</th>")
-    en_row = "".join(f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}</th>"
-                     for q in KEYS["ru"]["questions"])
-    parts.append("<tr><td>вопрос en</td>" + en_row + "</tr>")
-    for lang in ("ru", "en"):
-        row = []
-        for q in KEYS["ru"]["questions"]:
-            lookup = q["n"] if lang == "ru" else RU_TO_EN[q["n"]]
-            if lookup is None:
-                row.append("<td class='num na'>—</td>")
-                continue
-            okc, tot = q_stat[lang][lookup]
-            rate = okc / tot if tot else 0
-            row.append(f"<td class='num' style='{heat_color(rate)}' "
-                       f"title='{okc}/{tot}'>{okc}/{tot}</td>")
-        parts.append(f"<tr><td>верных — {lang}</td>" + "".join(row) + "</tr>")
-    key_rows = {"ru": [], "en": []}
-    for q in KEYS["ru"]["questions"]:
-        en_q = (KEYS["en"]["questions"][RU_TO_EN[q["n"]] - 1]
-                if RU_TO_EN[q["n"]] else None)
-        for lang, c in (("ru", COLOR_OF.get(q["key"], "—")),
-                        ("en", COLOR_OF.get(en_q["key"], "—") if en_q else "—")):
-            cc = {"D": "#c62828", "I": "#f9a825", "S": "#2e7d32", "C": "#1565c0"}.get(c, "#999")
-            key_rows[lang].append(f"<td class='num' style='background:{cc};color:#fff'>"
-                                  f"{c if c != '—' else '—'}</td>")
-    parts.append("<tr><td>эталон ru</td>" + "".join(key_rows["ru"]) + "</tr>")
-    parts.append("<tr><td>эталон en</td>" + "".join(key_rows["en"]) + "</tr>")
+    parts.append("<h2>Проблемные вопросы (модели массово не отвечают)</h2>")
+    parts.append("<div class='muted'>включены вопросы с суммарной долей верных &lt;50% "
+                 "(ru + en вместе); «решили все» — группы, ответившие верно во всех своих "
+                 "прогонах; распределение — по всем прогонам языка</div>")
+    for q, s_ru, s_en, rate in problems or []:
+        en_n = RU_TO_EN[q["n"]]
+        head = f"Q{q['n']} (en {en_n})" if en_n else f"Q{q['n']} (en —)"
+        et = f"Эталон: ru «{q['key']}»"
+        if s_en:
+            et += f" · en «{KEYS['en']['questions'][en_n - 1]['key']}»"
+        lines_h = [f"<div class='model'><b>{head}.</b> {q['question']}",
+                   f"{et}",
+                   "Верных: "]
+        vc = []
+        if s_ru:
+            vc.append(f"ru {s_ru['ok']}/{s_ru['tot']} ({s_ru['rate'] * 100:.0f}%)")
+        if s_en:
+            vc.append(f"en {s_en['ok']}/{s_en['tot']} ({s_en['rate'] * 100:.0f}%)")
+        lines_h.append(" · ".join(vc))
+
+        def perfect_str(s):
+            if s is None:
+                return "нет прогонов"
+            return "; ".join(s["perfect"]) if s["perfect"] else "никто"
+        lines_h.append("Решили все свои прогоны: ru — " + perfect_str(s_ru)
+                       + " · en — " + perfect_str(s_en))
+
+        def dist_str(s):
+            if not s or not s["tot"]:
+                return "нет прогонов"
+            items = s["dist"].most_common()
+            out = [f"{c * 100 // s['tot']}% «{s['raw'][k]}»" for k, c in items[:4]]
+            rest = s["tot"] - sum(c for _, c in items[:4])
+            if rest:
+                out.append(f"прочее {rest * 100 // s['tot']}%")
+            return ", ".join(out)
+        if s_ru:
+            lines_h.append("Ответы ru: " + dist_str(s_ru))
+        if s_en:
+            lines_h.append("Ответы en: " + dist_str(s_en))
+        parts.append("<br>".join(lines_h) + "</div>")
     parts.append("</table>")
 
     # точность по цветам, по языкам
@@ -424,7 +477,18 @@ table.matrix td.na{color:#9aa7b3}
     out.write_text("".join(parts), encoding="utf-8")
 
 
-def build_md(groups: dict, runs: list[dict], out: Path) -> None:
+def dist_str_md(s):
+    if not s or not s["tot"]:
+        return "нет прогонов"
+    items = s["dist"].most_common()
+    out = [f"{c * 100 // s['tot']}% «{s['raw'][k]}»" for k, c in items[:4]]
+    rest = s["tot"] - sum(c for _, c in items[:4])
+    if rest:
+        out.append(f"прочее {rest * 100 // s['tot']}%")
+    return ", ".join(out)
+
+
+def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = None) -> None:
     lines = [
         "# Анкета DISC (блиц-тест): своды (ru + en)",
         "",
@@ -505,20 +569,34 @@ def build_md(groups: dict, runs: list[dict], out: Path) -> None:
         for x in r["verdict"]["per_question"]:
             q_stat[r["_lang"]][x["n"]][0] += 1 if x.get("correct") else 0
             q_stat[r["_lang"]][x["n"]][1] += 1
-    lines += ["", "## Сложность вопросов (ru и en сопоставлены)", "",
-              "| вопрос ru | " + " | ".join(str(q["n"]) for q in KEYS["ru"]["questions"]) + " |",
-              "|---|" + "---|" * len(KEYS["ru"]["questions"]),
-              "| вопрос en | " + en_head + " |"]
-    for lang in ("ru", "en"):
-        row = []
-        for q in KEYS["ru"]["questions"]:
-            lookup = q["n"] if lang == "ru" else RU_TO_EN[q["n"]]
-            if lookup is None:
-                row.append("—")
-                continue
-            okc, tot = q_stat[lang][lookup]
-            row.append(f"{okc}/{tot} ({okc / tot * 100:.0f}%)")
-        lines.append(f"| верных — {lang} | " + " | ".join(row) + " |")
+    lines += ["", "## Проблемные вопросы (модели массово не отвечают)", "",
+              "Включены вопросы с суммарной долей верных <50% (ru + en вместе)."]
+    for q, s_ru, s_en, rate in problems or []:
+        en_n = RU_TO_EN[q["n"]]
+        lines.append("")
+        head_md = f"Q{q['n']} (en {en_n})" if en_n else f"Q{q['n']} (en —)"
+        lines.append(f"**{head_md}** {q['question']}")
+        et = f"Эталон: ru «{q['key']}»"
+        if s_en:
+            et += f" · en «{KEYS['en']['questions'][en_n - 1]['key']}»"
+        lines.append(et)
+        vc = []
+        if s_ru:
+            vc.append(f"ru {s_ru['ok']}/{s_ru['tot']} ({s_ru['rate'] * 100:.0f}%)")
+        if s_en:
+            vc.append(f"en {s_en['ok']}/{s_en['tot']} ({s_en['rate'] * 100:.0f}%)")
+        lines.append("Верных: " + " · ".join(vc))
+
+        def perfect_str_md(s):
+            if s is None:
+                return "нет прогонов"
+            return "; ".join(s["perfect"]) if s["perfect"] else "никто"
+        lines.append("Решили все свои прогоны: ru — " + perfect_str_md(s_ru)
+                     + " · en — " + perfect_str_md(s_en))
+        if s_ru:
+            lines.append("Ответы ru: " + dist_str_md(s_ru))
+        if s_en:
+            lines.append("Ответы en: " + dist_str_md(s_en))
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -550,9 +628,10 @@ def main() -> int:
     agg = {g: agg_group(rs) for g, rs in groups.items()}
     FAILED_COUNTS = dict(failed)
 
+    problems = compute_problems(groups)
     REPORTS.mkdir(exist_ok=True)
-    build_md(agg, runs, REPORTS / "QUIZ.md")
-    build_html(agg, runs, REPORTS / "QUIZ.html", dict(failed))
+    build_md(agg, runs, REPORTS / "QUIZ.md", problems)
+    build_html(agg, runs, REPORTS / "QUIZ.html", dict(failed), problems)
     print(f"отчёты: reports/QUIZ.md, reports/QUIZ.html ({len(runs)} прогонов)")
 
     if args.print:

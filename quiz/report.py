@@ -30,6 +30,10 @@ KEYS = {lang: json.loads((HERE.parent / f"quiz{'' if lang == 'ru' else '-en'}"
                          .read_text(encoding="utf-8")) for lang in ("ru", "en")}
 LEVEL_ORDER = {m["folder"]: m.get("doc_levels") or [None]
                for m in json.loads((HERE / "models.json").read_text(encoding="utf-8"))["models"]}
+# сопоставление вопросов ru <-> en (проверено по текстам 2026-11-17):
+# en 1..11 = ru 1..11; ru 12 (болезненная реакция на критику) не имеет
+# en-аналога; en 12..23 = ru 13..24
+RU_TO_EN = {n: (n if n <= 11 else n - 1 if n >= 13 else None) for n in range(1, 25)}
 COLOR_OF = {"Красный": "D", "Желтый": "I", "Зеленый": "S", "Синий": "C",
             "Red": "D", "Yellow": "I", "Green": "S", "Blue": "C"}
 COLOR_TITLE = {"D": "красный (D)", "I": "жёлтый (I)", "S": "зелёный (S)", "C": "синий (C)"}
@@ -311,63 +315,80 @@ table.matrix td.na{color:#9aa7b3}
                          f"<td>{stab}</td></tr>")
         parts.append("</table></div>")
 
-    # матрицы по языкам
-    for lang, label in (("ru", "ru (24 вопроса)"), ("en", "en (23 вопроса)")):
-        gs_lang = [g for g in sorted(groups, key=sort_key) if g[1] == lang]
-        if not gs_lang:
-            continue
-        mx = matrix_rows(groups, lang)
-        parts.append(f"<h2>Матрица «{label}»: модель × уровень × вопрос</h2>"
-                     "<div class='muted'>ячейка — доля верных ответов на вопрос по прогонам "
-                     "группы, 0–100 (наведение — точные «верных/всего»); 📘 — эталонный ответ не однозначный</div>")
-        parts.append("<table class='matrix'><tr><th class='model'>модель @ уровень</th>")
-        for q in KEYS[lang]["questions"]:
-            mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
-            parts.append(f"<th class='num'>{q['n']}{mark}</th>")
-        parts.append("</tr>")
-        for g in gs_lang:
-            rates = mx[g]
-            cells = []
-            for rate in rates:
-                if rate is None:
-                    cells.append("<td class='num na'>—</td>")
-                else:
-                    okc = round(rate * groups[g]["n"])
-                    cells.append(f"<td class='num' style='{heat_color(rate)}' "
-                                 f"title='{okc} из {groups[g]['n']} прогонов'>{rate * 100:.0f}</td>")
-            parts.append(f"<tr><td class='model'>{g[0]} "
-                         f"<span class='muted'>@ {g[2]}</span></td>" + "".join(cells) + "</tr>")
-        parts.append("</table>")
+    # единая матрица: столбцы по нумерации ru, en-вопросы сопоставлены
+    gs_all = [g for g in sorted(groups, key=sort_key)]
+    mx = {lang: matrix_rows(groups, lang) for lang in ("ru", "en")}
+    parts.append("<h2>Матрица: модель × язык × уровень × вопрос</h2>"
+                 "<div class='muted'>столбцы — нумерация ru (24 вопроса); вторая строка шапки — "
+                 "номера сопоставленных en-вопросов (ru 12 не имеет en-аналога). Ячейка — доля "
+                 "верных ответов на вопрос по прогонам группы, 0–100 (наведение — точные "
+                 "«верных/всего»); 📘 — эталонный ответ не однозначный</div>")
+    parts.append("<table class='matrix'><tr><th class='model'>модель @ язык @ уровень</th>")
+    for q in KEYS["ru"]["questions"]:
+        mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
+        parts.append(f"<th class='num'>{q['n']}{mark}</th>")
+    en_head = "".join(f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}</th>"
+                      for q in KEYS["ru"]["questions"])
+    parts.append("<tr><th class='model'>№ en →</th>" + en_head + "</tr>")
+    for g in gs_all:
+        lang = g[1]
+        rates = mx[lang][g]
+        cells = []
+        for q in KEYS["ru"]["questions"]:
+            if lang == "ru":
+                rate = rates[q["n"] - 1]
+            else:
+                en_n = RU_TO_EN[q["n"]]
+                rate = rates[en_n - 1] if en_n else None
+            if rate is None:
+                cells.append("<td class='num na'>—</td>")
+            else:
+                okc = round(rate * groups[g]["n"])
+                cells.append(f"<td class='num' style='{heat_color(rate)}' "
+                             f"title='{okc} из {groups[g]['n']} прогонов'>{rate * 100:.0f}</td>")
+        parts.append(f"<tr><td class='model'>{g[0]} "
+                     f"<span class='muted'>@ {g[1]} @ {g[2]}</span></td>" + "".join(cells) + "</tr>")
+    parts.append("</table>")
 
-    # сложность вопросов по языкам
+    # сложность вопросов: ru и en в одной таблице (столбцы по нумерации ru)
+    q_stat = {lang: defaultdict(lambda: [0, 0]) for lang in ("ru", "en")}
+    for r in runs:
+        for x in r["verdict"]["per_question"]:
+            q_stat[r["_lang"]][x["n"]][0] += 1 if x.get("correct") else 0
+            q_stat[r["_lang"]][x["n"]][1] += 1
+    parts.append("<h2>Сложность вопросов — ru и en (сопоставлены)</h2><table><tr>"
+                 "<th>вопрос ru</th>")
+    for q in KEYS["ru"]["questions"]:
+        mark = " <span title='эталонный ответ не однозначный'>📘</span>" \
+            if q["kind"] in ("book", "none") else ""
+        parts.append(f"<th class='num'>{q['n']}{mark}</th>")
+    en_row = "".join(f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}</th>"
+                     for q in KEYS["ru"]["questions"])
+    parts.append("<tr><td>вопрос en</td>" + en_row + "</tr>")
     for lang in ("ru", "en"):
-        rs_lang = [r for r in runs if r["_lang"] == lang]
-        if not rs_lang:
-            continue
-        q_correct = defaultdict(lambda: [0, 0])
-        for r in rs_lang:
-            for x in r["verdict"]["per_question"]:
-                q_correct[x["n"]][0] += 1 if x.get("correct") else 0
-                q_correct[x["n"]][1] += 1
-        parts.append(f"<h2>Сложность вопросов — {lang} (все прогоны языка)</h2><table><tr>"
-                     "<th>вопрос</th>")
-        for q in KEYS[lang]["questions"]:
-            mark = " <span title='эталонный ответ не однозначный'>📘</span>" \
-                if q["kind"] in ("book", "none") else ""
-            parts.append(f"<th class='num'>{q['n']}{mark}</th>")
-        parts.append("<th>эталон</th></tr>")
-        correct_row, color_row = [], []
-        for q in KEYS[lang]["questions"]:
-            okc, tot = q_correct[q["n"]]
+        row = []
+        for q in KEYS["ru"]["questions"]:
+            lookup = q["n"] if lang == "ru" else RU_TO_EN[q["n"]]
+            if lookup is None:
+                row.append("<td class='num na'>—</td>")
+                continue
+            okc, tot = q_stat[lang][lookup]
             rate = okc / tot if tot else 0
-            correct_row.append(f"<td class='num' style='{heat_color(rate)}' "
-                               f"title='{okc}/{tot}'>{okc}/{tot}</td>")
-            c = COLOR_OF.get(q["key"], "—" if q["kind"] != "color" else "?")
+            row.append(f"<td class='num' style='{heat_color(rate)}' "
+                       f"title='{okc}/{tot}'>{okc}/{tot}</td>")
+        parts.append(f"<tr><td>верных — {lang}</td>" + "".join(row) + "</tr>")
+    key_rows = {"ru": [], "en": []}
+    for q in KEYS["ru"]["questions"]:
+        en_q = (KEYS["en"]["questions"][RU_TO_EN[q["n"]] - 1]
+                if RU_TO_EN[q["n"]] else None)
+        for lang, c in (("ru", COLOR_OF.get(q["key"], "—")),
+                        ("en", COLOR_OF.get(en_q["key"], "—") if en_q else "—")):
             cc = {"D": "#c62828", "I": "#f9a825", "S": "#2e7d32", "C": "#1565c0"}.get(c, "#999")
-            color_row.append(f"<td class='num' style='background:{cc};color:#fff'>{c if c != '—' else '—'}</td>")
-        parts.append("<tr><td>верных</td>" + "".join(correct_row) + "<td></td></tr>")
-        parts.append("<tr><td>эталон</td>" + "".join(color_row) + "<td></td></tr>")
-        parts.append("</table>")
+            key_rows[lang].append(f"<td class='num' style='background:{cc};color:#fff'>"
+                                  f"{c if c != '—' else '—'}</td>")
+    parts.append("<tr><td>эталон ru</td>" + "".join(key_rows["ru"]) + "</tr>")
+    parts.append("<tr><td>эталон en</td>" + "".join(key_rows["en"]) + "</tr>")
+    parts.append("</table>")
 
     # точность по цветам, по языкам
     for lang in ("ru", "en"):
@@ -448,6 +469,51 @@ def build_md(groups: dict, runs: list[dict], out: Path) -> None:
         lines.append(f"| {folder} | {rp} | {r_pct} | {ep} | {e_pct} | {d} |")
     if deltas:
         lines += ["", f"Средняя Δ: **{sum(deltas) / len(deltas):+.1f} п.п.**"]
+
+    # единая матрица + сложность (столбцы по нумерации ru, en сопоставлен)
+    mx = {lang: matrix_rows(groups, lang) for lang in ("ru", "en")}
+    en_head = " | ".join(str(RU_TO_EN[q["n"]] or "—") for q in KEYS["ru"]["questions"])
+    lines += ["", "## Матрица: модель × язык × уровень × вопрос", "",
+              "Столбцы — нумерация ru; строка «№ en» — сопоставленные en-вопросы "
+              "(ru 12 не имеет en-аналога). Ячейка — доля верных, 0–100.",
+              "",
+              "| модель @ язык @ уровень | " + " | ".join(
+                  f"{q['n']}{'' if q['kind'] == 'color' else '📘'}"
+                  for q in KEYS["ru"]["questions"]) + " |",
+              "|---|" + "---|" * len(KEYS["ru"]["questions"]),
+              "| **№ en →** | " + en_head + " |"]
+    for g in sorted(groups, key=sort_key):
+        lang = g[1]
+        rates = mx[lang][g]
+        cells = []
+        for q in KEYS["ru"]["questions"]:
+            if lang == "ru":
+                rate = rates[q["n"] - 1]
+            else:
+                en = RU_TO_EN[q["n"]]
+                rate = rates[en - 1] if en else None
+            cells.append(f"{rate * 100:.0f}" if rate is not None else "—")
+        lines.append(f"| **{g[0]}** @ {lang} @ {g[2]} | " + " | ".join(cells) + " |")
+
+    q_stat = {lang: defaultdict(lambda: [0, 0]) for lang in ("ru", "en")}
+    for r in runs:
+        for x in r["verdict"]["per_question"]:
+            q_stat[r["_lang"]][x["n"]][0] += 1 if x.get("correct") else 0
+            q_stat[r["_lang"]][x["n"]][1] += 1
+    lines += ["", "## Сложность вопросов (ru и en сопоставлены)", "",
+              "| вопрос ru | " + " | ".join(str(q["n"]) for q in KEYS["ru"]["questions"]) + " |",
+              "|---|" + "---|" * len(KEYS["ru"]["questions"]),
+              "| вопрос en | " + en_head + " |"]
+    for lang in ("ru", "en"):
+        row = []
+        for q in KEYS["ru"]["questions"]:
+            lookup = q["n"] if lang == "ru" else RU_TO_EN[q["n"]]
+            if lookup is None:
+                row.append("—")
+                continue
+            okc, tot = q_stat[lang][lookup]
+            row.append(f"{okc}/{tot} ({okc / tot * 100:.0f}%)")
+        lines.append(f"| верных — {lang} | " + " | ".join(row) + " |")
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 

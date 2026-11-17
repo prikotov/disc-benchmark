@@ -1,0 +1,244 @@
+{
+  "model": "medgemma:27b-ctx100k",
+  "folder": "medgemma-27b-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "off",
+    "scale": [],
+    "sent": false,
+    "note": "think=false"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:11:25.147211+00:00",
+  "duration_s": 6.7,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 519,
+    "eval_count": 516,
+    "eval_duration": 6600171000,
+    "prompt_eval_duration": 61240000,
+    "load_duration": 404952,
+    "total_duration": 6664869984
+  },
+  "ps_snapshot": [
+    "medgemma:27b-ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"All profiles can agree on a social level, but generally Green and Yellow are most socially oriented.\",\n  \"2\": \"There isn't one single 'best' combination, as different combinations work well for different tasks. However, a balanced team often includes elements of all styles. D (Red) + S (Green) + C (Blue) + I (Yellow) can be effective.\",\n  \"3\": \"Red (Dominance)\",\n  \"4\": \"Blue (Conscientiousness) - precision, detail, accuracy are key.\",\n  \"5\": \"Yellow (Influence)\",\n  \"6\": \"Blue (Conscientiousness) - detail oriented, organized.\",\n  \"7\": \"Blue (Conscientiousness) - analytical, data-driven.\",\n  \"8\": \"Blue (Conscientiousness) - structured, reliable.\",\n  \"9\": \"Red (Dominance) - results-oriented, may bend rules.\",\n  \"10\": \"Yellow (Influence) - enthusiastic, open to new experiences.\",\n  \"11\": \"Yellow (Influence) - sensitive to criticism, values social harmony.\",\n  \"12\": \"Yellow (Influence) - sociable, adaptable, may lack formal organization but knows people/resources.\",\n  \"13\": \"Red (Dominance)\",\n  \"14\": \"Yellow (Influence) - expressive, image-conscious.\",\n  \"15\": \"Yellow (Influence) - enjoys novelty, stimulation, and challenges.\",\n  \"16\": \"Red (Dominance) - direct, results-oriented, can be critical.\",\n  \"17\": \"Again, depends on the goal, but a balanced team including all styles is often best. A common answer is Red, Yellow, Green, Blue (D, I, S, C).\",\n  \"18\": \"Yellow (Influence)\",\n  \"19\": \"Yellow (Influence) - enthusiastic, open-minded.\",\n  \"20\": \"Red (Dominance) - wants control and results, may micromanage despite delegation.\",\n  \"21\": \"Green (Steadiness) - patient, calm, empathetic.\",\n  \"22\": \"Blue (Conscientiousness) - detail-oriented, follows procedures.\",\n  \"23\": \"No single answer. This is subjective and depends on the individual's social circles and environment.\"\n}\n```",
+  "thinking_raw": null,
+  "parsed": {
+    "answers": {
+      "1": "All profiles can agree on a social level, but generally Green and Yellow are most socially oriented.",
+      "2": "There isn't one single 'best' combination, as different combinations work well for different tasks. However, a balanced team often includes elements of all styles. D (Red) + S (Green) + C (Blue) + I (Yellow) can be effective.",
+      "3": "Red (Dominance)",
+      "4": "Blue (Conscientiousness) - precision, detail, accuracy are key.",
+      "5": "Yellow (Influence)",
+      "6": "Blue (Conscientiousness) - detail oriented, organized.",
+      "7": "Blue (Conscientiousness) - analytical, data-driven.",
+      "8": "Blue (Conscientiousness) - structured, reliable.",
+      "9": "Red (Dominance) - results-oriented, may bend rules.",
+      "10": "Yellow (Influence) - enthusiastic, open to new experiences.",
+      "11": "Yellow (Influence) - sensitive to criticism, values social harmony.",
+      "12": "Yellow (Influence) - sociable, adaptable, may lack formal organization but knows people/resources.",
+      "13": "Red (Dominance)",
+      "14": "Yellow (Influence) - expressive, image-conscious.",
+      "15": "Yellow (Influence) - enjoys novelty, stimulation, and challenges.",
+      "16": "Red (Dominance) - direct, results-oriented, can be critical.",
+      "17": "Again, depends on the goal, but a balanced team including all styles is often best. A common answer is Red, Yellow, Green, Blue (D, I, S, C).",
+      "18": "Yellow (Influence)",
+      "19": "Yellow (Influence) - enthusiastic, open-minded.",
+      "20": "Red (Dominance) - wants control and results, may micromanage despite delegation.",
+      "21": "Green (Steadiness) - patient, calm, empathetic.",
+      "22": "Blue (Conscientiousness) - detail-oriented, follows procedures.",
+      "23": "No single answer. This is subjective and depends on the individual's social circles and environment."
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "flag": "all-option",
+        "correct": false,
+        "n": 1,
+        "answer": "All profiles can agree on a social level, but generally Green and Yellow are most socially oriented."
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 2,
+        "answer": "There isn't one single 'best' combination, as different combinations work well for different tasks. However, a balanced team often includes elements of all styles. D (Red) + S (Green) + C (Blue) + I (Yellow) can be effective."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 3,
+        "answer": "Red (Dominance)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue (Conscientiousness) - precision, detail, accuracy are key."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow (Influence)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue (Conscientiousness) - detail oriented, organized."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue (Conscientiousness) - analytical, data-driven."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 8,
+        "answer": "Blue (Conscientiousness) - structured, reliable."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "Red (Dominance) - results-oriented, may bend rules."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow (Influence) - enthusiastic, open to new experiences."
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "Yellow (Influence) - sensitive to criticism, values social harmony."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow (Influence) - sociable, adaptable, may lack formal organization but knows people/resources."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 13,
+        "answer": "Red (Dominance)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow (Influence) - expressive, image-conscious."
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 15,
+        "answer": "Yellow (Influence) - enjoys novelty, stimulation, and challenges."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 16,
+        "answer": "Red (Dominance) - direct, results-oriented, can be critical."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 17,
+        "answer": "Again, depends on the goal, but a balanced team including all styles is often best. A common answer is Red, Yellow, Green, Blue (D, I, S, C)."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow (Influence)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow (Influence) - enthusiastic, open-minded."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 20,
+        "answer": "Red (Dominance) - wants control and results, may micromanage despite delegation."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "Green (Steadiness) - patient, calm, empathetic."
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue (Conscientiousness) - detail-oriented, follows procedures."
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer. This is subjective and depends on the individual's social circles and environment."
+      }
+    ]
+  }
+}

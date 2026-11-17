@@ -1,0 +1,261 @@
+{
+  "model": "gemma4:e2b-ctx100k",
+  "folder": "gemma4-e2b-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:06:53.479603+00:00",
+  "duration_s": 2.0,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 526,
+    "eval_count": 1181,
+    "eval_duration": 1981174000,
+    "prompt_eval_duration": 16329999,
+    "load_duration": 492934,
+    "total_duration": 2003445549
+  },
+  "ps_snapshot": [
+    "gemma4:e2b-ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"Yellow/Green\",\n  \"2\": \"Red/Blue\",\n  \"3\": \"Red\",\n  \"4\": \"Blue\",\n  \"5\": \"Yellow\",\n  \"6\": \"Blue\",\n  \"7\": \"Blue\",\n  \"8\": \"Green\",\n  \"9\": \"Red\",\n  \"10\": \"Yellow\",\n  \"11\": \"Green\",\n  \"12\": \"Red/Blue\",\n  \"13\": \"Red\",\n  \"14\": \"Yellow\",\n  \"15\": \"Red\",\n  \"16\": \"Red\",\n  \"17\": \"Red/Blue/Green\",\n  \"18\": \"Yellow\",\n  \"19\": \"Yellow\",\n  \"20\": \"Red\",\n  \"21\": \"Green\",\n  \"22\": \"Blue\",\n  \"23\": \"Yellow\"\n}\n```",
+  "thinking_raw": "Thinking Process:\n\n1.  **Understand the Goal:** The request is a quiz on the DISC model (Red, Yellow, Green, Blue). I need to answer 23 questions by assigning the best fitting profile(s) to each question. The output *must* be a strict JSON object.\n\n2.  **Review the DISC Model:**\n    *   **D (Dominance/Red):** Direct, decisive, results-oriented, competitive, takes charge.\n    *   **I (Influence/Yellow):** Sociable, enthusiastic, optimistic, persuasive, expressive, people-oriented.\n    *   **S (Steadiness/Green):** Supportive, calm, cooperative, patient, focused on relationships, avoids conflict.\n    *   **C (Conscientiousness/Blue):** Analytical, precise, cautious, detail-oriented, quality-focused, logic-driven.\n\n3.  **Analyze Each Question and Determine the Best Fit:**\n\n    *   *Q1. Which combination of profiles would naturally agree on a social level?* (Requires people-focused, relationship-oriented profiles)\n    *   *Q2. Which combination of profiles naturally work well together?* (Requires complementary strengths)\n    *   *Q3. Which profile will always prefer to be the head of a project?* (Requires leadership, control, and decision-making)\n    *   *Q4. Which profile would make the best surgeon?* (Requires precision, caution, detail orientation)\n    *   *Q5. Which person would enjoy giving a speech the most?* (Requires expressiveness, social interaction)\n    *   *Q6. Which person would know exactly where he saved that email from his boss?* (Requires focus, attention to detail, following systems)\n    *   *Q7. Which person would want to do more tests or get more information before making a decision?* (Requires caution, analysis)\n    *   *Q8. Which person can you always rely on to arrive on time?* (Requires reliability, structure, organization)\n    *   *Q9. Which person doesn’t follow the rulebook to get a job done?* (Requires disregard for rules/structure, focus on action)\n    *   *Q10. Which person would be the most willing to try something new to get the job done?* (Requires risk-taking, enthusiasm)\n    *   *Q11. Which person will remember personal criticism the longest?* (Requires introspection, focus on self/relationship impact)\n    *   *Q12. Which person is the least organized but knows exactly where to go to get what he needs?* (Contradictory: lack of structure but knowing the system. Often a flexible/action-oriented profile that prioritizes the end goal.)\n    *   *Q13. Which profile always wants to make decisions?* (Requires speed, decisiveness)\n    *   *Q14. Which profile wears the latest fashions?* (Requires external focus, enthusiasm, social awareness)\n    *   *Q15. Which profile would enjoy new challenges the most?* (Requires excitement, drive)\n    *   *Q16. Which profile would be the quickest to judge other people?* (Requires speed, immediate assessment, dominance/directness)\n    *   *Q17. Which combination of profiles would form the best team?* (Requires balance: action, relationship, detail, vision)\n    *   *Q18. Which profile will probably talk the most?* (Requires extroversion, social drive)\n    *   *Q19. Which profile would assimilate new ideas the quickest?* (Requires openness, focus on new concepts)\n    *   *Q20. Which profile would delegate a task but then still do it himself?* (Requires competence in execution and control.)\n    *   *Q21. Which profile is the best listener?* (Requires patience, empathy, focus on feelings)\n    *   *Q22. Which profile wouldn’t miss the last step of the instructions?* (Requires attention to detail, adherence to process)\n    *   *Q23. Which profile is most common in your social circle?* (Subjective, but often I or S/Y mix.)\n\n4.  **Final Review and Formatting (JSON Strictness):** Ensure the answers map correctly and the output is *only* the JSON. (Self-Correction: Need to ensure the answers reflect the core DISC traits.)",
+  "parsed": {
+    "answers": {
+      "1": "Yellow/Green",
+      "2": "Red/Blue",
+      "3": "Red",
+      "4": "Blue",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Green",
+      "9": "Red",
+      "10": "Yellow",
+      "11": "Green",
+      "12": "Red/Blue",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "Red/Blue/Green",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red",
+      "21": "Green",
+      "22": "Blue",
+      "23": "Yellow"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 16,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 1,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow/Green"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red/Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Green"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Red/Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Red/Blue/Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 20,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 23,
+        "answer": "Yellow"
+      }
+    ]
+  }
+}

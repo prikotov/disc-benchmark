@@ -1,0 +1,252 @@
+{
+  "model": "gemma4:e2b-ctx100k",
+  "folder": "gemma4-e2b-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:07:00.147649+00:00",
+  "duration_s": 2.6,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 526,
+    "eval_count": 1404,
+    "eval_duration": 2544236000,
+    "prompt_eval_duration": 4962000,
+    "load_duration": 459454,
+    "total_duration": 2555413372
+  },
+  "ps_snapshot": [
+    "gemma4:e2b-ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n\"1\": \"Yellow and Green\",\n\"2\": \"All four (Red, Yellow, Green, Blue)\",\n\"3\": \"Red\",\n\"4\": \"Blue\",\n\"5\": \"Yellow\",\n\"6\": \"Blue\",\n\"7\": \"Blue\",\n\"8\": \"Green\",\n\"9\": \"Red\",\n\"10\": \"Yellow\",\n\"11\": \"Green\",\n\"12\": \"Red\",\n\"13\": \"Red\",\n\"14\": \"Yellow\",\n\"15\": \"Red\",\n\"16\": \"Red\",\n\"17\": \"Red, Yellow, Green, Blue\",\n\"18\": \"Yellow\",\n\"19\": \"Yellow\",\n\"20\": \"Red\",\n\"21\": \"Green\",\n\"22\": \"Blue\",\n\"23\": \"Yellow\"\n}\n```",
+  "thinking_raw": "Thinking Process:\n\n1.  **Analyze the Request:** The user wants me to answer a 23-question quiz based on the DISC behavioral model (Red, Yellow, Green, Blue). The answers must be strictly in a specific JSON format.\n\n2.  **Review DISC Model Basics:**\n    *   **D (Dominance/Red):** Direct, assertive, results-oriented, decisive, competitive, fast-paced.\n    *   **I (Influence/Yellow):** Sociable, optimistic, enthusiastic, persuasive, expressive, people-oriented.\n    *   **S (Steadiness/Green):** Cooperative, patient, supportive, good listener, focused on relationships, stable.\n    *   **C (Conscientiousness/Blue):** Analytical, precise, detail-oriented, quality-focused, cautious, logical.\n\n3.  **Analyze Each Question and Determine the Best Fit(s):**\n\n    *   *Question 1: Which combination of profiles would naturally agree on a social level?* (Needs people-focused and relationship-focused.) -> I and S.\n    *   *Question 2: Which combination of profiles naturally work well together?* (Needs different strengths.) -> D, I, C, S combination is usually necessary, but often D/C or I/S are good pairings. (I will look for a balanced pairing.)\n    *   *Question 3: Which profile will always prefer to be the head of a project?* (Needs direction and assertiveness.) -> D.\n    *   *Question 4: Which profile would make the best surgeon?* (Needs precision, caution, detail.) -> C.\n    *   *Question 5: Which person would enjoy giving a speech the most?* (Needs charisma, enthusiasm, social appeal.) -> I.\n    *   *Question 6: Which person would know exactly where he saved that email from his boss?* (Needs attention to detail, structure, or sometimes just fast thinking/dominance.) -> C or D (if quick access/systematic). C is stronger for accuracy.\n    *   *Question 7: Which person would want to do more tests or get more information before making a decision?* (Needs caution, analysis.) -> C.\n    *   *Question 8: Which person can you always rely on to arrive on time?* (Needs reliability, structure, patience.) -> S.\n    *   *Question 9: Which person doesn’t follow the rulebook to get a job done?* (Needs disregard for rules, speed, action.) -> D.\n    *   *Question 10: Which person would be the most willing to try something new to get the job done?* (Needs enthusiasm, risk-taking.) -> I.\n    *   *Question 11: Which person will remember personal criticism the longest?* (Needs focus on personal impact/relationships.) -> S or I. (S remembers relationship dynamics; I remembers social feedback.) S is often good for absorbing criticism constructively.\n    *   *Question 12: Which person is the least organized but knows exactly where to go to get what he needs?* (Needs efficiency, action over structure.) -> D or I. (D is more action-oriented; I might be less organized but good at networking to find things). D fits the 'knows exactly where to go' in an efficient, results-driven way.\n    *   *Question 13: Which profile always wants to make decisions?* (Needs speed, certainty.) -> D.\n    *   *Question 14: Which profile wears the latest fashions?* (Needs appearance, social focus.) -> I.\n    *   *Question 15: Which profile would enjoy new challenges the most?* (Needs excitement, risk.) -> D or I. (D for challenge/control; I for excitement/social challenge). D is often the primary driver of seeking out new dominant tasks.\n    *   *Question 16: Which profile would be the quickest to judge other people?* (Needs speed, directness, low patience.) -> D.\n    *   *Question 17: Which combination of profiles would form the best team?* (Needs balance: Vision/Action/Detail/Support.) -> D, C, S, I. (The complete balance.)\n    *   *Question 18: Which profile will probably talk the most?* (Needs communication, enthusiasm.) -> I.\n    *   *Question 19: Which profile would assimilate new ideas the quickest?* (Needs openness, enthusiasm, acceptance.) -> I.\n    *   *Question 20: Which profile would delegate a task but then still do it himself?* (Needs control and perfection.) -> D or C. (D is often the one who maintains control; C is the one who ensures quality.) D fits the 'do it himself' aspect better.\n    *   *Question 21: Which profile is the best listener?* (Needs patience, empathy, focus on others.) -> S.\n    *   *Question 22: Which profile wouldn’t miss the last step of the instructions?* (Needs attention to detail, thoroughness.) -> C.\n    *   *Question 23: Which profile is most common in your social circle?* (Subjective, but often I or S in general pop culture. I'll default to the most universally observed social type.)\n\n4.  **Construct the JSON Output:** Map the determined answers to the required format. (Self-Correction: Ensure the format is exactly `{\"1\": \"...\", \"2\": \"...\"}`).",
+  "parsed": {
+    "answers": {
+      "1": "Yellow and Green",
+      "2": "All four (Red, Yellow, Green, Blue)",
+      "3": "Red",
+      "4": "Blue",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Green",
+      "9": "Red",
+      "10": "Yellow",
+      "11": "Green",
+      "12": "Red",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "Red, Yellow, Green, Blue",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red",
+      "21": "Green",
+      "22": "Blue",
+      "23": "Yellow"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 17,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow and Green"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "all-option",
+        "correct": false,
+        "n": 2,
+        "answer": "All four (Red, Yellow, Green, Blue)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Green"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "Red, Yellow, Green, Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 20,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 23,
+        "answer": "Yellow"
+      }
+    ]
+  }
+}

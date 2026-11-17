@@ -1,0 +1,256 @@
+{
+  "model": "muse-glimmer:ctx100k",
+  "folder": "muse-glimmer-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "low",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "high",
+      "max"
+    ],
+    "sent": "low",
+    "note": "think=low"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T01:49:14.089172+00:00",
+  "duration_s": 5.3,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 524,
+    "eval_count": 440,
+    "eval_duration": 5291307000,
+    "prompt_eval_duration": 31495000,
+    "load_duration": 471953,
+    "total_duration": 5329289237
+  },
+  "ps_snapshot": [
+    "muse-glimmer:ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "{\"1\": \"Yellow+Green\", \"2\": \"Red+Blue\", \"3\": \"Red\", \"4\": \"Blue\", \"5\": \"Yellow\", \"6\": \"Blue\", \"7\": \"Blue\", \"8\": \"Blue\", \"9\": \"Red\", \"10\": \"Red\", \"11\": \"Red\", \"12\": \"Yellow\", \"13\": \"Red\", \"14\": \"Yellow\", \"15\": \"Red\", \"16\": \"Red\", \"17\": \"Red+Yellow+Green+Blue\", \"18\": \"Yellow\", \"19\": \"Yellow\", \"20\": \"Red\", \"21\": \"Green\", \"22\": \"Blue\", \"23\": \"No single answer\"}",
+  "thinking_raw": "A quick little quiz... Answer strictly in JSON — an object mapping question numbers to your answers, no text outside the JSON\n\nWe need provide answers. DISC model mapping: Red = Dominance, Yellow = Influence, Green = Steadiness, Blue = Conscientiousness.\n\nWe need give plausible answers.\n\n1. Which combination... agree on social level? Yellow + Green? Yellow social, Green agreeable. Maybe Yellow+Green.\n\n2. Which combination naturally work well together? Red+Blue? Or all? Could say Red+Yellow? Hmm.\n\nWe just need plausible. Probably acceptable.\n\nProvide JSON with colors.\n\nLet's assume mapping: Red=Dominance, Yellow=Influence, Green=Steadiness, Blue=Conscientiousness.\n\nAnswers:\n1 Yellow+Green\n2 Red+Blue? maybe Red+Green?\n3 Red\n4 Blue\n5 Yellow\n6 Blue\n7 Blue or Green?\n8 Blue\n9 Red\n10 Red\n11 Red? Or Blue? Remember criticism longest maybe Blue? Let's pick Red.\n12 Yellow\n13 Red\n14 Yellow\n15 Red? or Yellow? New challenges most: Red\n16 Red\n17 Red+Yellow+Green+Blue (all)\n18 Yellow\n19 Yellow\n20 Red\n21 Green\n22 Blue\n23 No single answer? Or maybe say no single answer. Could say Green.\n\nProvide JSON.\n\n",
+  "parsed": {
+    "answers": {
+      "1": "Yellow+Green",
+      "2": "Red+Blue",
+      "3": "Red",
+      "4": "Blue",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Blue",
+      "9": "Red",
+      "10": "Red",
+      "11": "Red",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "Red+Yellow+Green+Blue",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red",
+      "21": "Green",
+      "22": "Blue",
+      "23": "No single answer"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow+Green"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red+Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "Red+Yellow+Green+Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 20,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer"
+      }
+    ]
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "model": "gemma4:26b-pi-100k",
+  "folder": "gemma4-26b-pi-100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:02:19.763762+00:00",
+  "duration_s": 17.7,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 526,
+    "eval_count": 5720,
+    "eval_duration": 17651144000,
+    "prompt_eval_duration": 37150000,
+    "load_duration": 992968,
+    "total_duration": 17738670350
+  },
+  "ps_snapshot": [
+    "gemma4:26b-pi-100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"Yellow and Green\",\n  \"2\": \"No single answer\",\n  \"3\": \"Red\",\n  \"4\": \"Blue\",\n  \"5\": \"Yellow\",\n  \"6\": \"Blue\",\n  \"7\": \"Blue\",\n  \"8\": \"Blue\",\n  \"9\": \"Red\",\n  \"10\": \"Red\",\n  \"11\": \"Green\",\n  \"12\": \"Yellow\",\n  \"13\": \"Red\",\n  \"14\": \"Yellow\",\n  \"15\": \"Red\",\n  \"16\": \"Red\",\n  \"17\": \"Red, Yellow, Green and Blue\",\n  \"18\": \"Yellow\",\n  \"19\": \"Yellow\",\n  \"20\": \"Red and Blue\",\n  \"21\": \"Green\",\n  \"22\": \"Blue\",\n  \"23\": \"No single answer\"\n}\n```",
+  "thinking_raw": "*   Topic: DISC model (Red, Yellow, Green, Blue).\n    *   Red (Dominance): Direct, results-oriented, assertive, decisive, competitive.\n    *   Yellow (Influence): Outgoing, enthusiastic, social, optimistic, persuasive.\n    *   Green (Steadiness): Patient, empathetic, loyal, supportive, calm, listener.\n    *   Blue (Compliance): Analytical, detail-oriented, precise, cautious, organized.\n    *   Task: Answer 23 questions based on these profiles.\n    *   Output Format: Strictly JSON object mapping question numbers to answers.\n\n    *   1. *Which combination of profiles would naturally agree on a social level?*\n        *   Yellow (social/people-oriented) and Green (supportive/people-oriented) tend to agree on social levels. Red and Blue are task/accuracy oriented.\n        *   Answer: Yellow and Green.\n\n    *   2. *Which combination of profiles naturally work well together?*\n        *   This is subjective, but often Red and Blue (task-driven) or Yellow and Green (people-driven) are cited. However, in a balanced team context, many combinations work. But usually, Red/Blue (task) and Yellow/Green (people) are the pairings of \"opposites\" or \"complements\". Let's look for a standard pairing. Actually, Red and Yellow are both high-energy, or Green and Blue are both low-energy/stable. Most DISC materials suggest a mix is best. If asking for a natural \"fit\", Yellow/Green is common.\n        *   Let's rethink: Red/Blue focus on tasks, Yellow/Green focus on people. A \"good\" combination for productivity is often seen as Red/Blue or Yellow/Green. However, \"working well together\" in a balanced team sense implies diversity. But if asking for a *natural* synergy, maybe Yellow and Green.\n        *   Wait, looking at common DISC interpretations: Red/Blue (Task-oriented) vs Yellow/Green (People-oriented).\n        *   Let's look at Q1 again. Q1 is \"social level\". Q2 is \"work well together\".\n        *   Maybe Yellow/Red (high energy/action) or Green/Blue (low energy/process)?\n        *   Actually, many sources say Red and Yellow work well (extroverted), or Green and Blue (introverted). Let's go with Yellow and Green for social/people, or Red and Blue for task.\n        *   Let's try: Yellow and Green.\n\n    *   3. *Which profile will always prefer to be the head of a project?*\n        *   Red (Dominance) is the leader type.\n        *   Answer: Red.\n\n    *   4. *Which profile would make the best surgeon?*\n        *   Surgeons need precision, focus, and adherence to protocol. That's Blue (Compliance). Red might be too impulsive, Yellow too social, Green too hesitant.\n        *   Answer: Blue.\n\n    *   5. *Which person would enjoy giving a speech the most?*\n        *   Yellow (Influence) is the most expressive and loves the spotlight.\n        *   Answer: Yellow.\n\n    *   6. *Which person would know exactly where he saved that email from his boss?*\n        *   Blue (Compliance) is the organizer/detail-oriented one.\n        *   Answer: Blue.\n\n    *   7. *Which person would want to do more tests or get more information before making a decision?*\n        *   Blue (Compliance) seeks data and accuracy.\n        *   Answer: Blue.\n\n    *   8. *Which person can you always rely on to arrive on time?*\n        *   Blue (discipline/rules) or Red (efficiency). Usually Blue is associated with punctuality and following rules.\n        *   Answer: Blue.\n\n    *   9. *Which person doesn’t follow the rulebook to get a job done?*\n        *   Red (results-driven) or Yellow (spontaneous). Red is more likely to break rules to achieve a goal.\n        *   Answer: Red.\n\n    *   10. *Which person would be the most willing to try something new to get the job done?*\n        *   Red (challenge/results) or Yellow (novelty/fun). Red is driven by the outcome, Yellow by the experience. Usually, Red is the \"risk-taker\" in business contexts.\n        *   Answer: Red.\n\n    *   11. *Which person will remember personal criticism the longest?*\n        *   Green (Steadiness) is highly sensitive to interpersonal harmony and can take things personally.\n        *   Answer: Green.\n\n    *   12. *Which person is the least organized but knows exactly where to go to get what he needs?*\n        *   Yellow (influence/social) tends to be less organized/more chaotic but has high social navigation skills.\n        *   Answer: Yellow.\n\n    *   13. *Which profile always wants to make decisions?*\n        *   Red (Dominance) is decisive and wants control.\n        *   Answer: Red.\n\n    *   14. *Which profile wears the latest fashions?*\n        *   Yellow (Influence) loves to be noticed and trends.\n        *   Answer: Yellow.\n\n    *   15. *Which profile would enjoy new challenges the most?*\n        *   Red (Dominance) thrives on competition and overcoming obstacles.\n        *   Answer: Red.\n\n    *   16. *Which profile would be the quickest to judge other people?*\n        *   Red (Dominance) is direct and can be blunt/judgmental of inefficiency.\n        *   Answer: Red.\n\n    *   17. *Which combination of profiles would form the best team?*\n        *   The \"best\" team is usually all four colors (Red, Yellow, Green, Blue).\n        *   Answer: Red, Yellow, Green and Blue.\n\n    *   18. *Which profile will probably talk the most?*\n        *   Yellow (Influence).\n        *   Answer: Yellow.\n\n    *   19. *Which profile would assimilate new ideas the quickest?*\n        *   Yellow (Influence) is usually open to novelty and enthusiasm.\n        *   Answer: Yellow.\n\n    *   20. *Which profile would delegate a task but then still do it himself?*\n        *   This sounds like a mix of Red (wants it done) and Blue (wants it done *right*). Red delegates to move fast, Blue micromanages to ensure accuracy.\n        *   Answer: Red and Blue.\n\n    *   21. *Which profile is the best listener?*\n        *   Green (Steadiness) is characterized by being patient and empathetic.\n        *   Answer: Green.\n\n    *   22. *Which profile wouldn’t miss the last step of the instructions?*\n        *   Blue (Compliance).\n        *   Answer: Blue.\n\n    *   23. *Which profile is most common in your social circle?*\n        *   This is subjective/personal. The prompt asks \"how well have *you* learned...\". Since I am an AI, I don't have a social circle. However, in a general context of \"personality questions\", this is often a subjective question where there is \"no single answer\".\n        *   Answer: No single answer.\n\n    1. Yellow and Green (Socially oriented)\n    2. Red and Blue? Or Yellow and Green? Or a mix? Let's reconsider. Red/Blue focus on tasks. Yellow/Green focus on people. Often, Red/Blue/Yellow/Green is the answer for \"best team\". For \"working well together\", Red and Yellow (Extroverts) or Green and Blue (Introverts) are often paired. Let's look at the prompt again. \"If the answer is a combination... if there is no single answer, say so.\"\n    Actually, \"Which combination of profiles naturally work well together?\" is very vague. Red/Blue are task-oriented, Yellow/Green are people-oriented. Red/Blue work well on logic. Yellow/Green work well on social. I will provide \"Red and Blue\" or \"Yellow and Green\" or \"No single answer\". Actually, Red and Blue are often seen as the \"functional\" pair for tasks. Let's go with \"No single answer\" or a combination. Let's try \"Red, Yellow, Green and Blue\" for the best team, but for \"work well together\", it's hard to say. Let's try \"Yellow and Green\" for social, and maybe Red and Blue for work? Let's go with \"No single answer\" for Q2 to be safe, or \"Red and Blue\" (task) or \"Yellow and Green\" (people). Wait, looking at common quiz patterns: Red and Blue (drivers/thinkers) vs Yellow and Green (expressers/relators). I'll say \"No single answer\".\n\n    *Self-Correction on Q2:* In many DISC training modules, they say Red and Blue work well on tasks, while Yellow and Green work well on people. But the question is \"naturally work well together\". Let's provide \"No single answer\" as it's highly dependent on the context of the work.\n\n    *Refining Q1:* \"Which combination... would naturally agree on a social level?\" -> Yellow and Green.\n    *Refining Q2:* \"Which combination... naturally work well together?\" -> No single answer.\n    *Refining Q17:* \"Which combination... would form the best team?\" -> Red, Yellow, Green and Blue.\n\n    *Let's re-examine Q2:* Is there a specific pairing? Red/Yellow are both \"Direct/Active\". Green/Blue are both \"Indirect/Passive\". Often, people of similar energies work well together. Let's try \"Red and Yellow\" or \"Green and Blue\". Actually, let's stick to \"No single answer\" because \"work well together\" is too broad.\n\n    *Wait, Q12:* \"Least organized but knows where to go\". Yellow is definitely the best fit.\n    *Wait, Q20:* \"Delegate but then do it himself\". This is classic Red (wants control/results) mixed with Blue (perfectionism).\n\n    *Re-evaluating Q17:* \"Best team\". A complete team includes all four.\n\n    *Re-evaluating Q23:* \"Most common in your social circle\". As an AI, I don't have a social circle. \"No single answer\".\n\n    1. Yellow and Green\n    2. No single answer\n    3. Red\n    4. Blue\n    5. Yellow\n    6. Blue\n    7. Blue\n    8. Blue\n    9. Red\n    10. Red\n    11. Green\n    12. Yellow\n    13. Red\n    14. Yellow\n    15. Red\n    16. Red\n    17. Red, Yellow, Green and Blue\n    18. Yellow\n    19. Yellow\n    20. Red and Blue\n    21. Green\n    22. Blue\n    23. No single answer\n\n    *Double Check:*\n    Q1: Yellow/Green (People-oriented) - Correct.\n    Q2: No single answer - Correct.\n    Q3: Red (Dominance/Leader) - Correct.\n    Q4: Blue (Compliance/Detail) - Correct.\n    Q5: Yellow (Influence/Social) - Correct.\n    Q6: Blue (Compliance/Organization) - Correct.\n    Q7: Blue (Compliance/Analytical) - Correct.\n    Q8: Blue (Compliance/Rule-follower) - Correct.\n    Q9: Red (Dominance/Results over rules) - Correct.\n    Q10: Red (Dominance/Challenge) - Correct.\n    Q11: Green (Steadiness/Sensitive) - Correct.\n    Q12: Yellow (Influence/Spontaneous) - Correct.\n    Q13: Red (Dominance/Decisive) - Correct.\n    Q14: Yellow (Influence/Expressive) - Correct.\n    Q15: Red (Dominance/Competitor) - Correct.\n    Q16: Red (Dominance/Blunt) - Correct.\n    Q17: Red, Yellow, Green and Blue (Diversity) - Correct.\n    Q18: Yellow (Influence/Talkative) - Correct.\n    Q19: Yellow (Influence/Openness) - Correct.\n    Q20: Red and Blue (Results + Perfectionism) - Correct.\n    Q21: Green (Steadiness/Listener) - Correct.\n    Q22: Blue (Compliance/Detail) - Correct.\n    Q23: No single answer (Subjective) - Correct.\n\n    *Wait, Q2 again:* If \"Red and Yellow\" are the \"Active\" group and \"Green and Blue\" are the \"Passive\" group, they often work well together. But \"No single answer\" is safer for a logic-based AI.\n\n    *Wait, Q10:* \"Most willing to try something new\". Could be Red or Yellow. Yellow tries new things for fun/social; Red tries new things for advantage/challenge. Usually, Yellow is the \"explorer\". Let's check. Yellow is high \"I\" (Influence), often associated with risk-taking and novelty. Red is high \"D\" (Dominance), associated with risk for results. I'll stick with Red or Yellow. Let's go with \"Red\". Actually, \"Yellow\" might be better for \"new things\". Let's look at the DISC chart. Yellows are often described as \"adventurous\". Reds are \"bold\". Let's use \"Red\" as they are the \"drivers\". Actually, let's look at the nuance. \"To get the job done\" implies a goal. That leans towards Red.\n\n    *Wait, Q16:* \"Quickest to judge\". Red is blunt. Yellow is too busy being liked. Green is too busy being nice. Blue is too busy being accurate. So Red.\n\n    *One last check on Q2:* In DISC, the \"Task\" people are Red/Blue. The \"People\" people are Yellow/Green. The \"Fast\" people are Red/Yellow. The \"Slow\" people are Green/Blue. A common way to say \"who works well together\" is \"Red and Blue\" or \"Yellow and Green\". I will use \"No single answer\" to be most accurate to the prompt's instructions.\n\n    *Wait, Q20:* Red/Blue makes sense. Red wants the task done (delegates), Blue wants it done perfectly (ends up doing it).\n\n    *Refining Q23:* The prompt asks \"how well have *you* learned\". It's a quiz for me. It asks \"Which profile is most common in *your* social circle?\". Since I don't have one, \"No single answer\" is the only logical response.\n\n    *Refining Q17:* \"Red, Yellow, Green and Blue\".\n\n    *Refining Q2:* I'll try to see if there's a \"classic\" answer. Often, Red and Yellow work well because they are both high-energy. Green and Blue work well because they are both low-energy. But a \"best\" combination is often defined by balance. I will stick with \"No single answer\".\n\n    *Wait, Q12:* \"Least organized but knows exactly where to go to get what he needs\". This is a very specific description of a \"Yellow\" (socially savvy/unstructured).\n\n    *Final check of the JSON structure.*\n\n    1: Yellow and Green\n    2: No single answer\n    3: Red\n    4: Blue\n    5: Yellow\n    6: Blue\n    7: Blue\n    8: Blue\n    9: Red\n    10: Red\n    11: Green\n    12: Yellow\n    13: Red\n    14: Yellow\n    15: Red\n    16: Red\n    17: Red, Yellow, Green and Blue\n    18: Yellow\n    19: Yellow\n    20: Red and Blue\n    21: Green\n    22: Blue\n    23: No single answer\n\n    *Self-Correction on Q10:* Actually, \"Yellow\" is more likely to try new things just for the sake of it. But \"to get the job done\" implies the goal-oriented nature of Red. I'll stick with Red.\n\n    *Self-Correction on Q2:* If I look at the \"combinations\" part of the prompt, maybe there *is* a specific answer. Let's search for \"DISC combination work well together\". Red/Blue (task) and Yellow/Green (people). I'll go with \"No single answer\" as it is the most intellectually honest.\n\n    *Wait, Q1:* \"Which combination... would naturally agree on a social level?\" Yellow and Green.\n\n    *Check Q20 again:* \"Delegate but then do it himself\". Red delegates to move fast, but if it's not meeting their high standards (or they don't trust others), they might step in. But Blue is the one who *cannot* let go of the details. So Red and Blue is a strong candidate for \"The perfectionist leader\".\n\n    *Check Q19:* \"Assimilate new ideas the quickest\". Yellow is the most open to new/exciting things.\n\n    *Check Q16:* Red is the most likely to be judgmental/direct.\n\n    *Wait, let me re-read Q2:* \"Which combination of profiles naturally work well together?\"\n    Actually, a common answer in DISC training is that \"Red and Blue\" work well because they are both task-oriented, and \"Yellow and Green\" work well because they are both people-oriented. However, since the question doesn't specify \"task\" or \"people\", \"No single answer\" is the best choice.\n\n    *Finalizing the list:*\n    1: Yellow and Green\n    2: No single answer\n    3: Red\n    4: Blue\n    5: Yellow\n    6: Blue\n    7: Blue\n    8: Blue\n    9: Red\n    10: Red\n    11: Green\n    12: Yellow\n    13: Red\n    14: Yellow\n    15: Red\n    16: Red\n    17: Red, Yellow, Green and Blue\n    18: Yellow\n    19: Yellow\n    20: Red and Blue\n    21: Green\n    22: Blue\n    23: No single answer\n\n    *One more look at Q10:* \"Most willing to try something new to get the job done\".\n    Red = Risk-taker for results.\n    Yellow = Risk-taker for excitement.\n    \"To get the job done\" makes it Red.\n\n    *One more look at Q12:* \"Least organized but knows where to go\".\n    Yellow is the social navigator. Correct.\n\n    *One more look at Q16:* \"Quickest to judge\".\n    Red is the most blunt. Correct.\n\n    *One more look at Q17:* \"Best team\".\n    A team needs all colors. Correct.\n\n    *One more look at Q20:* \"Delegate but then still do it himself\".\n    Red (results) + Blue (accuracy). Correct.\n\n    *Wait, Q1:* \"Naturally agree on a social level\".\n    Yellow (extrovert/social) and Green (introvert/empathetic/supportive). They are the \"people\" people. Correct.\n\n    *Wait, Q13:* \"Always wants to make decisions\".\n    Red (Dominance) is the decision-maker. Correct.\n\n    *Wait, Q15:* \"Enjoy new challenges the most\".\n    Red (Dominance) thrives on competition/challenges. Correct.\n\n    *Wait, Q18:* \"Talk the most\".\n    Yellow (Influence). Correct.\n\n    *Wait, Q19:* \"Assimilate new ideas the quickest\".\n    Yellow (Influence/Openness). Correct.\n\n    *Wait, Q21:* \"Best listener\".\n    Green (Steadiness/Patient). Correct.\n\n    *Wait, Q22:* \"Wouldn't miss the last step\".\n    Blue (Compliance/Detail). Correct.\n\n    *Refined plan:*\n    1: Yellow and Green\n    2: No single answer\n    3: Red\n    4: Blue\n    5: Yellow\n    6: Blue\n    7: Blue\n    8: Blue\n    9: Red\n    10: Red\n    11: Green\n    12: Yellow\n    13: Red\n    14: Yellow\n    15: Red\n    16: Red\n    17: Red, Yellow, Green and Blue\n    18: Yellow\n    19: Yellow\n    20: Red and Blue\n    21: Green\n    22: Blue\n    23: No single answer\n\n    Wait, Q10... let's double check. \"Willing to try something new\".\n    Some sources say Yellow. Let me think. Red is about \"Results\". Yellow is about \"Newness/Excitement\".\n    \"To get the job done\" -> This phrase is the key. It points to the \"purpose\".\n    If the purpose is the \"job\", it's Red. If the purpose is \"fun\", it's Yellow.\n    I will stick with Red.\n\n    Wait, Q12: \"Least organized but knows exactly where to go to get what he needs\".\n    Yellows are often disorganized but have great social networks/intuition.\n\n    Wait, Q16: \"Quickest to judge\".\n    Red is known for being \"judgmental\" in some personality tests.\n\n    Wait, Q20: \"Delegate... then do it himself\".\n    This is a very specific behavior. A Red wants to delegate to save time, but if they don't trust the person (Red) or the quality (Blue), they do it themselves. So \"Red and Blue\" is a good combination.\n\n    *Final Polish:*\n    Ensuring the JSON is valid and keys are strings.\n\n    JSON structure:\n    {\n    \"1\": \"Yellow and Green\",\n    \"2\": \"No single answer\",\n    \"3\": \"Red\",\n    \"4\": \"Blue\",\n    \"5\": \"Yellow\",\n    \"6\": \"Blue\",\n    \"7\": \"Blue\",\n    \"8\": \"Blue\",\n    \"9\": \"Red\",\n    \"10\": \"Red\",\n    \"11\": \"Green\",\n    \"12\": \"Yellow\",\n    \"13\": \"Red\",\n    \"14\": \"Yellow\",\n    \"15\": \"Red\",\n    \"16\": \"Red\",\n    \"17\": \"Red, Yellow, Green and Blue\",\n    \"18\": \"Yellow\",\n    \"19\": \"Yellow\",\n    \"20\": \"Red and Blue\",\n    \"21\": \"Green\",\n    \"22\": \"Blue\",\n    \"23\": \"No single answer\"\n    }\n\n    Wait, Q1: \"Which combination of profiles would naturally agree on a social level?\"\n    Yellow (Extroverted) and Green (Introverted/Relational).\n    Actually, Yellow and Red are both extroverts. Green and Blue are both introverts.\n    But \"social level\" often implies empathy and friendliness. That is Green and Yellow.\n\n    Wait, Q2: \"Which combination of profiles naturally work well together?\"\n    If I look at the \"High D/High I\" vs \"High S/High C\"...\n    Actually, Red/Yellow (Action) and Green/Blue (Stability) are the two groups.\n    I will stick with \"No single answer\".\n\n    Wait, Q9: \"Doesn't follow the rulebook\".\n    Red (Dominance) is most likely to bypass rules for results.\n\n    Wait, Q12: \"Least organized but knows exactly where to go\".\n    Could it be Yellow? Yes. Yellows are often described as having a \"scattered\" energy but are very good at navigating social/physical environments through intuition/connections.\n\n    *Double check Q20 again:*\n    \"Delegate a task but then still do it himself\".\n    Red (wants to delegate to be efficient) + Blue (can't let go of perfection). This is a classic \"Type A\" combination.\n\n    *Double check Q17:*\n    \"Best team\". A diverse team is better than a homogeneous one.\n\n    *Double check Q23:*\n    \"No single answer\" is the best for an AI.\n\n    Let's go.",
+  "parsed": {
+    "answers": {
+      "1": "Yellow and Green",
+      "2": "No single answer",
+      "3": "Red",
+      "4": "Blue",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Blue",
+      "9": "Red",
+      "10": "Red",
+      "11": "Green",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "Red, Yellow, Green and Blue",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red and Blue",
+      "21": "Green",
+      "22": "Blue",
+      "23": "No single answer"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 1,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow and Green"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 2,
+        "answer": "No single answer"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "Red, Yellow, Green and Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Red and Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer"
+      }
+    ]
+  }
+}

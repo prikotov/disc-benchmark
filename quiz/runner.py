@@ -136,26 +136,114 @@ def norm_text(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
+# --- языковые таблицы матчера; активный язык = KEY["lang"] ------------------
 # цветовые стемы и черты (полные слова); одиночные буквы — только если ответ
-# целиком одна буква (защита от «с»/«к»-предлогов в развёрнутых ответах)
-COLOR_RE = {
-    "red":    r"\b(?:красн\w*|доминир\w*|доминант\w*|red)\b",
-    "yellow": r"\b(?:желт\w*|жолт\w*|влия\w*|yellow)\b",
-    "green":  r"\b(?:зелен\w*|стабил\w*|постоян\w*|green)\b",
-    "blue":   r"\b(?:син(?:ь|ий|яя|ее|ие|его|ему|им|их|ими|юю)\b|\bпослуш\w*|\bсоответ\w*|\bаналит\w*|\bblue\b)",
+# целиком одна буква (ru: защита от «с»/«к»-предлогов) или короткий ответ
+# из <=8 токенов с отдельными латинскими d/i/s/c (оба языка)
+COLOR_RE_BY_LANG = {
+    "ru": {
+        "red":    r"\b(?:красн\w*|доминир\w*|доминант\w*|red)\b",
+        "yellow": r"\b(?:желт\w*|жолт\w*|влия\w*|yellow)\b",
+        "green":  r"\b(?:зелен\w*|стабил\w*|постоян\w*|green)\b",
+        "blue":   r"\b(?:син(?:ь|ий|яя|ее|ие|его|ему|им|их|ими|юю)\b|\bпослуш\w*|\bсоответ\w*|\bаналит\w*|\bblue\b)",
+    },
+    "en": {
+        "red":    r"\b(?:reds?|dominan\w*)\b",
+        "yellow": r"\b(?:yellows?|yellowish|influen\w*)\b",
+        "green":  r"\b(?:greens?|greenish|stead\w*|patien\w*|calm\w*)\b",
+        "blue":   r"\b(?:blues?|analyt\w*|complian\w*|conscient\w*|perfection\w*)\b",
+    },
+}
+KEY_COLOR_BY_LANG = {
+    "ru": {"красный": "red", "желтый": "yellow", "зеленый": "green", "синий": "blue"},
+    "en": {"red": "red", "yellow": "yellow", "green": "green", "blue": "blue"},
 }
 LETTER_MAP = {"d": "red", "i": "yellow", "s": "green", "c": "blue"}
 CYR_MAP = {"к": "red", "д": "red", "ж": "yellow", "з": "green", "с": "blue"}
+
+# «нет однозначного ответа» и семья (для kind=none — это ключ; для остальных
+# вопросов — отказ отвечать по ключу)
+NO_ANSWER_RE_BY_LANG = {
+    "ru": re.compile(
+        r"\bнеоднозначн\w*|\bодногозначн\w*"   # вторая — опечатка моделей «одногозначного»
+        r"|\bнет\b[^.]{0,40}\b(?:однозначн\w*|одногозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b"
+        r"|\b(?:однозначн\w*|одногозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b[^.]{0,40}\b(?:ответа?\b[^.]{0,10})?(?:нет|нельзя)\b"
+        r"|\b(?:зависит|по-разному|разное|нельзя)\b|\bневозможно (?:определить|сказать)\b"
+        r"|\bнедостаточно (?:данных|информации)\b"
+        r"|\b(?:смешанн\w*|смешени\w*|индивидуальн\w*)\b|\bсмес[ьи]\b"
+        r"|\bу всех\b[^.]{0,20}\bразн\w*"
+        r"|\bу каждого\b"),
+    "en": re.compile(
+        r"\bno\b.{0,20}\b(?:single|given|clear|definitive|definite|unambiguous|correct|right|universal|specific)\b.{0,25}\banswer\b"
+        r"|\bthere (?:is|'s|was) no\b.{0,40}\banswer\b"
+        r"|\bnot a single\b.{0,25}\banswer\b|\bno such profile\b|\bno single profile\b|\bno specific profile\b"
+        r"|\b(?:it|this|that|one) depends\b|\bdepends on\b"
+        r"|\b(?:varies|vary|differs|differ)\b|\bdifferent for (?:everyone|each|everybody)\b"
+        r"|\b(?:cannot|can't|can not|impossible)\b.{0,30}\b(?:say|determine|tell|know|define|answer)\b"
+        r"|\b(?:not enough|insufficient)\b.{0,25}\b(?:data|information|context)\b"
+        r"|\bno way to\b.{0,25}\b(?:know|tell|determine|say)\b"
+        r"|\bnone of the above\b|\bmixed\b|\bindividual\b"
+        r"|\bno answer\b|\bn a\b"),
+}
+# «не применимо, я ИИ» — самоотвод, не «нет однозначного ответа»
+REFUSAL_RE_BY_LANG = {
+    "ru": re.compile(
+        r"\bне\s?применимо\b"
+        r"|\b(?:я|как)\s+(?:ии|языковая модель|модель|лм)\b"
+        r"|\bличный вопрос\b"
+        r"|\bу меня нет (?:круга|знакомых|друзей)\b"),
+    "en": re.compile(
+        r"\bas an ai\b"
+        r"|\bi(?:'m| am)\b.{0,10}\b(?:an )?(?:ai|language model|llm)\b"
+        r"|\bi (?:don't |do not |)have no\b.{0,25}\b(?:social )?(?:circle|friends|acquaintances)\b"
+        r"|\bi don't have\b.{0,25}\b(?:social )?(?:circle|friends|acquaintances)\b"
+        r"|\bpersonal question\b|\bnot applicable\b|\bnot relevant to me\b|\bdoesn't apply to me\b"),
+}
+# «все вышеперечисленные»/«любые» — ответ «любой из вариантов»
+ALL_OPT_RE_BY_LANG = {
+    "ru": re.compile(
+        r"\b(?:любые?|любой из них|любой вариант"
+        r"|все (?:вышеперечисленные|вышеуказанные|профили|варианты|четыре|сразу)"
+        r"|сочетание (?:всех|разн\w*)|комбинация всех|микс всех|смесь всех)\b"),
+    "en": re.compile(
+        r"\ball of the above\b|\ball of them\b|\bany of (?:them|the above|these)\b"
+        r"|\bany profile\b|\bany combination\b"
+        r"|\b(?:all|every)\b.{0,10}\b(?:profiles|colors|options)\b|\bevery (?:single )?(?:one|color|profile)\b"
+        r"|\ball four\b"),
+}
+# «два жёлтых»: маркер удвоения (ru Q1 / en Q1)
+DUO_RE_BY_LANG = {
+    "ru": re.compile(r"\b(?:два|две|оба|пар\w*)\b"),
+    "en": re.compile(r"\b(?:two|both|pair|2)\b"),
+}
+# «зелёный с любым»: маркер универсальности (ru Q2 / en Q2)
+ANYONE_RE_BY_LANG = {
+    "ru": re.compile(r"\b(?:люб\w*|все|всех|всеми|всем)\b"),
+    "en": re.compile(r"\b(?:anyone|anybody|any other|everyone|everybody|every|any|all|others|both)\b"),
+}
+# «смешение всех цветов» (ru Q18 / en Q17): маркеры смеси
+MIX_RE_BY_LANG = {
+    "ru": re.compile(r"\b(?:смеш\w*|смес\w*|микс\w*|комбинац\w*|сочетани\w*|команд\w*|сбалансированн\w*)\b"),
+    "en": re.compile(r"\b(?:mix\w*|combin\w*|blend\w*|balanc\w*|fusion|union|team)\b"),
+}
+MIX_WORD_RE_BY_LANG = {
+    "ru": re.compile(r"\b(?:все|всех|четыре)\b"),
+    "en": re.compile(r"\b(?:all|four)\b"),
+}
+ALL_FOUR_RE_BY_LANG = {
+    "ru": re.compile(r"\bвсе четыре\b"),
+    "en": re.compile(r"\ball four\b"),
+}
 
 
 def find_colors(answer: str) -> list:
     """Цвета в ответе: слова-стемы всегда; если цветовых слов нет —
     одиночные буквы: ответ из <=8 токенов с отдельными латинскими d/i/s/c
     (кириллические одиночные «с»/«к» — предлоги, не мапим вне правила
-    «весь ответ — одна буква»)."""
+    «весь ответ — одна буква», только ru)."""
     n = norm_text(answer)
     colors = []
-    for color, pat in COLOR_RE.items():
+    for color, pat in COLOR_RE_BY_LANG[KEY.get("lang", "ru")].items():
         if re.search(pat, n):
             colors.append(color)
     if not colors:
@@ -164,39 +252,20 @@ def find_colors(answer: str) -> list:
             for tok in tokens:
                 if tok in LETTER_MAP:
                     colors.append(LETTER_MAP[tok])
-        if not colors and len(n) <= 2:
+        if not colors and KEY.get("lang", "ru") == "ru" and len(n) <= 2:
             ch = n.strip()
             if ch in CYR_MAP:
                 colors.append(CYR_MAP[ch])
     return colors
 
 
-# «нет однозначного ответа» и семья (для Q24 — это ключ; для остальных
-# вопросов — отказ отвечать по ключу)
-NO_ANSWER_RE = re.compile(
-    r"\bнеоднозначн\w*|\bодногозначн\w*"   # вторая — опечатка моделей «одногозначного»
-    r"|\bнет\b[^.]{0,40}\b(?:однозначн\w*|одногозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b"
-    r"|\b(?:однозначн\w*|одногозначн\w*|единственн\w*|правильн\w*|верн\w*|конкретн\w*)\b[^.]{0,40}\b(?:ответа?\b[^.]{0,10})?(?:нет|нельзя)\b"
-    r"|\b(?:зависит|по-разному|разное|нельзя)\b|\bневозможно (?:определить|сказать)\b"
-    r"|\bнедостаточно (?:данных|информации)\b"
-    r"|\b(?:смешанн\w*|смешени\w*|индивидуальн\w*)\b|\bсмес[ьи]\b"
-    r"|\bу всех\b[^.]{0,20}\bразн\w*"
-    r"|\bу каждого\b")
-# «не применимо, я ИИ» — самоотвод, не «нет однозначного ответа»
-REFUSAL_RE = re.compile(
-    r"\bне\s?применимо\b"
-    r"|\b(?:я|как)\s+(?:ии|языковая модель|модель|лм)\b"
-    r"|\bличный вопрос\b"
-    r"|\bу меня нет (?:круга|знакомых|друзей)\b")
-# «все вышеперечисленные»/«любые»/«все четыре» — ответ «любой из вариантов»
-ALL_OPT_RE = re.compile(
-    r"\b(?:любые?|любой из них|любой вариант"
-    r"|все (?:вышеперечисленные|вышеуказанные|профили|варианты|четыре|сразу)"
-    r"|сочетание (?:всех|разн\w*)|комбинация всех|микс всех|смесь всех)\b")
-
-
 def match_answer(q: dict, answer: str) -> dict:
-    """Вердикт по одному вопросу: correct/incorrect/unparsed/skipped + флаги."""
+    """Вердикт по одному вопросу: correct/incorrect/unparsed/skipped + флаги.
+    Язык матчера и спец-ветки — из KEY (kind, generic) и языковых таблиц."""
+    lang = KEY.get("lang", "ru")
+    no_answer_re = NO_ANSWER_RE_BY_LANG[lang]
+    refusal_re = REFUSAL_RE_BY_LANG[lang]
+    all_opt_re = ALL_OPT_RE_BY_LANG[lang]
     key_norm = norm_text(q["key"])
     ans = (answer or "").strip()
     if not ans:
@@ -206,12 +275,12 @@ def match_answer(q: dict, answer: str) -> dict:
         return {"verdict": "correct", "matched": "exact"}
     if n in [norm_text(a) for a in q.get("aliases", [])]:
         return {"verdict": "correct", "matched": "alias"}
-    no_answer = bool(NO_ANSWER_RE.search(n))
-    refusal = bool(REFUSAL_RE.search(n))
-    all_opt = bool(ALL_OPT_RE.search(n))
+    no_answer = bool(no_answer_re.search(n))
+    refusal = bool(refusal_re.search(n))
+    all_opt = bool(all_opt_re.search(n))
     colors = find_colors(ans)
     if q["kind"] == "none":
-        # ключ Q24 — «нет однозначного ответа»: семья таких формулировок — зачёт
+        # ключ — «нет однозначного ответа»: семья таких формулировок — зачёт
         if no_answer or all_opt:
             return {"verdict": "correct", "matched": "no-single-answer"}
         if refusal:
@@ -223,14 +292,12 @@ def match_answer(q: dict, answer: str) -> dict:
         return {"verdict": "incorrect", "flag": "refusal"}
     if no_answer:
         return {"verdict": "incorrect", "flag": "no-answer"}
-    if all_opt and not (q["kind"] == "book" and q["n"] == 18):
-        # «любые»/«все вышеперечисленные» — не по ключу; для Q18 «все четыре»
-        # и есть ключ, дженерик ниже разберётся
+    if all_opt and q.get("generic") != "all-four":
+        # «любые»/«all of the above» — не по ключу; для вопроса-команды
+        # «все четыре» и есть ключ, дженерик ниже разберётся
         return {"verdict": "incorrect", "flag": "all-option"}
     if q["kind"] == "color":
-        key_color = {norm_text(v): k for k, v in
-                     {"red": "Красный", "yellow": "Желтый", "green": "Зеленый", "blue": "Синий"}.items()}[
-                     norm_text(q["key"])]
+        key_color = KEY_COLOR_BY_LANG[lang][norm_text(q["key"])]
         if len(colors) == 1:
             if colors[0] == key_color:
                 return {"verdict": "correct", "matched": "color-token"}
@@ -239,26 +306,24 @@ def match_answer(q: dict, answer: str) -> dict:
             return {"verdict": "incorrect", "flag": "ambiguous", "colors": colors}
         return {"verdict": "unparsed"}
     if q["kind"] == "book":
-        # дженерики поверх алиасов
-        if q["n"] == 1:
-            if colors == ["yellow"] and re.search(r"\b(?:два|две|оба|пар\w*)\b", n):
+        # дженерики поверх алиасов, ветка — по generic из ключа
+        g = q.get("generic")
+        if g == "yellow-duo":
+            if colors == ["yellow"] and DUO_RE_BY_LANG[lang].search(n):
                 return {"verdict": "correct", "matched": "generic"}
             if colors == ["yellow"]:
                 return {"verdict": "incorrect", "flag": "near", "colors": colors}
-        if q["n"] == 2:
-            if "green" in colors and re.search(r"\b(?:люб\w*|все|всех|всеми|всем)\b", n):
+        elif g == "green-anyone":
+            if "green" in colors and ANYONE_RE_BY_LANG[lang].search(n):
                 return {"verdict": "correct", "matched": "generic"}
             if colors == ["green"]:
                 return {"verdict": "incorrect", "flag": "near", "colors": colors}
-        if q["n"] == 18:
-            if re.search(r"\b(?:смеш\w*|смес\w*|микс\w*|комбинац\w*|сочетани\w*|команд\w*|сбалансированн\w*)\b", n) \
-                    and re.search(r"\b(?:все|всех|четыре)\b", n):
+        elif g == "all-four":
+            if MIX_RE_BY_LANG[lang].search(n) and MIX_WORD_RE_BY_LANG[lang].search(n):
                 return {"verdict": "correct", "matched": "generic"}
             if set(colors) == {"red", "yellow", "green", "blue"}:
                 return {"verdict": "correct", "matched": "all-four-colors"}
-            if re.search(r"\bвсе четыре\b", n):
-                return {"verdict": "correct", "matched": "generic"}
-            if n in [norm_text(a) for a in ["смешение всех", "смесь всех"]]:
+            if ALL_FOUR_RE_BY_LANG[lang].search(n):
                 return {"verdict": "correct", "matched": "generic"}
         # назван конкретный другой набор цветов
         if colors:
@@ -582,6 +647,7 @@ def run_cloud_block(tag: str, folder: str, levels: list, runs: int,
             per_q, score, stats = chat_verdict(answers)
             run = {
                 "model": tag, "folder": folder, "provider": "cloud",
+                "lang": KEY.get("lang", "ru"),
                 "cloud_provider": cloud_provider,
                 "thinking": {"requested": level, "scale": list(cfg["scale"]),
                              "sent": level, "note": cfg["doc_levels_note"]},
@@ -619,13 +685,19 @@ def load_prompt() -> tuple[int, str, str]:
 
 
 def next_run_dir(folder: str) -> Path:
-    base = ROOT / "models" / folder / "quiz"
+    base = ROOT / "models" / folder / QUIZ_DIRNAME
     base.mkdir(parents=True, exist_ok=True)
     nums = [int(p.name.split("-")[1]) for p in base.glob("run-*") if p.name[4:].isdigit()]
     num = max(nums) + 1 if nums else 1
     d = base / f"run-{num:02d}"
     d.mkdir(exist_ok=True)
     return d
+
+
+def set_lang_keys(key: dict) -> None:
+    """Переключить глобальный ключ матчера (для rescore двух языков)."""
+    global KEY
+    KEY = key
 
 
 def chat_verdict(answers: dict) -> tuple[list, int, dict]:
@@ -691,6 +763,7 @@ def run_chat_block(tag: str, folder: str, levels: list, runs: int, prompt_ver: i
             per_q, score, stats = chat_verdict(answers)
             run = {
                 "model": tag, "folder": folder, "provider": "chat",
+                "lang": KEY.get("lang", "ru"),
                 "thinking": {"requested": level, "scale": scale,
                              "sent": think, "note": think_note},
                 "options": {"num_ctx": NUM_CTX, "num_predict": NUM_PREDICT},
@@ -732,6 +805,7 @@ def run_decision_block(tag: str, folder: str, runs: int) -> None:
         flips = sum(1 for x in pq if x["chosen"] is None)
         run = {
             "model": tag, "folder": folder, "provider": "decision",
+            "lang": KEY.get("lang", "ru"),
             "thinking": {"requested": None, "scale": [], "sent": None,
                          "note": "decision-протокол, ручки нет"},
             "prompt_version": PROMPT_VER, "prompt_sha256": PROMPT_SHA,
@@ -762,10 +836,13 @@ def run_decision_block(tag: str, folder: str, runs: int) -> None:
 # ---------------------------------------------------------------- CLI
 
 def load_matrix() -> list:
-    return json.loads((HERE / "models.json").read_text(encoding="utf-8"))["models"]
+    return json.loads(MATRIX_PATH.read_text(encoding="utf-8"))["models"]
 
 
 KEY = json.loads((HERE / "reference" / "key.json").read_text(encoding="utf-8"))
+LANG = KEY.get("lang", "ru")            # активный язык матчера
+QUIZ_DIRNAME = "quiz"                   # имя папки прогонов (quiz / quiz-en)
+MATRIX_PATH = HERE / "models.json"
 PROMPT_VER, PROMPT_SHA, PROMPT = load_prompt()
 
 
@@ -784,19 +861,31 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.rescore:
+        # каждый прогон пересчитывается ключом СВОЕГО языка (run.json.lang)
+        keys = {"ru": json.loads((HERE / "reference" / "key.json").read_text(encoding="utf-8")),
+                "en": json.loads((HERE.parent / "quiz-en" / "reference" / "key-en.json")
+                                 .read_text(encoding="utf-8"))}
         n = 0
-        for p in sorted(ROOT.glob("models/*/quiz/run-*/run.json")):
-            r = json.loads(p.read_text(encoding="utf-8"))
-            if r.get("provider") != "chat":
-                continue
-            answers = {int(k): v for k, v in
-                       (r.get("parsed") or {}).get("answers", {}).items()}
-            per_q, score, stats = chat_verdict(answers)
-            r["verdict"] = {"score": score, "total": len(KEY["questions"]),
-                            "stats": stats, "per_question": per_q}
-            p.write_text(json.dumps(r, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-            n += 1
-        log(f"rescore: пересчитано {n} chat-прогонов")
+        for pattern in ("models/*/quiz/run-*/run.json",
+                        "models/*/quiz-en/run-*/run.json"):
+            for p in sorted(ROOT.glob(pattern)):
+                r = json.loads(p.read_text(encoding="utf-8"))
+                if r.get("provider") != "chat":
+                    continue
+                runner_key = KEY
+                try:  # матчеру нужен ключ нужного языка
+                    set_lang_keys(keys[r.get("lang") or "ru"])
+                except NameError:
+                    pass
+                answers = {int(k): v for k, v in
+                           (r.get("parsed") or {}).get("answers", {}).items()}
+                per_q, score, stats = chat_verdict(answers)
+                r["verdict"] = {"score": score, "total": len(KEY["questions"]),
+                                "stats": stats, "per_question": per_q}
+                p.write_text(json.dumps(r, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                n += 1
+        set_lang_keys(runner_key)  # вернуть исходное состояние
+        log(f"rescore: пересчитано {n} chat-прогонов (оба языка)")
         return 0
 
     if args.list:

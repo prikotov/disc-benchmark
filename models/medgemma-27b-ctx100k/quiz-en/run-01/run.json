@@ -1,0 +1,256 @@
+{
+  "model": "medgemma:27b-ctx100k",
+  "folder": "medgemma-27b-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "off",
+    "scale": [],
+    "sent": false,
+    "note": "think=false"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:11:10.174438+00:00",
+  "duration_s": 5.9,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 519,
+    "eval_count": 454,
+    "eval_duration": 5788138000,
+    "prompt_eval_duration": 63073000,
+    "load_duration": 461573,
+    "total_duration": 5854755322
+  },
+  "ps_snapshot": [
+    "medgemma:27b-ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"All profiles can agree on a social level, but typically Yellows and Blues are more socially oriented. It depends on the specific individuals and context.\",\n  \"2\": \"There's no single 'best' combination, as different combinations excel at different tasks. However, a balanced team often includes elements of all four styles. R-D (Red-Dominant) and G-S (Green-Steady) can complement each other. C-I (Blue-Conscientious) and R-D can also be effective. It heavily depends on the specific project and goals.\",\n  \"3\": \"Red\",\n  \"4\": \"Blue (due to precision, attention to detail, and calmness under pressure)\",\n  \"5\": \"Yellow\",\n  \"6\": \"Blue\",\n  \"7\": \"Blue or Green (depending on the context - Blue for data analysis, Green for cautious consideration)\",\n  \"8\": \"Blue or Green (Blue for punctuality, Green for consistency)\",\n  \"9\": \"Red\",\n  \"10\": \"Yellow\",\n  \"11\": \"Blue\",\n  \"12\": \"Yellow\",\n  \"13\": \"Red\",\n  \"14\": \"Yellow\",\n  \"15\": \"Yellow\",\n  \"16\": \"Red\",\n  \"17\": \"Again, depends on the task. A balanced team is often best. However, a combination like R-D (Red-Dominant) and G-S (Green-Steady) can be very effective for achieving goals and maintaining harmony. Or R-D (Red-Dominant) and C-I (Blue-Conscientious) for strategic planning and execution.\",\n  \"18\": \"Yellow\",\n  \"19\": \"Yellow\",\n  \"20\": \"Red (often wants control and ensures quality)\",\n  \"21\": \"Green (typically patient and empathetic listeners)\",\n  \"22\": \"Blue\",\n  \"23\": \"This is subjective and depends entirely on the individual's personal relationships.\"\n}\n```",
+  "thinking_raw": null,
+  "parsed": {
+    "answers": {
+      "1": "All profiles can agree on a social level, but typically Yellows and Blues are more socially oriented. It depends on the specific individuals and context.",
+      "2": "There's no single 'best' combination, as different combinations excel at different tasks. However, a balanced team often includes elements of all four styles. R-D (Red-Dominant) and G-S (Green-Steady) can complement each other. C-I (Blue-Conscientious) and R-D can also be effective. It heavily depends on the specific project and goals.",
+      "3": "Red",
+      "4": "Blue (due to precision, attention to detail, and calmness under pressure)",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue or Green (depending on the context - Blue for data analysis, Green for cautious consideration)",
+      "8": "Blue or Green (Blue for punctuality, Green for consistency)",
+      "9": "Red",
+      "10": "Yellow",
+      "11": "Blue",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Yellow",
+      "16": "Red",
+      "17": "Again, depends on the task. A balanced team is often best. However, a combination like R-D (Red-Dominant) and G-S (Green-Steady) can be very effective for achieving goals and maintaining harmony. Or R-D (Red-Dominant) and C-I (Blue-Conscientious) for strategic planning and execution.",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red (often wants control and ensures quality)",
+      "21": "Green (typically patient and empathetic listeners)",
+      "22": "Blue",
+      "23": "This is subjective and depends entirely on the individual's personal relationships."
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 14,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 3,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 1,
+        "answer": "All profiles can agree on a social level, but typically Yellows and Blues are more socially oriented. It depends on the specific individuals and context."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 2,
+        "answer": "There's no single 'best' combination, as different combinations excel at different tasks. However, a balanced team often includes elements of all four styles. R-D (Red-Dominant) and G-S (Green-Steady) can complement each other. C-I (Blue-Conscientious) and R-D can also be effective. It heavily depends on the specific project and goals."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Blue (due to precision, attention to detail, and calmness under pressure)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 7,
+        "answer": "Blue or Green (depending on the context - Blue for data analysis, Green for cautious consideration)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Blue or Green (Blue for punctuality, Green for consistency)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 15,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 17,
+        "answer": "Again, depends on the task. A balanced team is often best. However, a combination like R-D (Red-Dominant) and G-S (Green-Steady) can be very effective for achieving goals and maintaining harmony. Or R-D (Red-Dominant) and C-I (Blue-Conscientious) for strategic planning and execution."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 20,
+        "answer": "Red (often wants control and ensures quality)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "Green (typically patient and empathetic listeners)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "This is subjective and depends entirely on the individual's personal relationships."
+      }
+    ]
+  }
+}

@@ -1655,3 +1655,113 @@ KeyError: 'xiaomi'
 [09:39:35]   траты записаны в reports/spend.csv: {'prompt_tokens': 1966, 'completion_tokens': 47747}
 отчёты: reports/QUIZ.md, reports/QUIZ.html (446 прогонов)
 === СЕРИЯ mimo v2 ЗАВЕРШЕНА 2026-11-17 16:39:35 ===
+=== СЕРИЯ mimo добивка +2/уровень — старт 2026-11-17 17:16:17 ===
+--- flash RU +2 ---
+[10:16:17] mimo-v2.6-flash: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[10:16:28]   пилот: ok (691 симв., reasoning=нет, версия mimo-v2.6-flash)
+[10:16:40]   run-05 @off: 16/24 (json_ok=True, unparsed=0, 11.9s, tok=752/360, версия mimo-v2.6-flash)
+[10:16:48]   run-06 @off: 16/24 (json_ok=True, unparsed=0, 8.0s, tok=752/268, версия mimo-v2.6-flash)
+[10:18:25]   пилот: ok (570 симв., reasoning=есть, версия mimo-v2.6-flash)
+[10:23:56]   run-07 @low: 15/24 (json_ok=True, unparsed=1, 330.8s, tok=750/11238, версия mimo-v2.6-flash)
+[10:27:06]   run-08 @low: 15/24 (json_ok=True, unparsed=0, 190.0s, tok=750/6610, версия mimo-v2.6-flash)
+[10:40:28]   пилот: ok (485 симв., reasoning=есть, версия mimo-v2.6-flash)
+[10:43:08]   run-09 @medium: 15/24 (json_ok=True, unparsed=0, 159.8s, tok=750/5335, версия mimo-v2.6-flash)
+[10:54:26]   run-10 @medium: 16/24 (json_ok=True, unparsed=0, 678.5s, tok=750/24852, версия mimo-v2.6-flash)
+[10:56:08]   пилот: ok (546 симв., reasoning=есть, версия mimo-v2.6-flash)
+[10:59:01]   run-11 @high: 16/24 (json_ok=True, unparsed=0, 173.6s, tok=750/6101, версия mimo-v2.6-flash)
+[11:00:41]   run-12 @high: 15/24 (json_ok=True, unparsed=0, 100.2s, tok=750/3331, версия mimo-v2.6-flash)
+[11:00:41]   траты записаны в reports/spend.csv: {'prompt_tokens': 6004, 'completion_tokens': 58095}
+--- flash EN +2 ---
+[11:00:41] mimo-v2.6-flash: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[11:00:51]   пилот: ok (413 симв., reasoning=нет, версия mimo-v2.6-flash)
+[11:00:57]   run-05 @off: 16/24 (json_ok=True, unparsed=0, 6.4s, tok=493/163, версия mimo-v2.6-flash)
+[11:01:04]   run-06 @off: 18/24 (json_ok=True, unparsed=0, 6.5s, tok=493/215, версия mimo-v2.6-flash)
+[11:02:44]   пилот: ok (349 симв., reasoning=есть, версия mimo-v2.6-flash)
+[11:03:27]   run-07 @low: 18/24 (json_ok=True, unparsed=0, 43.1s, tok=491/1453, версия mimo-v2.6-flash)
+[11:04:32]   run-08 @low: 18/24 (json_ok=True, unparsed=0, 65.3s, tok=491/1937, версия mimo-v2.6-flash)
+[11:06:47]   пилот: ok (344 симв., reasoning=есть, версия mimo-v2.6-flash)
+Traceback (most recent call last):
+  File "/usr/lib64/python3.14/http/client.py", line 603, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "/usr/lib64/python3.14/http/client.py", line 561, in _read_next_chunk_size
+    return int(line, 16)
+ValueError: invalid literal for int() with base 16: b''
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib64/python3.14/http/client.py", line 621, in _read_chunked
+    while (chunk_left := self._get_chunk_left()) is not None:
+                         ~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib64/python3.14/http/client.py", line 605, in _get_chunk_left
+    raise IncompleteRead(b'')
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/dp/MyProjects/disc-quiz/quiz-en/runner.py", line 30, in <module>
+    sys.exit(R.main())
+             ~~~~~~^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 935, in main
+    run_cloud_block(m["tag"], m["folder"], levels, args.runs,
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    PROMPT_VER, PROMPT_SHA, PROMPT,
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    cloud_provider=m.get("cloud_provider", "deepseek"))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 666, in run_cloud_block
+    resp = cloud_call(tag, prompt, level, cloud_provider)
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 589, in cloud_call
+    resp = json.loads(r.read())
+                      ~~~~~~^^
+  File "/usr/lib64/python3.14/http/client.py", line 488, in read
+    return self._read_chunked(amt)
+           ~~~~~~~~~~~~~~~~~~^^^^^
+  File "/usr/lib64/python3.14/http/client.py", line 633, in _read_chunked
+    raise IncompleteRead(b''.join(value)) from exc
+http.client.IncompleteRead: IncompleteRead(179 bytes read)
+!!! FAIL flash en
+--- pro RU +2 ---
+[11:21:48] mimo-v2.6-pro: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[11:21:56]   пилот: ok (485 симв., reasoning=нет, версия mimo-v2.6-pro)
+[11:22:00]   run-05 @off: 19/24 (json_ok=True, unparsed=0, 4.6s, tok=752/278, версия mimo-v2.6-pro)
+[11:22:04]   run-06 @off: 19/24 (json_ok=True, unparsed=0, 3.9s, tok=752/285, версия mimo-v2.6-pro)
+[11:23:58]   пилот: ok (505 симв., reasoning=есть, версия mimo-v2.6-pro)
+[11:26:35]   run-07 @low: 16/24 (json_ok=True, unparsed=0, 157.2s, tok=750/11661, версия mimo-v2.6-pro)
+[11:30:29]   run-08 @low: 16/24 (json_ok=True, unparsed=0, 234.2s, tok=750/16617, версия mimo-v2.6-pro)
+[11:32:58]   пилот: ok (514 симв., reasoning=есть, версия mimo-v2.6-pro)
+[11:34:41]   run-09 @medium: 17/24 (json_ok=True, unparsed=0, 103.7s, tok=750/7454, версия mimo-v2.6-pro)
+[11:36:26]   run-10 @medium: 19/24 (json_ok=True, unparsed=0, 104.9s, tok=750/5478, версия mimo-v2.6-pro)
+[11:38:32]   пилот: ok (659 симв., reasoning=есть, версия mimo-v2.6-pro)
+[11:40:49]   run-11 @high: 17/24 (json_ok=True, unparsed=0, 137.0s, tok=750/9847, версия mimo-v2.6-pro)
+[11:42:44]   run-12 @high: 17/24 (json_ok=True, unparsed=0, 115.0s, tok=750/6190, версия mimo-v2.6-pro)
+[11:42:44]   траты записаны в reports/spend.csv: {'prompt_tokens': 6004, 'completion_tokens': 57810}
+--- pro EN +2 ---
+[11:42:44] mimo-v2.6-pro: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[11:42:47]   пилот: ok (390 симв., reasoning=нет, версия mimo-v2.6-pro)
+[11:42:51]   run-05 @off: 17/24 (json_ok=True, unparsed=0, 3.8s, tok=493/207, версия mimo-v2.6-pro)
+[11:42:56]   run-06 @off: 19/24 (json_ok=True, unparsed=0, 4.3s, tok=493/221, версия mimo-v2.6-pro)
+[11:44:14]   пилот: ok (493 симв., reasoning=есть, версия mimo-v2.6-pro)
+[11:48:42]   run-07 @low: 18/24 (json_ok=True, unparsed=0, 268.1s, tok=491/13372, версия mimo-v2.6-pro)
+[11:52:28]   run-08 @low: 19/24 (json_ok=True, unparsed=0, 226.3s, tok=491/11443, версия mimo-v2.6-pro)
+[11:57:53]   пилот: ok (573 симв., reasoning=есть, версия mimo-v2.6-pro)
+[12:03:35]   run-09 @medium: 19/24 (json_ok=True, unparsed=0, 341.7s, tok=491/16759, версия mimo-v2.6-pro)
+[12:06:31]   run-10 @medium: 19/24 (json_ok=True, unparsed=0, 176.9s, tok=491/8300, версия mimo-v2.6-pro)
+[12:15:19]   пилот: ok (529 симв., reasoning=есть, версия mimo-v2.6-pro)
+[12:19:42]   run-11 @high: 17/24 (json_ok=True, unparsed=0, 262.8s, tok=491/11518, версия mimo-v2.6-pro)
+[12:26:13]   run-12 @high: 19/24 (json_ok=True, unparsed=0, 390.5s, tok=491/17167, версия mimo-v2.6-pro)
+[12:26:13]   траты записаны в reports/spend.csv: {'prompt_tokens': 3932, 'completion_tokens': 78987}
+отчёты: reports/QUIZ.md, reports/QUIZ.html (476 прогонов)
+=== ДОБИВКА mimo ЗАВЕРШЕНА 2026-11-17 19:26:13 ===
+=== flash EN medium/high добивка (фикс ретраев) — старт 2026-11-17 19:26:59 ===
+[12:26:59] mimo-v2.6-flash: облачный провайдер xiaomi, уровни ['medium', 'high']
+[12:27:56]   пилот: ok (421 симв., reasoning=есть, версия mimo-v2.6-flash)
+[12:28:36]   run-10 @medium: 19/24 (json_ok=True, unparsed=0, 39.9s, tok=491/1330, версия mimo-v2.6-flash)
+[12:30:30]   run-11 @medium: 18/24 (json_ok=True, unparsed=0, 114.3s, tok=491/4173, версия mimo-v2.6-flash)
+[12:40:08]   пилот: ok (412 симв., reasoning=есть, версия mimo-v2.6-flash)
+[12:40:56]   run-12 @high: 19/24 (json_ok=True, unparsed=0, 48.4s, tok=491/1734, версия mimo-v2.6-flash)
+[12:41:25]   run-13 @high: 18/24 (json_ok=True, unparsed=0, 28.8s, tok=491/906, версия mimo-v2.6-flash)
+[12:41:25]   траты записаны в reports/spend.csv: {'prompt_tokens': 1964, 'completion_tokens': 8143}
+отчёты: reports/QUIZ.md, reports/QUIZ.html (480 прогонов)
+=== ЗАВЕРШЕНА 2026-11-17 19:41:25 ===

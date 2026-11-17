@@ -72,7 +72,11 @@ def http_json(path: str, payload: dict | None = None, timeout: int = 60) -> dict
             req = urllib.request.Request(url, data=data, headers=headers)
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 return json.loads(r.read())
-        except (urllib.error.URLError, TimeoutError, OSError) as e:
+        except (urllib.error.URLError, TimeoutError, OSError,
+                __import__("http").client.HTTPException,
+                json.JSONDecodeError) as e:
+            # HTTPException (IncompleteRead/RemoteDisconnected) — сервер
+            # обрывает соединение/тело ответа; JSONDecodeError — обрыв тела
             last_exc = e
             if attempt <= RETRIES:
                 log(f"  транспортная ошибка ({e}); повтор {attempt}/{RETRIES}")
@@ -603,7 +607,9 @@ def cloud_call(tag: str, prompt: str, level, provider: str) -> dict:
             return {"content": content, "thinking": thinking, "usage": usage,
                     "model_version": resp.get("model"),
                     "done_reason": resp.get("choices", [{}])[0].get("finish_reason")}
-        except (urllib.error.URLError, TimeoutError, OSError) as e:
+        except (urllib.error.URLError, TimeoutError, OSError,
+                __import__("http").client.HTTPException,
+                json.JSONDecodeError) as e:
             last_exc = e
             if attempt <= RETRIES:
                 log(f"  транспортная ошибка ({e}); повтор {attempt}/{RETRIES}")

@@ -433,31 +433,61 @@ def decision_run(tag: str, key: dict) -> dict:
 
 # ---------------------------------------------------------------- облако (OpenAI-совместимое)
 
-DEEPSEEK_CHAT = "https://api.deepseek.com/chat/completions"
-# $/1M токенов (вход / кэш-хит / выход), пик; оф-пик вдвое дешевле
-DEEPSEEK_TARIFF = (0.30, 0.006, 1.20)
+CLOUD_PROVIDERS = {
+    # $/1M токенов (вход / кэш-хит / выход), пик; оф-пик вдвое дешевле
+    "deepseek": {
+        "url": "https://api.deepseek.com/chat/completions",
+        "key": "env-file:DEEPSEEK_API_KEY",   # путь к файлу — env MODELS_RU_ENV
+        "tariff": (0.30, 0.006, 1.20),
+        "scale": ("low", "high"),
+        "thinking": lambda lvl: {"reasoning_effort": lvl} if lvl else {},
+        "doc_levels_note": "reasoning_effort, минимум low (off не существует)",
+    },
+    "zai": {
+        # подписка z.ai (coding plan); паттерн сестринского workspace
+        # (~/MyProjects/Models/knowledge-map/runner_cloud.py)
+        "url": "https://api.z.ai/api/coding/paas/v4/chat/completions",
+        "key": "pi-auth:zai",                 # запись zai в ~/.pi/agent/auth.json
+        "tariff": None,                       # квота подписки, не по-токеново
+        "scale": ("low", "high", "max"),
+        "thinking": lambda lvl: ({"thinking": {"type": "enabled"},
+                                  "reasoning_effort": lvl} if lvl else {}),
+        "doc_levels_note": ("шкала low/high/max (docs.z.ai, дефолт max); "
+                            "off не существует — «thinking cannot be disabled», "
+                            "запрошенный off провайдер выполняет как минимальное "
+                            "мышление (низведён к low); medium — legacy, не запускаем"),
+    },
+}
 
 
-def cloud_key() -> str:
-    """Ключ из env-файла MODELS_RU_ENV (путь — env; секреты в репо не живут)."""
-    v = __import__("os").environ
-    env_path = v.get("MODELS_RU_ENV", "")
-    if not env_path:
-        sys.exit("задайте MODELS_RU_ENV — путь к env-файлу с ключами облаков")
-    for line in Path(env_path.replace("~", str(Path.home()))).read_text().splitlines():
-        if line.startswith("DEEPSEEK_API_KEY="):
-            return line.split("=", 1)[1].strip()
-    sys.exit(f"DEEPSEEK_API_KEY не найден в {env_path}")
+def cloud_key(provider: str) -> str:
+    """Ключ провайдера: из env-файла (путь — env MODELS_RU_ENV) или из
+    pi-auth (~/.pi/agent/auth.json). Секреты в репо не живут и не печатаются."""
+    spec = CLOUD_PROVIDERS[provider]["key"]
+    kind, _, name = spec.partition(":")
+    if kind == "env-file":
+        env_path = __import__("os").environ.get("MODELS_RU_ENV", "")
+        if not env_path:
+            sys.exit(f"задайте MODELS_RU_ENV — путь к env-файлу с ключами облаков ({provider})")
+        for line in Path(env_path.replace("~", str(Path.home()))).read_text().splitlines():
+            if line.startswith(name + "="):
+                return line.split("=", 1)[1].strip()
+        sys.exit(f"{name} не найден в {env_path}")
+    if kind == "pi-auth":
+        d = json.loads((Path.home() / ".pi/agent/auth.json").read_text())
+        return d[name]["key"]
+    sys.exit(f"неизвестный источник ключа: {spec}")
 
 
-def cloud_call(tag: str, prompt: str, level) -> dict:
+def cloud_call(tag: str, prompt: str, level, provider: str) -> dict:
+    cfg = CLOUD_PROVIDERS[provider]
     body = {"model": tag, "messages": [{"role": "user", "content": prompt}],
-            "reasoning_effort": level}
+            **cfg["thinking"](level)}
     req = urllib.request.Request(
-        DEEPSEEK_CHAT,
+        cfg["url"],
         data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
         headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {cloud_key()}"})
+                 "Authorization": f"Bearer {cloud_key(provider)}"})
     last_exc = None
     for attempt in range(1, RETRIES + 2):
         try:
@@ -487,14 +517,21 @@ def cloud_call(tag: str, prompt: str, level) -> dict:
     raise RuntimeError(f"облако не ответило после {RETRIES + 1} попыток: {last_exc}")
 
 
-def spend_row(model: str, purpose: str, requests: int, usage: dict) -> None:
+def spend_row(provider: str, model: str, purpose: str, requests: int,
+              usage: dict) -> None:
     """Правило 9: каждая платная операция — строка в reports/spend.csv
-    (главный workspace, в git не живёт)."""
+    (главный workspace, в git не живёт). Подписки (tariff None) —
+    стоимость 0, токены записываются как расход квоты."""
     import csv as _csv
     tin, tcout = usage.get("prompt_tokens") or 0, usage.get("completion_tokens") or 0
     cached = usage.get("cached_tokens") or 0
-    ti, tc, to = DEEPSEEK_TARIFF
-    cost = (tin - cached) * ti / 1e6 + cached * tc / 1e6 + tcout * to / 1e6
+    tariff = CLOUD_PROVIDERS[provider]["tariff"]
+    if tariff:
+        ti, tc, to = tariff
+        cost = (tin - cached) * ti / 1e6 + cached * tc / 1e6 + tcout * to / 1e6
+        cost_str = f"{cost:.4f}"
+    else:
+        cost_str = "0 (квота)"
     if ROOT.name == "disc-quiz":  # worktree — учёт в главном tree
         target = ROOT.parent / "disc" / "reports" / "spend.csv"
     else:
@@ -507,12 +544,14 @@ def spend_row(model: str, purpose: str, requests: int, usage: dict) -> None:
             w.writerow(["дата", "модель", "цель", "запросов", "токены вх",
                         "из них кэш", "токены вых", "стоимость $"])
         w.writerow([datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),
-                    model, purpose, requests, tin, cached, tcout, f"{cost:.4f}"])
+                    model, purpose, requests, tin, cached, tcout, cost_str])
 
 
 def run_cloud_block(tag: str, folder: str, levels: list, runs: int,
-                    prompt_ver: int, prompt_sha: str, prompt: str) -> None:
-    log(f"{tag}: облачный провайдер (OpenAI-совместимый), уровни {levels}")
+                    prompt_ver: int, prompt_sha: str, prompt: str,
+                    cloud_provider: str = "deepseek") -> None:
+    cfg = CLOUD_PROVIDERS[cloud_provider]
+    log(f"{tag}: облачный провайдер {cloud_provider}, уровни {levels}")
     (ROOT / "models" / folder / "quiz").mkdir(parents=True, exist_ok=True)
     total_usage = {}
     for level in levels:
@@ -520,7 +559,7 @@ def run_cloud_block(tag: str, folder: str, levels: list, runs: int,
         for i in range(runs):
             if do_pilot:  # пилот: один выброшенный вызов
                 try:
-                    pilot = cloud_call(tag, prompt, level)
+                    pilot = cloud_call(tag, prompt, level, cloud_provider)
                     do_pilot = False
                     log(f"  пилот: ok ({len(pilot['content'])} симв., "
                         f"reasoning={'есть' if pilot['thinking'] else 'нет'}, "
@@ -530,10 +569,11 @@ def run_cloud_block(tag: str, folder: str, levels: list, runs: int,
             d = next_run_dir(folder)
             t0 = time.monotonic()
             try:
-                resp = cloud_call(tag, prompt, level)
+                resp = cloud_call(tag, prompt, level, cloud_provider)
                 content, thinking, usage = resp["content"], resp["thinking"], resp["usage"]
                 error = done_reason = None
             except RuntimeError as e:
+                resp = {"model_version": None}
                 content, thinking, usage = "", None, {}
                 error, done_reason = str(e), None
                 log(f"  прогон прерван: {e}")
@@ -542,9 +582,10 @@ def run_cloud_block(tag: str, folder: str, levels: list, runs: int,
             per_q, score, stats = chat_verdict(answers)
             run = {
                 "model": tag, "folder": folder, "provider": "cloud",
-                "thinking": {"requested": level, "scale": ["low", "high"],
-                             "sent": level, "note": "reasoning_effort (минимум low)"},
-                "options": {"reasoning_effort": level},
+                "cloud_provider": cloud_provider,
+                "thinking": {"requested": level, "scale": list(cfg["scale"]),
+                             "sent": level, "note": cfg["doc_levels_note"]},
+                "options": dict(cfg["thinking"](level) or {}),
                 "model_version": resp.get("model_version") if not error else None,
                 "prompt_version": prompt_ver, "prompt_sha256": prompt_sha,
                 "started_utc": datetime.now(timezone.utc).isoformat(),
@@ -564,8 +605,9 @@ def run_cloud_block(tag: str, folder: str, levels: list, runs: int,
                 f"(json_ok={flags['json_ok']}, unparsed={stats['unparsed']}, "
                 f"{duration}s, tok={usage.get('prompt_tokens', '?')}/"
                 f"{usage.get('completion_tokens', '?')}, версия {run['model_version']})")
-    spend_row(tag, "анкета DISC (quiz)", runs * len(levels), total_usage)
-    log(f"  trаты записаны в reports/spend.csv: {total_usage}")
+    spend_row(cloud_provider, tag, f"анкета DISC (quiz, {cloud_provider})",
+              runs * len(levels), total_usage)
+    log(f"  траты записаны в reports/spend.csv: {total_usage}")
 
 
 # ---------------------------------------------------------------- конвейер прогона
@@ -773,7 +815,8 @@ def main() -> int:
     if m["provider"] == "cloud":
         levels = args.thinking.split(",") if args.thinking else [l for l in m["doc_levels"] if l]
         run_cloud_block(m["tag"], m["folder"], levels, args.runs,
-                        PROMPT_VER, PROMPT_SHA, PROMPT)
+                        PROMPT_VER, PROMPT_SHA, PROMPT,
+                        cloud_provider=m.get("cloud_provider", "deepseek"))
         return 0
 
     if m["provider"] == "decision":

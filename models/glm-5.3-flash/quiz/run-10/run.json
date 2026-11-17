@@ -1,0 +1,269 @@
+{
+  "model": "glm-5.3-flash",
+  "folder": "glm-5.3-flash",
+  "provider": "cloud",
+  "cloud_provider": "zai",
+  "thinking": {
+    "requested": "high",
+    "scale": [
+      "low",
+      "high",
+      "max"
+    ],
+    "sent": "high",
+    "note": "шкала low/high/max (docs.z.ai, дефолт max); off не существует — «thinking cannot be disabled», запрошенный off провайдер выполняет как минимальное мышление (низведён к low); medium — legacy, не запускаем"
+  },
+  "options": {
+    "thinking": {
+      "type": "enabled"
+    },
+    "reasoning_effort": "high"
+  },
+  "model_version": "glm-5.3-flash",
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-17T00:27:29.141449+00:00",
+  "duration_s": 96.6,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 598,
+    "cached_tokens": 0,
+    "completion_tokens": 5598,
+    "reasoning_tokens": 5201
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Красный и жёлтый (оба экстраверты и любят общение); зелёный при этом гибок и уживается почти со всеми",
+      "2": "Красный и зелёный (лидер + надёжный исполнитель); взаимодополняюща и пара жёлтый–синий (генератор идей + детализация)",
+      "3": "Красный",
+      "4": "Синий (точность, системность, концентрация)",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Синий (пунктуальность, следование правилам); общая надёжность — также черта зелёного",
+      "9": "Красный",
+      "10": "Красный",
+      "11": "Зелёный",
+      "12": "Жёлтый (потребность в признании делает личную критику особенно болезненной)",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный (сложные задачи = вызов)",
+      "17": "Синий (критичность, склонность оценивать других по стандартам)",
+      "18": "Сочетание всех четырёх: красный + жёлтый + зелёный + синий",
+      "19": "Жёлтый",
+      "20": "Жёлтый",
+      "21": "Синий (перфекционист, не уверен, что другие сделают так же хорошо)",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Однозначного ответа нет — это зависит от вашего конкретного круга общения"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 17,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 1,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Красный и жёлтый (оба экстраверты и любят общение); зелёный при этом гибок и уживается почти со всеми"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Красный и зелёный (лидер + надёжный исполнитель); взаимодополняюща и пара жёлтый–синий (генератор идей + детализация)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "Синий (точность, системность, концентрация)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Синий (пунктуальность, следование правилам); общая надёжность — также черта зелёного"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Жёлтый (потребность в признании делает личную критику особенно болезненной)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 16,
+        "answer": "Красный (сложные задачи = вызов)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Синий (критичность, склонность оценивать других по стандартам)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 18,
+        "answer": "Сочетание всех четырёх: красный + жёлтый + зелёный + синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 21,
+        "answer": "Синий (перфекционист, не уверен, что другие сделают так же хорошо)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Однозначного ответа нет — это зависит от вашего конкретного круга общения"
+      }
+    ]
+  }
+}

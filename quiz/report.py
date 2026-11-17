@@ -28,8 +28,6 @@ RUNS_GLOBS = {"ru": "models/*/quiz/run-*/run.json",
 KEYS = {lang: json.loads((HERE.parent / f"quiz{'' if lang == 'ru' else '-en'}"
                           / "reference" / f"key{'' if lang == 'ru' else '-en'}.json")
                          .read_text(encoding="utf-8")) for lang in ("ru", "en")}
-MODEL_ORDER = [m["folder"] for m in json.loads(
-    (HERE / "models.json").read_text(encoding="utf-8"))["models"]]
 LEVEL_ORDER = {m["folder"]: m.get("doc_levels") or [None]
                for m in json.loads((HERE / "models.json").read_text(encoding="utf-8"))["models"]}
 COLOR_OF = {"Красный": "D", "Желтый": "I", "Зеленый": "S", "Синий": "C",
@@ -62,11 +60,16 @@ def group_key(r: dict) -> tuple[str, str, str]:
 
 
 def sort_key(g: tuple[str, str, str]):
+    """Сортировка по имени модели (алфавит), затем язык (ru раньше en),
+    затем уровень — в порядке документированной лестницы."""
     folder, lang, lvl = g
-    mi = MODEL_ORDER.index(folder) if folder in MODEL_ORDER else 99
     dl = LEVEL_ORDER.get(folder) or [None]
     li = dl.index(None if lvl == "decision" else lvl) if lvl in dl or lvl == "decision" else 99
-    return mi, 0 if lang == "ru" else 1, li
+    return folder.lower(), 0 if lang == "ru" else 1, li
+
+
+def folders_sorted(groups: dict) -> list[str]:
+    return sorted({g[0] for g in groups}, key=lambda f: f.lower())
 
 
 def agg_group(runs: list[dict]) -> dict:
@@ -247,8 +250,7 @@ table.matrix td.na{color:#9aa7b3}
                  "<th>en: лучший балл</th><th>%</th><th class='num'>Δ п.п.</th>"
                  "<th>стабильность ru</th><th>стабильность en</th></tr>")
     deltas = []
-    folders = sorted({g[0] for g in groups},
-                     key=lambda f: MODEL_ORDER.index(f) if f in MODEL_ORDER else 99)
+    folders = folders_sorted(groups)
     for folder in folders:
         br = lang_best(groups, folder, "ru")
         be = lang_best(groups, folder, "en")
@@ -430,8 +432,7 @@ def build_md(groups: dict, runs: list[dict], out: Path) -> None:
               "| модель | ru лучший | ru % | en лучший | en % | Δ п.п. |",
               "|---|---|---|---|---|---|"]
     deltas = []
-    folders = sorted({g[0] for g in groups},
-                     key=lambda f: MODEL_ORDER.index(f) if f in MODEL_ORDER else 99)
+    folders = folders_sorted(groups)
     for folder in folders:
         br = lang_best(groups, folder, "ru")
         be = lang_best(groups, folder, "en")

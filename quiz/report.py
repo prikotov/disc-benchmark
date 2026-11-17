@@ -158,7 +158,8 @@ def lang_level(groups: dict, folder: str, lang: str, best: dict) -> str:
     return "?"
 
 
-def build_html(groups: dict, runs: list[dict], out: Path) -> None:
+def build_html(groups: dict, runs: list[dict], out: Path,
+               failed_counts: dict | None = None) -> None:
     total_runs = len(runs)
     parts = []
     parts.append("""<!doctype html><html lang="ru"><head><meta charset="utf-8">
@@ -207,8 +208,9 @@ table.matrix td.na{color:#9aa7b3}
                  "<th>модель</th><th>язык</th><th>уровень</th><th>прогонов</th>"
                  "<th class='num'>балл (ср)</th><th class='num'>min–max</th><th>%</th>"
                  "<th>стабильность</th><th class='num'>json_ok</th>"
-                 "<th class='num'>unparsed/skipped</th><th class='num'>p_correct</th>"
-                 "<th class='num'>токены вх/вых</th><th class='num'>время, с</th></tr>")
+                 "<th class='num'>unparsed/skipped</th><th class='num'>сбои</th>"
+                 "<th class='num'>p_correct</th><th class='num'>токены вх/вых</th>"
+                 "<th class='num'>время, с</th></tr>")
     for g in sorted(groups, key=sort_key):
         a = groups[g]
         stab = f"{a['distinct']} уник. из {a['n']}"
@@ -218,6 +220,7 @@ table.matrix td.na{color:#9aa7b3}
         j = "—" if a["json_ok"] is None else f"{a['json_ok'] * 100:.0f}%"
         p = "—" if a["p_correct"] is None else str(a["p_correct"])
         href = f"../models/{g[0]}/{('quiz' if g[1] == 'ru' else 'quiz-en')}/"
+        fails = (failed_counts or {}).get(g, 0)
         parts.append(
             f"<tr><td><a href='{href}'>{g[0]}</a></td><td>{g[1]}</td><td>{g[2]}</td>"
             f"<td class='num'>{a['n']}</td><td class='num'><b>{a['mean']:.1f}</b></td>"
@@ -225,9 +228,12 @@ table.matrix td.na{color:#9aa7b3}
             f"<div class='bar'><div style='width:{a['mean'] / a['total'] * 100:.0f}%'></div></div></td>"
             f"<td>{stab}</td><td class='num'>{j}</td>"
             f"<td class='num'>{a['unparsed']}/{a['skipped']}</td>"
+            f"<td class='num'>{fails}</td>"
             f"<td class='num'>{p}</td><td class='num'>{tok}</td>"
             f"<td class='num'>{a['dur']}</td></tr>")
     parts.append("</table>")
+    parts.append("<div class='muted'>Сбои — прогоны с транспортными ошибками (run.json "
+                 "error), в метриках не участвуют; сырой результат сохранён рядом.</div>")
     if any(a["contention"] for a in groups.values()):
         parts.append("<div class='warn'>У части прогонов в VRAM была чужая модель "
                      "(факт в run.json ollama_contention) — на баллы это не влияет, "
@@ -457,11 +463,24 @@ def main() -> int:
     groups = defaultdict(list)
     for r in runs:
         groups[group_key(r)].append(r)
+    # сбойные прогоны (транспортная ошибка) — вне метрик, факт в отчёте
+    failed = defaultdict(int)
+    clean = defaultdict(list)
+    for r in runs:
+        g = group_key(r)
+        if r.get("error"):
+            failed[g] += 1
+        else:
+            clean[g].append(r)
+    groups = defaultdict(list)
+    for g, rs in clean.items():
+        groups[g] = rs
     agg = {g: agg_group(rs) for g, rs in groups.items()}
+    FAILED_COUNTS = dict(failed)
 
     REPORTS.mkdir(exist_ok=True)
     build_md(agg, runs, REPORTS / "QUIZ.md")
-    build_html(agg, runs, REPORTS / "QUIZ.html")
+    build_html(agg, runs, REPORTS / "QUIZ.html", dict(failed))
     print(f"отчёты: reports/QUIZ.md, reports/QUIZ.html ({len(runs)} прогонов)")
 
     if args.print:

@@ -1513,3 +1513,145 @@ NameError: name 'CALL_TIMEOUT' is not defined
 [06:24:33]   run-03 @max: 19/24 (json_ok=True, unparsed=0, 323.2s)
 отчёты: reports/QUIZ.md, reports/QUIZ.html (418 прогонов)
 === СЕРИЯ kimi v2 ЗАВЕРШЕНА 2026-11-17 13:24:33 ===
+=== СЕРИЯ kimi-k3.1-pro добивка +2 прогона/уровень — старт 2026-11-17 14:52:40 ===
+--- RU проход 1 ---
+[07:52:40] kimi-coding/k3.1-pro [ru] через pi-подписку: уровни ['low', 'high', 'max']
+[07:53:29]   run-04 @low: 18/24 (json_ok=True, unparsed=0, 48.7s)
+[07:55:11]   run-05 @high: 19/24 (json_ok=True, unparsed=0, 102.0s)
+=== СЕРИЯ mimo flash+pro (xiaomi, ru+en, 1 прогон/уровень) — старт 2026-11-17 14:56:54 ===
+--- flash RU ---
+Traceback (most recent call last):
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 944, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 923, in main
+    run_cloud_block(m["tag"], m["folder"], levels, args.runs,
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    PROMPT_VER, PROMPT_SHA, PROMPT,
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    cloud_provider=m.get("cloud_provider", "deepseek"))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 635, in run_cloud_block
+    cfg = CLOUD_PROVIDERS[cloud_provider]
+          ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'xiaomi'
+!!! FAIL flash ru
+--- flash EN ---
+Traceback (most recent call last):
+  File "/home/dp/MyProjects/disc-quiz/quiz-en/runner.py", line 30, in <module>
+    sys.exit(R.main())
+             ~~~~~~^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 923, in main
+    run_cloud_block(m["tag"], m["folder"], levels, args.runs,
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    PROMPT_VER, PROMPT_SHA, PROMPT,
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    cloud_provider=m.get("cloud_provider", "deepseek"))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 635, in run_cloud_block
+    cfg = CLOUD_PROVIDERS[cloud_provider]
+          ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'xiaomi'
+!!! FAIL flash en
+--- pro RU ---
+Traceback (most recent call last):
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 944, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 923, in main
+    run_cloud_block(m["tag"], m["folder"], levels, args.runs,
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    PROMPT_VER, PROMPT_SHA, PROMPT,
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    cloud_provider=m.get("cloud_provider", "deepseek"))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 635, in run_cloud_block
+    cfg = CLOUD_PROVIDERS[cloud_provider]
+          ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'xiaomi'
+!!! FAIL pro ru
+--- pro EN ---
+Traceback (most recent call last):
+  File "/home/dp/MyProjects/disc-quiz/quiz-en/runner.py", line 30, in <module>
+    sys.exit(R.main())
+             ~~~~~~^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 923, in main
+    run_cloud_block(m["tag"], m["folder"], levels, args.runs,
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    PROMPT_VER, PROMPT_SHA, PROMPT,
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    cloud_provider=m.get("cloud_provider", "deepseek"))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dp/MyProjects/disc-quiz/quiz/runner.py", line 635, in run_cloud_block
+    cfg = CLOUD_PROVIDERS[cloud_provider]
+          ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'xiaomi'
+!!! FAIL pro en
+отчёты: reports/QUIZ.md, reports/QUIZ.html (420 прогонов)
+=== СЕРИЯ mimo ЗАВЕРШЕНА 2026-11-17 14:56:55 ===
+=== СЕРИЯ mimo v2 (фикс провайдера) — старт 2026-11-17 14:57:42 ===
+--- flash RU ---
+[07:57:43] mimo-v2.6-flash: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[07:57:53]   пилот: ok (875 симв., reasoning=нет, версия mimo-v2.6-flash)
+[07:57:59]   run-01 @off: 17/24 (json_ok=True, unparsed=0, 5.7s, tok=752/189, версия mimo-v2.6-flash)
+[07:58:53]   run-06 @max: 17/24 (json_ok=True, unparsed=0, 222.1s)
+--- EN проход 1 ---
+[07:58:53] kimi-coding/k3.1-pro [en] через pi-подписку: уровни ['low', 'high', 'max']
+[07:59:14]   run-04 @low: 20/24 (json_ok=True, unparsed=0, 20.8s)
+[08:00:53]   run-05 @high: 20/24 (json_ok=True, unparsed=0, 99.4s)
+[08:01:49]   пилот: ok (521 симв., reasoning=есть, версия mimo-v2.6-flash)
+[08:05:07]   run-06 @max: 17/24 (json_ok=True, unparsed=0, 254.0s)
+--- RU проход 2 ---
+[08:05:07] kimi-coding/k3.1-pro [ru] через pi-подписку: уровни ['low', 'high', 'max']
+[08:05:29]   run-07 @low: 17/24 (json_ok=True, unparsed=0, 21.7s)
+[08:07:13]   run-08 @high: 16/24 (json_ok=True, unparsed=0, 103.4s)
+[08:10:05]   run-09 @max: 17/24 (json_ok=True, unparsed=0, 172.9s)
+--- EN проход 2 ---
+[08:10:06] kimi-coding/k3.1-pro [en] через pi-подписку: уровни ['low', 'high', 'max']
+[08:10:59]   прогон прерван: HTTP 401: {"error":{"message":"The API Key appears to be invalid or may have expired. Please verify your credentials and try again.","type":"invalid_authentication_error"}}
+[08:10:59]   run-07 @low: 0/24 (json_ok=False, unparsed=0, 53.3s)
+[08:11:55]   run-02 @low: 15/24 (json_ok=True, unparsed=0, 606.0s, tok=750/21133, версия mimo-v2.6-flash)
+[08:14:31]   пилот: ok (535 симв., reasoning=есть, версия mimo-v2.6-flash)
+[08:15:19]   run-03 @medium: 16/24 (json_ok=True, unparsed=0, 47.3s, tok=750/1390, версия mimo-v2.6-flash)
+[08:15:23]   run-08 @high: 18/24 (json_ok=True, unparsed=0, 264.3s)
+[08:18:24]   пилот: ok (560 симв., reasoning=есть, версия mimo-v2.6-flash)
+[08:21:38]   run-09 @max: 19/24 (json_ok=True, unparsed=0, 374.5s)
+отчёты: reports/QUIZ.md, reports/QUIZ.html (433 прогонов)
+=== ДОБИВКА kimi ЗАВЕРШЕНА 2026-11-17 15:21:38 ===
+[08:29:17]   run-04 @high: 18/24 (json_ok=True, unparsed=0, 652.2s, tok=750/21619, версия mimo-v2.6-flash)
+[08:29:17]   траты записаны в reports/spend.csv: {'prompt_tokens': 3002, 'completion_tokens': 44331}
+--- flash EN ---
+[08:29:17] mimo-v2.6-flash: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[08:29:24]   пилот: ok (396 симв., reasoning=нет, версия mimo-v2.6-flash)
+[08:29:30]   run-01 @off: 18/24 (json_ok=True, unparsed=0, 5.3s, tok=493/167, версия mimo-v2.6-flash)
+[08:31:34]   пилот: ok (473 симв., reasoning=есть, версия mimo-v2.6-flash)
+[08:36:28]   run-02 @low: 19/24 (json_ok=True, unparsed=0, 294.3s, tok=491/9047, версия mimo-v2.6-flash)
+[08:37:05]   пилот: ok (436 симв., reasoning=есть, версия mimo-v2.6-flash)
+[08:40:11]   run-03 @medium: 18/24 (json_ok=True, unparsed=0, 186.1s, tok=491/5329, версия mimo-v2.6-flash)
+[08:41:14]   пилот: ok (498 симв., reasoning=есть, версия mimo-v2.6-flash)
+[08:49:47]   run-04 @high: 18/24 (json_ok=True, unparsed=0, 513.3s, tok=491/14145, версия mimo-v2.6-flash)
+[08:49:47]   траты записаны в reports/spend.csv: {'prompt_tokens': 1966, 'completion_tokens': 28688}
+--- pro RU ---
+[08:49:47] mimo-v2.6-pro: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[08:49:55]   пилот: ok (489 симв., reasoning=нет, версия mimo-v2.6-pro)
+[08:50:01]   run-01 @off: 20/24 (json_ok=True, unparsed=0, 5.5s, tok=752/286, версия mimo-v2.6-pro)
+[08:52:08]   пилот: ok (461 симв., reasoning=есть, версия mimo-v2.6-pro)
+[08:55:17]   run-02 @low: 17/24 (json_ok=True, unparsed=0, 189.4s, tok=750/12108, версия mimo-v2.6-pro)
+[08:59:59]   пилот: ok (513 симв., reasoning=есть, версия mimo-v2.6-pro)
+[09:02:54]   run-03 @medium: 16/24 (json_ok=True, unparsed=0, 174.9s, tok=750/9816, версия mimo-v2.6-pro)
+[09:06:47]   пилот: ok (577 симв., reasoning=есть, версия mimo-v2.6-pro)
+[09:11:10]   run-04 @high: 16/24 (json_ok=True, unparsed=0, 263.3s, tok=750/16016, версия mimo-v2.6-pro)
+[09:11:10]   траты записаны в reports/spend.csv: {'prompt_tokens': 3002, 'completion_tokens': 38226}
+--- pro EN ---
+[09:11:10] mimo-v2.6-pro: облачный провайдер xiaomi, уровни ['off', 'low', 'medium', 'high']
+[09:11:14]   пилот: ok (462 симв., reasoning=нет, версия mimo-v2.6-pro)
+[09:11:20]   run-01 @off: 15/24 (json_ok=True, unparsed=0, 5.8s, tok=493/170, версия mimo-v2.6-pro)
+[09:14:50]   пилот: ok (487 симв., reasoning=есть, версия mimo-v2.6-pro)
+[09:20:27]   run-02 @low: 19/24 (json_ok=True, unparsed=0, 337.1s, tok=491/17279, версия mimo-v2.6-pro)
+[09:26:08]   пилот: ok (489 симв., reasoning=есть, версия mimo-v2.6-pro)
+[09:33:33]   run-03 @medium: 19/24 (json_ok=True, unparsed=0, 444.9s, tok=491/21254, версия mimo-v2.6-pro)
+[09:36:20]   пилот: ok (428 симв., reasoning=есть, версия mimo-v2.6-pro)
+[09:39:35]   run-04 @high: 19/24 (json_ok=True, unparsed=0, 195.2s, tok=491/9044, версия mimo-v2.6-pro)
+[09:39:35]   траты записаны в reports/spend.csv: {'prompt_tokens': 1966, 'completion_tokens': 47747}
+отчёты: reports/QUIZ.md, reports/QUIZ.html (446 прогонов)
+=== СЕРИЯ mimo v2 ЗАВЕРШЕНА 2026-11-17 16:39:35 ===

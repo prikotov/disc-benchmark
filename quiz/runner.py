@@ -508,6 +508,18 @@ CLOUD_PROVIDERS = {
         "thinking": lambda lvl: {"reasoning_effort": lvl} if lvl else {},
         "doc_levels_note": "reasoning_effort, минимум low (off не существует)",
     },
+    "xiaomi": {
+        # подписка Xiaomi (token plan sgp); паттерн сестринского workspace
+        # (knowledge-map/runner_cloud.py). Шкала из ошибки 400 API:
+        # reasoning_effort none/low/medium/high; off = none.
+        "url": "https://token-plan-sgp.xiaomimimo.com/v1/chat/completions",
+        "key": "pi-auth:xiaomi-token-plan-sgp",
+        "tariff": None,                       # квота подписки
+        "scale": ("off", "low", "medium", "high"),
+        "thinking": lambda lvl: ({"reasoning_effort": "none"} if lvl == "off"
+                                 else {"reasoning_effort": lvl} if lvl else {}),
+        "doc_levels_note": "reasoning_effort none/low/medium/high (перечислено в 400 API); off = none",
+    },
     "alibabacloud": {
         # подписка alibabacloud (Model Studio token plan); паттерн сестринского
         # workspace (knowledge-map/runner_cloud.py). Ключ pi-auth.

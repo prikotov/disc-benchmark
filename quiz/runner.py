@@ -905,6 +905,18 @@ def main() -> int:
                         "models/*/quiz-en/run-*/run.json"):
             for p in sorted(ROOT.glob(pattern)):
                 r = json.loads(p.read_text(encoding="utf-8"))
+                if r.get("provider") == "decision":
+                    # decision: эталон может отличаться от сохранённого
+                    # (текст варианта vs текст раздела ответов) — пересверка
+                    rkey = keys[r.get("lang") or "ru"]
+                    score = 0
+                    for x, q in zip(r["verdict"]["per_question"], rkey["questions"]):
+                        x["correct"] = x.get("chosen") == q["key"]
+                        score += 1 if x["correct"] else 0
+                    r["verdict"]["score"] = score
+                    p.write_text(json.dumps(r, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    n += 1
+                    continue
                 if r.get("provider") != "chat":
                     continue
                 runner_key = KEY

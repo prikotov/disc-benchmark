@@ -165,6 +165,13 @@ def build_html(groups: dict, runs: list[dict], out: Path,
                failed_counts: dict | None = None) -> None:
     total_runs = len(runs)
     parts = []
+    LEGEND = ("<div class='muted legend'>📘 — ключ — правило методологии курса (по Эриксону): "
+              "Q1 «двое жёлтых» совместимы социально, Q2 «зелёный с любым» в работе, "
+              "Q18 «смешение всех цветов» — команда, Q24 «нет однозначного ответа». "
+              "Из общего DISC-материала эти ответы не выводятся (типовая подача совместимости — "
+              "комплементарные пары); в промпте источник не упоминается. Остальные 20 вопросов — "
+              "профильные ассоциации общего DISC.</div>")
+    parts = []
     parts.append("""<!doctype html><html lang="ru"><head><meta charset="utf-8">
 <title>disc quiz: анкета DISC — своды (ru + en)</title><style>
 body{font:14px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif;margin:24px;color:#1c2733;background:#fafbfc}
@@ -337,7 +344,7 @@ table.matrix td.na{color:#9aa7b3}
                                  f"title='{okc} из {groups[g]['n']} прогонов'>{rate * 100:.0f}</td>")
             parts.append(f"<tr><td class='model'>{g[0]} "
                          f"<span class='muted'>@ {g[2]}</span></td>" + "".join(cells) + "</tr>")
-        parts.append("</table>")
+        parts.append("</table>" + LEGEND)
 
     # сложность вопросов по языкам
     for lang in ("ru", "en"):
@@ -367,7 +374,7 @@ table.matrix td.na{color:#9aa7b3}
             color_row.append(f"<td class='num' style='background:{cc};color:#fff'>{c if c != '—' else '—'}</td>")
         parts.append("<tr><td>верных</td>" + "".join(correct_row) + "<td></td></tr>")
         parts.append("<tr><td>ключ</td>" + "".join(color_row) + "<td></td></tr>")
-        parts.append("</table>")
+        parts.append("</table>" + LEGEND)
 
     # точность по цветам, по языкам
     for lang in ("ru", "en"):

@@ -373,7 +373,7 @@ table.matrix td.na{color:#9aa7b3}
                  "номера сопоставленных en-вопросов (ru 12 не имеет en-аналога). Ячейка — доля "
                  "верных ответов на вопрос по прогонам группы, 0–100 (наведение — точные "
                  "«верных/всего»); 📘 — эталонный ответ не однозначный</div>")
-    parts.append("<table class='matrix'><tr><th class='model'>модель @ язык @ уровень</th>")
+    parts.append("<table class='matrix'><tr><th class='model'>модель @ уровень</th><th>язык</th>")
     for q in KEYS["ru"]["questions"]:
         mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
         parts.append(f"<th class='num'>{q['n']}{mark}</th>")
@@ -381,7 +381,7 @@ table.matrix td.na{color:#9aa7b3}
         f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}"
         f"{' <span class=\'bm\'>📘</span>' if RU_TO_EN[q['n']] and KEYS['en']['questions'][RU_TO_EN[q['n']] - 1]['kind'] in ('book', 'none') else ''}</th>"
         for q in KEYS["ru"]["questions"])
-    parts.append("<tr><th class='model'>№ en →</th>" + en_head + "</tr>")
+    parts.append("<tr><th class='model'>№ en →</th><th></th>" + en_head + "</tr>")
     for g in gs_all:
         lang = g[1]
         rates = mx[lang][g]
@@ -399,7 +399,7 @@ table.matrix td.na{color:#9aa7b3}
                 cells.append(f"<td class='num' style='{heat_color(rate)}' "
                              f"title='{okc} из {groups[g]['n']} прогонов'>{rate * 100:.0f}</td>")
         parts.append(f"<tr><td class='model'>{g[0]} "
-                     f"<span class='muted'>@ {g[1]} @ {g[2]}</span></td>" + "".join(cells) + "</tr>")
+                     f"@ {g[2]}</td><td>{g[1]}</td>" + "".join(cells) + "</tr>")
     parts.append("</table>")
 
     parts.append("<h2>Проблемные вопросы (модели массово не отвечают)</h2>")
@@ -546,11 +546,11 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
               "Столбцы — нумерация ru; строка «№ en» — сопоставленные en-вопросы "
               "(ru 12 не имеет en-аналога). Ячейка — доля верных, 0–100.",
               "",
-              "| модель @ язык @ уровень | " + " | ".join(
+              "| модель @ уровень | язык | " + " | ".join(
                   f"{q['n']}{'' if q['kind'] == 'color' else '📘'}"
                   for q in KEYS["ru"]["questions"]) + " |",
-              "|---|" + "---|" * len(KEYS["ru"]["questions"]),
-              "| **№ en →** | " + en_head + " |"]
+              "|---|---|" + "---|" * len(KEYS["ru"]["questions"]),
+              "| **№ en →** | | " + en_head + " |"]
     for g in sorted(groups, key=sort_key):
         lang = g[1]
         rates = mx[lang][g]
@@ -562,7 +562,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
                 en = RU_TO_EN[q["n"]]
                 rate = rates[en - 1] if en else None
             cells.append(f"{rate * 100:.0f}" if rate is not None else "—")
-        lines.append(f"| **{g[0]}** @ {lang} @ {g[2]} | " + " | ".join(cells) + " |")
+        lines.append(f"| **{g[0]}** @ {g[2]} | {lang} | " + " | ".join(cells) + " |")
 
     q_stat = {lang: defaultdict(lambda: [0, 0]) for lang in ("ru", "en")}
     for r in runs:

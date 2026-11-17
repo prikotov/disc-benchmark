@@ -431,6 +431,143 @@ def decision_run(tag: str, key: dict) -> dict:
     return {"per_question": per_question, "usage": usage}
 
 
+# ---------------------------------------------------------------- облако (OpenAI-совместимое)
+
+DEEPSEEK_CHAT = "https://api.deepseek.com/chat/completions"
+# $/1M токенов (вход / кэш-хит / выход), пик; оф-пик вдвое дешевле
+DEEPSEEK_TARIFF = (0.30, 0.006, 1.20)
+
+
+def cloud_key() -> str:
+    """Ключ из env-файла MODELS_RU_ENV (путь — env; секреты в репо не живут)."""
+    v = __import__("os").environ
+    env_path = v.get("MODELS_RU_ENV", "")
+    if not env_path:
+        sys.exit("задайте MODELS_RU_ENV — путь к env-файлу с ключами облаков")
+    for line in Path(env_path.replace("~", str(Path.home()))).read_text().splitlines():
+        if line.startswith("DEEPSEEK_API_KEY="):
+            return line.split("=", 1)[1].strip()
+    sys.exit(f"DEEPSEEK_API_KEY не найден в {env_path}")
+
+
+def cloud_call(tag: str, prompt: str, level) -> dict:
+    body = {"model": tag, "messages": [{"role": "user", "content": prompt}],
+            "reasoning_effort": level}
+    req = urllib.request.Request(
+        DEEPSEEK_CHAT,
+        data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+        headers={"Content-Type": "application/json",
+                 "Authorization": f"Bearer {cloud_key()}"})
+    last_exc = None
+    for attempt in range(1, RETRIES + 2):
+        try:
+            with urllib.request.urlopen(req, timeout=CALL_TIMEOUT) as r:
+                resp = json.loads(r.read())
+            msg = (resp.get("choices") or [{}])[0].get("message") or {}
+            content = msg.get("content") or ""
+            thinking = msg.get("reasoning_content")
+            content, embedded = strip_think(content)
+            if thinking is None and embedded:
+                thinking = embedded
+            u = resp.get("usage") or {}
+            usage = {
+                "prompt_tokens": u.get("prompt_tokens"),
+                "cached_tokens": (u.get("prompt_tokens_details") or {}).get("cached_tokens"),
+                "completion_tokens": u.get("completion_tokens"),
+                "reasoning_tokens": (u.get("completion_tokens_details") or {}).get("reasoning_tokens"),
+            }
+            return {"content": content, "thinking": thinking, "usage": usage,
+                    "model_version": resp.get("model"),
+                    "done_reason": resp.get("choices", [{}])[0].get("finish_reason")}
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            last_exc = e
+            if attempt <= RETRIES:
+                log(f"  транспортная ошибка ({e}); повтор {attempt}/{RETRIES}")
+                time.sleep(5 * attempt)
+    raise RuntimeError(f"облако не ответило после {RETRIES + 1} попыток: {last_exc}")
+
+
+def spend_row(model: str, purpose: str, requests: int, usage: dict) -> None:
+    """Правило 9: каждая платная операция — строка в reports/spend.csv
+    (главный workspace, в git не живёт)."""
+    import csv as _csv
+    tin, tcout = usage.get("prompt_tokens") or 0, usage.get("completion_tokens") or 0
+    cached = usage.get("cached_tokens") or 0
+    ti, tc, to = DEEPSEEK_TARIFF
+    cost = (tin - cached) * ti / 1e6 + cached * tc / 1e6 + tcout * to / 1e6
+    if ROOT.name == "disc-quiz":  # worktree — учёт в главном tree
+        target = ROOT.parent / "disc" / "reports" / "spend.csv"
+    else:
+        target = ROOT / "reports" / "spend.csv"
+    target.parent.mkdir(exist_ok=True)
+    new = not target.exists()
+    with open(target, "a", newline="") as f:
+        w = _csv.writer(f)
+        if new:
+            w.writerow(["дата", "модель", "цель", "запросов", "токены вх",
+                        "из них кэш", "токены вых", "стоимость $"])
+        w.writerow([datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),
+                    model, purpose, requests, tin, cached, tcout, f"{cost:.4f}"])
+
+
+def run_cloud_block(tag: str, folder: str, levels: list, runs: int,
+                    prompt_ver: int, prompt_sha: str, prompt: str) -> None:
+    log(f"{tag}: облачный провайдер (OpenAI-совместимый), уровни {levels}")
+    (ROOT / "models" / folder / "quiz").mkdir(parents=True, exist_ok=True)
+    total_usage = {}
+    for level in levels:
+        do_pilot = True
+        for i in range(runs):
+            if do_pilot:  # пилот: один выброшенный вызов
+                try:
+                    pilot = cloud_call(tag, prompt, level)
+                    do_pilot = False
+                    log(f"  пилот: ok ({len(pilot['content'])} симв., "
+                        f"reasoning={'есть' if pilot['thinking'] else 'нет'}, "
+                        f"версия {pilot['model_version']})")
+                except RuntimeError as e:
+                    log(f"  пилот: {e}")
+            d = next_run_dir(folder)
+            t0 = time.monotonic()
+            try:
+                resp = cloud_call(tag, prompt, level)
+                content, thinking, usage = resp["content"], resp["thinking"], resp["usage"]
+                error = done_reason = None
+            except RuntimeError as e:
+                content, thinking, usage = "", None, {}
+                error, done_reason = str(e), None
+                log(f"  прогон прерван: {e}")
+            duration = round(time.monotonic() - t0, 1)
+            answers, flags = parse_chat_answers(content)
+            per_q, score, stats = chat_verdict(answers)
+            run = {
+                "model": tag, "folder": folder, "provider": "cloud",
+                "thinking": {"requested": level, "scale": ["low", "high"],
+                             "sent": level, "note": "reasoning_effort (минимум low)"},
+                "options": {"reasoning_effort": level},
+                "model_version": resp.get("model_version") if not error else None,
+                "prompt_version": prompt_ver, "prompt_sha256": prompt_sha,
+                "started_utc": datetime.now(timezone.utc).isoformat(),
+                "duration_s": duration, "error": error,
+                "done_reason": done_reason, "usage": usage,
+                "ps_snapshot": ["облако, /api/ps неприменим"],
+                "parsed": {"answers": {str(k): v for k, v in sorted(answers.items())}, **flags},
+                "verdict": {"score": score, "total": len(KEY["questions"]),
+                            "stats": stats, "per_question": per_q},
+            }
+            (d / "run.json").write_text(
+                json.dumps(run, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            (d / "answer.txt").write_text(content, encoding="utf-8")
+            for k in ("prompt_tokens", "completion_tokens"):
+                total_usage[k] = (total_usage.get(k) or 0) + (usage.get(k) or 0)
+            log(f"  run-{d.name[4:]} @{level}: {score}/24 "
+                f"(json_ok={flags['json_ok']}, unparsed={stats['unparsed']}, "
+                f"{duration}s, tok={usage.get('prompt_tokens', '?')}/"
+                f"{usage.get('completion_tokens', '?')}, версия {run['model_version']})")
+    spend_row(tag, "анкета DISC (quiz)", runs * len(levels), total_usage)
+    log(f"  trаты записаны в reports/spend.csv: {total_usage}")
+
+
 # ---------------------------------------------------------------- конвейер прогона
 
 def load_prompt() -> tuple[int, str, str]:
@@ -632,6 +769,12 @@ def main() -> int:
     m = next((x for x in load_matrix() if x["tag"] == args.model), None)
     if not m:
         sys.exit(f"тег {args.model} не в quiz/models.json")
+
+    if m["provider"] == "cloud":
+        levels = args.thinking.split(",") if args.thinking else [l for l in m["doc_levels"] if l]
+        run_cloud_block(m["tag"], m["folder"], levels, args.runs,
+                        PROMPT_VER, PROMPT_SHA, PROMPT)
+        return 0
 
     if m["provider"] == "decision":
         run_decision_block(m["tag"], m["folder"], args.runs)

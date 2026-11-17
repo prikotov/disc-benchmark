@@ -88,15 +88,16 @@ def agg_group(runs: list[dict]) -> dict:
     toks = defaultdict(list)
     for r in runs:
         u = r.get("usage") or {}
-        for k in ("prompt_eval_count", "eval_count", "input_tokens", "output_tokens"):
+        for k in ("prompt_eval_count", "eval_count", "input_tokens", "output_tokens",
+                  "prompt_tokens", "completion_tokens"):
             if u.get(k):
                 toks[k].append(u[k])
     mean = lambda k: round(sum(toks[k]) / len(toks[k])) if toks.get(k) else None
     pc = [r["verdict"].get("p_correct_mean") for r in runs
           if r["verdict"].get("p_correct_mean") is not None]
-    # json_ok осмыслен только для chat-моделей (decision отвечает noul-пробами)
+    # json_ok осмыслен для chat и cloud (decision отвечает noul-пробами)
     jok = (sum(1 for r in runs if (r.get("parsed") or {}).get("json_ok")) / n) \
-        if n and provider == "chat" else None
+        if n and provider in ("chat", "cloud") else None
     return {
         "n": n, "provider": provider,
         "mean": sum(scores) / n if n else 0,
@@ -105,8 +106,8 @@ def agg_group(runs: list[dict]) -> dict:
         "unparsed": flags["unparsed"], "skipped": flags["skipped"],
         "ambiguous": flags["ambiguous"], "near": flags["near"],
         "json_ok": jok,
-        "tok_in": mean("prompt_eval_count") or mean("input_tokens"),
-        "tok_out": mean("eval_count") or mean("output_tokens"),
+        "tok_in": mean("prompt_eval_count") or mean("input_tokens") or mean("prompt_tokens"),
+        "tok_out": mean("eval_count") or mean("output_tokens") or mean("completion_tokens"),
         "dur": round(sum(r.get("duration_s") or 0 for r in runs) / n, 1) if n else None,
         "p_correct": round(sum(pc) / len(pc), 3) if pc else None,
         "contention": any(r.get("ollama_contention") for r in runs),

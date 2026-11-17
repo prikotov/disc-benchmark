@@ -327,8 +327,10 @@ table.matrix td.na{color:#9aa7b3}
     for q in KEYS["ru"]["questions"]:
         mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
         parts.append(f"<th class='num'>{q['n']}{mark}</th>")
-    en_head = "".join(f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}</th>"
-                      for q in KEYS["ru"]["questions"])
+    en_head = "".join(
+        f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}"
+        f"{' <span class=\'bm\'>📘</span>' if RU_TO_EN[q['n']] and KEYS['en']['questions'][RU_TO_EN[q['n']] - 1]['kind'] in ('book', 'none') else ''}</th>"
+        for q in KEYS["ru"]["questions"])
     parts.append("<tr><th class='model'>№ en →</th>" + en_head + "</tr>")
     for g in gs_all:
         lang = g[1]
@@ -472,7 +474,10 @@ def build_md(groups: dict, runs: list[dict], out: Path) -> None:
 
     # единая матрица + сложность (столбцы по нумерации ru, en сопоставлен)
     mx = {lang: matrix_rows(groups, lang) for lang in ("ru", "en")}
-    en_head = " | ".join(str(RU_TO_EN[q["n"]] or "—") for q in KEYS["ru"]["questions"])
+    en_head = " | ".join(
+        f"{RU_TO_EN[q['n']] or '—'}"
+        f"{'📘' if RU_TO_EN[q['n']] and KEYS['en']['questions'][RU_TO_EN[q['n']] - 1]['kind'] in ('book', 'none') else ''}"
+        for q in KEYS["ru"]["questions"])
     lines += ["", "## Матрица: модель × язык × уровень × вопрос", "",
               "Столбцы — нумерация ru; строка «№ en» — сопоставленные en-вопросы "
               "(ru 12 не имеет en-аналога). Ячейка — доля верных, 0–100.",

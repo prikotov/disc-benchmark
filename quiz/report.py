@@ -165,10 +165,6 @@ def build_html(groups: dict, runs: list[dict], out: Path,
                failed_counts: dict | None = None) -> None:
     total_runs = len(runs)
     parts = []
-    LEGEND = ("<div class='muted legend'>📘 — эталонный ответ не одиночный цвет "
-              "(утверждение о совместимости/команде либо «нет однозначного ответа»). "
-              "Промахи здесь — знание другой версии методологии, а не незнание DISC.</div>")
-    parts = []
     parts.append("""<!doctype html><html lang="ru"><head><meta charset="utf-8">
 <title>disc quiz: анкета DISC — своды (ru + en)</title><style>
 body{font:14px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif;margin:24px;color:#1c2733;background:#fafbfc}
@@ -323,7 +319,7 @@ table.matrix td.na{color:#9aa7b3}
         mx = matrix_rows(groups, lang)
         parts.append(f"<h2>Матрица «{label}»: модель × уровень × вопрос</h2>"
                      "<div class='muted'>ячейка — доля верных ответов на вопрос по прогонам "
-                     "группы, 0–100 (наведение — точные «верных/всего»); 📘 — эталонный ответ — не одиночный цвет (расшифровка под таблицей)</div>")
+                     "группы, 0–100 (наведение — точные «верных/всего»); 📘 — эталонный ответ не однозначный</div>")
         parts.append("<table class='matrix'><tr><th class='model'>модель @ уровень</th>")
         for q in KEYS[lang]["questions"]:
             mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
@@ -341,7 +337,7 @@ table.matrix td.na{color:#9aa7b3}
                                  f"title='{okc} из {groups[g]['n']} прогонов'>{rate * 100:.0f}</td>")
             parts.append(f"<tr><td class='model'>{g[0]} "
                          f"<span class='muted'>@ {g[2]}</span></td>" + "".join(cells) + "</tr>")
-        parts.append("</table>" + LEGEND)
+        parts.append("</table>")
 
     # сложность вопросов по языкам
     for lang in ("ru", "en"):
@@ -356,7 +352,7 @@ table.matrix td.na{color:#9aa7b3}
         parts.append(f"<h2>Сложность вопросов — {lang} (все прогоны языка)</h2><table><tr>"
                      "<th>вопрос</th>")
         for q in KEYS[lang]["questions"]:
-            mark = " <span title='эталонный ответ — не одиночный цвет'>📘</span>" \
+            mark = " <span title='эталонный ответ не однозначный'>📘</span>" \
                 if q["kind"] in ("book", "none") else ""
             parts.append(f"<th class='num'>{q['n']}{mark}</th>")
         parts.append("<th>эталон</th></tr>")
@@ -371,7 +367,7 @@ table.matrix td.na{color:#9aa7b3}
             color_row.append(f"<td class='num' style='background:{cc};color:#fff'>{c if c != '—' else '—'}</td>")
         parts.append("<tr><td>верных</td>" + "".join(correct_row) + "<td></td></tr>")
         parts.append("<tr><td>эталон</td>" + "".join(color_row) + "<td></td></tr>")
-        parts.append("</table>" + LEGEND)
+        parts.append("</table>")
 
     # точность по цветам, по языкам
     for lang in ("ru", "en"):

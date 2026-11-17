@@ -185,7 +185,8 @@ code{background:#eef2f6;border-radius:3px;padding:0 4px}
 
     gen = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     parts.append(f"<h1>Анкета DISC (блиц-тест): своды по прогонам</h1>"
-                 f"<div class='sub'>24 вопроса из книги Эриксона; модель называет профиль без вариантов. "
+                 f"<div class='sub'>24 вопроса по методологии DISC (блиц-тест курса, материалы по книге Эриксона); "
+                 f"модель называет профиль без вариантов. "
                  f"Промпт v{runs[0]['prompt_version'] if runs else 1}. "
                  f"Прогонов: {total_runs}. Сформировано: {gen}. "
                  f"Методика: <code>quiz/README.md</code></div>")
@@ -252,7 +253,7 @@ code{background:#eef2f6;border-radius:3px;padding:0 4px}
     mx = matrix_rows(groups)
     parts.append("<h2>Матрица: модель × уровень × вопрос</h2>"
                  "<div class='muted'>ячейка — доля верных ответов на вопрос по прогонам группы, "
-                 "0–100 (наведение — точные «верных/всего»); 📘 — ключ — утверждение книги</div>")
+                 "0–100 (наведение — точные «верных/всего»); 📘 — ключ — правило курса (трактовка методологии)</div>")
     parts.append("<table class='matrix'><tr><th class='model'>модель @ уровень</th>")
     for q in KEY["questions"]:
         mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
@@ -276,7 +277,7 @@ code{background:#eef2f6;border-radius:3px;padding:0 4px}
     parts.append("<h2>Сложность вопросов (все прогоны, оба формата)</h2><table><tr>"
                  "<th>вопрос</th>")
     for q in KEY["questions"]:
-        mark = " <span title='ключ — утверждение книги'>📘</span>" \
+        mark = " <span title='ключ — правило курса (трактовка методологии по Эриксону)'>📘</span>" \
             if q["kind"] in ("book", "none") else ""
         parts.append(f"<th class='num'>{q['n']}{mark}</th>")
     parts.append("<th>цвет ключа</th></tr>")
@@ -291,9 +292,10 @@ code{background:#eef2f6;border-radius:3px;padding:0 4px}
         color_row.append(f"<td class='num' style='background:{cc};color:#fff'>{c if c != '—' else '—'}</td>")
     parts.append("<tr><td>верных</td>" + "".join(correct_row) + "<td></td></tr>")
     parts.append("<tr><td>ключ</td>" + "".join(color_row) + "<td></td></tr>")
-    parts.append("</table><div class='muted legend'>📘 — ключ — утверждение книги "
-                 "(Q1/Q2/Q18 совместимость/команда, Q24 «нет однозначного ответа»): из общего DISC "
-                 "не выводится, в промпте книга не упоминается</div>")
+    parts.append("</table><div class='muted legend'>📘 — ключ — правило курса "
+                 "(Q1/Q2/Q18 совместимость/команда, Q24 «нет однозначного ответа»): "
+                 "в распространённых версиях DISC эти правила подают иначе "
+                 "(комплементарные пары), в промпте источник не упоминается</div>")
 
     # по цветам
     parts.append("<h2>Точность по профилям (20 single-цветных вопросов)</h2>"
@@ -343,7 +345,7 @@ def build_md(groups: dict, runs: list[dict], out: Path) -> None:
             f"{a['tok_in'] or '—'}/{a['tok_out'] or '—'} | {a['dur']} |")
     lines += ["", "## Матрица: модель × уровень × вопрос", "",
               "Ячейка — доля верных ответов на вопрос по прогонам группы (0–100). "
-              "Q1/Q2/Q18/Q24 — ключи-утверждения книги.",
+              "Q1/Q2/Q18/Q24 — ключи по правилам курса (трактовка методологии; в распространённых версиях DISC — иначе).",
               "",
               "| модель @ уровень | " + " | ".join(str(q["n"]) for q in KEY["questions"]) + " |",
               "|---|" + "---|" * len(KEY["questions"])]
@@ -365,7 +367,7 @@ def build_md(groups: dict, runs: list[dict], out: Path) -> None:
         rate = okc / tot if tot else 0
         row.append(f"{okc}/{tot} ({rate * 100:.0f}%)")
     lines.append("| верных | " + " | ".join(row) + " |")
-    lines += ["", "Q1/Q2/Q18/Q24 (📘) — ключи-утверждения книги.", "",
+    lines += ["", "Q1/Q2/Q18/Q24 (📘) — ключи по правилам курса (трактовка методологии).", "",
               "## Точность по профилям", "", "| профиль | верных | % |", "|---|---|---|"]
     color_stats = defaultdict(lambda: [0, 0])
     for r in runs:

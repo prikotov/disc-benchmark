@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Тест DISC - одностраничный тест типа коммуникации, работает офлайн">
+<title>Тестирование DISC - Тест DISC</title>
+<style>
+:root{
+  --bg:#f4f5f9; --card:#ffffff; --ink:#1a1d2c; --muted:#666c82;
+  --line:#e3e6f2; --accent:#4b5cff; --accent-d:#3a3fd6;
+  --top:#1f7a3f; --bottom:#a8324a;
+  --shadow:0 20px 50px rgba(20,24,40,.18);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;font-size:15px}
+body.no-scroll{overflow:hidden}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:32px 20px;text-align:center}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:26px;justify-content:center}
+.brand .logo{width:34px;height:34px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#4b5cff,#ff5c8a);color:#fff;font-size:15px;font-weight:800}
+h1{font-size:clamp(30px,5vw,50px);line-height:1.08;margin:0 0 18px;font-weight:800;letter-spacing:-.01em}
+.lede{font-size:clamp(15px,2.3vw,19px);color:var(--muted);max-width:560px;margin:0 auto 34px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:12px;padding:15px 32px;
+  font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font);transition:transform .08s,box-shadow .15s,background .15s}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:#fff;box-shadow:0 10px 24px rgba(75,92,255,.35)}
+.btn.primary:hover{background:var(--accent-d);box-shadow:0 12px 28px rgba(75,92,255,.45)}
+.btn.ghost{background:#fff;color:var(--muted);border:1px solid var(--line);padding:12px 22px;font-weight:500}
+.btn.ghost:hover{border-color:#c6c9dc;background:#f8f9fd}
+.btn:disabled{opacity:.4;cursor:default;box-shadow:none}
+.overlay{position:fixed;inset:0;background:rgba(16,19,30,.55);display:none;z-index:40;overflow:auto;padding:18px;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:16px;box-shadow:var(--shadow);width:100%;max-width:780px;
+  max-height:94vh;display:flex;flex-direction:column;overflow:hidden}
+.modal__head{position:relative;padding:20px 24px 16px;border-bottom:1px solid var(--line);flex-shrink:0}
+.modal__title{margin:0;font-size:22px;font-weight:800}
+.modal__sub{margin-top:6px;color:var(--muted);font-size:13.5px}
+.modal__close{position:absolute;top:14px;right:14px;border:0;background:transparent;cursor:pointer;color:var(--muted);
+  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;font-family:var(--font)}
+.modal__close:hover{background:var(--bg);color:var(--ink)}
+#wizard{display:flex;flex-direction:column;flex:1;min-height:0}
+#resultSection{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:8px 0}
+#wizard.hidden,#resultSection.hidden{display:none}
+.step-hint{font-size:13px;color:var(--muted);margin:10px 24px 0}
+.tabs{position:sticky;top:0;background:var(--card);z-index:5;border-bottom:1px solid var(--line);padding:10px 8px;overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:8px 16px;
+  font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--font);transition:background .12s,color .12s,border-color .12s}
+.tab:hover{border-color:#c6c9dc;color:var(--ink)}
+.tab.is-active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.progress{height:6px;background:var(--bg);margin:14px 24px;border-radius:999px;overflow:hidden}
+.progress span{display:block;height:100%;width:12.5%;background:var(--accent);transition:width .25s ease}
+.modal__body{overflow-y:auto;overflow-x:hidden;flex:1;min-height:0}
+.pane{display:none}
+.pane.show{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:12px 24px 10px}
+.qcard{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 12px 14px;min-width:0}
+.qcard .num{font-size:12px;color:var(--muted);margin:0 0 8px;font-weight:600;text-align:center}
+.qcard .lbl{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-align:center;margin:0 0 8px}
+.qcard .lbl.top{color:var(--top)}
+.qcard .lbl.bot{color:var(--bottom)}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.item{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:9px 11px;user-select:none;-webkit-user-select:none;font-size:14.5px;position:relative;cursor:grab;
+  transition:box-shadow .1s,border-color .1s,opacity .15s,transform .06s}
+.item:hover{border-color:#c7cdf2}
+.item:active{cursor:grabbing}
+.item.is-drag{opacity:.35;box-shadow:none;border-color:#9aa3d0}
+.item .handle{flex:none;color:#b3b3b3;display:flex;align-items:center;justify-content:center;width:18px;height:18px;touch-action:none}
+.item .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:680px){
+  .grid{grid-template-columns:1fr;padding:10px 14px}
+  .step-hint{margin:10px 14px 0}
+  .progress{margin:12px 14px}
+  .item .txt{white-space:normal;overflow:visible;text-overflow:initial}
+  .item .handle{display:none}
+}
+.modal__foot{display:flex;gap:10px;padding:14px 24px 16px;border-top:1px solid var(--line);flex-shrink:0}
+.modal__foot .btn{flex:1}
+@media (max-width:520px){.modal__foot{padding:12px 14px 14px}.modal__head{padding:18px 16px 12px}}
+.result__title{margin:8px 24px 4px;font-size:20px;font-weight:800}
+.result__score{margin:2px 24px 6px}
+.result__score span{font-size:26px;font-weight:800;letter-spacing:.02em;display:inline-block}
+.score-chips{display:flex;flex-wrap:wrap;gap:12px;margin:8px 24px}
+.score-chip{flex:1;min-width:74px;max-width:120px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 10px;text-align:center}
+.score-chip .letter{font-size:14px;font-weight:700;letter-spacing:.08em;color:var(--muted)}
+.score-chip .val{font-size:28px;font-weight:800;margin-top:2px;display:block}
+.score-chip .val.pos{color:var(--top)}
+.score-chip .val.neg{color:var(--bottom)}
+.score-chip .val.zero{color:var(--muted)}
+.result__subtitle{margin:4px 24px 4px;color:var(--ink);font-size:14px}
+.result__subtitle a{color:var(--accent);font-weight:600;text-decoration:underline}
+.result__disclaimer{margin:2px 24px 18px;color:var(--muted);font-size:13.5px}
+.result__disclaimer span{font-weight:800}
+.result__link-wrap{margin:0 24px 4px}
+.result__link-title{margin:0 0 10px;font-weight:700;font-size:14px}
+.copyfield{display:flex;gap:8px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:6px;max-width:420px}
+.copyfield__input{flex:1;min-width:0;border:0;padding:10px 12px;font-family:var(--font);font-size:13.5px;color:var(--muted);background:var(--bg);border-radius:8px}
+.copyfield__btn{flex:none;border:0;border-radius:8px;background:var(--accent);color:#fff;padding:10px 18px;font-weight:600;cursor:pointer;font-family:var(--font);font-size:14px}
+.copyfield__btn:hover{background:var(--accent-d)}
+.copyfield__btn.ok{background:#1f7a3f}
+@media (max-width:520px){
+  .result__title{margin-left:14px;margin-right:14px}
+  .result__score,.score-chips,.result__subtitle,.result__disclaimer,.result__link-wrap,.copyfield{margin-left:14px;margin-right:14px}
+}
+</style>
+</head>
+<body>
+<main class="hero">
+  <div class="brand"><span class="logo" aria-hidden="true">DISC</span></div>
+  <h1>Тест DISC</h1>
+  <p class="lede">Определите свой тип коммуникации за 8 коротких шагов. Размещайте блоки от наиболее похожего на вас к наименее похожему.</p>
+  <button id="openBtn" class="btn primary" type="button">Пройти тест</button>
+</main>
+
+<div class="overlay" id="overlay" role="presentation">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Тестирование DISC">
+    <div class="modal__head">
+      <div>
+        <h2 class="modal__title">Тестирование DISC</h2>
+        <p class="modal__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+      </div>
+      <button class="modal__close" id="closeBtn" type="button" aria-label="Закрыть">&times;</button>
+    </div>
+    <section id="wizard" aria-label="Шаги теста">
+      <p class="step-hint" id="stepHint">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+      <nav class="tabs" id="discTabs" role="tablist" aria-label="Шаги теста"></nav>
+      <div class="progress" aria-hidden="true"><span id="progressFill"></span></div>
+      <div class="modal__body" id="discGrid" role="region" aria-label="Вопросы текущего шага"></div>
+      <div class="modal__foot">
+        <button id="prevBtn" class="btn ghost" type="button" disabled>Назад</button>
+        <button id="nextBtn" class="btn primary" type="button">Далее</button>
+      </div>
+    </section>
+    <section id="resultSection" class="result" aria-label="Результат" hidden>
+      <h2 class="result__title">Ваш DISC-профиль:</h2>
+      <div class="result__score"><span id="scoreSpan">D:0, I:0, S:0, C:0</span></div>
+      <div class="score-chips" id="scoreChips"></div>
+      <p class="result__subtitle">По данной <a href="https://stratoplan-school.com/disc/result/disc.pdf" target="_blank" rel="noopener noreferrer">ссылке</a> вы можете ознакомиться с общей расшифровкой результатов тестирования.</p>
+      <p class="result__disclaimer"><span>*</span> Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем вам научиться использовать этот инструмент для самотестирования, а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</p>
+      <div class="result__link-wrap">
+        <div class="result__link-title">Поделиться результатами теста:</div>
+        <div class="copyfield">
+          <input class="copyfield__input" id="discShare" type="text" readonly>
+          <button class="copyfield__btn" id="copyBtn" type="button">Copy</button>
+        </div>
+      </div>
+      <button id="restartBtn" class="btn ghost" type="button" style="margin:12px 24px 14px;">Пройти заново</button>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* === Данные: 24 вопроса, 8 шагов по 3; порядок = исходный порядок DOM оригинала === */
+  const QUESTIONS = [{"id": 1, "items": [{"t": "i", "x": "Экспресcивный"}, {"t": "c", "x": "Покладистый"}, {"t": "d", "x": "Волевой"}, {"t": "s", "x": "Осторожный"}]}, {"id": 2, "items": [{"t": "d", "x": "Пылкий"}, {"t": "i", "x": "Разговорчивый"}, {"t": "s", "x": "Добродушный"}, {"t": "c", "x": "Сдержанный"}]}, {"id": 3, "items": [{"t": "i", "x": "Любитель приключений"}, {"t": "c", "x": "Энтузиаст"}, {"t": "d", "x": "Исполнитель инструкций"}, {"t": "s", "x": "Верный"}]}, {"id": 4, "items": [{"t": "d", "x": "Настойчивый"}, {"t": "c", "x": "Осторожный"}, {"t": "i", "x": "Эмоциональный"}, {"t": "s", "x": "Удовлетворенный"}]}, {"id": 5, "items": [{"t": "s", "x": "Довольный"}, {"t": "d", "x": "Нетерпеливый"}, {"t": "i", "x": "Убедительный"}, {"t": "c", "x": "Безропотный"}]}, {"id": 6, "items": [{"t": "c", "x": "Смиренный"}, {"t": "s", "x": "Умеющий слушать"}, {"t": "i", "x": "Душа компании"}, {"t": "d", "x": "Волевой"}]}, {"id": 7, "items": [{"t": "c", "x": "Правильный"}, {"t": "d", "x": "Первопроходец"}, {"t": "s", "x": "Спокойный"}, {"t": "i", "x": "Влиятельный"}]}, {"id": 8, "items": [{"t": "c", "x": "Почтительный"}, {"t": "i", "x": "Контактный"}, {"t": "d", "x": "Агрессивный"}, {"t": "s", "x": "Мягкий"}]}, {"id": 9, "items": [{"t": "i", "x": "Весельчак"}, {"t": "s", "x": "Покорный"}, {"t": "c", "x": "Тактичный"}, {"t": "d", "x": "Соперничающий"}]}, {"id": 10, "items": [{"t": "c", "x": "Точный"}, {"t": "d", "x": "Доминирующий"}, {"t": "s", "x": "Охотный"}, {"t": "i", "x": "Притягательный"}]}, {"id": 11, "items": [{"t": "i", "x": "Уравновешенный"}, {"t": "c", "x": "Уступчивый"}, {"t": "d", "x": "Идущий на риск"}, {"t": "s", "x": "Услужливый"}]}, {"id": 12, "items": [{"t": "c", "x": "Осмотрительный"}, {"t": "s", "x": "Добрососедский"}, {"t": "d", "x": "Энергичный"}, {"t": "i", "x": "Убедительный"}]}, {"id": 13, "items": [{"t": "s", "x": "Уравновешенный"}, {"t": "i", "x": "Мотивирующий"}, {"t": "c", "x": "Щепетильный"}, {"t": "d", "x": "Решительный"}]}, {"id": 14, "items": [{"t": "i", "x": "Уверенный"}, {"t": "c", "x": "Готовый к сотрудничеству"}, {"t": "s", "x": "Беззаботный"}, {"t": "d", "x": "Аргументирующий"}]}, {"id": 15, "items": [{"t": "s", "x": "Сдержанный"}, {"t": "d", "x": "Прямой"}, {"t": "c", "x": "Строгий"}, {"t": "i", "x": "Убедительный"}]}, {"id": 16, "items": [{"t": "c", "x": "Застенчивый"}, {"t": "d", "x": "Требовательный"}, {"t": "s", "x": "Терпеливый"}, {"t": "i", "x": "Очаровательный"}]}, {"id": 17, "items": [{"t": "d", "x": "Неугомонный"}, {"t": "c", "x": "Дисциплинированный"}, {"t": "i", "x": "Вдохновляющий"}, {"t": "s", "x": "Внимательный"}]}, {"id": 18, "items": [{"t": "s", "x": "Обязательный"}, {"t": "i", "x": "Оживленный"}, {"t": "d", "x": "Решительный"}, {"t": "c", "x": "Точный"}]}, {"id": 19, "items": [{"t": "c", "x": "Добросовестный"}, {"t": "i", "x": "Компанейский"}, {"t": "s", "x": "Добрый"}, {"t": "d", "x": "Уверенный в себе"}]}, {"id": 20, "items": [{"t": "c", "x": "Дипломатичный"}, {"t": "d", "x": "Отважный"}, {"t": "s", "x": "Сочувствующий"}, {"t": "i", "x": "Оптимистичный"}]}, {"id": 21, "items": [{"t": "d", "x": "Настойчивый"}, {"t": "i", "x": "Общительный"}, {"t": "s", "x": "Постоянный"}, {"t": "c", "x": "Организованный"}]}, {"id": 22, "items": [{"t": "c", "x": "Соглашающийся"}, {"t": "s", "x": "Владеющий собой"}, {"t": "d", "x": "Шутливый"}, {"t": "i", "x": "Настойчивый"}]}, {"id": 23, "items": [{"t": "i", "x": "Обаятельный"}, {"t": "d", "x": "Позитивный"}, {"t": "s", "x": "Снисходительный"}, {"t": "c", "x": "Требовательный"}]}, {"id": 24, "items": [{"t": "i", "x": "Коммуникабельный"}, {"t": "d", "x": "Смелый"}, {"t": "c", "x": "Перфекционист"}, {"t": "s", "x": "Сдержанный"}]}];
+
+  const STEPS = 8;
+  const TAB_NAMES = ["Первый","Второй","Третий","Четвёртый","Пятый","Шестой","Семьмой","Восьмой"];
+  const HANDLE_SVG = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\"><path d=\"M5 4C5 3.86 5 3.791 5.008 3.733C5.03345 3.54971 5.11803 3.37973 5.24888 3.24888C5.37973 3.11803 5.54971 3.03345 5.733 3.008C5.79 3 5.86 3 6 3C6.14 3 6.209 3 6.267 3.008C6.45029 3.03345 6.62027 3.11803 6.75112 3.24888C6.88197 3.37973 6.96655 3.54971 6.992 3.733C7 3.79 7 3.86 7 4C7 4.14 7 4.209 6.992 4.267C6.96655 4.45029 6.88197 4.62027 6.75112 4.75112C6.62027 4.88197 6.45029 4.96655 6.267 4.992C6.21 5 6.14 5 6 5C5.86 5 5.791 5 5.733 4.992C5.54971 4.96655 5.37973 4.88197 5.24888 4.75112C5.11803 4.62027 5.03345 4.45029 5.008 4.267C5 4.21 5 4.14 5 4ZM5 8C5 7.86 5 7.791 5.008 7.733C5.03345 7.54971 5.11803 7.37973 5.24888 7.24888C5.37973 7.11803 5.54971 7.03345 5.733 7.008C5.79 7 5.86 7 6 7C6.14 7 6.209 7 6.267 7.008C6.45029 7.03345 6.62027 7.11803 6.75112 7.24888C6.88197 7.37973 6.96655 7.54971 6.992 7.733C7 7.79 7 7.86 7 8C7 8.14 7 8.209 6.992 8.267C6.96655 8.45029 6.88197 8.62027 6.75112 8.75112C6.62027 8.88197 6.45029 8.96655 6.267 8.992C6.21 9 6.14 9 6 9C5.86 9 5.791 9 5.733 8.992C5.54971 8.96655 5.37973 8.88197 5.24888 8.75112C5.11803 8.62027 5.03345 8.45029 5.008 8.267C5 8.21 5 8.14 5 8ZM5 12C5 11.861 5 11.791 5.008 11.733C5.0336 11.55 5.11812 11.3804 5.24876 11.2498C5.37939 11.1191 5.54904 11.0346 5.732 11.009C5.791 11.001 5.86 11.001 5.999 11.001C6.138 11.001 6.209 11.001 6.266 11.009C6.44896 11.0346 6.61861 11.1191 6.74924 11.2498C6.87988 11.3804 6.9644 11.55 6.99 11.733C6.998 11.791 6.998 11.861 6.998 12C6.998 12.139 6.998 12.209 6.99 12.267C6.9644 12.45 6.87988 12.6196 6.74924 12.7502C6.61861 12.8809 6.44896 12.9654 6.266 12.991C6.208 12.999 6.138 12.999 5.999 12.999C5.86 12.999 5.79 12.999 5.732 12.991C5.54904 12.9654 5.37939 12.8809 5.24876 12.7502C5.11812 12.6196 5.0336 12.45 5.008 12.267C5 12.209 5 12.139 5 12ZM9 4C9 3.86 9 3.791 9.008 3.733C9.03345 3.54971 9.11803 3.37973 9.24888 3.24888C9.37973 3.11803 9.54971 3.03345 9.733 3.008C9.79 3 9.86 3 10 3C10.14 3 10.209 3 10.267 3.008C10.4503 3.03345 10.6203 3.11803 10.7511 3.24888C10.882 3.37973 10.9665 3.54971 10.992 3.733C11 3.79 11 3.86 11 4C11 4.14 11 4.209 10.992 4.267C10.9665 4.45029 10.882 4.62027 10.7511 4.75112C10.6203 4.88197 10.4503 4.96655 10.267 4.992C10.21 5 10.14 5 10 5C9.86 5 9.791 5 9.733 4.992C9.54971 4.96655 9.37973 4.88197 9.24888 4.75112C9.11803 4.62027 9.03345 4.45029 9.008 4.267C9 4.21 9 4.14 9 4ZM9 8C9 7.86 9 7.791 9.008 7.733C9.03345 7.54971 9.11803 7.37973 9.24888 7.24888C9.37973 7.11803 9.54971 7.03345 9.733 7.008C9.79 7 9.86 7 10 7C10.14 7 10.209 7 10.267 7.008C10.4503 3.03345 10.6203 7.11803 10.7511 7.24888C10.882 7.37973 10.9665 7.54971 10.992 7.733C11 7.79 11 7.86 11 8C11 8.14 11 8.209 10.992 8.267C10.9665 8.45029 10.882 8.62027 10.7511 8.75112C10.6203 8.88197 10.4503 8.96655 10.267 8.992C10.21 9 10.14 9 10 9C9.86 9 9.791 9 9.733 8.992C9.54971 8.96655 9.37973 8.88197 9.24888 8.75112C9.11803 8.62027 9.03345 8.45029 9.008 8.267C9 8.21 9 8.14 9 8ZM9 12C9 11.861 9 11.791 9.008 11.733C9.0336 11.55 9.11812 11.3804 9.24876 11.2498C9.37939 11.1191 9.54904 11.0346 9.732 11.009C9.791 11.001 9.86 11.001 9.999 11.001C10.139 11.001 10.209 11.001 10.266 11.009C10.449 11.0346 10.6186 11.1191 10.7492 11.2498C10.8799 11.3804 10.9644 11.55 10.99 11.733C10.998 11.791 10.998 11.861 10.998 12C10.998 12.139 10.998 12.209 10.99 12.267C10.9644 12.45 10.8799 12.6196 10.7492 12.7502C10.6186 12.8809 10.449 12.9654 10.266 12.991C10.208 12.999 10.138 12.999 9.999 12.999C9.86 12.999 9.79 12.999 9.732 12.991C9.54904 12.9654 9.37939 12.8809 9.24876 12.7502C9.11812 12.6196 9.0336 12.45 9.008 12.267C9 12.209 9 12.139 9 12Z\n\" fill=\"#B3B3B3\"/></svg>";
+
+  const $ = (s,r)=> (r||document).querySelector(s);
+  const $$ = (s,r)=> Array.prototype.slice.call((r||document).querySelectorAll(s));
+
+  const grid=$("#discGrid"), tabsEl=$("#discTabs"), prevBtn=$("#prevBtn"), nextBtn=$("#nextBtn"),
+  closeBtn=$("#closeBtn"), openBtn=$("#openBtn"), overlay=$("#overlay"), wizard=$("#wizard"),
+  resultSection=$("#resultSection"), stepHint=$("#stepHint"), progressFill=$("#progressFill"),
+  scoreSpan=$("#scoreSpan"), scoreChips=$("#scoreChips"), discShare=$("#discShare"),
+  copyBtn=$("#copyBtn"), restartBtn=$("#restartBtn");
+
+  let current=0, finished=false, pointerId=0;
+
+  const stepGroups=Array.from({length:STEPS},()=>[]);
+  QUESTIONS.forEach(q=>{ stepGroups[Math.floor((q.id-1)/3)].push(q); });
+
+  function buildTabs(){
+    TAB_NAMES.forEach((name,s)=>{
+      const b=document.createElement("button"); b.type="button"; b.className="tab"; b.setAttribute("role","tab");
+      b.setAttribute("aria-selected", s===0?"true":"false"); b.setAttribute("data-step",s); b.textContent=name;
+      b.addEventListener("click", ()=>{ if(!finished) render(s); });
+      tabsEl.appendChild(b);
+    });
+  }
+  function buildPanes(){
+    for(let s=0;s<STEPS;s++){
+      const pane=document.createElement("section");
+      pane.className="pane"; pane.id="step-"+s; pane.dataset.step=s; pane.hidden=true;
+      stepGroups[s].forEach((q,n)=> pane.appendChild(makeCard(q,n+1)));
+      grid.appendChild(pane);
+    }
+    $$(".list").forEach(attachDrag);
+  }
+  function makeCard(q,n){
+    const card=document.createElement("div"); card.className="qcard";
+    const num=document.createElement("div"); num.className="num"; num.textContent="Вопрос "+n;
+    const top=document.createElement("div"); top.className="lbl top"; top.textContent="Я наиболее";
+    const list=makeList(q);
+    const bot=document.createElement("div"); bot.className="lbl bot"; bot.textContent="Я наименее";
+    card.append(num,top,list,bot);
+    return card;
+  }
+  function makeList(q){
+    const ul=document.createElement("ul"); ul.className="disc-list"; ul.id="draggable-list"+q.id;
+    q.items.forEach(it=>{
+      const li=document.createElement("li"); li.className="item"; li.setAttribute("data-type",it.t);
+      const h=document.createElement("span"); h.className="handle"; h.setAttribute("aria-hidden","true");
+      h.innerHTML=HANDLE_SVG;
+      const txt=document.createElement("span"); txt.className="txt"; txt.textContent=it.x;
+      li.append(h,txt); ul.appendChild(li);
+    });
+    return ul;
+  }
+
+  /* ===== Перетаскивание (Pointer Events: мышь + тач; тач — за "точечки") ===== */
+  function attachDrag(list){
+    let dragging=null, captured=false;
+    function onDown(e){
+      const item=e.target.closest("li.item");
+      if(!item || !list.contains(item)) return;
+      const isTouch=e.pointerType==="touch";
+      if(isTouch && !e.target.closest(".handle")) return;
+      e.preventDefault();
+      dragging=item; pointerId=e.pointerId;
+      item.classList.add("is-drag"); list.classList.add("is-reordering");
+      try{ list.setPointerCapture(pointerId); captured=true; }catch(_x){}
+      onMove(e);
+    }
+    function onMove(e){
+      if(!dragging) return; e.preventDefault();
+      const lis=Array.prototype.slice.call(list.children);
+      const others=lis.filter(li=>li!==dragging);
+      if(others.length===0) return;
+      const y=e.clientY; let anchor=null;
+      for(const li of others){
+        const r=li.getBoundingClientRect(); const mid=r.top+r.height/2;
+        if(y>=mid) anchor=li; else break;
+      }
+      if(anchor) list.insertBefore(dragging, anchor.nextSibling);
+      else list.insertBefore(dragging, others[0]);
+    }
+    function onUp(){
+      if(dragging){ dragging.classList.remove("is-drag"); list.classList.remove("is-reordering"); dragging=null; }
+      if(captured){ try{ list.releasePointerCapture(pointerId); }catch(_x){} captured=false; }
+      pointerId=0;
+    }
+    list.addEventListener("pointerdown",onDown,{passive:false});
+    list.addEventListener("pointermove",onMove,{passive:false});
+    list.addEventListener("pointerup",onUp);
+    list.addEventListener("pointercancel",onUp);
+  }
+
+  /* ===== Навигация ===== */
+  function render(s){
+    if(finished) return;
+    current=s;
+    $$(".pane").forEach(p=>{
+      const sp=parseInt(p.dataset.step,10);
+      p.hidden = sp!==s; p.classList.toggle("show", sp===s);
+    });
+    $$(".tab").forEach(b=>{
+      const on=parseInt(b.getAttribute("data-step"),10)===s;
+      b.classList.toggle("is-active",on); b.setAttribute("aria-selected", on?"true":"false");
+    });
+    prevBtn.disabled=(s===0);
+    nextBtn.textContent= (s===STEPS-1)?"Завершить тест":"Далее";
+    progressFill.style.width=((s+1)/STEPS*100)+"%";
+  }
+  function openModal(){
+    overlay.removeAttribute("hidden"); overlay.classList.add("open");
+    document.body.classList.add("no-scroll");
+    if(finished){ wizard.hidden=true; resultSection.hidden=false; }
+    else{ render(0); const f=$("#discTabs .tab"); if(f) f.focus(); }
+  }
+  function closeModal(){
+    overlay.classList.remove("open"); overlay.setAttribute("hidden","");
+    document.body.classList.remove("no-scroll");
+  }
+
+  /* ===== Подсчёт (логика как в оригинале: major=позиция 0, minor=позиция 3) ===== */
+  function score(){
+    const maj=[], min=[];
+    const lists=document.querySelectorAll(".disc-list");
+    lists.forEach(ul=>{
+      const lis=Array.prototype.slice.call(ul.children);
+      lis.forEach((li,idx)=>{
+        const type=li.getAttribute("data-type");
+        if(idx===0) maj.push(type);
+        else if(idx===lis.length-1) min.push(type);
+      });
+    });
+    const count=(arr,ch)=>arr.reduce((a,v)=>a+(v===ch?1:0),0);
+    return { d:count(maj,"d")-count(min,"d"), i:count(maj,"i")-count(min,"i"),
+             s:count(maj,"s")-count(min,"s"), c:count(maj,"c")-count(min,"c") };
+  }
+  function finish(){
+    finished=true;
+    const res=score();
+    scoreSpan.textContent="D:"+res.d+", I:"+res.i+", S:"+res.s+", C:"+res.c;
+    renderResult(res);
+    wizard.hidden=true; resultSection.hidden=false;
+    discShare.value="Мой DISC-профиль: "+scoreSpan.textContent;
+    makeToken(res).catch(()=>{});
+  }
+  function renderResult(r){
+    scoreChips.innerHTML="";
+    ["D","I","S","C"].forEach(k=>{
+      const v=r[k.toLowerCase()];
+      const chip=document.createElement("div"); chip.className="score-chip";
+      const letter=document.createElement("div"); letter.className="letter"; letter.textContent=k;
+      const val=document.createElement("div"); val.className="val "+(v>0?"pos":v<0?"neg":"zero"); val.textContent=v;
+      chip.append(letter,val); scoreChips.appendChild(chip);
+    });
+  }
+
+  /* ===== Шифрование результата в URL-токен (AES-GCM, WebCrypto, client-only) ===== */
+  function strToBytes(s){ return new TextEncoder().encode(s); }
+  function b64url(buf){
+    const b64="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-";
+    let out="";
+    for(let i=0;i<buf.length;i+=3){
+      const p0=buf[i], p1=i+1<buf.length?buf[i+1]:0, p2=i+2<buf.length?buf[i+2]:0;
+      out+=b64[p0>>2]+b64[((p0&3)<<4)|(p1>>4)]+b64[((p1&15)<<2)|(p2>>6)]+b64[p2&63];
+    }
+    return out.replace(/==?$/,"");
+  }
+  async function makeToken(res){
+    const SECRET="disc@v1::client-only";
+    const hash=await crypto.subtle.digest("SHA-256",strToBytes(SECRET));
+    const key=await crypto.subtle.importKey("raw",hash,{name:"AES-GCM"},false,["encrypt","decrypt"]);
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,strToBytes(JSON.stringify(res)));
+    const token=b64url(iv.concat(new Uint8Array(ct)));
+    try{ sessionStorage.setItem("disc.token",token); }catch(_x){}
+    return token;
+  }
+
+  /* ===== Кнопки ===== */
+  openBtn.addEventListener("click",openModal);
+  closeBtn.addEventListener("click",closeModal);
+  nextBtn.addEventListener("click",()=>{
+    if(finished) return;
+    if(current<STEPS-1) render(current+1); else finish();
+  });
+  prevBtn.addEventListener("click",()=>{ if(!finished && current>0) render(current-1); });
+  restartBtn.addEventListener("click",()=>{
+    finished=false; current=0;
+    scoreSpan.textContent="D:0, I:0, S:0, C:0"; scoreChips.innerHTML="";
+    wizard.hidden=false; resultSection.hidden=true;
+    render(0);
+  });
+  copyBtn.addEventListener("click",()=>{
+    const val=discShare.value;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(val).catch(()=>{}).then(flash);
+    }else{
+      discShare.select();
+      try{document.execCommand("copy");}catch(_x){}
+      flash();
+    }
+  });
+  function flash(){
+    copyBtn.textContent="Скопировано!";
+    copyBtn.classList.add("ok");
+    setTimeout(()=>{ copyBtn.textContent="Copy"; copyBtn.classList.remove("ok"); },1400);
+  }
+  /* ===== Инициализация ===== */
+  buildTabs();
+  buildPanes();
+  render(0);
+  overlay.addEventListener("click",e=>{ if(e.target===overlay) closeModal(); });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&overlay.classList.contains("open")) closeModal(); });
+})();
+
+</script>
+</body>
+</html>

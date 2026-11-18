@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;color:#111}
+header{padding:24px;text-align:center;background:#fff}
+h1{font-size:28px}
+button{cursor:pointer}
+.hero{padding:60px 20px;text-align:center}
+.hero__title{font-size:32px;margin-bottom:10px}
+.hero__subtitle{opacity:.7;margin-bottom:24px}
+.hero__btn{background:#2563eb;color:#fff;border:0;padding:14px 28px;border-radius:12px;font-size:16px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:1000}
+.modal.is-open{display:flex}
+.dialog{background:#fff;border-radius:16px;width:min(960px,95vw);max-height:90vh;overflow:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.close{position:absolute;top:12px;right:12px;background:none;border:0;font-size:28px;line-height:1}
+.head{padding:24px 24px 0}
+.title{font-size:24px}
+.sub{opacity:.7;margin:6px 0 12px}
+.lead{font-size:13px;opacity:.8}
+.tabs{display:flex;gap:6px;overflow:auto;padding:16px 24px;border-bottom:1px solid #eee}
+.tab{flex:0 0 auto;padding:6px 12px;border-radius:999px;border:1px solid #ddd;background:#fff;font-size:13px}
+.tab.is-active{background:#2563eb;color:#fff;border-color:#2563eb}
+.body{padding:24px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+.card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa}
+.card__title{font-size:12px;opacity:.7;margin-bottom:8px;text-align:center}
+.card__foot{font-size:12px;opacity:.7;margin-top:8px;text-align:center}
+.list{list-style:none;min-height:180px}
+.item{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;margin:8px 0;cursor:grab;user-select:none}
+.item.is-dragging{opacity:.5}
+.actions{display:flex;justify-content:space-between;margin-top:20px}
+.btn{padding:10px 18px;border-radius:10px;border:1px solid #ddd;background:#fff}
+.btn.primary{background:#2563eb;color:#fff;border-color:#2563eb}
+.btn:disabled{opacity:.4}
+.progress{height:6px;background:#eee;border-radius:3px;margin:16px 0}
+.progress-bar{height:100%;background:#2563eb;width:12.5%}
+.result{padding:40px;text-align:center}
+.result h2{margin-bottom:12px}
+.scores{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:20px}
+.score-box{border:1px solid #e5e7eb;border-radius:12px;padding:16px 22px;min-width:120px}
+.score-box .label{font-weight:600}
+.score-box .val{font-size:32px;margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Школа менеджмента STRATOPLAN</h1>
+</header>
+<div class="hero">
+  <div class="hero__title">Бесплатный тест DISC для руководителей</div>
+  <div class="hero__subtitle">Определите ваш управленческий стиль за 5 минут</div>
+  <button class="hero__btn" id="openTest">Пройти онлайн-тест</button>
+</div>
+
+<div class="modal" id="wizard">
+  <div class="dialog" role="dialog" aria-modal="true">
+    <button class="close" id="closeTest">×</button>
+    <div class="head">
+      <div class="title">Тестирование DISC</div>
+      <div class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="body">
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <div id="panes"></div>
+      <div class="actions">
+        <button class="btn" id="prevBtn">Назад</button>
+        <button class="btn primary" id="nextBtn">Далее</button>
+        <button class="btn primary" id="finishBtn" style="display:none">Завершить тест</button>
+      </div>
+    </div>
+    <div class="result" id="resultView" style="display:none">
+      <h2>Ваш результат DISC</h2>
+      <div class="scores" id="scores"></div>
+      <button class="btn" id="restartBtn">Пройти заново</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const stepsData = [
+  // step 0
+  [
+    {id:1, items:[{t:'i',txt:'Экспресcивный'},{t:'c',txt:'Покладистый'},{t:'d',txt:'Волевой'},{t:'s',txt:'Осторожный'}]},
+    {id:2, items:[{t:'d',txt:'Пылкий'},{t:'i',txt:'Разговорчивый'},{t:'s',txt:'Добродушный'},{t:'c',txt:'Сдержанный'}]},
+    {id:3, items:[{t:'i',txt:'Любитель приключений'},{t:'c',txt:'Энтузиаст'},{t:'d',txt:'Исполнитель инструкций'},{t:'s',txt:'Верный'}]},
+  ],
+  // step1
+  [
+    {id:4, items:[{t:'d',txt:'Настойчивый'},{t:'c',txt:'Осторожный'},{t:'i',txt:'Эмоциональный'},{t:'s',txt:'Удовлетворенный'}]},
+    {id:5, items:[{t:'s',txt:'Довольный'},{t:'d',txt:'Нетерпеливый'},{t:'i',txt:'Убедительный'},{t:'c',txt:'Безропотный'}]},
+    {id:6, items:[{t:'c',txt:'Смиренный'},{t:'s',txt:'Умеющий слушать'},{t:'i',txt:'Душа компании'},{t:'d',txt:'Волевой'}]},
+  ],
+  // step2
+  [
+    {id:7, items:[{t:'c',txt:'Правильный'},{t:'d',txt:'Первопроходец'},{t:'s',txt:'Спокойный'},{t:'i',txt:'Влиятельный'}]},
+    {id:8, items:[{t:'c',txt:'Почтительный'},{t:'i',txt:'Контактный'},{t:'d',txt:'Агрессивный'},{t:'s',txt:'Мягкий'}]},
+    {id:9, items:[{t:'i',txt:'Весельчак'},{t:'s',txt:'Покорный'},{t:'c',txt:'Тактичный'},{t:'d',txt:'Соперничающий'}]},
+  ],
+  // step3
+  [
+    {id:10, items:[{t:'c',txt:'Точный'},{t:'d',txt:'Доминирующий'},{t:'s',txt:'Охотный'},{t:'i',txt:'Притягательный'}]},
+    {id:11, items:[{t:'i',txt:'Уравновешенный'},{t:'c',txt:'Уступчивый'},{t:'d',txt:'Идущий на риск'},{t:'s',txt:'Услужливый'}]},
+    {id:12, items:[{t:'c',txt:'Осмотрительный'},{t:'s',txt:'Добрососедский'},{t:'d',txt:'Энергичный'},{t:'i',txt:'Убедительный'}]},
+  ],
+  // step4
+  [
+    {id:13, items:[{t:'s',txt:'Уравновешенный'},{t:'i',txt:'Мотивирующий'},{t:'c',txt:'Щепетильный'},{t:'d',txt:'Решительный'}]},
+    {id:14, items:[{t:'i',txt:'Уверенный'},{t:'c',txt:'Готовый к сотрудничеству'},{t:'s',txt:'Беззаботный'},{t:'d',txt:'Аргументирующий'}]},
+    {id:15, items:[{t:'s',txt:'Сдержанный'},{t:'d',txt:'Прямой'},{t:'c',txt:'Строгий'},{t:'i',txt:'Убедительный'}]},
+  ],
+  // step5
+  [
+    {id:16, items:[{t:'c',txt:'Застенчивый'},{t:'d',txt:'Требовательный'},{t:'s',txt:'Терпеливый'},{t:'i',txt:'Очаровательный'}]},
+    {id:17, items:[{t:'d',txt:'Неугомонный'},{t:'c',txt:'Дисциплинированный'},{t:'i',txt:'Вдохновляющий'},{t:'s',txt:'Внимательный'}]},
+    {id:18, items:[{t:'s',txt:'Обязательный'},{t:'i',txt:'Оживленный'},{t:'d',txt:'Решительный'},{t:'c',txt:'Точный'}]},
+  ],
+  // step6
+  [
+    {id:19, items:[{t:'c',txt:'Добросовестный'},{t:'i',txt:'Компанейский'},{t:'s',txt:'Добрый'},{t:'d',txt:'Уверенный в себе'}]},
+    {id:20, items:[{t:'c',txt:'Дипломатичный'},{t:'d',txt:'Отважный'},{t:'s',txt:'Сочувствующий'},{t:'i',txt:'Оптимистичный'}]},
+    {id:21, items:[{t:'d',txt:'Настойчивый'},{t:'i',txt:'Общительный'},{t:'s',txt:'Постоянный'},{t:'c',txt:'Организованный'}]},
+  ],
+  // step7
+  [
+    {id:22, items:[{t:'c',txt:'Соглашающийся'},{t:'s',txt:'Владеющий собой'},{t:'d',txt:'Шутливый'},{t:'i',txt:'Настойчивый'}]},
+    {id:23, items:[{t:'i',txt:'Обаятельный'},{t:'d',txt:'Позитивный'},{t:'s',txt:'Снисходительный'},{t:'c',txt:'Требовательный'}]},
+    {id:24, items:[{t:'i',txt:'Коммуникабельный'},{t:'d',txt:'Смелый'},{t:'c',txt:'Перфекционист'},{t:'s',txt:'Сдержанный'}]},
+  ],
+];
+
+const modal = document.getElementById('wizard');
+const openBtn = document.getElementById('openTest');
+const closeBtn = document.getElementById('closeTest');
+const tabsEl = document.getElementById('tabs');
+const panesEl = document.getElementById('panes');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const finishBtn = document.getElementById('finishBtn');
+const progressBar = document.getElementById('progressBar');
+const resultView = document.getElementById('resultView');
+const scoresEl = document.getElementById('scores');
+const restartBtn = document.getElementById('restartBtn');
+
+let step = 0;
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  for(let i=0;i<8;i++){
+    const b=document.createElement('button');
+    b.className='tab'+(i===step?' is-active':'');
+    b.textContent=['Первый','Второй','Третий','Четвертый','Пятый','Шестой','Седьмой','Восьмой'][i];
+    b.dataset.i=i;
+    b.onclick=()=>setStep(i);
+    tabsEl.appendChild(b);
+  }
+  progressBar.style.width = ((step+1)/8*100)+'%';
+}
+
+function renderPane(){
+  panesEl.innerHTML='';
+  const grid=document.createElement('div');
+  grid.className='grid';
+  stepsData[step].forEach(col=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`<div class="card__title">Я наиболее</div><ul class="list" data-list="${col.id}"></ul><div class="card__foot">Я наименее</div>`;
+    const ul=card.querySelector('ul');
+    col.items.forEach(it=>{
+      const li=document.createElement('li');
+      li.className='item';
+      li.draggable=true;
+      li.dataset.type=it.t;
+      li.textContent=it.txt;
+      ul.appendChild(li);
+    });
+    grid.appendChild(card);
+  });
+  panesEl.appendChild(grid);
+  makeDraggable();
+}
+
+function makeDraggable(){
+  document.querySelectorAll('.list').forEach(ul=>{
+    ul.querySelectorAll('.item').forEach(li=>{
+      li.ondragstart=e=>{li.classList.add('is-dragging'); e.dataTransfer.effectAllowed='move';};
+      li.ondragend=()=>li.classList.remove('is-dragging');
+      li.ondragover=e=>{e.preventDefault();};
+      li.ondrop=e=>{
+        e.preventDefault();
+        const dragging=document.querySelector('.is-dragging');
+        if(!dragging||dragging.parentNode===ul){ 
+          const rect=li.getBoundingClientRect();
+          if(e.clientY<rect.top+rect.height/2){ul.insertBefore(dragging,li);}else{ul.insertBefore(dragging,li.nextSibling);}
+        }
+      };
+    });
+  });
+}
+
+function setStep(i){
+  step=i;
+  renderTabs();
+  renderPane();
+  prevBtn.disabled=step===0;
+  nextBtn.hidden=step===7;
+  finishBtn.style.display=step===7?'inline-block':'none';
+}
+function collect(){
+  const payload=[];
+  document.querySelectorAll('.list').forEach((ul,liIdx)=>{
+    [...ul.children].forEach((li,pos)=>{
+      payload.push({type:li.dataset.type,pos});
+    });
+  });
+  return payload;
+}
+function score(payload){
+  const maj=[],min=[];
+  payload.forEach(x=>{ if(x.pos===0)maj.push(x.type); if(x.pos===3)min.push(x.type); });
+  const cnt=(arr,ch)=>arr.filter(v=>v===ch).length;
+  return {d:cnt(maj,'d')-cnt(min,'d'), i:cnt(maj,'i')-cnt(min,'i'), s:cnt(maj,'s')-cnt(min,'s'), c:cnt(maj,'c')-cnt(min,'c')};
+}
+function showResult(){
+  const res=score(collect());
+  const labels={d:'Доминирование',i:'Влияние',s:'Стабильность',c:'Соответствие'};
+  scoresEl.innerHTML='';
+  Object.entries(res).forEach(([k,v])=>{
+    const box=document.createElement('div');
+    box.className='score-box';
+    box.innerHTML=`<div class="label">${labels[k]}</div><div class="val">${v}</div>`;
+    scoresEl.appendChild(box);
+  });
+  document.querySelector('.body').style.display='none';
+  resultView.style.display='block';
+}
+
+openBtn.onclick=()=>{modal.classList.add('is-open'); setStep(0);};
+closeBtn.onclick=()=>modal.classList.remove('is-open');
+prevBtn.onclick=()=>setStep(step-1);
+nextBtn.onclick=()=>setStep(step+1);
+finishBtn.onclick=showResult;
+restartBtn.onclick=()=>{document.querySelector('.body').style.display='block'; resultView.style.display='none'; setStep(0);};
+</script>
+</body>
+</html>

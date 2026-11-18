@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f6f8;color:#222}
+header{padding:20px 16px;text-align:center;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+h1{font-size:24px}
+button{cursor:pointer}
+#openBtn{margin-top:16px;padding:12px 24px;border:none;border-radius:8px;background:#2563eb;color:#fff;font-size:16px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:1000}
+.modal.open{display:flex}
+.dialog{background:#fff;border-radius:12px;max-width:900px;width:95%;max-height:90vh;overflow:auto;position:relative;padding:20px}
+.close{position:absolute;top:12px;right:12px;font-size:24px;background:none;border:none}
+.head{text-align:center;margin-bottom:16px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;justify-content:center}
+.tab{padding:6px 10px;border:1px solid #ddd;border-radius:6px;background:#fafafa}
+.tab.is-active{background:#2563eb;color:#fff;border-color:#2563eb}
+.pane{display:none}
+.pane.is-active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#fff}
+.card__title,.card__foot{font-size:12px;color:#666;text-align:center;margin:4px 0}
+.list{list-style:none;min-height:120px}
+.item{padding:8px 10px;margin:6px 0;background:#f3f4f6;border-radius:6px;border:1px solid #e5e7eb;cursor:grab;user-select:none}
+.item.dragging{opacity:.5}
+.actions{display:flex;justify-content:space-between;margin-top:16px}
+.btn{padding:10px 18px;border-radius:8px;border:1px solid #ddd;background:#fff}
+.btn.primary{background:#2563eb;color:#fff;border-color:#2563eb}
+.result{display:none;text-align:center;padding:40px 20px}
+.result h2{margin-bottom:20px}
+.scores{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.score{width:140px;padding:16px;border-radius:10px;background:#f3f4f6}
+.score strong{display:block;font-size:32px;margin-bottom:4px}
+</style>
+</head>
+<body>
+<header>
+<h1>Бесплатный тест DISC для руководителей</h1>
+<p>Определите ваш управленческий стиль за 5 минут</p>
+<button id="openBtn">Пройти онлайн-тест</button>
+</header>
+
+<div class="modal" id="modal">
+<div class="dialog">
+<button class="close" id="closeBtn">×</button>
+<div class="head">
+<h2>Тестирование DISC</h2>
+<p style="color:#666;font-size:14px">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="panes"></div>
+
+<div class="result" id="result">
+<h2>Ваш результат</h2>
+<div class="scores" id="scores"></div>
+<button class="btn" id="restartBtn">Пройти заново</button>
+</div>
+
+<div class="actions" id="actions">
+<button class="btn" id="prevBtn">Назад</button>
+<button class="btn primary" id="nextBtn">Далее</button>
+</div>
+</div>
+</div>
+
+<script>
+const stepsData = [
+  [
+    {type:'i',text:'Экспресcивный'},{type:'c',text:'Покладистый'},{type:'d',text:'Волевой'},{type:'s',text:'Осторожный'},
+    {type:'d',text:'Пылкий'},{type:'i',text:'Разговорчивый'},{type:'s',text:'Добродушный'},{type:'c',text:'Сдержанный'},
+    {type:'i',text:'Любитель приключений'},{type:'c',text:'Энтузиаст'},{type:'d',text:'Исполнитель инструкций'},{type:'s',text:'Верный'}
+  ],
+  [
+    {type:'d',text:'Настойчивый'},{type:'c',text:'Осторожный'},{type:'i',text:'Эмоциональный'},{type:'s',text:'Удовлетворенный'},
+    {type:'s',text:'Довольный'},{type:'d',text:'Нетерпеливый'},{type:'i',text:'Убедительный'},{type:'c',text:'Безропотный'},
+    {type:'c',text:'Смиренный'},{type:'s',text:'Умеющий слушать'},{type:'i',text:'Душа компании'},{type:'d',text:'Волевой'}
+  ],
+  [
+    {type:'c',text:'Правильный'},{type:'d',text:'Первопроходец'},{type:'s',text:'Спокойный'},{type:'i',text:'Влиятельный'},
+    {type:'c',text:'Почтительный'},{type:'i',text:'Контактный'},{type:'d',text:'Агрессивный'},{type:'s',text:'Мягкий'},
+    {type:'i',text:'Весельчак'},{type:'s',text:'Покорный'},{type:'c',text:'Тактичный'},{type:'d',text:'Соперничающий'}
+  ],
+  [
+    {type:'c',text:'Точный'},{type:'d',text:'Доминирующий'},{type:'s',text:'Охотный'},{type:'i',text:'Притягательный'},
+    {type:'i',text:'Уравновешенный'},{type:'c',text:'Уступчивый'},{type:'d',text:'Идущий на риск'},{type:'s',text:'Услужливый'},
+    {type:'c',text:'Осмотрительный'},{type:'s',text:'Добрососедский'},{type:'d',text:'Энергичный'},{type:'i',text:'Убедительный'}
+  ],
+  [
+    {type:'s',text:'Уравновешенный'},{type:'i',text:'Мотивирующий'},{type:'c',text:'Щепетильный'},{type:'d',text:'Решительный'},
+    {type:'i',text:'Уверенный'},{type:'c',text:'Готовый к сотрудничеству'},{type:'s',text:'Беззаботный'},{type:'d',text:'Аргументирующий'},
+    {type:'s',text:'Сдержанный'},{type:'d',text:'Прямой'},{type:'c',text:'Строгий'},{type:'i',text:'Убедительный'}
+  ],
+  [
+    {type:'c',text:'Застенчивый'},{type:'d',text:'Требовательный'},{type:'s',text:'Терпеливый'},{type:'i',text:'Очаровательный'},
+    {type:'d',text:'Неугомонный'},{type:'c',text:'Дисциплинированный'},{type:'i',text:'Вдохновляющий'},{type:'s',text:'Внимательный'},
+    {type:'s',text:'Обязательный'},{type:'i',text:'Оживленный'},{type:'d',text:'Решительный'},{type:'c',text:'Точный'}
+  ],
+  [
+    {type:'c',text:'Добросовестный'},{type:'i',text:'Компанейский'},{type:'s',text:'Добрый'},{type:'d',text:'Уверенный в себе'},
+    {type:'c',text:'Дипломатичный'},{type:'d',text:'Отважный'},{type:'s',text:'Сочувствующий'},{type:'i',text:'Оптимистичный'},
+    {type:'d',text:'Настойчивый'},{type:'i',text:'Общительный'},{type:'s',text:'Постоянный'},{type:'c',text:'Организованный'}
+  ],
+  [
+    {type:'c',text:'Соглашающийся'},{type:'s',text:'Владеющий собой'},{type:'d',text:'Шутливый'},{type:'i',text:'Настойчивый'},
+    {type:'i',text:'Обаятельный'},{type:'d',text:'Позитивный'},{type:'s',text:'Снисходительный'},{type:'c',text:'Требовательный'},
+    {type:'i',text:'Коммуникабельный'},{type:'d',text:'Смелый'},{type:'c',text:'Перфекционист'},{type:'s',text:'Сдержанный'}
+  ]
+];
+
+const modal = document.getElementById('modal');
+const openBtn = document.getElementById('openBtn');
+const closeBtn = document.getElementById('closeBtn');
+const tabsEl = document.getElementById('tabs');
+const panesEl = document.getElementById('panes');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const resultEl = document.getElementById('result');
+const scoresEl = document.getElementById('scores');
+const actionsEl = document.getElementById('actions');
+const restartBtn = document.getElementById('restartBtn');
+
+let currentStep = 0;
+let dragSrc = null;
+
+function buildUI(){
+  tabsEl.innerHTML='';
+  panesEl.innerHTML='';
+  stepsData.forEach((stepItems, idx)=>{
+    const tab=document.createElement('button');
+    tab.className='tab'+(idx===0?' is-active':'');
+    tab.textContent=['Первый','Второй','Третий','Четвертый','Пятый','Шестой','Седьмой','Восьмой'][idx];
+    tab.dataset.idx=idx;
+    tab.onclick=()=>goTo(idx);
+    tabsEl.appendChild(tab);
+
+    const pane=document.createElement('div');
+    pane.className='pane'+(idx===0?' is-active':'');
+    pane.dataset.idx=idx;
+    const grid=document.createElement('div');
+    grid.className='grid';
+    for(let i=0;i<3;i++){
+      const card=document.createElement('div');
+      card.className='card';
+      card.innerHTML='<div class="card__title">Я наиболее</div>';
+      const ul=document.createElement('ul');
+      ul.className='list';
+      for(let j=0;j<4;j++){
+        const itemIdx=i*4+j;
+        const it=stepItems[itemIdx];
+        const li=document.createElement('li');
+        li.className='item';
+        li.draggable=true;
+        li.dataset.type=it.type;
+        li.textContent=it.text;
+        li.ondragstart=e=>{dragSrc=li;li.classList.add('dragging')};
+        li.ondragend=()=>li.classList.remove('dragging');
+        li.ondragover=e=>e.preventDefault();
+        li.ondrop=e=>{
+          e.preventDefault();
+          if(dragSrc && dragSrc!==li){
+            const parent=li.parentNode;
+            const items=[...parent.children].filter(c=>c.classList.contains('item'));
+            const from=items.indexOf(dragSrc);
+            const to=items.indexOf(li);
+            if(from<to){
+              parent.insertBefore(dragSrc, li.nextSibling);
+            }else{
+              parent.insertBefore(dragSrc, li);
+            }
+          }
+        };
+        ul.appendChild(li);
+      }
+      card.innerHTML+='<div class="card__foot">Я наименее</div>';
+      card.appendChild(ul);
+      grid.appendChild(card);
+    }
+    pane.appendChild(grid);
+    panesEl.appendChild(pane);
+  });
+}
+
+function goTo(idx){
+  currentStep=idx;
+  [...tabsEl.children].forEach((t,i)=>t.classList.toggle('is-active',i===idx));
+  [...panesEl.children].forEach((p,i)=>p.classList.toggle('is-active',i===idx));
+  updateButtons();
+}
+function updateButtons(){
+  prevBtn.style.display=currentStep>0?'inline-block':'none';
+  nextBtn.textContent=currentStep===stepsData.length-1?'Завершить':'Далее';
+}
+prevBtn.onclick=()=>{if(currentStep>0)goTo(currentStep-1)};
+nextBtn.onclick=()=>{
+  if(currentStep<stepsData.length-1){goTo(currentStep+1);return}
+  calculateResult();
+};
+closeBtn.onclick=()=>modal.classList.remove('open');
+openBtn.onclick=()=>{modal.classList.add('open');currentStep=0;goTo(0);};
+restartBtn.onclick=()=>{resultEl.style.display='none';actionsEl.style.display='flex';goTo(0)};
+
+function calculateResult(){
+  const scores={d:0,i:0,s:0,c:0};
+  panesEl.querySelectorAll('.pane').forEach(pane=>{
+    pane.querySelectorAll('.list').forEach(list=>{
+      const items=[...list.querySelectorAll('.item')];
+      items.forEach((it,idx)=>{
+        const type=it.dataset.type;
+        const weight=4-idx;
+        scores[type]+=weight;
+      });
+    });
+  });
+  const entries=Object.entries(scores);
+  entries.sort((a,b)=>b[1]-a[1]);
+  const names={d:'Доминирование',i:'Влияние',s:'Стабильность',c:'Соответствие'};
+  scoresEl.innerHTML='';
+  entries.forEach(([k,v])=>{
+    const div=document.createElement('div');
+    div.className='score';
+    div.innerHTML=`<strong>${v}</strong>${names[k]}`;
+    scoresEl.appendChild(div);
+  });
+  resultEl.style.display='block';
+  actionsEl.style.display='none';
+  document.querySelector('.dialog').scrollTop=0;
+}
+
+buildUI();
+updateButtons();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-17T14:45:52.325548+00:00",
+  "duration_s": 25.0,
+  "exit_code": 0,
+  "prompt_chars": 53791,
+  "verdict": {
+    "data": 4,
+    "logic": 4,
+    "ux": 2,
+    "impl": 2,
+    "total": 12,
+    "notes": "Данные и подсчёт перенесены точно (все 84 прилагательных посимвольно, типы в data-type, тач за ручку, тач за ручку; контрольная раскладка даёт D:5, I:2, S:-3, C:-4 — сходится). Но результат виден во время теста: правило #resultSection{display:flex} перебивает атрибут hidden (подтверждено vision-сканом check.json). Плюс на мобильных (<680px) ручка скрыта display:none, а тач разрешён только за ручку — перетаскивание на таче на телефоне невозможно. В коде остались следы токен-логики: makeToken, AES-GCM шифрование через WebCrypto, sessionStorage.setItem('disc.token') — по заданию токен/шифрование должны быть убраны.",
+    "examples": "data: массив QUESTIONS содержит все 24 вопроса в исходном порядке, включая «Экспресcивный» с латинской c и служебные типы (Шутливый→d, Энтузиаст→c); типы не видны пользователю. logic: score() — idx===0 → maj (+1), idx===last → min (−1), средние игнорируются; playthrough подтвердил D:5,I:2,S:-3,C:-4. ux: CSS `#resultSection{display:flex;...}` имеет специфичность выше [hidden] — блок «Ваш DISC-профиль» виден на шагах с вопросами (check.json step_screen.result_visible=true); `@media (max-width:680px){.item .handle{display:none}}` + `if(isTouch && !e.target.closest('.handle')) return;` ломают тач-drag на мобильных. impl: мёртвый кусок — makeToken/b64url/AES-GCM (строки `const SECRET='disc@v1::client-only'`, `sessionStorage.setItem('disc.token',token)`), не используются для отображения; сам файл офлайн, без CDN и внешних библиотек, drag&drop своя реализация на Pointer Events."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T20-44-26-505Z_01a1dbcd-e608-7088-929c-85b5555d2609.jsonl",
+  "turns": 65,
+  "tool_calls": 69,
+  "tools_by_name": {
+    "bash": 55,
+    "read": 4,
+    "write": 3,
+    "edit": 7
+  },
+  "tokens_in": 152828,
+  "tokens_out": 65469,
+  "bash_total": 18,
+  "bash_with_network": 10,
+  "curl_to_source": 10,
+  "network_cmds_sample": [
+    "curl -sSL --max-time 30 -A \\\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36\\\" \\\"https://stratoplan-school.com/disc/\\\" -o /tmp/disc.html && wc -c /tmp/disc.html && head -c 2000 /tmp/disc.html",
+    "curl -sSL --max-time 30 -A \\\"Mozilla/5.0\\\" \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o /tmp/disc_patched.js && wc -c /tmp/disc_patched.js",
+    "curl -sSL --max-time 30 -A \\\"Mozilla/5.0\\\" \\\"https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6\\\" -o /tmp/disc_patched.js && wc -c /tmp/disc_patched.js && head -c 500 /tmp/disc_patched.js",
+    "curl -sSL --max-time 30 -A \\\"Mozilla/5.0\\\" \\\"https://stratoplan-school.com/disc/result/\\\" -o /tmp/result.html; wc -c /tmp/result.html; grep -o 'data-disc-open[^>]*' /tmp/disc.html; grep -n 'data-modal-open' /tmp/disc.html | head",
+    "cd /tmp && curl -s 'https://stratoplan-school.com/disc/' -H 'User-Agent: Mozilla/5.0' -o orig.html && wc -c orig.html && grep -o 'Я наиболее[^<]*\\\\|Я примерно[^<]*\\\\|Я наименее[^<]*' orig.html | sort -u; echo ===HEADERS===; grep -o '<h[1-6][^>]*>[^<]*</h[1-6]>' orig.html | sort -u; echo ===BTN===; g"
+  ],
+  "errors": 13,
+  "first_ts": "2026-11-14T20:44:26.505Z",
+  "last_ts": "2026-11-14T20:58:14.365Z"
+}

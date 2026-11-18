@@ -1,0 +1,24 @@
+{
+  "session_file": "2026-11-15T08-07-35-833Z_01a1de3f-5897-7314-a139-6ae453d54909.jsonl",
+  "turns": 11,
+  "tool_calls": 10,
+  "tools_by_name": {
+    "bash": 8,
+    "write": 2
+  },
+  "tokens_in": 83344,
+  "tokens_out": 10774,
+  "bash_total": 8,
+  "bash_with_network": 7,
+  "curl_to_source": 7,
+  "network_cmds_sample": [
+    "curl -L https://stratoplan-school.com/disc/",
+    "curl -L https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6",
+    "curl -L https://stratoplan-school.com/js/app.js?v=0.0.0.1",
+    "curl -L https://stratoplan-school.com/disc/ | grep 'data-type='",
+    "curl -L https://stratoplan-school.com/disc/ | grep -oP '(?<=data-type=\\\")[idsc](?=\\\")' | wc -l"
+  ],
+  "errors": 3,
+  "first_ts": "2026-11-15T08:07:35.833Z",
+  "last_ts": "2026-11-15T08:12:41.488Z"
+}

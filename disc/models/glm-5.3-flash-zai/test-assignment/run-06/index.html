@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тестирование DISC — Stratoplan (копия)</title>
+<style>
+  :root{
+    --blue:#002D7A; --accent:#268AC5; --bg:#F7FAFC; --ink:#10243E;
+    --card:#fff; --line:#DDE6F0; --muted:#5B6B7F; --ok:#1B9E5A;
+    --d:#E4572E; --i:#F2A93B; --s:#2E9E6B; --c:#3E6FB0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.5;
+  }
+  button{font:inherit;cursor:pointer}
+
+  /* ---------- стартовый экран ---------- */
+  .hero{
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; text-align:center; padding:32px 20px;
+    background:linear-gradient(160deg,#001F3D 0%,var(--blue) 55%,#0A4FA8 100%); color:#fff;
+  }
+  .hero svg.logo{margin-bottom:28px}
+  .hero h1{font-size:clamp(26px,4.5vw,44px); max-width:820px; margin-bottom:14px; font-weight:700}
+  .hero p{max-width:560px; color:#C9D8EE; margin-bottom:34px}
+  .btn-start{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--accent); color:#fff; border:none; border-radius:999px;
+    padding:16px 36px; font-size:18px; font-weight:600;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn-start:hover{background:#1D7CB0; transform:translateY(-2px)}
+  .hero .meta{margin-top:26px; font-size:14px; color:#8FA6C6}
+
+  /* ---------- модалка-мастер ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(4,18,38,.62); display:none;
+    align-items:flex-start; justify-content:center; padding:24px; overflow:auto; z-index:50;
+  }
+  .overlay.is-open{display:flex}
+  .dialog{
+    background:var(--card); border-radius:16px; width:100%; max-width:1060px;
+    padding:28px clamp(16px,3vw,36px) 24px; position:relative; margin:auto 0;
+    box-shadow:0 24px 64px rgba(0,15,40,.35);
+  }
+  .close{
+    position:absolute; top:14px; right:14px; width:36px; height:36px;
+    border:none; background:#EEF3F9; border-radius:50%; font-size:20px; color:var(--muted);
+  }
+  .close:hover{background:#DDE6F0}
+  .head h2{font-size:24px; margin-bottom:4px}
+  .head .sub{color:var(--muted); font-size:14px}
+  .head .lead{margin-top:10px; font-weight:600}
+
+  .tabs{display:flex; flex-wrap:wrap; gap:6px; margin:18px 0 14px}
+  .tab{
+    border:1px solid var(--line); background:#fff; color:var(--muted);
+    border-radius:999px; padding:6px 14px; font-size:13px;
+  }
+  .tab.is-active{background:var(--blue); border-color:var(--blue); color:#fff}
+  .tab:disabled{opacity:.45; cursor:not-allowed}
+
+  .pane{display:none}
+  .pane.is-active{display:block}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  @media (max-width:860px){.grid3{grid-template-columns:1fr}}
+  .card{background:#F4F8FC; border:1px solid var(--line); border-radius:12px; padding:12px}
+  .card__title,.card__foot{
+    font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--muted); text-align:center;
+  }
+  .card__foot{margin-top:10px}
+  .list{list-style:none; display:flex; flex-direction:column; gap:8px; margin-top:10px; min-height:10px}
+  .item{
+    background:#fff; border:1px solid var(--line); border-radius:10px;
+    padding:11px 12px; font-size:15px; user-select:none; cursor:grab;
+    display:flex; align-items:center; gap:10px; touch-action:none;
+    transition:box-shadow .15s ease, border-color .15s ease;
+  }
+  .item:active{cursor:grabbing}
+  .item.dragging{opacity:.45}
+  .item.drop-target{border-color:var(--accent); box-shadow:0 0 0 2px rgba(38,138,197,.35)}
+  .item .rank{
+    flex:0 0 22px; height:22px; border-radius:50%; background:#EEF3F9; color:var(--muted);
+    font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  }
+  .item .dot{flex:0 0 8px; height:8px; border-radius:50%}
+  .item .dot.t-d{background:var(--d)} .item .dot.t-i{background:var(--i)}
+  .item .dot.t-s{background:var(--s)} .item .dot.t-c{background:var(--c)}
+  .grip{margin-left:auto; color:#B9C6D6; flex:0 0 auto}
+
+  .progress{height:6px; background:#E7EEF6; border-radius:3px; margin:20px 0 14px; overflow:hidden}
+  .progress__bar{height:100%; width:0; background:var(--accent); border-radius:3px; transition:width .25s ease}
+
+  .actions{display:flex; justify-content:space-between; gap:10px}
+  .btn{
+    border-radius:10px; padding:12px 26px; font-weight:600; border:1px solid transparent;
+  }
+  .btn--ghost{background:#fff; border-color:var(--line); color:var(--ink)}
+  .btn--ghost:hover{background:#F0F5FA}
+  .btn--ghost:disabled{opacity:.45; cursor:not-allowed}
+  .btn--primary{background:var(--blue); color:#fff}
+  .btn--primary:hover{background:#023C9E}
+  .btn--primary:disabled{opacity:.45; cursor:not-allowed}
+
+  .hint{margin-top:10px; font-size:13px; color:var(--muted); min-height:18px}
+
+  /* ---------- результат ---------- */
+  .result{display:none}
+  .result.is-open{display:block}
+  .result h2{font-size:26px; margin-bottom:6px}
+  .result .res-sub{color:var(--muted); margin-bottom:22px}
+  .bars{display:flex; flex-direction:column; gap:16px; margin-bottom:22px}
+  .bar-row{display:grid; grid-template-columns:150px 1fr 56px; gap:12px; align-items:center}
+  @media (max-width:560px){.bar-row{grid-template-columns:90px 1fr 44px}}
+  .bar-row .lbl{font-weight:700}
+  .bar-row .lbl small{display:block; font-weight:400; color:var(--muted); font-size:12px}
+  .bar-track{background:#E7EEF6; border-radius:6px; height:22px; overflow:hidden}
+  .bar-fill{height:100%; width:0; border-radius:6px; transition:width .6s ease}
+  .bar-row .val{font-weight:700; text-align:right; font-variant-numeric:tabular-nums}
+  .top-note{background:#F0F7F2; border:1px solid #CBE7D6; color:#14603B; border-radius:10px; padding:12px 16px; margin-bottom:20px}
+  .desc{color:var(--muted); font-size:14px; margin-top:18px}
+</style>
+</head>
+<body>
+
+<!-- Стартовый экран -->
+<section class="hero" id="hero">
+  <svg class="logo" width="192" height="32" viewBox="0 0 192 32" fill="none" aria-label="Stratoplan">
+    <text x="0" y="24" fill="#fff" font-size="26" font-weight="700" font-family="inherit">STRATOPLAN</text>
+    <circle cx="176" cy="16" r="9" fill="#268AC5"/>
+    <path d="M171 16h10M176 11v10" stroke="#fff" stroke-width="1.4"/>
+  </svg>
+  <h1>Тест управленческих поведенческих типов DISC</h1>
+  <p>Определите, какой из четырёх поведенческих типов — доминирование, влияние, постоянство или соответствие — у вас выражен сильнее всего.</p>
+  <button class="btn-start" id="startBtn">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="currentColor"/></svg>
+    Пройти тест
+  </button>
+  <div class="meta">8 шагов · 24 группы прилагательных · ~7 минут</div>
+</section>
+
+<!-- Мастер теста -->
+<div class="overlay" id="wizardmodal" aria-hidden="true">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+    <button class="close" type="button" id="closeBtn" aria-label="Закрыть">×</button>
+
+    <div class="head">
+      <h2 id="discTitle">Тестирование DISC</h2>
+      <div class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+
+    <div class="tabs" id="tabs" role="tablist" aria-label="Шаги"></div>
+
+    <div id="panes"></div>
+
+    <div class="progress" aria-hidden="true"><div class="progress__bar" id="discProgress"></div></div>
+
+    <div class="actions">
+      <button class="btn btn--ghost" type="button" id="prevBtn">Назад</button>
+      <button class="btn btn--primary" type="button" id="nextBtn">Далее</button>
+      <button class="btn btn--primary" type="button" id="finishBtn" hidden>Завершить тест</button>
+    </div>
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <!-- Результат -->
+  <div class="dialog result" id="result">
+    <button class="close" type="button" id="resCloseBtn" aria-label="Закрыть">×</button>
+    <h2>Ваши результаты</h2>
+    <div class="res-sub">Баллы по четырём поведенческим типам DISC</div>
+    <div class="top-note" id="topNote"></div>
+    <div class="bars" id="bars"></div>
+    <p class="desc" id="typeDesc"></p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- данные: 24 шага по 4 прилагательных (как в оригинале) ----------
+  var STEPS = [
+    [["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+    [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],
+    [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]],
+    [["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],
+    [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+    [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]],
+    [["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+    [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+    [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]],
+    [["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+    [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+    [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]],
+    [["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+    [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+    [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]],
+    [["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+    [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+    [["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]],
+    [["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+    [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+    [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]],
+    [["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+    [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+    [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]
+  ];
+
+  var TAB_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+  var WIZ_STEPS = TAB_NAMES.length; // 8 шагов по 3 карточки
+
+  // баллы за позицию: 1-я («наиболее») +2, 2-я +1, 3-я −1, 4-я («наименее») −2
+  var POSITION_POINTS = [2, 1, -1, -2];
+
+  var TYPES = {
+    d: { name: "D — Доминирование", color: "var(--d)",
+         desc: "Вы ориентированы на результат, решительны и готовы брать инициативу. Быстро принимаете решения, любите вызовы и управление ситуацией." },
+    i: { name: "I — Влияние", color: "var(--i)",
+         desc: "Вы общительны, эмоциональны и умеете убеждать. Вдохновляете других, легко устанавливаете контакты и работаете на энтузиазме." },
+    s: { name: "S — Постоянство", color: "var(--s)",
+         desc: "Вы спокойны, надёжны и последовательны. Цените стабильность, поддерживаете команду и доводите начатое до конца." },
+    c: { name: "C — Соответствие", color: "var(--c)",
+         desc: "Вы точны, аналитичны и внимательны к деталям. Опираетесь на факты, стандарты и качество, работаете по правилам." }
+  };
+
+  // ---------- состояние ----------
+  var order = STEPS.map(function (step) { return step.map(function (_, i) { return i; }); });
+  var current = 0;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var overlay = $("wizardmodal"), panes = $("panes"), tabsEl = $("tabs");
+  var prevBtn = $("prevBtn"), nextBtn = $("nextBtn"), finishBtn = $("finishBtn");
+  var hint = $("hint"), progress = $("discProgress");
+
+  // ---------- построение DOM ----------
+  function build() {
+    // табы
+    TAB_NAMES.forEach(function (name, i) {
+      var b = document.createElement("button");
+      b.className = "tab" + (i === 0 ? " is-active" : "");
+      b.type = "button"; b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", i === 0 ? "true" : "false");
+      b.textContent = name; b.dataset.stepBtn = i;
+      b.addEventListener("click", function () { if (i <= maxReached()) goTo(i); });
+      tabsEl.appendChild(b);
+    });
+
+    // панели
+    var paneIndex = 0;
+    STEPS.forEach(function (step, idx) {
+      if (idx % 3 === 0) {
+        var pane = document.createElement("div");
+        pane.className = "pane" + (paneIndex === 0 ? " is-active" : "");
+        pane.dataset.stepPane = paneIndex;
+        var grid = document.createElement("div");
+        grid.className = "grid3";
+        pane.appendChild(grid);
+        panes.appendChild(pane);
+      }
+      var grid = panes.lastChild.firstChild;
+      var card = document.createElement("div");
+      card.className = "card";
+      var title = document.createElement("div");
+      title.className = "card__title"; title.textContent = "Я наиболее";
+      var ul = document.createElement("ul");
+      ul.className = "list"; ul.dataset.list = idx;
+      step.forEach(function (_, pos) {
+        var li = document.createElement("li");
+        li.className = "item"; li.draggable = true;
+        li.dataset.type = step[pos][0]; li.dataset.word = step[pos][1];
+        li.innerHTML =
+          '<span class="rank">' + (pos + 1) + '</span>' +
+          '<span class="dot t-' + step[pos][0] + '"></span>' +
+          '<span class="word">' + step[pos][1] + '</span>' +
+          '<svg class="grip" width="14" height="14" viewBox="0 0 14 14"><circle cx="4" cy="3" r="1.3" fill="currentColor"/><circle cx="10" cy="3" r="1.3" fill="currentColor"/><circle cx="4" cy="7" r="1.3" fill="currentColor"/><circle cx="10" cy="7" r="1.3" fill="currentColor"/><circle cx="4" cy="11" r="1.3" fill="currentColor"/><circle cx="10" cy="11" r="1.3" fill="currentColor"/></svg>';
+        ul.appendChild(li);
+      });
+      var foot = document.createElement("div");
+      foot.className = "card__foot"; foot.textContent = "Я наименее";
+      card.appendChild(title); card.appendChild(ul); card.appendChild(foot);
+      grid.appendChild(card);
+    });
+    panes.lastChild.id = "lastPane";
+
+    initDnD();
+  }
+
+  function paneOfStep(step) { return Math.floor(step / 3); }
+  function maxReached() {
+    var m = 0;
+    panes.querySelectorAll(".pane").forEach(function (p, i) {
+      if (p.dataset.visited) m = Math.max(m, i);
+    });
+    return Math.max(m, paneOfStep(current));
+  }
+
+  function goTo(step) {
+    current = step;
+    var pi = paneOfStep(step);
+    panes.querySelectorAll(".pane").forEach(function (p, i) {
+      p.classList.toggle("is-active", i === pi);
+      if (i === pi) p.dataset.visited = "1";
+    });
+    tabsEl.querySelectorAll(".tab").forEach(function (t, i) {
+      t.classList.toggle("is-active", i === pi);
+      t.setAttribute("aria-selected", i === pi ? "true" : "false");
+    });
+    prevBtn.disabled = step === 0;
+    nextBtn.hidden = step === WIZ_STEPS - 1;
+    finishBtn.hidden = step !== WIZ_STEPS - 1;
+    updateProgress();
+    hint.textContent = "";
+  }
+
+  function updateProgress() {
+    progress.style.width = ((current + 1) / WIZ_STEPS * 100) + "%";
+  }
+
+  // ---------- drag & drop (HTML5 + fallback для touch через сортировку стрелками не нужен: pointer fallback) ----------
+  var dragEl = null;
+
+  function initDnD() {
+    panes.querySelectorAll(".list").forEach(function (ul) {
+      ul.addEventListener("dragstart", function (e) {
+        dragEl = e.target.closest(".item");
+        if (!dragEl) return;
+        dragEl.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        try { e.dataTransfer.setData("text/plain", ""); } catch (_) {}
+      });
+      ul.addEventListener("dragend", function () {
+        if (dragEl) dragEl.classList.remove("dragging");
+        dragEl = null;
+        ul.querySelectorAll(".drop-target").forEach(function (x) { x.classList.remove("drop-target"); });
+        renumber(ul);
+      });
+      ul.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        var target = e.target.closest(".item");
+        ul.querySelectorAll(".drop-target").forEach(function (x) { x.classList.remove("drop-target"); });
+        if (target && target !== dragEl) target.classList.add("drop-target");
+      });
+      ul.addEventListener("drop", function (e) {
+        e.preventDefault();
+        var target = e.target.closest(".item");
+        if (!dragEl) return;
+        if (target && target !== dragEl) {
+          ul.insertBefore(dragEl, target);
+        }
+      });
+
+      // pointer/touch fallback: долгое нажатие + перетаскивание
+      attachPointerSort(ul);
+    });
+  }
+
+  function attachPointerSort(ul) {
+    var item = null, startY = 0, started = false, timer = null;
+
+    function onMove(e) {
+      if (!item) return;
+      var dy = e.clientY - startY;
+      if (!started && Math.abs(dy) > 8) started = true;
+      if (!started) return;
+      e.preventDefault();
+      var over = document.elementFromPoint(e.clientX, e.clientY);
+      var target = over && over.closest ? over.closest(".item") : null;
+      if (target && target !== item && target.parentElement === ul) {
+        var rect = target.getBoundingClientRect();
+        var before = (e.clientY - rect.top) < rect.height / 2;
+        ul.insertBefore(item, before ? target : target.nextSibling);
+      }
+    }
+    function onUp() {
+      clearTimeout(timer);
+      if (item && started) renumber(ul);
+      item = null; started = false;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    }
+
+    ul.addEventListener("pointerdown", function (e) {
+      item = e.target.closest(".item");
+      if (!item) return;
+      startY = e.clientY;
+      timer = setTimeout(function () { started = true; }, 60);
+      window.addEventListener("pointermove", onMove, { passive: false });
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
+    });
+  }
+
+  function renumber(ul) {
+    ul.querySelectorAll(".item").forEach(function (li, i) {
+      li.querySelector(".rank").textContent = i + 1;
+    });
+  }
+
+  // ---------- подсчёт ----------
+  function computeScores() {
+    var scores = { d: 0, i: 0, s: 0, c: 0 };
+    panes.querySelectorAll(".list").forEach(function (ul) {
+      ul.querySelectorAll(".item").forEach(function (li, pos) {
+        scores[li.dataset.type] += POSITION_POINTS[pos] || 0;
+      });
+    });
+    return scores;
+  }
+
+  function showResult() {
+    var scores = computeScores();
+    var bars = $("bars");
+    bars.innerHTML = "";
+    var max = Math.max.apply(null, ["d","i","s","c"].map(function (t) { return Math.abs(scores[t]); })) || 1;
+
+    var winners = ["d","i","s","c"].filter(function (t) { return scores[t] === Math.max(scores.d, scores.i, scores.s, scores.c); });
+
+    ["d","i","s","c"].forEach(function (t) {
+      var row = document.createElement("div");
+      row.className = "bar-row";
+      row.innerHTML =
+        '<div class="lbl">' + TYPES[t].name.split(" — ")[1] + '<small>' + TYPES[t].name.split(" — ")[0] + '</small></div>' +
+        '<div class="bar-track"><div class="bar-fill" style="background:' + TYPES[t].color + '"></div></div>' +
+        '<div class="val">' + scores[t] + '</div>';
+      bars.appendChild(row);
+      var pct = Math.max(3, Math.round((scores[t] + max) / (2 * max) * 100));
+      requestAnimationFrame(function () { row.querySelector(".bar-fill").style.width = pct + "%"; });
+    });
+
+    $("topNote").textContent = "Ваш ведущий тип: " + winners.map(function (t) { return TYPES[t].name; }).join(", ");
+    $("typeDesc").textContent = TYPES[winners[0]].desc;
+
+    document.querySelector(".dialog").style.display = "none";
+    $("result").classList.add("is-open");
+  }
+
+  // ---------- события ----------
+  $("startBtn").addEventListener("click", function () {
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    goTo(0);
+  });
+  function closeWizard() {
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden", "true");
+    $("result").classList.remove("is-open");
+    document.querySelector(".dialog").style.display = "";
+  }
+  $("closeBtn").addEventListener("click", closeWizard);
+  $("resCloseBtn").addEventListener("click", closeWizard);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeWizard(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && overlay.classList.contains("is-open")) closeWizard(); });
+
+  prevBtn.addEventListener("click", function () { if (current > 0) goTo(current - 1); });
+  nextBtn.addEventListener("click", function () { if (current < WIZ_STEPS - 1) goTo(current + 1); });
+  finishBtn.addEventListener("click", showResult);
+
+  build();
+  goTo(0);
+})();
+</script>
+</body>
+</html>

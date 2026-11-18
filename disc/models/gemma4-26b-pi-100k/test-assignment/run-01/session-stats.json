@@ -1,0 +1,24 @@
+{
+  "session_file": "2026-11-15T07-33-55-171Z_01a1de20-8360-73ae-8d63-308343cbe8f7.jsonl",
+  "turns": 16,
+  "tool_calls": 15,
+  "tools_by_name": {
+    "bash": 14,
+    "write": 1
+  },
+  "tokens_in": 56817,
+  "tokens_out": 8448,
+  "bash_total": 12,
+  "bash_with_network": 12,
+  "curl_to_source": 12,
+  "network_cmds_sample": [
+    "curl -s https://stratoplan-school.com/disc/ | head -n 100",
+    "curl -s https://stratoplan-school.com/disc/ | grep -C 20 \\\"class=\\\\\\\"disc-test\\\\\\\"\\\" || curl -s https://stratoplan-school.com/disc/ | grep -C 20 \\\"id=\\\\\\\"test-container\\\\\\\"\\\" || curl -s https://stratoplan-school.com/disc/ | grep -C 20 \\\"class=\\\\\\\"question\\\\\\\"\\\"",
+    "curl -s https://stratoplan-school.com/disc/ | grep -iE \\\"script|disc\\\" | head -n 50",
+    "curl -s https://stratoplan-school.com/disc/ | grep -A 50 \\\"disc-modal__tabs\\\" | grep -A 100 \\\"disc-modal__dialog\\\"",
+    "curl -s https://stratoplan-school.com/disc/ | grep -A 100 \\\"disc-modal__dialog\\\" | head -n 500"
+  ],
+  "errors": 3,
+  "first_ts": "2026-11-15T07:33:55.171Z",
+  "last_ts": "2026-11-15T07:34:52.125Z"
+}

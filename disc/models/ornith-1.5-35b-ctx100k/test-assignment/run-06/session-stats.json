@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-15T05-16-59-908Z_01a1dda3-2882-70e0-9f5f-a1add19764b3.jsonl",
+  "turns": 110,
+  "tool_calls": 120,
+  "tools_by_name": {
+    "bash": 92,
+    "read": 6,
+    "edit": 2,
+    "write": 20
+  },
+  "tokens_in": 254152,
+  "tokens_out": 96529,
+  "bash_total": 14,
+  "bash_with_network": 13,
+  "curl_to_source": 13,
+  "network_cmds_sample": [
+    "curl -s -L --max-time 60 'https://stratoplan-school.com/disc/' -o /tmp/disc_page.html; echo \\\"exit=$?\\\"; wc -c /tmp/disc_page.html; head -c 2000 /tmp/disc_page.html",
+    "cd /tmp && for i in 1 2 3 4 5; do   curl -s -L --max-time 60 'https://stratoplan-school.com/js/disc_patched.js' -o disc_patched.js   if [ -s disc_patched.js ]; then echo \\\"got $i\\\"; break; fi done wc -c disc_patched.js; head -c 1500 disc_patched.js; echo; echo \\\"=== tail ===\\\"; tail -c 800 disc_patc",
+    "cd /tmp && for i in 1 2 3 4 5; do   curl -s -L --max-time 60 'https://stratoplan-school.com/js/app.js' -o app.js   if [ -s app.js ]; then echo \\\"got app i=$i\\\"; break; fi done wc -c app.js; head -c 600 app.js",
+    "cd /tmp && for i in 1 2 3; do   curl -s -L --max-time 60 'https://stratoplan-school.com/js/disc.js' -o disc.js   echo \\\"disc i=$i: $(wc -c < disc.js) bytes\\\"   head -c 200 disc.js   echo done",
+    "echo \\\"=== app.js headers ===\\\"; curl -sL -o /dev/null -w \\\"url:%{url_effective} size:%{size_download} resp:%{http_code}\\ \\\" 'https://stratoplan-school.com/js/app.js' echo \\\"=== disc_patched ===\\\"; curl -sL -o /dev/null -w \\\"url:%{url_effective} size:%{size_download} resp:%{http_code}\\ \\\" 'https://s"
+  ],
+  "errors": 14,
+  "first_ts": "2026-11-15T05:16:59.908Z",
+  "last_ts": "2026-11-15T05:26:21.778Z"
+}

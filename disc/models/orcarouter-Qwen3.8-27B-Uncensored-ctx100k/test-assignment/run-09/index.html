@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тест DISC онлайн — типы личности за 5 минут</title>
+<style>
+  :root{
+    --bg: #0e1726;
+    --bg-2: #111e33;
+    --card-bg:#152238;
+    --card-line:#24344f;
+    --ink:#eaf1fb;
+    --muted:#91a2bd;
+    --faint:#67789a;
+    --accent:#ffb84d;
+    --accent-2:#ff9d2e;
+    --accent-ink:#22130a;
+    --d:#ff6b6b;
+    --i:#ffc93c;
+    --s:#4fd1a6;
+    --c:#5aa9ff;
+    --radius: 16px;
+    --shadow: 0 20px 60px rgba(0,0,0,.45);
+    --ring: 0 0 0 3px rgba(255,184,77,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji",sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.5;
+  }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1100px 600px at 15% -10%, rgba(255,183,77,.16), transparent 60%),
+      radial-gradient(900px 700px at 110% 10%, rgba(90,169,255,.18), transparent 60%),
+      radial-gradient(700px 500px at 50% 120%, rgba(79,209,166,.10), transparent 60%),
+      linear-gradient(180deg,#0c1322 0%, #0e1726 45%, #0b1220 100%);
+  }
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 64px}
+
+  /* ===== Top bar ===== */
+  .top{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:10px 4px 22px;
+  }
+  .brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none}
+  .brand:hover{text-decoration:none}
+  .brand__mark{
+    width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+    background:linear-gradient(135deg,#ffb84d,#ff9d2e);box-shadow:0 8px 24px rgba(255,157,46,.28);
+  }
+  .brand__name{font-weight:700;letter-spacing:.2px;font-size:18px}
+  .brand__sub{font-size:12px;color:var(--muted)}
+
+  /* ===== Hero ===== */
+  .hero{
+    display:grid;grid-template-columns:1.15fr 1fr;gap:36px;align-items:center;
+    margin:6px 0 26px;
+  }
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;
+    color:var(--accent);letter-spacing:.8px;text-transform:uppercase;
+  }
+  .kicker::before{content:"";width:22px;height:2px;background:var(--accent);border-radius:2px;display:inline-block}
+  .hero h1{
+    margin:14px 0 12px;font-size:clamp(30px,4.4vw,46px);line-height:1.12;font-weight:800;letter-spacing:-.3px;
+  }
+  .hero p.lead{color:var(--muted);max-width:52ch;margin:0 0 22px;font-size:17px}
+  .meta{display:flex;gap:14px;flex-wrap:wrap;margin:22px 0 26px;color:var(--muted);font-size:14px}
+  .meta > div{display:flex;align-items:center;gap:8px}
+  .meta svg{opacity:.85}
+
+  .cta{
+    display:inline-flex;align-items:center;gap:10px;padding:15px 24px;font-weight:700;font-size:16px;
+    background:linear-gradient(180deg,#ffd07b,#ffb84d 55%,#ff9d2e);color:var(--accent-ink);
+    border:none;border-radius:14px;cursor:pointer;
+    box-shadow:0 12px 30px rgba(255,157,46,.32), inset 0 1px 0 rgba(255,255,255,.35);
+    transition:transform .08s ease, filter .15s ease;
+  }
+  .cta:hover{filter:brightness(1.03)}
+  .cta:active{transform:translateY(1px)}
+  .cta svg{fill:currentColor}
+
+  .side{
+    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+    border:1px solid var(--card-line);
+    border-radius:var(--radius);padding:22px;
+  }
+  .side h4{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600}
+  .types{margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;list-style:none}
+  .types li{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+    background:rgba(255,255,255,.03);border:1px solid var(--card-line);font-size:14px;
+  }
+  .types .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .types b{font-weight:700;letter-spacing:.5px}
+
+  .hero__illustration{display:flex;align-items:center;justify-content:center}
+  .hero__illustration svg{max-width:100%;height:auto}
+
+  /* ===== Section: rules / how ===== */
+  .how{
+    margin:26px 0 10px;
+    background:rgba(255,255,255,.02);border:1px solid var(--card-line);border-radius:var(--radius);
+    padding:22px;
+  }
+  .how h3{margin:0 0 14px;font-size:18px}
+  .how ol{margin:0;padding-left:20px;color:var(--muted);max-width:75ch}
+  .how ol li{margin:6px 0}
+  .how ol li b{color:var(--ink)}
+
+  /* ===== Footer ===== */
+  .foot{
+    margin-top:48px;padding-top:22px;border-top:1px solid var(--card-line);
+    color:var(--faint);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+
+  /* ===== Modal ===== */
+  .modal{
+    position:fixed;inset:0;z-index:50;display:none;
+  }
+  .modal.is-open{display:block}
+  .modal__backdrop{
+    position:absolute;inset:0;background:rgba(6,10,20,.72);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  }
+  .dialog{
+    position:relative;z-index:2;width:min(960px, calc(100vw - 24px));
+    max-height:calc(100vh - 24px);
+    margin:12px auto 24px;
+    background:linear-gradient(180deg,#132036,#0f1a2c);
+    border:1px solid #2a3a59;border-radius:18px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+  }
+  .dialog__head{
+    padding:18px 22px 0;
+    display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  }
+  .dialog__head .titles{min-width:0}
+  .dialog__head h2{margin:0;font-size:20px;letter-spacing:-.2px}
+  .dialog__head .sub{color:var(--muted);font-size:14px;margin-top:4px}
+  .dialog__head .sub b{color:var(--accent)}
+
+  .icon-btn{
+    appearance:none;border:1px solid var(--card-line);background:rgba(255,255,255,.03);color:var(--ink);
+    width:38px;height:38px;border-radius:10px;display:grid;place-items:center;cursor:pointer;flex:none;
+    transition:background .12s ease;
+  }
+  .icon-btn:hover{background:rgba(255,255,255,.07)}
+  .icon-btn:active{transform:translateY(1px)}
+
+  /* Tabs */
+  .tabs{
+    display:flex;gap:8px;overflow-x:auto;padding:14px 16px 10px;scrollbar-width:thin;
+    flex:none;
+  }
+  .tab{
+    appearance:none;flex:none;border:1px solid var(--card-line);background:rgba(255,255,255,.02);
+    color:var(--ink);padding:9px 14px;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;
+    white-space:nowrap;
+    position:relative;
+  }
+  .tab[aria-selected="true"]{
+    background:linear-gradient(180deg,#1a2b47,#152238);
+    border-color:#38517b;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .tab[aria-selected="true"]::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;border-radius:2px;
+    background:var(--accent);
+  }
+
+  /* Body + panes */
+  .body{
+    overflow:auto;padding:8px 18px 18px;flex:1;
+  }
+  .pane{display:none}
+  .pane.is-active{display:block}
+
+  /* Grid + cards */
+  .grid{
+    display:grid;gap:14px;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+  }
+  .card{
+    background:var(--card-bg);border:1px solid var(--card-line);border-radius:14px;
+    padding:14px 12px 12px;display:flex;flex-direction:column;
+  }
+  .card__label{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    color:var(--muted);font-size:12.5px;letter-spacing:.3px;text-transform:uppercase;font-weight:600;
+    padding:0 4px 8px;
+  }
+  .card__label .top::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:middle}
+  .card__label .bot::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#4a5e88;margin-right:8px;vertical-align:middle}
+
+  /* List */
+  .list{
+    list-style:none;margin:0;padding:2px;display:flex;flex-direction:column;gap:8px;
+  }
+  .item{
+    position:relative;display:flex;align-items:center;gap:10px;
+    padding:10px 10px 10px 34px;border-radius:10px;
+    background:#0f1a2e;border:1px solid #23334f;color:var(--ink);
+    user-select:none;-webkit-user-select:none;
+    touch-action: pan-y; /* allow vertical scroll, horizontal drag handled by JS */
+    cursor:grab;
+    transition:background .12s ease, border-color .12s ease, transform .08s ease, box-shadow .12s ease;
+  }
+  .item:hover{background:#12203a;border-color:#2c4065}
+  .item.is-grabbing{cursor:grabbing}
+  .item .rank{
+    position:absolute;left:8px;top:50%;transform:translateY(-50%);
+    width:20px;height:20px;border-radius:6px;display:grid;place-items:center;
+    background:rgba(255,255,255,.06);color:var(--muted);font-size:12px;font-weight:700;
+    border:1px solid var(--card-line);
+  }
+  .item[data-pos="0"] .rank{background:#ffe7c2;color:#5a2c00;border-color:#ffb84d}
+  .item[data-pos="3"] .rank{background:#101b2e;color:#7d90b6;border-color:#2a3c5f}
+  .item .grip{
+    margin-left:auto;width:18px;height:18px;color:#90a2c2;flex:none;opacity:.8;
+  }
+  .item .txt{
+    min-width:0;flex:1;
+    font-size:15px;font-weight:500;
+  }
+  .item.is-ghost{
+    position:fixed;z-index:60;pointer-events:none;
+    box-shadow:0 18px 42px rgba(0,0,0,.5);
+    background:#16253f;border-color:#4a639a;
+    will-change:transform;
+    transform:translate(calc(var(--gx,0)*1px - 50%), calc(var(--gy,0)*1px - 50%)) scale(1.03) rotate(1.5deg);
+  }
+  .item.is-placeholder{
+    background:rgba(255,255,255,.02);border-style:dashed;border-color:#3a5176;
+  }
+  .item.is-placeholder .txt,.item.is-placeholder .rank,.item.is-placeholder .grip{opacity:.25}
+
+  /* Progress + actions */
+  .prog{
+    height:4px;background:#0e1a31;border-radius:2px;margin:16px 4px 10px;overflow:hidden;flex:none;
+  }
+  .progbar{
+    height:100%;background:linear-gradient(90deg,#ffb84d,#ff9d2e);width:12.5%;transition:width .25s ease;
+  }
+  .actions{
+    display:flex;justify-content:space-between;gap:10px;padding:4px 16px 16px;flex:none;
+  }
+  .btn{
+    appearance:none;border:1px solid var(--card-line);background:rgba(255,255,255,.04);color:var(--ink);
+    padding:11px 18px;border-radius:12px;font:inherit;font-weight:700;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:background .12s ease;
+  }
+  .btn:hover{background:rgba(255,255,255,.07)}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn--primary{
+    background:linear-gradient(180deg,#ffd07b,#ffb84d 55%,#ff9d2e);color:var(--accent-ink);border-color:transparent;
+    box-shadow:0 10px 22px rgba(255,157,46,.25);
+  }
+
+  /* ===== Result ===== */
+  .result-head{
+    display:flex;gap:18px;align-items:flex-start;
+    background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+    border:1px solid var(--card-line);border-radius:14px;padding:20px;margin:12px 0 18px;
+  }
+  .result-head .score-icon{flex:none}
+  .result-head h3{margin:0 0 6px;font-size:20px}
+  .result-head p{margin:0;color:var(--muted);max-width:68ch}
+  .result-head .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;
+    background:rgba(255,255,255,.04);border:1px solid var(--card-line);font-size:13px;
+  }
+  .chip .dot{width:10px;height:10px;border-radius:50%}
+
+  .bars{display:grid;gap:14px;margin:18px 0 8px}
+  .bar-row{display:grid;grid-template-columns:120px 1fr auto;gap:14px;align-items:center}
+  .bar-row .name{display:flex;align-items:center;gap:10px;font-weight:600}
+  .bar-row .name .dot{width:12px;height:12px;border-radius:50%}
+  .bar{height:14px;background:#0f1c33;border-radius:8px;overflow:hidden;border:1px solid #22334f}
+  .bar__fill{
+    height:100%;width:0%;border-radius:8px;
+    background:linear-gradient(90deg,var(--bar-c), color-mix(in srgb, var(--bar-c) 55%,#ffffff));
+    transition:width .8s cubic-bezier(.2,.7,.2,1);
+  }
+  .bar-row .val{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);min-width:52px;text-align:right}
+
+  .legend{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 4px;
+  }
+  .legend__item{
+    background:rgba(255,255,255,.03);border:1px solid var(--card-line);border-radius:12px;padding:12px;
+    font-size:13.5px;color:var(--muted);
+  }
+  .legend__item b{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:14px;margin-bottom:4px}
+  .legend__item .dot{width:10px;height:10px;border-radius:50%}
+
+  .result-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+
+  .hidden{display:none !important}
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px){
+    .hero{grid-template-columns:1fr;gap:20px}
+    .hero__illustration{order:-1}
+    .grid{grid-template-columns:1fr}
+    .legend{grid-template-columns:repeat(2,1fr)}
+    .bar-row{grid-template-columns:1fr;gap:6px}
+    .bar-row .val{min-width:auto;text-align:left}
+    .dialog{width:calc(100vw - 12px);margin:6px auto 12px;max-height:calc(100vh - 12px);border-radius:14px}
+  }
+  @media (max-width: 560px){
+    .wrap{padding:22px 14px 48px}
+    .top{padding-bottom:16px}
+    .hero h1{font-size:30px}
+    .types{grid-template-columns:1fr}
+    .legend{grid-template-columns:1fr}
+    .dialog__head{padding:14px 14px 0}
+    .body{padding:6px 12px 14px}
+    .actions{padding:2px 12px 14px}
+    .tabs{padding:12px 10px 6px}
+    .result-actions .btn{flex:1;justify-content:center}
+  }
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+  }
+
+  /* no-select while dragging */
+  body.is-dragging{cursor:grabbing}
+  body.is-dragging .item{user-select:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top bar -->
+  <header class="top">
+    <a class="brand" href="#" aria-label="Stratoplan — школа менеджмента">
+      <span class="brand__mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3.2" fill="#22130a"/>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"
+                stroke="#22130a" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>
+        <span class="brand__name">Stratoplan</span><br>
+        <span class="brand__sub">школа менеджмента</span>
+      </span>
+    </a>
+    <a href="#start" class="btn" id="openTop">Пройти тест</a>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div>
+      <span class="kicker">Диагностика поведенческого стиля</span>
+      <h1>Узнайте свой тип&nbsp;DISC<br>и сильные стороны</h1>
+      <p class="lead">
+        Короткий тест: 8 шагов, по 3 карточки на каждом. Разместите качества в порядке от
+        «наиболее похожего на меня» до «наименее похожего». По итогам вы получите баллы
+        по четырём типам — D, I, S, C — и увидите свой поведенческий профиль.
+      </p>
+      <div class="meta">
+        <div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>≈ 5 минут</div>
+        <div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>24 карточки · 8 шагов</div>
+        <div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/></svg>Без регистрации</div>
+      </div>
+      <button class="cta" id="openBtn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Начать тест
+      </button>
+    </div>
+
+    <div class="hero__illustration" aria-hidden="true">
+      <!-- Inline SVG: "profile" illustration, no rasters -->
+      <svg width="340" viewBox="0 0 340 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gD" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ff8a8a"/>
+            <stop offset="1" stop-color="#ff6b6b"/>
+          </linearGradient>
+          <linearGradient id="gI" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffe08a"/>
+            <stop offset="1" stop-color="#ffc93c"/>
+          </linearGradient>
+          <linearGradient id="gS" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7fe6c4"/>
+            <stop offset="1" stop-color="#4fd1a6"/>
+          </linearGradient>
+          <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#8ec3ff"/>
+            <stop offset="1" stop-color="#5aa9ff"/>
+          </linearGradient>
+        </defs>
+        <!-- backdrop -->
+        <rect x="18" y="18" width="304" height="224" rx="18" fill="#132033" stroke="#24365a" stroke-width="1.5"/>
+        <rect x="34" y="34" width="14" height="14" rx="4" fill="#ffb84d"/>
+        <rect x="52" y="34" width="14" height="14" rx="7" fill="#2c4166"/>
+        <rect x="70" y="34" width="14" height="14" rx="7" fill="#2c4166"/>
+
+        <!-- card D -->
+        <g transform="translate(34 62)">
+          <rect x="0" y="0" width="122" height="88" rx="12" fill="#0f1c33" stroke="#2a3d63" stroke-width="1.2"/>
+          <rect x="12" y="14" width="26" height="26" rx="7" fill="url(#gD)"/>
+          <text x="15" y="32" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800" fill="#2a0d0d">D</text>
+          <rect x="46" y="18" width="60" height="7" rx="3.5" fill="#233456"/>
+          <rect x="46" y="32" width="42" height="7" rx="3.5" fill="#1c2b48"/>
+          <rect x="12" y="54" width="98" height="10" rx="5" fill="#1a2947"/>
+          <rect x="12" y="54" width="76" height="10" rx="5" fill="url(#gD)"/>
+        </g>
+
+        <!-- card I -->
+        <g transform="translate(168 62)">
+          <rect x="0" y="0" width="122" height="88" rx="12" fill="#0f1c33" stroke="#2a3d63" stroke-width="1.2"/>
+          <rect x="12" y="14" width="26" height="26" rx="7" fill="url(#gI)"/>
+          <text x="15" y="32" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800" fill="#3a2405">I</text>
+          <rect x="46" y="18" width="54" height="7" rx="3.5" fill="#233456"/>
+          <rect x="46" y="32" width="70" height="7" rx="3.5" fill="#1c2b48"/>
+          <rect x="12" y="54" width="98" height="10" rx="5" fill="#1a2947"/>
+          <rect x="12" y="54" width="88" height="10" rx="5" fill="url(#gI)"/>
+        </g>
+
+        <!-- card S -->
+        <g transform="translate(34 162)">
+          <rect x="0" y="0" width="122" height="88" rx="12" fill="#0f1c33" stroke="#2a3d63" stroke-width="1.2"/>
+          <rect x="12" y="14" width="26" height="26" rx="7" fill="url(#gS)"/>
+          <text x="15" y="32" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800" fill="#0a3527">S</text>
+          <rect x="46" y="18" width="48" height="7" rx="3.5" fill="#233456"/>
+          <rect x="46" y="32" width="62" height="7" rx="3.5" fill="#1c2b48"/>
+          <rect x="12" y="54" width="98" height="10" rx="5" fill="#1a2947"/>
+          <rect x="12" y="54" width="64" height="10" rx="5" fill="url(#gS)"/>
+        </g>
+
+        <!-- card C -->
+        <g transform="translate(168 162)">
+          <rect x="0" y="0" width="122" height="88" rx="12" fill="#0f1c33" stroke="#2a3d63" stroke-width="1.2"/>
+          <rect x="12" y="14" width="26" height="26" rx="7" fill="url(#gC)"/>
+          <text x="15" y="32" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="800" fill="#0b2a4d">C</text>
+          <rect x="46" y="18" width="64" height="7" rx="3.5" fill="#233456"/>
+          <rect x="46" y="32" width="44" height="7" rx="3.5" fill="#1c2b48"/>
+          <rect x="12" y="54" width="98" height="10" rx="5" fill="#1a2947"/>
+          <rect x="12" y="54" width="72" height="10" rx="5" fill="url(#gC)"/>
+        </g>
+        <!-- connecting arcs -->
+        <path d="M100 108c22-14 80-14 100 0" stroke="#3a5176" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Types legend -->
+  <aside class="side" aria-label="Что такое DISC">
+    <h4>Четыре типа поведенческого стиля</h4>
+    <ul class="types">
+      <li><span class="dot" style="background:var(--d)"></span><span><b>D</b> · Dominant — доминантный</span></li>
+      <li><span class="dot" style="background:var(--i)"></span><span><b>I</b> · Influential — влиятельный</span></li>
+      <li><span class="dot" style="background:var(--s)"></span><span><b>S</b> · Steadfast — стабильный</span></li>
+      <li><span class="dot" style="background:var(--c)"></span><span><b>C</b> · Compliant — конформный</span></li>
+    </ul>
+  </aside>
+
+  <!-- How it works -->
+  <section class="how" aria-label="Как проходит тест">
+    <h3>Как проходит тест</h3>
+    <ol>
+      <li>На каждом шаге три карточки с четырьмя качествами.</li>
+      <li>Перетащите качества: <b>1 — наиболее похожее на вас</b>, <b>4 — наименее похожее</b>.</li>
+      <li>Навигация вверху: шаги «Первый» … «Восьмой», кнопки «Назад» / «Далее».</li>
+      <li>На шаге «Восьмой» нажмите <b>«Завершить тест»</b> — увидите баллы сразу, без email.</li>
+    </ol>
+  </section>
+
+  <footer class="foot">
+    <span>© <span id="year"></span> Копия теста DISC. Демонстрационная версия.</span>
+    <span>Все данные остаются в вашем браузере.</span>
+  </footer>
+</div>
+
+<!-- ============ MODAL: test wizard ============ -->
+<div class="modal" id="wizardmodal" aria-hidden="true">
+  <div class="modal__backdrop" data-close></div>
+
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+    <div class="dialog__head">
+      <div class="titles">
+        <h2 id="discTitle">Тестирование DISC</h2>
+        <div class="sub">
+          <span id="stepTitle">Шаг 1 из 8</span> ·
+          Помните — <b>чем честнее вы с тестом, тем точнее результаты</b>
+        </div>
+      </div>
+      <button class="icon-btn" type="button" data-close aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Шаги теста" id="tabs"></div>
+
+    <div class="body" id="panes">
+      <!-- panes injected via JS -->
+    </div>
+
+    <div class="prog" aria-hidden="true"><div class="progbar" id="progbar"></div></div>
+
+    <div class="actions">
+      <button class="btn" type="button" id="btnPrev">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        Назад
+      </button>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn--primary" type="button" id="btnNext">
+          Далее
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn btn--primary hidden" type="button" id="btnFinish">Завершить тест</button>
+      </div>
+    </div>
+
+    <!-- Result pane (inside dialog) -->
+    <div class="body hidden" id="resultBody" role="region" aria-label="Результаты теста">
+      <div class="result-head">
+        <div class="score-icon" aria-hidden="true" style="width:64px;height:64px;border-radius:16px;
+             background:linear-gradient(135deg,#ffd07b,#ff9d2e);display:grid;place-items:center;
+             box-shadow:0 12px 28px rgba(255,157,46,.35)">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12l4 4 10-10" stroke="#22130a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div style="min-width:0">
+          <h3>Ваш поведенческий профиль</h3>
+          <p>
+            Баллы суммируют позиции качества в восьми списках: <b>1 место</b> даёт 4 балла,
+            <b>2 место</b> — 3, <b>3 место</b> — 2, <b>4 место</b> — 1. Максимум по каждому типу — 32
+            (8 карточек × 4 балла). Чем выше балл, тем сильнее выражен этот стиль.
+          </p>
+          <div class="chips" id="chips"></div>
+        </div>
+      </div>
+
+      <div class="bars" id="bars"></div>
+
+      <div class="legend" id="legend">
+        <div class="legend__item"><b><span class="dot" style="background:var(--d)"></span>D · Dominant</b>Решительность, ориентация на результат, готовность брать ответственность.</div>
+        <div class="legend__item"><b><span class="dot" style="background:var(--i)"></span>I · Influential</b>Коммуникабельность, воодушевление, влияние через людей и идеи.</div>
+        <div class="legend__item"><b><span class="dot" style="background:var(--s)"></span>S · Steadfast</b>Стабильность, эмпатия, поддержка, умение слушать и договариваться.</div>
+        <div class="legend__item"><b><span class="dot" style="background:var(--c)"></span>C · Compliant</b>Точность, системность, ответственность, соблюдение правил и стандартов.</div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn" type="button" id="btnRestart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+          Пройти заново
+        </button>
+        <button class="btn btn--primary" type="button" id="btnCloseResult">Готово</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ Data: 8 steps × 3 cards × 4 options ============ */
+  // Each option: {t: type, v: label}. Original page order preserved;
+  // order will be shuffled per session (as in the original behavior the user ranks them themselves).
+  const STEPS = [
+    [
+      [ {t:"i",v:"Экспрессивный"}, {t:"c",v:"Покладистый"}, {t:"d",v:"Волевой"}, {t:"s",v:"Осторожный"} ],
+      [ {t:"d",v:"Пылкий"}, {t:"i",v:"Разговорчивый"}, {t:"s",v:"Добродушный"}, {t:"c",v:"Сдержанный"} ],
+      [ {t:"i",v:"Любитель приключений"}, {t:"c",v:"Энтузиаст"}, {t:"d",v:"Исполнитель инструкций"}, {t:"s",v:"Верный"} ],
+    ],
+    [
+      [ {t:"d",v:"Настойчивый"}, {t:"c",v:"Осторожный"}, {t:"i",v:"Эмоциональный"}, {t:"s",v:"Удовлетворённый"} ],
+      [ {t:"s",v:"Довольный"}, {t:"d",v:"Нетерпеливый"}, {t:"i",v:"Убедительный"}, {t:"c",v:"Безропотный"} ],
+      [ {t:"c",v:"Смиренный"}, {t:"s",v:"Умеющий слушать"}, {t:"i",v:"Душа компании"}, {t:"d",v:"Волевой"} ],
+    ],
+    [
+      [ {t:"c",v:"Правильный"}, {t:"d",v:"Первопроходец"}, {t:"s",v:"Спокойный"}, {t:"i",v:"Влиятельный"} ],
+      [ {t:"c",v:"Почтительный"}, {t:"i",v:"Контактный"}, {t:"d",v:"Агрессивный"}, {t:"s",v:"Мягкий"} ],
+      [ {t:"i",v:"Весельчак"}, {t:"s",v:"Покорный"}, {t:"c",v:"Тактичный"}, {t:"d",v:"Соперничающий"} ],
+    ],
+    [
+      [ {t:"c",v:"Точный"}, {t:"d",v:"Доминирующий"}, {t:"s",v:"Охотный"}, {t:"i",v:"Притягательный"} ],
+      [ {t:"i",v:"Уравновешенный"}, {t:"c",v:"Уступчивый"}, {t:"d",v:"Идущий на риск"}, {t:"s",v:"Услужливый"} ],
+      [ {t:"c",v:"Осмотрительный"}, {t:"s",v:"Добрососедский"}, {t:"d",v:"Энергичный"}, {t:"i",v:"Убедительный"} ],
+    ],
+    [
+      [ {t:"s",v:"Уравновешенный"}, {t:"i",v:"Мотивирующий"}, {t:"c",v:"Щепетильный"}, {t:"d",v:"Решительный"} ],
+      [ {t:"i",v:"Уверенный"}, {t:"c",v:"Готовый к сотрудничеству"}, {t:"s",v:"Беззаботный"}, {t:"d",v:"Аргументирующий"} ],
+      [ {t:"s",v:"Сдержанный"}, {t:"d",v:"Прямой"}, {t:"c",v:"Строгий"}, {t:"i",v:"Убедительный"} ],
+    ],
+    [
+      [ {t:"c",v:"Застенчивый"}, {t:"d",v:"Требовательный"}, {t:"s",v:"Терпеливый"}, {t:"i",v:"Очаровательный"} ],
+      [ {t:"d",v:"Неугомонный"}, {t:"c",v:"Дисциплинированный"}, {t:"i",v:"Вдохновляющий"}, {t:"s",v:"Внимательный"} ],
+      [ {t:"s",v:"Обязательный"}, {t:"i",v:"Оживленный"}, {t:"d",v:"Решительный"}, {t:"c",v:"Точный"} ],
+    ],
+    [
+      [ {t:"c",v:"Добросовестный"}, {t:"i",v:"Компанейский"}, {t:"s",v:"Добрый"}, {t:"d",v:"Уверенный в себе"} ],
+      [ {t:"c",v:"Дипломатичный"}, {t:"d",v:"Отважный"}, {t:"s",v:"Сочувствующий"}, {t:"i",v:"Оптимистичный"} ],
+      [ {t:"d",v:"Настойчивый"}, {t:"i",v:"Общительный"}, {t:"s",v:"Постоянный"}, {t:"c",v:"Организованный"} ],
+    ],
+    [
+      [ {t:"c",v:"Соглашающийся"}, {t:"s",v:"Владеющий собой"}, {t:"d",v:"Шутливый"}, {t:"i",v:"Настойчивый"} ],
+      [ {t:"i",v:"Обаятельный"}, {t:"d",v:"Позитивный"}, {t:"s",v:"Снисходительный"}, {t:"c",v:"Требовательный"} ],
+      [ {t:"i",v:"Коммуникабельный"}, {t:"d",v:"Смелый"}, {t:"c",v:"Перфекционист"}, {t:"s",v:"Сдержанный"} ],
+    ],
+  ];
+  const STEP_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+  const TYPE_META = {
+    d:{name:"D · Dominant",  color:"var(--d)", hex:"#ff6b6b"},
+    i:{name:"I · Influential",color:"var(--i)", hex:"#ffc93c"},
+    s:{name:"S · Steadfast", color:"var(--s)", hex:"#4fd1a6"},
+    c:{name:"C · Compliant", color:"var(--c)", hex:"#5aa9ff"},
+  };
+
+  const GRIP_SVG = '<svg class="grip" viewBox="0 0 16 16" aria-hidden="true"><circle cx="5.5" cy="4" r="1.2" fill="currentColor"/><circle cx="10.5" cy="4" r="1.2" fill="currentColor"/><circle cx="5.5" cy="8" r="1.2" fill="currentColor"/><circle cx="10.5" cy="8" r="1.2" fill="currentColor"/><circle cx="5.5" cy="12" r="1.2" fill="currentColor"/><circle cx="10.5" cy="12" r="1.2" fill="currentColor"/></svg>';
+
+  /* ============ State ============ */
+  let step = 0;
+  const TOTAL = STEPS.length;
+  let lastFocus = null;
+  let modalOpen = false;
+  let finished = false;
+
+  /** user order per list: listKey -> array of option indices (0..3) in displayed order.
+      Position 0 = most like me (4pts), position 3 = least (1pt). */
+  let userOrderState = {};
+  function initUserOrder(){
+    const o = {};
+    STEPS.forEach((cards,s) => cards.forEach((card,c) => {
+      const key = s+"-"+c;
+      o[key] = [0,1,2,3];
+    }));
+    userOrderState = o;
+  }
+
+  // shuffle initial option order per session (each card starts with a random permutation).
+  // The user must still rank — shuffling avoids anchoring.
+  function shuffleArr(a){
+    const b = a.slice();
+    for(let i=b.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [b[i],b[j]]=[b[j],b[i]];
+    }
+    return b;
+  }
+  function buildPanes(){
+    initUserOrder();
+    const panes = document.getElementById('panes');
+    panes.innerHTML = '';
+    STEPS.forEach((cards, s) => {
+      const pane = document.createElement('div');
+      pane.className = 'pane' + (s===0 ? ' is-active' : '');
+      pane.dataset.pane = s;
+      pane.innerHTML = '<div class="grid"></div>';
+      const grid = pane.querySelector('.grid');
+      cards.forEach((card, c) => {
+        const idx = shuffleArr([0,1,2,3]);
+        userOrderState[s+"-"+c] = idx; // current display order
+
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
+        cardEl.dataset.list = s+"-"+c;
+        cardEl.innerHTML =
+          '<div class="card__label"><span class="top">Я наиболее</span><span class="bot">Я наименее</span></div>';
+        const ul = document.createElement('ul');
+        ul.className = 'list';
+        ul.setAttribute('role','list');
+        idx.forEach((optIdx, pos) => {
+          const li = document.createElement('li');
+          li.className = 'item';
+          li.dataset.opt = optIdx;
+          li.dataset.pos = pos;
+          li.innerHTML =
+            '<span class="rank">'+(pos+1)+'</span>'+
+            '<span class="txt"></span>'+
+            '<svg class="grip" viewBox="0 0 16 16" aria-hidden="true">'+
+              '<circle cx="5.5" cy="4" r="1.2" fill="currentColor"/>'+
+              '<circle cx="10.5" cy="4" r="1.2" fill="currentColor"/>'+
+              '<circle cx="5.5" cy="8" r="1.2" fill="currentColor"/>'+
+              '<circle cx="10.5" cy="8" r="1.2" fill="currentColor"/>'+
+              '<circle cx="5.5" cy="12" r="1.2" fill="currentColor"/>'+
+              '<circle cx="10.5" cy="12" r="1.2" fill="currentColor"/>'+
+            '</svg>';
+          li.querySelector('.txt').textContent = card[optIdx].v;
+          ul.appendChild(li);
+        });
+        cardEl.appendChild(ul);
+        grid.appendChild(cardEl);
+      });
+      panes.appendChild(pane);
+    });
+  }
+
+  /* ============ Render: tabs / steps / progress ============ */
+  function buildTabs(){
+    const tabs = document.getElementById('tabs');
+    tabs.innerHTML = '';
+    STEP_NAMES.forEach((n,i) => {
+      const b = document.createElement('button');
+      b.className = 'tab';
+      b.type = 'button';
+      b.role = 'tab';
+      b.dataset.step = i;
+      b.textContent = (i+1) + " · " + n;
+      b.addEventListener('click', () => setStep(i));
+      tabs.appendChild(b);
+    });
+  }
+
+  function render(){
+    document.querySelectorAll('#tabs .tab').forEach(t => {
+      const on = Number(t.dataset.step) === step;
+      t.setAttribute('aria-selected', on ? 'true':'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    document.querySelectorAll('#panes .pane').forEach(p => {
+      p.classList.toggle('is-active', Number(p.dataset.pane) === step);
+    });
+    document.getElementById('stepTitle').textContent = 'Шаг ' + (step+1) + ' из ' + TOTAL;
+    document.getElementById('progbar').style.width = (((step+1) / TOTAL) * 100) + '%';
+    const onLast = step === TOTAL-1;
+    document.getElementById('btnPrev').disabled = (step === 0);
+    document.getElementById('btnNext').classList.toggle('hidden', onLast);
+    document.getElementById('btnFinish').classList.toggle('hidden', !onLast);
+    if (isMobileUI && isMobileUI()){
+      requestAnimationFrame(centerActiveTab);
+    }
+  }
+
+  function setStep(n){
+    step = Math.max(0, Math.min(TOTAL-1, n));
+    finished = false;
+    document.getElementById('resultBody').classList.add('hidden');
+    document.getElementById('panes').classList.remove('hidden');
+    render();
+  }
+
+  function isMobileUI(){
+    return (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) ||
+           (window.matchMedia && window.matchMedia('(pointer: coarse)').matches &&
+            window.matchMedia && window.matchMedia('(max-width: 1024px)').matches);
+  }
+  function centerActiveTab(){
+    const tabs = document.getElementById('tabs');
+    if (!tabs || !tabs.scrollWidth) return;
+    const active = tabs.querySelector('.tab[aria-selected="true"]');
+    if (!active) return;
+    const cRect = tabs.getBoundingClientRect();
+    const tRect = active.getBoundingClientRect();
+    const tabCenter = (tRect.left - cRect.left) + tRect.width/2;
+    const target = tabs.scrollLeft + tabCenter - tabs.clientWidth/2;
+    const maxL = Math.max(0, tabs.scrollWidth - tabs.clientWidth);
+    clamp(target,0,maxL);
+    tabs.scrollTo({left: Math.min(Math.max(0,target), maxL), behavior:'smooth'});
+  }
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+  /* ============ Modal open/close ============ */
+  function openModal(){
+    lastFocus = document.activeElement;
+    document.getElementById('wizardmodal').classList.add('is-open');
+    document.getElementById('wizardmodal').setAttribute('aria-hidden','false');
+    document.body.classList.add('no-scroll');
+    document.documentElement.classList.add('no-scroll');
+    modalOpen = true;
+    if (!panesBuilt){
+      buildPanes();
+      bindAllDrag();
+      panesBuilt = true;
+    }
+    render();
+    requestAnimationFrame(() => {
+      const btn = document.querySelector('#wizardmodal .icon-btn');
+      if (btn) btn.focus();
+    });
+  }
+  function closeModal(){
+    document.getElementById('wizardmodal').classList.remove('is-open');
+    document.getElementById('wizardmodal').setAttribute('aria-hidden','true');
+    document.body.classList.remove('no-scroll');
+    document.documentElement.classList.remove('no-scroll');
+    modalOpen = false;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  let panesBuilt = false;
+
+  /* ============ Drag-to-reorder (pointer-based, offline, no external libs) ============ */
+  const TAP_THRESHOLD = 6;   // px of travel before we switch from tap to drag
+  let drag = null;
+
+  function onPointerDown(e){
+    if (!e.isPrimary) return;
+    if (e.target.closest('button')) return;
+    const li = e.target.closest('li.item');
+    if (!li || li.dataset.dragging === '1') return;
+    const list = li.parentElement;
+    if (e.pointerType === 'mouse' || e.pointerType === 'pen'){
+      li.setPointerCapture && li.setPointerCapture(e.pointerId);
+    }
+    drag = {
+      li, list, pointerId: e.pointerId,
+      startX: e.clientX, startY: e.clientY,
+      started: false,
+    };
+    document.addEventListener('pointermove', onPointerMove, {passive:false});
+    document.addEventListener('pointerup', onPointerUp);
+    document.addEventListener('pointercancel', onPointerCancel);
+  }
+
+  function onPointerMove(e){
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+    if (!drag.started){
+      if (Math.hypot(dx, dy) < TAP_THRESHOLD) return;
+      startDrag(e);
+    }
+    ghostMove(e.clientX, e.clientY);
+    movePlaceholder(e.clientY);
+    if (e.cancelable) e.preventDefault();
+  }
+
+  function onPointerUp(e){
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    if (drag.ghost){
+      // Animate ghost into the ph slot, then swap li in behind it.
+      const ghost = drag.ghost, phEl = drag.ph, li = drag.li;
+      const target = phEl.getBoundingClientRect();
+      ghost.style.transition = 'transform 150ms ease';
+      ghost.style.transform = `translate(${target.left}px, ${target.top}px)`;
+      setTimeout(() => {
+        li.classList.remove('is-grabbing');
+        li.style.cssText = '';
+        phEl.parentNode.insertBefore(li, phEl);
+        phEl.remove();
+        ghost.remove();
+        commitOrder();
+      }, 160);
+      cleanupDrag();
+    } else {
+      cleanupDrag();
+    }
+  }
+  function onPointerCancel(e){
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    if (drag.ghost){
+      const ph = drag.ph, li = drag.li;
+      drag.ghost.remove();
+      li.classList.remove('is-grabbing');
+      li.style.cssText = '';
+      ph.parentNode.insertBefore(li, ph);
+      ph.remove();
+      commitOrder();
+    }
+    cleanupDrag();
+  }
+
+  function removeListeners(){
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+    document.removeEventListener('pointercancel', onPointerCancel);
+  }
+
+  function startDrag(e){
+    const li = drag.li;
+    const rect = li.getBoundingClientRect();
+    const ghost = li.cloneNode(true);
+    ghost.classList.add('is-ghost');
+    ghost.classList.remove('is-placeholder');
+    ghost.removeAttribute('tabindex');
+    Object.assign(ghost.style, {
+      width: rect.width+'px',
+      height: rect.height+'px',
+      left: '0', top: '0', margin:'0',
+      transform: `translate(${e.clientX - rect.width/2}px, ${e.clientY - rect.height/2}px)`,
+    });
+    document.body.appendChild(ghost);
+
+    const li2 = e.target.closest('li.item') || li;
+    const ph = document.createElement('li');
+    ph.className = 'item is-placeholder';
+    ph.style.height = rect.height + 'px';
+    ph.innerHTML = li2 ? li2.innerHTML : li.innerHTML;
+    li.parentNode.insertBefore(ph, li);
+    li.remove();
+    li.classList.add('is-grabbing');
+
+    drag.started = true;
+    drag.ghost = ghost;
+    drag.ph = ph;
+    drag.li = li2 || li;
+    document.body.classList.add('is-dragging');
+  }
+
+  function ghostMove(x,y){
+    if (!drag.ghost) return;
+    const li = drag.li;
+    const w = li.offsetWidth || 200;
+    const h = li.offsetHeight || 40;
+    drag.ghost.style.transform = `translate(${x - w/2}px, ${y - h/2}px)`;
+  }
+
+  function movePlaceholder(clientY){
+    const list = drag.list;
+    const items = Array.from(list.children).filter(x => x.className.includes('item') && x !== drag.ph);
+    if (!items.length) return;
+    let insertBefore = null;
+    for (const it of items){
+      const r = it.getBoundingClientRect();
+      if (clientY < r.top + r.height/2){ insertBefore = it; break; }
+    }
+    if (insertBefore){ list.insertBefore(drag.ph, insertBefore); }
+    else { list.appendChild(drag.ph); }
+  }
+
+  function cleanupDrag(){
+    removeListeners();
+    document.body.classList.remove('is-dragging');
+    document.body.classList.remove('is-dragging');
+    drag = null;
+  }
+
+  function commitOrder(){
+    document.querySelectorAll('.card').forEach(cardEl => {
+      const key = cardEl.dataset.list;
+      const ul = cardEl.querySelector('.list');
+      const order = [];
+      Array.from(ul.querySelectorAll('li.item')).forEach(li => {
+        order.push(Number(li.dataset.opt));
+      });
+      if (order.length) userOrderState[key] = order;
+      // update rank badges
+      Array.from(ul.querySelectorAll('li.item')).forEach((li,i) => {
+        li.dataset.pos = i;
+        li.querySelector('.rank').textContent = (i+1);
+      });
+    });
+  }
+
+  function bindAllDrag(){
+    document.querySelectorAll('.card .list').forEach(ul => {
+      ul.addEventListener('pointerdown', onPointerDown);
+      // Prevent text selection while dragging
+      ul.addEventListener('dragstart', e => e.preventDefault());
+      // Allow native scroll when vertical on touch devices
+      ul.setAttribute('style','touch-action: pan-y; -webkit-user-select:none; user-select:none');
+    });
+    // Keyboard reorder: ArrowUp/ArrowDown while a list is focused
+    document.querySelectorAll('.card .list').forEach(ul => {
+      ul.tabIndex = 0;
+      ul.setAttribute('role','listbox');
+      ul.setAttribute('aria-orientation','vertical');
+      ul.setAttribute('aria-label','Порядок: от наиболее похожего на меня к наименее');
+      ul.addEventListener('keydown', (e) => {
+        const items = Array.from(ul.querySelectorAll('li.item'));
+        const idx = items.indexOf(document.activeElement);
+        if (idx < 0) return;
+        if (e.key === 'ArrowUp' && idx > 0){
+          e.preventDefault();
+          ul.insertBefore(items[idx], items[idx-1]);
+          commitOrder();
+        } else if (e.key === 'ArrowDown' && idx < items.length-1){
+          e.preventDefault();
+          const next = items[idx+1];
+          if (next.nextSibling) ul.insertBefore(items[idx], next.nextSibling);
+          else ul.appendChild(items[idx]);
+          commitOrder();
+        }
+      });
+      // Make items focusable
+      items_focusables(ul);
+    });
+  }
+  function items_focusables(ul){
+    ul.querySelectorAll('li.item').forEach(li => {
+      li.setAttribute('tabindex','0');
+    });
+  }
+
+  /* ============ Scoring ============ */
+  // Rank 1 (pos 0) = 4, rank 2 = 3, rank 3 = 2, rank 4 = 1.
+  // Equivalent to original: 4 for major, 1 for minor → same relative ordering.
+  function score(){
+    const out = {d:0, i:0, s:0, c:0};
+    const weights = [4,3,2,1];
+    Object.entries(userOrderState).forEach(([key,order]) => {
+      const [s,c] = key.split('-').map(Number);
+      const cardOpts = STEPS[s][c];
+      order.forEach((optIdx, pos) => {
+        const t = cardOpts[optIdx].t;
+        out[t] += weights[pos];
+      });
+    });
+    return out;
+  }
+
+  function renderResult(){
+    const sc = score();
+    const max = 32; // 8 lists * 4
+    const sorted = Object.entries(sc).sort((a,b)=>b[1]-a[1]);
+    const top = sorted[0][0];
+    const topName = TYPE_META[top].name;
+
+    // Chips: ranked list
+    const chipsEl = document.getElementById('chips');
+    chipsEl.innerHTML = '';
+    sorted.forEach(([t,v],i) => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.innerHTML = '<span class="dot" style="background:'+TYPE_META[t].hex+'"></span>'+
+        (i===0 ? '<b>'+TYPE_META[t].name.split(' ')[0]+'</b> · ' : '') +
+        TYPE_META[t].name.split(' ')[0] + ' — ' + v + ' из ' + max;
+      chipsEl.appendChild(chip);
+    });
+
+    // Bars
+    const bars = document.getElementById('bars');
+    bars.innerHTML = '';
+    Object.entries(sc).forEach(([t,v]) => {
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML =
+        '<div class="name"><span class="dot" style="background:'+TYPE_META[t].hex+'"></span>'+
+        '<span>'+TYPE_META[t].name.split('·')[0].trim()+'</span></div>'+
+        '<div class="bar"><div class="bar__fill" data-c="'+TYPE_META[t].hex+'"></div></div>'+
+        '<div class="val">'+v+' / '+max+'</div>';
+      bars.appendChild(row);
+      requestAnimationFrame(()=>{
+        const f = row.querySelector('.bar__fill');
+        f.style.setProperty('--bar-c', TYPE_META[t].hex);
+        f.style.width = Math.round((v/max)*100)+'%';
+      });
+    });
+
+    document.getElementById('resultBody').classList.remove('hidden');
+    document.getElementById('panes').classList.add('hidden');
+    document.getElementById('progbar').style.width = '100%';
+    document.getElementById('stepTitle').textContent = 'Результаты';
+    finished = true;
+    // Scroll to top of dialog
+    const body = document.querySelector('#wizardmodal .body');
+    if (body) body.scrollTop = 0;
+  }
+
+  /* ============ Wiring ============ */
+  function wire(){
+    document.getElementById('openBtn').addEventListener('click', openModal);
+    document.getElementById('openTop').addEventListener('click', (e)=>{e.preventDefault(); openModal();});
+    document.querySelectorAll('#wizardmodal [data-close]').forEach(el => el.addEventListener('click', closeModal));
+    document.getElementById('btnPrev').addEventListener('click', ()=> setStep(step - 1));
+    document.getElementById('btnNext').addEventListener('click', ()=> setStep(step + 1));
+    document.getElementById('btnFinish').addEventListener('click', renderResult);
+    document.getElementById('btnRestart').addEventListener('click', ()=>{
+      buildPanes();
+      bindAllDrag();
+      panesBuilt = true;
+      setStep(0);
+    });
+    document.getElementById('btnCloseResult').addEventListener('click', ()=>{
+      closeModal();
+    });
+    // Esc to close
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape' && modalOpen){
+        e.preventDefault();
+        closeModal();
+      }
+      // Arrow-key shortcut while modal open (not in inputs)
+      if (modalOpen && !e.target.matches('input,textarea,select')){
+        if (e.key === 'ArrowLeft' && !finished){ e.preventDefault(); setStep(step-1); }
+        else if (e.key === 'ArrowRight'){
+          if (finished) return;
+          if (step < TOTAL-1){ e.preventDefault(); setStep(step+1); }
+          else { e.preventDefault(); renderResult(); }
+        }
+      }
+      // Enter on finish
+      if (modalOpen && e.key === 'Enter' && finished){
+        // let buttons handle
+      }
+    });
+    // close on backdrop click
+    document.querySelector('#wizardmodal .modal__backdrop').addEventListener('click', closeModal);
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    buildTabs();
+    wire();
+    // don't build panes until first open (lazy init) — cheaper & avoids hidden-list sizing quirk
+  });
+})();
+</script>
+</body>
+</html>

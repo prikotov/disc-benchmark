@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бесплатный тест DISC для руководителей</title>
+<style>
+  :root{
+    --ink:#0F0F0F;
+    --ink-2:#2C2C2C;
+    --ink-3:#7A7A7A;
+    --blue:#1F5BD6;
+    --blue-soft:#EAF2FA;
+    --green:#3A944A;
+    --green-lead:#409C54;
+    --green-bar:#6FE28A;
+    --line:rgba(0,0,0,.12);
+    --bg:#FFFFFF;
+    --dark:#0D1B2E;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html.no-scroll,body.no-scroll{overflow:hidden}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    -webkit-text-size-adjust:100%;
+  }
+  button{font-family:inherit}
+  .container{width:min(1240px,calc(100% - 48px));margin:0 auto}
+
+  /* ---------- header ---------- */
+  .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
+  .header__in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.2px}
+  .logo__mark{width:34px;height:34px;flex:none}
+  .header__nav{display:flex;align-items:center;gap:22px}
+  .header__link{color:var(--ink-2);text-decoration:none;font-size:16px}
+  .header__link:hover{color:var(--blue)}
+  .header__cta{display:flex;align-items:center;gap:10px}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    border:1px solid transparent;border-radius:999px;padding:14px 34px;
+    font-size:18px;cursor:pointer;text-decoration:none;white-space:nowrap;
+    transition:transform .06s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn--primary{background:var(--green);color:#fff}
+  .btn--primary:hover{background:#338742}
+  .btn--ghost{background:#fff;color:var(--ink);border-color:rgba(0,0,0,.22)}
+  .btn--ghost:hover{border-color:var(--ink-3)}
+  .btn--blue{background:var(--blue);color:#fff}
+  .btn--blue:hover{background:#1A4EB8}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn--sm{padding:10px 22px;font-size:15px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;color:#fff;background:linear-gradient(135deg,#0D1B2E 0%,#12305B 55%,#1F5BD6 130%);overflow:hidden}
+  .hero::after{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.16;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Ccircle cx='4' cy='4' r='2' fill='%23ffffff'/%3E%3Ccircle cx='32' cy='20' r='2' fill='%23ffffff'/%3E%3Ccircle cx='12' cy='40' r='2' fill='%23ffffff'/%3E%3Ccircle cx='44' cy='44' r='2' fill='%23ffffff'/%3E%3C/svg%3E");
+  }
+  .hero__in{position:relative;z-index:1;padding:88px 0 96px;max-width:820px}
+  .hero__badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+    font-size:14px;font-weight:600;letter-spacing:.2px;
+  }
+  .badge svg{flex:none}
+  .hero__uptitle{font-size:20px;color:#BBD4FF;margin:0 0 10px;font-weight:600}
+  .hero__title{font-size:clamp(34px,5vw,56px);line-height:1.12;margin:0 0 18px;font-weight:800}
+  .hero__subtitle{font-size:clamp(17px,2.2vw,22px);color:#DCE8FB;margin:0 0 34px;max-width:640px;line-height:1.45}
+  .hero__actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .btn--xl{padding:18px 46px;font-size:20px}
+  .hero__note{font-size:14px;color:#9FB9E6;margin-top:14px}
+
+  /* ---------- about ---------- */
+  .about{padding:72px 0 20px}
+  .about h2{font-size:clamp(26px,3vw,36px);margin:0 0 22px}
+  .about p{font-size:17px;line-height:1.65;color:var(--ink-2);max-width:920px;margin:0 0 16px}
+  .types{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:40px 0 8px}
+  .type-card{border:1px solid var(--line);border-radius:14px;padding:20px 18px;background:#fff}
+  .type-card__letter{
+    width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:800;font-size:22px;margin-bottom:12px;
+  }
+  .type-card--d .type-card__letter{background:#D64545}
+  .type-card--i .type-card__letter{background:#E8A13C}
+  .type-card--s .type-card__letter{background:#3A944A}
+  .type-card--c .type-card__letter{background:#1F5BD6}
+  .type-card__name{font-weight:700;font-size:17px;margin-bottom:6px}
+  .type-card__desc{font-size:14px;color:var(--ink-3);line-height:1.5}
+
+  /* ---------- footer ---------- */
+  .footer{padding:48px 0 56px;color:var(--ink-3);font-size:14px;line-height:1.6}
+  .footer__line{border-top:1px solid var(--line);margin-top:40px;padding-top:24px}
+
+  /* ---------- modals ---------- */
+  .disc-modal{position:fixed;inset:0;z-index:100001;display:none}
+  .disc-modal.is-open{display:block}
+  .disc-modal__overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+  .disc-modal__dialog{
+    position:relative;width:min(1240px,calc(100% - 64px));margin:24px auto;
+    background:#fff;border-radius:22px;box-shadow:0 40px 120px rgba(0,0,0,.28);overflow:hidden;
+    max-height:calc(100vh - 24px);display:flex;flex-direction:column;
+  }
+  .disc-modal__close{
+    position:absolute;top:20px;right:20px;width:48px;height:48px;border:0;background:transparent;
+    font-size:0;cursor:pointer;opacity:.55;z-index:3;
+  }
+  .disc-modal__close::before,.disc-modal__close::after{
+    content:"";position:absolute;left:50%;top:50%;width:34px;height:2px;background:#7A7A7A;transform-origin:center;
+  }
+  .disc-modal__close::before{transform:translate(-50%,-50%) rotate(45deg)}
+  .disc-modal__close::after{transform:translate(-50%,-50%) rotate(-45deg)}
+  .disc-modal__close:hover{opacity:1}
+  .disc-modal__head{padding:40px 56px 14px;text-align:center;flex:none}
+  .disc-modal__title{color:var(--ink);text-align:center;font-size:30px;font-weight:700;margin:0;line-height:1.3}
+  .disc-modal__sub{color:#272727;font-size:18px;margin-top:10px}
+  .disc-modal__lead{margin-top:16px;color:var(--green-lead);text-align:center;font-size:21px}
+  .disc-modal__tabs{padding:6px 56px 10px;display:flex;gap:8px;justify-content:center;flex:none;overflow-x:auto;scrollbar-width:thin}
+  .disc-tab{
+    border:0;background:var(--blue-soft);color:var(--ink-2);border-radius:10px;padding:14px 18px;
+    font-size:20px;line-height:1;cursor:pointer;flex:none;
+  }
+  .disc-tab.is-active{background:var(--blue);color:#fff}
+  .disc-modal__body{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;padding:8px 56px 28px;background:#fff}
+  .disc-pane{display:none}
+  .disc-pane.is-active{display:block}
+  .disc-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:18px}
+  .disc-card{border:1px solid rgba(0,0,0,.18);border-radius:10px;overflow:hidden;background:#fff}
+  .disc-card__title{padding:16px 18px;font-size:24px;font-weight:800;color:#1C1C1C}
+  .disc-card__foot{padding:16px 18px;font-size:22px;font-weight:800;color:#1C1C1C}
+  .disc-list{list-style:none;margin:0 20px;padding:0;border:1px solid var(--line)}
+  .disc-item{
+    position:relative;padding:18px 52px 18px 18px;font-size:19px;color:var(--ink-2);
+    border-top:1px solid var(--line);cursor:grab;user-select:none;-webkit-user-select:none;background:#fff;
+    outline:none;
+  }
+  .disc-item:first-child{border-top:0}
+  .disc-item:focus-visible{box-shadow:inset 0 0 0 2px var(--blue)}
+  .disc-item.is-picked{background:#F2F7FF;box-shadow:inset 0 0 0 2px var(--blue)}
+  .disc-item.is-dragging{opacity:.45;background:#F4F8FD}
+  .disc-item.is-over{outline:2px dashed rgba(31,91,214,.45);outline-offset:-6px}
+  .disc-handle{
+    position:absolute;right:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;
+    display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;opacity:.75;
+  }
+  .disc-handle:hover{opacity:1}
+  .disc-handle svg{display:block;width:16px;height:16px;pointer-events:none}
+  .disc-ghost{
+    position:fixed;z-index:100002;pointer-events:none;margin:0;
+    box-shadow:0 14px 36px rgba(0,0,0,.28);border:1px solid rgba(31,91,214,.35);border-radius:6px;
+    background:#fff;cursor:grabbing;
+  }
+  .disc-ghost .disc-item{cursor:grabbing}
+  body.is-reordering, body.is-reordering *{cursor:grabbing !important}
+  .disc-progress{flex:none;height:16px;margin:14px 56px 0;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden}
+  .disc-progress__bar{height:100%;width:0;border-radius:999px;background:var(--green-bar);transition:width .2s ease}
+  .disc-actions{flex:none;display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 56px 24px}
+  .disc-btn{
+    border:1px solid rgba(0,0,0,.22);border-radius:999px;padding:15px 40px;font-size:21px;cursor:pointer;
+    background:#fff;color:#1C1C1C;
+  }
+  .disc-btn--primary{border-color:transparent;background:var(--green);color:#fff}
+  .disc-btn--primary:hover{background:#338742}
+  .disc-btn:disabled{opacity:.45;cursor:not-allowed}
+  [hidden]{display:none !important}
+
+  /* ---------- result modal ---------- */
+  .result-modal__dialog{width:min(720px,calc(100% - 32px))}
+  .result-modal__body{padding:20px 48px 40px;text-align:center;overflow:auto}
+  .result-modal__title{font-size:28px;font-weight:800;margin:8px 0 6px}
+  .result__score{
+    font-size:clamp(28px,4.5vw,40px);font-weight:800;letter-spacing:.5px;color:var(--ink);
+    background:var(--blue-soft);border:1px solid rgba(31,91,214,.25);border-radius:14px;
+    padding:22px 18px;margin:18px 0 6px;
+  }
+  .result__score-sub{font-size:16px;color:var(--ink-2);line-height:1.55;margin:14px auto 0;max-width:520px}
+  .result__score-sub a{color:var(--blue)}
+  .result__note{display:flex;gap:8px;text-align:left;font-size:14px;color:var(--ink-3);line-height:1.55;margin:18px auto 0;max-width:560px}
+  .result__note span{flex:none;font-weight:800;color:var(--blue)}
+  .result__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:26px 0 4px}
+  .result__cell{border:1px solid var(--line);border-radius:12px;padding:12px 8px}
+  .result__cell b{display:block;font-size:22px;margin-top:2px}
+  .result__cell small{color:var(--ink-3);font-size:12.5px;line-height:1.3;display:block;margin-top:2px}
+  .result__actions{display:flex;justify-content:center;gap:12px;margin-top:26px;flex-wrap:wrap}
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px){
+    .disc-modal__dialog{width:100%;height:100vh;max-height:100vh;margin:0;border-radius:0}
+    .disc-modal__close{top:14px;right:14px}
+    .disc-modal__head{padding:26px 18px 10px}
+    .disc-modal__title{font-size:26px}
+    .disc-modal__sub{font-size:16px}
+    .disc-modal__lead{font-size:18px;margin-top:10px}
+    .disc-modal__tabs{padding:4px 18px 8px;justify-content:flex-start}
+    .disc-modal__body{padding:6px 18px 20px}
+    .disc-grid3{grid-template-columns:1fr;gap:14px}
+    .disc-progress{margin:12px 18px 0}
+    .disc-actions{margin:14px 18px 18px}
+    .disc-tab{font-size:17px;padding:12px 14px}
+    .disc-item{font-size:17px;padding:15px 52px 15px 15px}
+    .disc-card__title{font-size:20px;padding:13px 15px}
+    .disc-card__foot{font-size:19px;padding:13px 15px}
+    .types{grid-template-columns:repeat(2,1fr)}
+    .result__grid{grid-template-columns:repeat(2,1fr)}
+    .result-modal__body{padding:16px 22px 32px}
+    .header__nav{display:none}
+    .hero__in{padding:56px 0 64px}
+  }
+  @media (max-width: 480px){
+    .types{grid-template-columns:1fr}
+    .disc-btn{padding:14px 26px;font-size:18px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="container header__in">
+    <div class="logo">
+      <svg class="logo__mark" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="8" fill="#1F5BD6"/>
+        <path d="M8 24V10h5.2c4.3 0 7 2.8 7 7s-2.7 7-7 7H8Z" fill="#fff"/>
+        <circle cx="24.5" cy="13.5" r="2.5" fill="#6FE28A"/>
+        <circle cx="24.5" cy="21.5" r="2.5" fill="#E8A13C"/>
+      </svg>
+      Тест DISC
+    </div>
+    <nav class="header__nav" aria-label="Разделы страницы">
+      <a class="header__link" href="#about">О тесте</a>
+      <a class="header__link" href="#types">Типы поведения</a>
+    </nav>
+    <div class="header__cta">
+      <button class="btn btn--primary btn--sm js-open-disc" type="button">Пройти тест</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="container hero__in">
+    <div class="hero__badges">
+      <span class="badge">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm3.6 5.6-4.5 4.5a.9.9 0 0 1-1.3 0L4.4 8.7a.9.9 0 0 1 1.3-1.3l.8.8 3.8-3.8a.9.9 0 0 1 1.3 1.2Z" fill="#6FE28A"/></svg>
+        Бесплатный тест
+      </span>
+      <span class="badge">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm.75 6.7 2.6 1.5a.75.75 0 0 1-.75 1.3L8 9l-.4.2A.75.75 0 0 1 7.25 8V4.75a.75.75 0 0 1 1.5 0V7.7Z" fill="#6FE28A"/></svg>
+        5 минут
+      </span>
+    </div>
+    <p class="hero__uptitle">Бесплатный тест DISC для руководителей</p>
+    <h1 class="hero__title">Определите ваш управленческий стиль за 5 минут</h1>
+    <p class="hero__subtitle">24 группы утверждений, ранжирование перетаскиванием — и вы видите свой DISC-профиль: баллы по шкалам доминирования, влияния, стабильности и соответствия.</p>
+    <div class="hero__actions">
+      <button class="btn btn--primary btn--xl js-open-disc" type="button">Пройти онлайн-тест</button>
+    </div>
+    <div class="hero__note">Работает офлайн: результаты отображаются здесь же и никуда не отправляются.</div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="about" id="about">
+  <div class="container">
+    <h2>О тесте</h2>
+    <p>Сегодня DISC широко применяется в корпоративном обучении, при формировании команд и в процессе найма персонала по всему миру. Тест помогает понять паттерны поведения в разных ситуациях: как мы принимаем решения, общаемся, реагируем на задачи и дедлайны.</p>
+    <p>Исследование компании Wiley подтвердило надёжность теста. Около 90% участников оценили точность результатов как высокую. 79% респондентов сообщили, что результаты DISC помогли им лучше понять себя, 82% рекомендуют тест как инструмент мотивации сотрудников, а 75% компаний из списка Fortune 500 используют его в качестве инструмента ассессмента.</p>
+    <p>Компании, использующие этот тест, отмечают более эффективное взаимодействие внутри команд, уменьшение числа конфликтных ситуаций и рост общей результативности работы.</p>
+  </div>
+</section>
+
+<!-- ================= TYPES ================= -->
+<section class="about" id="types" style="padding-top:28px">
+  <div class="container">
+    <h2>Четыре типа поведения</h2>
+    <div class="types">
+      <div class="type-card type-card--d">
+        <div class="type-card__letter">D</div>
+        <div class="type-card__name">Доминирование</div>
+        <div class="type-card__desc">Решительность, ориентация на результат, готовность идти на риск.</div>
+      </div>
+      <div class="type-card type-card--i">
+        <div class="type-card__letter">I</div>
+        <div class="type-card__name">Влияние</div>
+        <div class="type-card__desc">Общительность, энтузиазм, умение убеждать и вдохновлять.</div>
+      </div>
+      <div class="type-card type-card--s">
+        <div class="type-card__letter">S</div>
+        <div class="type-card__name">Стабильность</div>
+        <div class="type-card__desc">Терпеливость, надёжность, последовательность и умение слушать.</div>
+      </div>
+      <div class="type-card type-card--c">
+        <div class="type-card__letter">C</div>
+        <div class="type-card__name">Соответствие</div>
+        <div class="type-card__desc">Точность, аналитичность, внимание к стандартам и качеству.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container footer__line">
+    Одностраничная копия теста DISC: работает офлайн, без бэкенда и внешних запросов.
+    Баллы показываются в том же приложении после завершения теста; результаты никуда не отправляются.
+  </div>
+</footer>
+
+<!-- ================= WIZARD MODAL ================= -->
+<div class="disc-modal" id="wizardmodal" aria-hidden="true">
+  <div class="disc-modal__overlay" data-disc-close></div>
+  <div class="disc-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+    <button class="disc-modal__close" type="button" data-disc-close aria-label="Закрыть">×</button>
+
+    <div class="disc-modal__head">
+      <h2 class="disc-modal__title" id="discTitle">Тестирование DISC</h2>
+      <div class="disc-modal__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="disc-modal__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+
+    <div class="disc-modal__tabs" role="tablist" aria-label="Шаги" id="discTabs"></div>
+    <div class="disc-modal__body" id="rootwizard" data-step="0"></div>
+
+    <div class="disc-progress" aria-hidden="true"><div class="disc-progress__bar" id="discProgress"></div></div>
+
+    <div class="disc-actions">
+      <button class="disc-btn" type="button" data-disc-prev>Назад</button>
+      <button class="disc-btn disc-btn--primary" type="button" data-disc-next>Далее</button>
+      <button class="disc-btn disc-btn--primary" type="button" data-disc-finish hidden>Завершить тест</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= RESULT MODAL ================= -->
+<div class="disc-modal result-modal" id="resultmodal" aria-hidden="true">
+  <div class="disc-modal__overlay" data-result-close></div>
+  <div class="disc-modal__dialog result-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <button class="disc-modal__close" type="button" data-result-close aria-label="Закрыть">×</button>
+    <div class="result-modal__body">
+      <div class="result-modal__title" id="resultTitle">Ваш DISC-профиль:</div>
+      <div class="result__score" id="discScoreLine">D:0, I:0, S:0, C:0</div>
+      <div class="result__score-sub">По данной <a href="https://stratoplan-school.com/disc/result/disc.pdf" target="_blank" rel="noopener">ссылке</a> вы можете ознакомиться с общей расшифровкой результатов тестирования.</div>
+      <div class="result__grid" aria-label="Баллы по шкалам">
+        <div class="result__cell"><small>Доминирование</small><b id="valD">0</b></div>
+        <div class="result__cell"><small>Влияние</small><b id="valI">0</b></div>
+        <div class="result__cell"><small>Стабильность</small><b id="valS">0</b></div>
+        <div class="result__cell"><small>Соответствие</small><b id="valC">0</b></div>
+      </div>
+      <div class="result__note"><span>*</span><div>Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем вам научиться использовать этот инструмент для самотестирования, а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</div></div>
+      <div class="result__actions">
+        <button class="btn btn--blue" type="button" id="discRestart">Пройти тест ещё раз</button>
+        <button class="btn btn--ghost" type="button" data-result-close>Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const qs = (s, r = document) => r.querySelector(s);
+  const qsa = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  // =========================
+  // Данные: 24 группы (шаги по 3 карточки), в каждой 4 утверждения.
+  // Формат: [тип d/i/s/c, прилагательное] — в порядке оригинала.
+  // =========================
+  const QUESTIONS = [[["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],[["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],[["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]],[["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],[["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],[["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]],[["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],[["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],[["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]],[["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],[["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],[["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]],[["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],[["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],[["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]],[["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],[["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],[["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]],[["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],[["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],[["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]],[["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],[["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],[["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]];
+
+  const TAB_NAMES = ["Первый", "Второй", "Третий", "Четвертый", "Пятый", "Шестой", "Седьмой", "Восьмой"];
+  const STEPS = TAB_NAMES.length;
+
+  const HANDLE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="3.5" r="1.6" fill="#B3B3B3"/><circle cx="10.5" cy="3.5" r="1.6" fill="#B3B3B3"/><circle cx="5.5" cy="8" r="1.6" fill="#B3B3B3"/><circle cx="10.5" cy="8" r="1.6" fill="#B3B3B3"/><circle cx="5.5" cy="12.5" r="1.6" fill="#B3B3B3"/><circle cx="10.5" cy="12.5" r="1.6" fill="#B3B3B3"/></svg>';
+
+  // =========================
+  // DOM
+  // =========================
+  const wizard = qs("#wizardmodal");
+  const resultModal = qs("#resultmodal");
+  const tabsBox = qs("#discTabs");
+  const bodyEl = qs("#rootwizard");
+  const progressEl = qs("#discProgress");
+  const btnPrev = qs("[data-disc-prev]", wizard);
+  const btnNext = qs("[data-disc-next]", wizard);
+  const btnFinish = qs("[data-disc-finish]", wizard);
+  const scoreLine = qs("#discScoreLine");
+
+  let step = 0;
+  let lastFocus = null;
+
+  const isCoarse = () => !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+
+  // =========================
+  // scroll lock (как в оригинале)
+  // =========================
+  const syncScrollLock = () => {
+    const anyOpen = !!document.querySelector(".disc-modal.is-open");
+    document.documentElement.classList.toggle("no-scroll", anyOpen);
+    document.body.classList.toggle("no-scroll", anyOpen);
+  };
+
+  const openModal = (el) => {
+    if (!el) return;
+    el.classList.add("is-open");
+    el.setAttribute("aria-hidden", "false");
+    syncScrollLock();
+  };
+
+  const closeModal = (el) => {
+    if (!el) return;
+    el.classList.remove("is-open");
+    el.setAttribute("aria-hidden", "true");
+    syncScrollLock();
+  };
+
+  // =========================
+  // рендер теста: 8 шагов × 3 карточки = 24 списка
+  // =========================
+  const buildWizard = () => {
+    // табы
+    tabsBox.innerHTML = "";
+    TAB_NAMES.forEach((name, n) => {
+      const b = document.createElement("button");
+      b.className = "disc-tab" + (n === 0 ? " is-active" : "");
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", n === 0 ? "true" : "false");
+      b.dataset.stepBtn = String(n);
+      b.textContent = name;
+      b.addEventListener("click", () => setStep(n));
+      tabsBox.appendChild(b);
+    });
+
+    // панели с карточками
+    bodyEl.innerHTML = "";
+    QUESTIONS.forEach((group, gi) => {
+      const paneIndex = Math.floor(gi / 3);
+      let pane = qs('[data-step-pane="' + paneIndex + '"]', bodyEl);
+      if (!pane) {
+        pane = document.createElement("div");
+        pane.className = "disc-pane" + (paneIndex === 0 ? " is-active" : "");
+        pane.setAttribute("data-step-pane", String(paneIndex));
+        pane.setAttribute("role", "tabpanel");
+        pane.id = "tab" + (paneIndex + 1);
+        const grid = document.createElement("div");
+        grid.className = "disc-grid3";
+        pane.appendChild(grid);
+        bodyEl.appendChild(pane);
+      }
+      const grid = pane.firstElementChild;
+
+      const card = document.createElement("div");
+      card.className = "disc-card";
+      const title = document.createElement("div");
+      title.className = "disc-card__title";
+      title.textContent = "Я наиболее";
+      const ul = document.createElement("ul");
+      ul.className = "disc-list";
+      ul.id = "draggable-list" + (gi + 1);
+      group.forEach(([type, word]) => {
+        const li = document.createElement("li");
+        li.className = "disc-item";
+        li.setAttribute("data-type", type);
+        li.tabIndex = 0;
+        li.textContent = word;
+        ul.appendChild(li);
+      });
+      const foot = document.createElement("div");
+      foot.className = "disc-card__foot";
+      foot.textContent = "Я наименее";
+      card.append(title, ul, foot);
+      grid.appendChild(card);
+
+      makeSortable(ul);
+    });
+  };
+
+  // =========================
+  // состояние шагов
+  // =========================
+  const setStep = (n) => {
+    step = Math.max(0, Math.min(STEPS - 1, n));
+    render();
+  };
+
+  let lastRenderedStep = -1;
+  let pendingScrollTop = false;
+
+  const render = () => {
+    qsa("[data-step-btn]", tabsBox).forEach((t) => {
+      const is = Number(t.dataset.stepBtn) === step;
+      t.classList.toggle("is-active", is);
+      t.setAttribute("aria-selected", is ? "true" : "false");
+    });
+
+    qsa("[data-step-pane]", bodyEl).forEach((p) =>
+      p.classList.toggle("is-active", Number(p.dataset.stepPane) === step)
+    );
+
+    if (btnPrev) btnPrev.disabled = step === 0;
+    if (btnNext) btnNext.hidden = step === STEPS - 1;
+    if (btnFinish) btnFinish.hidden = step !== STEPS - 1;
+
+    if (progressEl) progressEl.style.width = ((step + 1) / STEPS) * 100 + "%";
+
+    // мобильные хуки: центр активного таба + скролл шага вверх после "Далее"
+    if (pendingScrollTop) {
+      pendingScrollTop = false;
+      requestAnimationFrame(() => bodyEl.scrollTo({ top: 0, behavior: "smooth" }));
+    }
+    if (step !== lastRenderedStep) {
+      lastRenderedStep = step;
+      requestAnimationFrame(() => centerActiveTab("smooth"));
+    }
+  };
+
+  const centerActiveTab = (behavior) => {
+    const active = qs('[data-step-btn="' + step + '"]', tabsBox);
+    if (!active || !tabsBox.scrollWidth) return;
+    const cRect = tabsBox.getBoundingClientRect();
+    const tRect = active.getBoundingClientRect();
+    const targetLeft = tabsBox.scrollLeft + (tRect.left - cRect.left) + tRect.width / 2 - tabsBox.clientWidth / 2;
+    const maxLeft = Math.max(0, tabsBox.scrollWidth - tabsBox.clientWidth);
+    const clamped = Math.min(Math.max(0, targetLeft), maxLeft);
+    if (Math.abs(tabsBox.scrollLeft - clamped) < 2) return;
+    tabsBox.scrollTo({ left: clamped, behavior });
+  };
+
+  // =========================
+  // перетаскивание (Pointer Events, без библиотек)
+  // десктоп: тащим за весь элемент; сенсорные экраны: за "точечки" (handle) — как в оригинале
+  // =========================
+  const drag = { li: null, ul: null, pid: -1, ghost: null, offY: 0, lastY: 0, raf: 0 };
+
+  const onDragStart = (li, e) => {
+    drag.li = li;
+    drag.ul = li.closest(".disc-list");
+    drag.pid = e.pointerId;
+    drag.lastY = e.clientY;
+
+    const rect = li.getBoundingClientRect();
+    drag.offY = e.clientY - rect.top;
+
+    // призрак, следующий за курсором
+    const ghostLi = li.cloneNode(true);
+    const ghost = document.createElement("ul");
+    ghost.className = "disc-list disc-ghost";
+    ghost.style.left = rect.left + "px";
+    ghost.style.width = rect.width + "px";
+    ghost.appendChild(ghostLi);
+    document.body.appendChild(ghost);
+    drag.ghost = ghost;
+
+    li.classList.add("is-dragging");
+    document.body.classList.add("is-reordering");
+    // слушатели на document: не зависим от ретаргетинга pointer-событий
+    document.addEventListener("pointermove", onDragMove);
+    document.addEventListener("pointerup", onDragEnd);
+    document.addEventListener("pointercancel", onDragEnd);
+    try { li.setPointerCapture(e.pointerId); } catch (_) {}
+
+    const loop = () => {
+      if (!drag.li) return;
+      const r = bodyEl.getBoundingClientRect();
+      if (drag.lastY < r.top + 60) bodyEl.scrollTop -= 12;
+      else if (drag.lastY > r.bottom - 60) bodyEl.scrollTop += 12;
+      drag.raf = requestAnimationFrame(loop);
+    };
+    drag.raf = requestAnimationFrame(loop);
+    moveGhost(e.clientY);
+  };
+
+  const moveGhost = (y) => {
+    if (drag.ghost) drag.ghost.style.top = y - drag.offY + "px";
+  };
+
+  const onDragMove = (e) => {
+    if (!drag.li || e.pointerId !== drag.pid) return;
+    e.preventDefault();
+    drag.lastY = e.clientY;
+    moveGhost(e.clientY);
+
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const overLi = el ? el.closest(".disc-item") : null;
+    if (overLi && overLi !== drag.li && overLi.closest(".disc-list") === drag.ul) {
+      const r = overLi.getBoundingClientRect();
+      const before = e.clientY - r.top < r.height / 2;
+      drag.ul.insertBefore(drag.li, before ? overLi : overLi.nextSibling);
+    }
+    qsa(".disc-item.is-over", drag.ul).forEach((x) => x !== drag.li && x.classList.remove("is-over"));
+    if (overLi && overLi !== drag.li) overLi.classList.add("is-over");
+  };
+
+  const onDragEnd = (e) => {
+    if (!drag.li || (e && e.pointerId !== undefined && e.pointerId !== drag.pid)) return;
+    cancelAnimationFrame(drag.raf);
+    if (drag.ghost) { drag.ghost.remove(); drag.ghost = null; }
+    drag.li.classList.remove("is-dragging");
+    qsa(".disc-item.is-over", drag.ul).forEach((x) => x.classList.remove("is-over"));
+    document.body.classList.remove("is-reordering");
+    document.removeEventListener("pointermove", onDragMove);
+    document.removeEventListener("pointerup", onDragEnd);
+    document.removeEventListener("pointercancel", onDragEnd);
+    try { drag.li.releasePointerCapture(drag.pid); } catch (_) {}
+    drag.li = null; drag.ul = null; drag.pid = -1;
+  };
+
+  const makeSortable = (ul) => {
+    const isTouch = isCoarse();
+
+    qsa("li", ul).forEach((li) => {
+      // "точечки"
+      const h = document.createElement("span");
+      h.className = "disc-handle";
+      h.setAttribute("aria-hidden", "true");
+      h.innerHTML = HANDLE_SVG;
+      li.appendChild(h);
+
+      li.addEventListener("pointerdown", (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        // на сенсорных экранах перетаскивание только за handle (как в оригинале),
+        // иначе жест уходит на скролл; на десктопе тащим за весь элемент
+        if (isTouch && !e.target.closest(".disc-handle")) return;
+        e.preventDefault();
+        onDragStart(li, e);
+      });
+
+      // клавиатура: Enter/Space — взять, стрелки — переместить, Enter/Space — положить, Esc — отменить
+      let kbOrigin = null;
+      li.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (li.classList.contains("is-picked")) {
+            li.classList.remove("is-picked");
+            li.setAttribute("aria-grabbed", "false");
+            kbOrigin = null;
+          } else {
+            qsa(".disc-item.is-picked", ul).forEach((x) => x.classList.remove("is-picked"));
+            kbOrigin = li;
+            li.classList.add("is-picked");
+            li.setAttribute("aria-grabbed", "true");
+          }
+        } else if (li.classList.contains("is-picked") && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+          e.preventDefault();
+          const sib = e.key === "ArrowUp" ? li.previousElementSibling : li.nextElementSibling;
+          if (sib) ul.insertBefore(li, e.key === "ArrowUp" ? sib : sib.nextSibling);
+        } else if (e.key === "Escape" && li.classList.contains("is-picked")) {
+          li.classList.remove("is-picked");
+          li.setAttribute("aria-grabbed", "false");
+          if (kbOrigin && kbOrigin !== li) ul.insertBefore(li, kbOrigin);
+          kbOrigin = null;
+        }
+      });
+    });
+  };
+
+  // =========================
+  // подсчёт: позиция 0 = "наиболее" (+1), позиция 3 = "наименее" (−1) — как в оригинале
+  // =========================
+  const collectScores = () => {
+    const maj = { d: 0, i: 0, s: 0, c: 0 };
+    const min = { d: 0, i: 0, s: 0, c: 0 };
+    qsa(".disc-list", bodyEl).forEach((ul) => {
+      const lis = qsa("li", ul);
+      maj[lis[0].getAttribute("data-type")] += 1;
+      min[lis[lis.length - 1].getAttribute("data-type")] += 1;
+    });
+    return {
+      d: maj.d - min.d,
+      i: maj.i - min.i,
+      s: maj.s - min.s,
+      c: maj.c - min.c,
+    };
+  };
+
+  const formatScore = (s) => "D:" + s.d + ", I:" + s.i + ", S:" + s.s + ", C:" + s.c;
+
+  const showResult = () => {
+    const res = collectScores();
+    scoreLine.textContent = formatScore(res);
+    qs("#valD").textContent = res.d;
+    qs("#valI").textContent = res.i;
+    qs("#valS").textContent = res.s;
+    qs("#valC").textContent = res.c;
+    closeModal(wizard);
+    openModal(resultModal);
+    qs("[data-result-close]", resultModal).focus({ preventScroll: true });
+  };
+
+  // =========================
+  // открытие/закрытие визарда
+  // =========================
+  const openWizard = () => {
+    lastFocus = document.activeElement;
+    openModal(wizard);
+    qs(".disc-modal__close", wizard).focus({ preventScroll: true });
+    render();
+    requestAnimationFrame(() => centerActiveTab("auto"));
+  };
+
+  const closeWizard = () => {
+    closeModal(wizard);
+    if (lastFocus && typeof lastFocus.focus === "function") {
+      lastFocus.focus({ preventScroll: true });
+    }
+  };
+
+  const closeResult = () => closeModal(resultModal);
+
+  const restart = () => {
+    buildWizard();
+    setStep(0);
+    closeResult();
+    lastFocus = document.activeElement;
+    openModal(wizard);
+    render();
+  };
+
+  qsa(".js-open-disc").forEach((b) => b.addEventListener("click", openWizard));
+  qsa("[data-disc-close]", wizard).forEach((x) => x.addEventListener("click", closeWizard));
+  qsa("[data-result-close]", resultModal).forEach((x) => x.addEventListener("click", closeResult));
+  qs("#discRestart").addEventListener("click", restart);
+
+  // Esc закрывает верхнюю открытую модалку
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (resultModal.classList.contains("is-open")) { closeResult(); return; }
+    if (wizard.classList.contains("is-open")) closeWizard();
+  });
+
+  btnPrev.addEventListener("click", () => setStep(step - 1));
+  btnNext.addEventListener("click", () => { pendingScrollTop = true; setStep(step + 1); });
+  btnFinish.addEventListener("click", showResult);
+
+  // init
+  buildWizard();
+  render();
+  syncScrollLock();
+})();
+</script>
+</body>
+</html>

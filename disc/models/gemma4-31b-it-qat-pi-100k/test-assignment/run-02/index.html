@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Тест</title>
+    <style>
+        :root {
+            --primary: #268AC5;
+            --bg: #f4f7f9;
+            --text: #333;
+            --card-bg: #fff;
+            --border: #ddd;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #app {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+        }
+        .card-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .sortable-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            user-select: none;
+        }
+        .sortable-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: grab;
+            text-align: center;
+            transition: background 0.2s, border-color 0.2s, transform 0.1s;
+        }
+        .sortable-item:active {
+            cursor: grabbing;
+        }
+        .sortable-item.dragging {
+            opacity: 0.5;
+            background: #eef;
+            border-color: var(--primary);
+            transform: scale(0.98);
+        }
+        .card-foot {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-weight: 600;
+            flex: 1;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover { background: #1d6fa5; }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #666;
+        }
+        .btn-ghost:hover { background: #eee; }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 500px;
+            margin: 30px auto;
+        }
+        .result-item {
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+        .type-d { background: #ffebee; color: #c62828; font-weight: bold; }
+        .type-i { background: #fffde7; color: #fbc02d; font-weight: bold; }
+        .type-s { background: #e8f5e9; color: #2e7d32; font-weight: bold; }
+        .type-c { background: #e3f2fd; color: #1565c0; font-weight: bold; }
+        .value { display: block; font-size: 2rem; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <h1>DISC-тест</h1>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div id="test-screen" class="screen active">
+            <div class="grid" id="questionsGrid"></div>
+            <div class="actions">
+                <button class="btn btn-ghost" id="prevBtn">Назад</button>
+                <button class="btn btn-primary" id="nextBtn">Далее</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="result-card">
+                <h2>Ваш результат</h2>
+                <p>Баллы по типам личности:</p>
+                <div class="results-grid">
+                    <div class="result-item type-d">Доминирование (D)<span class="value" id="res-d">0</span></div>
+                    <div class="result-item type-i">Влияние (I)<span class="value" id="res-i">0</span></div>
+                    <div class="result-item type-s">Стабильность (S)<span class="value" id="res-s">0</span></div>
+                    <div class="result-item type-c">Соответствие (C)<span class="value" id="res-c">0</span></div>
+                </div>
+                <button class="btn btn-primary" onclick="location.reload()">Пройти заново</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_DATA = [
+            { id: 1, items: [{t: "Экспресcивный", v: "i"}, {t: "Покладистый", v: "c"}, {t: "Волевой", v: "d"}, {t: "Осторожный", v: "s"}] },
+            { id: 2, items: [{t: "Пылкий", v: "d"}, {t: "Разговорчивый", v: "i"}, {t: "Добродушный", v: "s"}, {t: "Сдержанный", v: "c"}] },
+            { id: 3, items: [{t: "Любитель приключений", v: "i"}, {t: "Энтузиаст", v: "c"}, {t: "Исполнитель инструкций", v: "d"}, {t: "Верный", v: "s"}] },
+            { id: 4, items: [{t: "Настойчивый", v: "d"}, {t: "Осторожный", v: "c"}, {t: "Эмоциональный", v: "i"}, {t: "Удовлетворенный", v: "s"}] },
+            { id: 5, items: [{t: "Довольный", v: "s"}, {t: "Нетерпеливый", v: "d"}, {t: "Убедительный", v: "i"}, {t: "Безропотный", v: "c"}] },
+            { id: 6, items: [{t: "Смиренный", v: "c"}, {t: "Умеющий слушать", v: "s"}, {t: "Душа компании", v: "i"}, {t: "Волевой", v: "d"}] },
+            { id: 7, items: [{t: "Правильный", v: "c"}, {t: "Первопроходец", v: "d"}, {t: "Спокойный", v: "s"}, {t: "Влиятельный", v: "i"}] },
+            { id: 8, items: [{t: "Почтительный", v: "c"}, {t: "Контактный", v: "i"}, {t: "Агрессивный", v: "d"}, {t: "Мягкий", v: "s"}] },
+            { id: 9, items: [{t: "Весельчак", v: "i"}, {t: "Покорный", v: "s"}, {t: "Тактичный", v: "c"}, {t: "Соперничающий", v: "d"}] },
+            { id: 10, items: [{t: "Точный", v: "c"}, {t: "Доминирующий", v: "d"}, {t: "Охотный", v: "s"}, {t: "Притягательный", v: "i"}] },
+            { id: 11, items: [{t: "Уравновешенный", v: "i"}, {t: "Уступчивый", v: "c"}, {t: "Идущий на риск", v: "d"}, {t: "Услужливый", v: "s"}] },
+            { id: 12, items: [{t: "Осмотрительный", v: "c"}, {t: "Добрососедский", v: "s"}, {t: "Энергичный", v: "d"}, {t: "Убедительный", v: "i"}] },
+            { id: 13, items: [{t: "Уравновешенный", v: "s"}, {t: "Мотивирующий", v: "i"}, {t: "Щепетильный", v: "c"}, {t: "Решительный", v: "d"}] },
+            { id: 14, items: [{t: "Уверенный", v: "i"}, {t: "Готовый к сотрудничеству", v: "c"}, {t: "Беззаботный", v: "s"}, {t: "Аргументирующий", v: "d"}] },
+            { id: 15, items: [{t: "Сдержанный", v: "s"}, {t: "Прямой", v: "d"}, {t: "Строгий", v: "c"}, {t: "Убедительный", v: "i"}] },
+            { id: 16, items: [{t: "Застенчивый", v: "c"}, {t: "Требовательный", v: "d"}, {t: "Терпеливый", v: "s"}, {t: "Очаровательный", v: "i"}] },
+            { id: 17, items: [{t: "Неугомонный", v: "d"}, {t: "Дисциплинированный", v: "c"}, {t: "Вдохновляющий", v: "i"}, {t: "Внимательный", v: "s"}] },
+            { id: 18, items: [{t: "Обязательный", v: "s"}, {t: "Оживленный", v: "i"}, {t: "Решительный", v: "d"}, {t: "Точный", v: "c"}] },
+            { id: 19, items: [{t: "Добросовестный", v: "c"}, {t: "Компанейский", v: "i"}, {t: "Добрый", v: "s"}, {t: "Уверенный в себе", v: "d"}] },
+            { id: 20, items: [{t: "Дипломатичный", v: "c"}, {t: "Отважный", v: "d"}, {t: "Сочувствующий", v: "s"}, {t: "Оптимистичный", v: "i"}] },
+            { id: 21, items: [{t: "Настойчивый", v: "d"}, {t: "Общительный", v: "i"}, {t: "Постоянный", v: "s"}, {t: "Организованный", v: "c"}] },
+            { id: 22, items: [{t: "Соглашающийся", v: "c"}, {t: "Владеющий собой", v: "s"}, {t: "Шутливый", v: "d"}, {t: "Настойчивый", v: "i"}] },
+            { id: 23, items: [{t: "Обаятельный", v: "i"}, {t: "Позитивный", v: "d"}, {t: "Снисходительный", v: "s"}, {t: "Требовательный", v: "c"}] },
+            { id: 24, items: [{t: "Коммуникабельный", v: "i"}, {t: "Смелый", v: "d"}, {t: "Перфекционист", v: "c"}, {t: "Сдержанный", v: "s"}] },
+        ];
+
+        let currentStep = 0;
+        const stepSize = 3; 
+        const state = {}; 
+
+        const qGrid = document.getElementById('questionsGrid');
+        const pBar = document.getElementById('progressBar');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+
+        function renderStep() {
+            qGrid.innerHTML = '';
+            const start = currentStep * stepSize;
+            const end = start + stepSize;
+            const pageQuestions = QUESTIONS_DATA.slice(start, end);
+
+            pageQuestions.forEach((q) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const title = document.createElement('div');
+                title.className = 'card-title';
+                title.innerText = 'Я наиболее';
+                
+                const list = document.createElement('ul');
+                list.className = 'sortable-list';
+                list.dataset.qid = q.id;
+
+                const itemsOrder = state[q.id] || q.items.map((item, i) => i);
+                
+                itemsOrder.forEach(itemIdx => {
+                    const item = q.items[itemIdx];
+                    const li = document.createElement('li');
+                    li.className = 'sortable-item';
+                    li.innerText = item.t;
+                    li.dataset.v = item.v;
+                    li.dataset.originalIdx = itemIdx;
+                    list.appendChild(li);
+                });
+
+                const foot = document.createElement('div');
+                foot.className = 'card-foot';
+                foot.innerText = 'Я наименее';
+
+                card.appendChild(title);
+                card.appendChild(list);
+                card.appendChild(foot);
+                qGrid.appendChild(card);
+            });
+
+            initDragAndDrop();
+            
+            const totalSteps = Math.ceil(QUESTIONS_DATA.length / stepSize);
+            pBar.style.width = `${((currentStep + 1) / totalSteps) * 100}%`;
+            
+            prevBtn.disabled = currentStep === 0;
+            nextBtn.innerText = (end >= QUESTIONS_DATA.length) ? 'Завершить' : 'Далее';
+        }
+
+        function initDragAndDrop() {
+            const lists = document.querySelectorAll('.sortable-list');
+            lists.forEach(list => {
+                list.addEventListener('dragstart', e => {
+                    e.target.classList.add('dragging');
+                });
+                list.addEventListener('dragend', e => {
+                    e.target.classList.remove('dragging');
+                    saveOrder(list);
+                });
+                list.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(list, e.clientY);
+                    const dragging = document.querySelector('.dragging');
+                    if (afterElement == null) {
+                        list.appendChild(dragging);
+                    } else {
+                        list.insertBefore(dragging, afterElement);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.sortable-item').forEach(item => {
+                item.setAttribute('draggable', 'true');
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.sortable-item:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function saveOrder(list) {
+            const qid = parseInt(list.dataset.qid);
+            const items = [...list.querySelectorAll('.sortable-item')];
+            state[qid] = items.map(li => parseInt(li.dataset.originalIdx));
+        }
+
+        function calculateResults() {
+            const scores = { d: 0, i: 0, s: 0, c: 0 };
+            
+            QUESTIONS_DATA.forEach(q => {
+                const order = state[q.id];
+                if (!order || order.length !== 4) return;
+                
+                const weights = [4, 3, 2, 1];
+                order.forEach((itemIdx, pos) => {
+                    const type = q.items[itemIdx].v;
+                    scores[type] += weights[pos];
+                });
+            });
+            
+            return scores;
+        }
+
+        function showResults() {
+            document.getElementById('test-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            pBar.style.width = '100%';
+            
+            const res = calculateResults();
+            document.getElementById('res-d').innerText = res.d;
+            document.getElementById('res-i').innerText = res.i;
+            document.getElementById('res-s').innerText = res.s;
+            document.getElementById('res-c').innerText = res.c;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            const start = currentStep * stepSize;
+            const end = start + stepSize;
+            
+            document.querySelectorAll('.sortable-list').forEach(list => saveOrder(list));
+
+            if (end >= QUESTIONS_DATA.length) {
+                showResults();
+            } else {
+                currentStep++;
+                renderStep();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        });
+
+        renderStep();
+    </script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тестирование DISC</title>
+<style>
+  :root{
+    --bg:#f2f5fa;
+    --card:#ffffff;
+    --ink:#16233b;
+    --muted:#5b6b84;
+    --line:#dbe3ef;
+    --accent:#2456d6;
+    --accent-ink:#ffffff;
+    --accent-soft:#e8efff;
+    --warn:#b3b3b3;
+    --radius:14px;
+    --shadow:0 10px 30px rgba(22,35,59,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 12px;
+  }
+  .app{
+    width:100%;
+    max-width:1040px;
+  }
+  /* ---------- header ---------- */
+  .app__head{text-align:center;margin-bottom:18px}
+  .app__title{margin:0 0 6px;font-size:clamp(22px,3vw,30px);letter-spacing:.2px}
+  .app__sub{margin:0 0 4px;color:var(--muted);font-size:15px}
+  .app__lead{margin:0;color:var(--ink);font-size:15px;font-weight:600}
+
+  /* ---------- progress ---------- */
+  .progress{
+    height:6px;border-radius:999px;background:var(--line);overflow:hidden;margin:14px auto 18px;
+  }
+  .progress__bar{
+    height:100%;width:12.5%;background:var(--accent);border-radius:999px;
+    transition:width .35s ease;
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--muted);
+    font-size:14px;font-weight:600;
+    padding:8px 16px;border-radius:999px;cursor:pointer;
+    transition:background .15s,color .15s,border-color .15s,transform .1s;
+  }
+  .tab:hover{border-color:var(--accent)}
+  .tab.is-active{
+    background:var(--accent);border-color:var(--accent);color:var(--accent-ink);
+  }
+  .tab:disabled{opacity:.45;cursor:not-allowed}
+
+  /* ---------- panes ---------- */
+  .pane{display:none}
+  .pane.is-active{display:block}
+  .grid{
+    display:grid;gap:14px;
+    grid-template-columns:repeat(3,1fr);
+  }
+  @media (max-width:860px){ .grid{grid-template-columns:1fr} }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px 14px 12px;
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .card__cap{font-size:13px;font-weight:700;color:var(--accent);text-transform:none}
+  .card__foot{font-size:13px;font-weight:700;color:var(--muted)}
+
+  /* ---------- list & items ---------- */
+  .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .item{
+    position:relative;
+    display:flex;align-items:center;gap:10px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:15px;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    transition:border-color .12s, box-shadow .12s, background .12s, opacity .12s;
+  }
+  .item:hover{border-color:#b9c6e4}
+  .item .rank{
+    flex:0 0 auto;
+    width:22px;height:22px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent);
+    font-size:12px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .item .label{flex:1 1 auto;min-width:0}
+  .item .grip{
+    flex:0 0 auto;
+    display:inline-flex;color:var(--warn);
+    cursor:grab;
+    padding:4px;
+    border-radius:6px;
+    touch-action:none;
+  }
+  .item .grip:hover{background:#f0f3f9}
+  .item.is-dragging{
+    opacity:.35;
+    border-style:dashed;
+  }
+  .item.is-placeholder{
+    border:2px dashed var(--accent);
+    background:var(--accent-soft);
+    opacity:1;
+  }
+  .list.is-reordering .item{transition:none}
+
+  /* ---------- actions ---------- */
+  .actions{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:20px;
+  }
+  .btn{
+    border-radius:999px;
+    font-size:15px;font-weight:600;
+    padding:11px 26px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:background .15s,transform .1s,border-color .15s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn--ghost{
+    background:transparent;border-color:var(--line);color:var(--muted);
+  }
+  .btn--ghost:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+  .btn--ghost:disabled{opacity:.4;cursor:not-allowed}
+  .btn--primary{
+    background:var(--accent);color:var(--accent-ink);
+  }
+  .btn--primary:hover{background:#1e49bb}
+
+  /* ---------- results ---------- */
+  .results{
+    display:none;
+  }
+  .results.is-active{display:block}
+  .results__card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:26px 24px;
+    text-align:center;
+  }
+  .results__title{margin:0 0 6px;font-size:22px}
+  .results__note{margin:0 0 22px;color:var(--muted);font-size:14px}
+  .scores{
+    display:grid;gap:14px;
+    grid-template-columns:repeat(4,1fr);
+    margin-bottom:24px;
+  }
+  @media (max-width:640px){ .scores{grid-template-columns:repeat(2,1fr)} }
+  .score{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 12px;
+    background:#fff;
+  }
+  .score__name{
+    font-size:13px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;
+  }
+  .score__value{
+    font-size:34px;font-weight:800;color:var(--accent);
+    line-height:1;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .progress__bar{transition:none}
+  }
+</style>
+</head>
+<body>
+<main class="app" role="main">
+  <header class="app__head">
+    <h1 class="app__title">Тестирование DISC</h1>
+    <p class="app__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+    <p class="app__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+  </header>
+
+  <div class="progress" aria-hidden="true">
+    <div class="progress__bar" id="progressBar"></div>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist" aria-label="Шаги"></div>
+
+  <div class="panes" id="panes"></div>
+
+  <div class="actions" id="actions">
+    <button class="btn btn--ghost" id="btnPrev" type="button">Назад</button>
+    <button class="btn btn--primary" id="btnNext" type="button">Далее</button>
+    <button class="btn btn--primary" id="btnFinish" type="button" hidden>Завершить тест</button>
+  </div>
+
+  <section class="results" id="results" aria-live="polite">
+    <div class="results__card">
+      <h2 class="results__title">Ваши результаты</h2>
+      <p class="results__note">Баллы по шкалам DISC (от −8 до +8)</p>
+      <div class="scores" id="scores"></div>
+      <button class="btn btn--ghost" id="btnRestart" type="button">Пройти заново</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // Данные теста: 8 шагов × 3 карточки × 4 варианта (дословно как в оригинале)
+  var STEP_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+
+  var STEPS = [
+    [
+      [["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+      [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],
+      [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]
+    ],
+    [
+      [["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],
+      [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+      [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]
+    ],
+    [
+      [["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+      [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+      [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]
+    ],
+    [
+      [["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+      [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+      [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]
+    ],
+    [
+      [["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+      [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+      [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]
+    ],
+    [
+      [["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+      [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+      [["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]
+    ],
+    [
+      [["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+      [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+      [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]
+    ],
+    [
+      [["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+      [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+      [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]
+    ]
+  ];
+
+  var GRIP_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">' +
+    '<path d="M5 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 1 1 3 0Zm0 5.1a1.5 1.5 0 1 1-3 0 1.5 1.5 0 1 1 3 0Zm0 5.1a1.5 1.5 0 1 1-3 0 1.5 1.5 0 1 1 3 0ZM11.5 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 1 1 3 0Zm0 5.1a1.5 1.5 0 1 1-3 0 1.5 1.5 0 1 1 3 0Zm0 5.1a1.5 1.5 0 1 1-3 0 1.5 1.5 0 1 1 3 0Z" fill="#B3B3B3"/>' +
+    "</svg>";
+
+  var TOTAL_STEPS = STEPS.length;
+  var step = 0;
+
+  var tabsEl = document.getElementById("tabs");
+  var panesEl = document.getElementById("panes");
+  var actionsEl = document.getElementById("actions");
+  var progressBar = document.getElementById("progressBar");
+  var btnPrev = document.getElementById("btnPrev");
+  var btnNext = document.getElementById("btnNext");
+  var btnFinish = document.getElementById("btnFinish");
+  var resultsEl = document.getElementById("results");
+  var scoresEl = document.getElementById("scores");
+  var btnRestart = document.getElementById("btnRestart");
+
+  var finished = false;
+
+  // ---------- build DOM ----------
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  STEPS.forEach(function (cards, si) {
+    var tab = el("button", "tab", STEP_NAMES[si]);
+    tab.type = "button";
+    tab.role = "tab";
+    tab.dataset.step = String(si);
+    tab.addEventListener("click", function () { if (!finished) setStep(si); });
+    tabsEl.appendChild(tab);
+
+    var pane = el("div", "pane");
+    pane.dataset.stepPane = String(si);
+    pane.setAttribute("role", "tabpanel");
+
+    var grid = el("div", "grid");
+    cards.forEach(function (opts, ci) {
+      var card = el("div", "card");
+      card.appendChild(el("div", "card__cap", "Я наиболее"));
+
+      var ul = el("ul", "list");
+      ul.dataset.step = String(si);
+      ul.dataset.pos = String(ci);
+      opts.forEach(function (o) {
+        var li = el("li", "item");
+        li.dataset.type = o[0];
+        li.draggable = true;
+
+        var rank = el("span", "rank", "1");
+        rank.setAttribute("aria-hidden", "true");
+
+        var label = el("span", "label", o[1]);
+
+        var grip = el("span", "grip", null);
+        grip.innerHTML = GRIP_SVG;
+
+        li.appendChild(rank);
+        li.appendChild(label);
+        li.appendChild(grip);
+        ul.appendChild(li);
+      });
+      makeSortable(ul);
+
+      card.appendChild(ul);
+      card.appendChild(el("div", "card__foot", "Я наименее"));
+      grid.appendChild(card);
+    });
+
+    pane.appendChild(grid);
+    panesEl.appendChild(pane);
+  });
+
+  // ---------- сортировка перетаскиванием (mouse + touch, без библиотек) ----------
+  // как в оригинале: desktop — тащим за весь элемент, coarse pointer — за «точечки» (handle)
+  var dragByHandle = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+  var DRAG_THRESHOLD = 7; // px, аналогично fallbackTolerance у Sortable
+
+  function makeSortable(ul) {
+    function items() {
+      return Array.prototype.slice.call(ul.querySelectorAll(":scope > li"));
+    }
+
+    function refreshRanks() {
+      items().forEach(function (li, i) {
+        li.querySelector(".rank").textContent = String(i + 1);
+      });
+    }
+
+    function makePlaceholder(li) {
+      var ph = document.createElement("li");
+      ph.className = "item is-placeholder";
+      ph.style.height = li.getBoundingClientRect().height + "px";
+      ph.innerHTML = li.innerHTML;
+      ph.setAttribute("aria-hidden", "true");
+      return ph;
+    }
+
+    function getDropBefore(y) {
+      var before = null;
+      items().forEach(function (li) {
+        if (before === li) return;
+        var r = li.getBoundingClientRect();
+        if (y <= r.top + r.height / 2) before = li;
+      });
+      return before;
+    }
+
+    ul.addEventListener("pointerdown", function (e) {
+      if (e.button != null && e.button !== 0 && e.pointerType === "mouse") return;
+      var li = e.target.closest && e.target.closest(".item");
+      if (!li || li.parentElement !== ul) return;
+      if (dragByHandle && !(e.target.closest && e.target.closest(".grip"))) return;
+      if (li.classList.contains("is-dragging")) return;
+
+      var startX = e.clientX, startY = e.clientY;
+      var started = false;
+      var dragItem = li, placeholder = null;
+      var grabDX = 12, grabDY = li.getBoundingClientRect().height / 2;
+
+      function begin() {
+        started = true;
+        placeholder = makePlaceholder(dragItem);
+        ul.insertBefore(placeholder, dragItem);
+        ul.classList.add("is-reordering");
+        dragItem.classList.add("is-dragging");
+        // элемент следует за указателем, размер как у оригинального li
+        var w = dragItem.getBoundingClientRect().width;
+        dragItem.style.position = "fixed";
+        dragItem.style.margin = "0";
+        dragItem.style.width = w + "px";
+        dragItem.style.zIndex = "9999";
+        dragItem.style.pointerEvents = "none";
+        document.body.appendChild(dragItem);
+      }
+
+      function cleanup() {
+        window.removeEventListener("pointermove", move, true);
+        window.removeEventListener("pointerup", up, true);
+        window.removeEventListener("pointercancel", up, true);
+        if (started) {
+          ul.insertBefore(dragItem, placeholder);
+          ul.removeChild(placeholder);
+          ul.classList.remove("is-reordering");
+          dragItem.classList.remove("is-dragging");
+          dragItem.style.cssText = "";
+          refreshRanks();
+        }
+      }
+
+      function move(ev) {
+        var dx = ev.clientX - startX, dy = ev.clientY - startY;
+        if (!started) {
+          if (dx * dx + dy * dy < DRAG_THRESHOLD * DRAG_THRESHOLD) return;
+          begin();
+        }
+        ev.preventDefault();
+        dragItem.style.left = Math.max(0, ev.clientX - grabDX) + "px";
+        dragItem.style.top = (ev.clientY - grabDY) + "px";
+
+        var before = getDropBefore(ev.clientY);
+        if (before) {
+          if (placeholder.nextSibling !== before) ul.insertBefore(placeholder, before);
+        } else {
+          if (ul.lastElementChild !== placeholder) ul.appendChild(placeholder);
+        }
+      }
+
+      function up() {
+        cleanup();
+      }
+
+      window.addEventListener("pointermove", move, true);
+      window.addEventListener("pointerup", up, true);
+      window.addEventListener("pointercancel", up, true);
+    });
+
+    refreshRanks();
+  }
+
+  // ---------- steps ----------
+  function setStep(n) {
+    step = Math.max(0, Math.min(TOTAL_STEPS - 1, n));
+    render();
+  }
+
+  function render() {
+    var tabs = Array.prototype.slice.call(tabsEl.querySelectorAll(".tab"));
+    tabs.forEach(function (t) {
+      var is = Number(t.dataset.step) === step;
+      t.classList.toggle("is-active", is);
+      t.setAttribute("aria-selected", is ? "true" : "false");
+    });
+
+    Array.prototype.slice.call(panesEl.querySelectorAll(".pane")).forEach(function (p) {
+      p.classList.toggle("is-active", Number(p.dataset.stepPane) === step);
+    });
+
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === TOTAL_STEPS - 1;
+    btnFinish.hidden = step !== TOTAL_STEPS - 1;
+
+    progressBar.style.width = ((step + 1) / TOTAL_STEPS * 100) + "%";
+
+    if (window.matchMedia && window.matchMedia("(max-width: 860px)").matches) {
+      var activeTab = tabs[step];
+      if (activeTab) {
+        requestAnimationFrame(function () {
+          var c = tabsEl;
+          var cr = c.getBoundingClientRect();
+          var tr = activeTab.getBoundingClientRect();
+          var left = c.scrollLeft + (tr.left - cr.left) + tr.width / 2 - c.clientWidth / 2;
+          left = Math.max(0, Math.min(left, c.scrollWidth - c.clientWidth));
+          try { c.scrollTo({ left: left, behavior: "smooth" }); } catch (_) { c.scrollLeft = left; }
+        });
+      }
+    }
+  }
+
+  btnPrev.addEventListener("click", function () { if (!finished) setStep(step - 1); });
+  btnNext.addEventListener("click", function () { if (!finished) setStep(step + 1); });
+
+  // ---------- finish + scoring (логика оригинала: major = позиция 0, minor = позиция 3) ----------
+  function collectPayload() {
+    var payload = [];
+    Array.prototype.slice.call(panesEl.querySelectorAll(".list")).forEach(function (ul, listIndex) {
+      Array.prototype.slice.call(ul.querySelectorAll("li")).forEach(function (li, idx) {
+        payload.push({ list: listIndex, pos: idx, type: li.getAttribute("data-type") });
+      });
+    });
+    return payload;
+  }
+
+  function score(payload) {
+    var maj = [];
+    var min = [];
+    payload.forEach(function (x) {
+      if (x.pos === 0) maj.push(x.type);
+      if (x.pos === 3) min.push(x.type);
+    });
+    function count(arr, ch) {
+      return arr.reduce(function (a, v) { return a + (v === ch ? 1 : 0); }, 0);
+    }
+    return {
+      d: count(maj, "d") - count(min, "d"),
+      i: count(maj, "i") - count(min, "i"),
+      s: count(maj, "s") - count(min, "s"),
+      c: count(maj, "c") - count(min, "c")
+    };
+  }
+
+  var SCORE_NAMES = { d: "D", i: "I", s: "S", c: "C" };
+
+  function finish() {
+    var res = score(collectPayload());
+    finished = true;
+
+    actionsEl.style.display = "none";
+    tabsEl.style.display = "none";
+    panesEl.style.display = "none";
+    progressBar.parentElement.style.display = "none";
+
+    scoresEl.innerHTML = "";
+    ["d", "i", "s", "c"].forEach(function (k) {
+      var box = el("div", "score");
+      box.appendChild(el("div", "score__name", SCORE_NAMES[k]));
+      var v = el("div", "score__value", String(res[k]));
+      box.appendChild(v);
+      scoresEl.appendChild(box);
+    });
+
+    resultsEl.classList.add("is-active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  btnFinish.addEventListener("click", finish);
+
+  btnRestart.addEventListener("click", function () {
+    // сброс к исходному порядку каждого списка (порядок из данных)
+    Array.prototype.slice.call(panesEl.querySelectorAll(".list")).forEach(function (ul) {
+      var si = Number(ul.dataset.step), ci = Number(ul.dataset.pos);
+      var order = STEPS[si][ci];
+      order.forEach(function (o) {
+        var li = Array.prototype.slice.call(ul.querySelectorAll("li")).filter(function (x) {
+          return x.dataset.type === o[0] && x.querySelector(".label").textContent === o[1];
+        })[0];
+        if (li) ul.appendChild(li);
+      });
+      Array.prototype.slice.call(ul.querySelectorAll("li")).forEach(function (li, i) {
+        li.querySelector(".rank").textContent = String(i + 1);
+      });
+    });
+
+    finished = false;
+    resultsEl.classList.remove("is-active");
+    actionsEl.style.display = "";
+    tabsEl.style.display = "";
+    panesEl.style.display = "";
+    progressBar.parentElement.style.display = "";
+    setStep(0);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

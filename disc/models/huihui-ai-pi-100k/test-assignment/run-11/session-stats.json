@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T12-55-28-087Z_01a1da20-8a56-70d3-93ba-e0ced65cbf63.jsonl",
+  "turns": 56,
+  "tool_calls": 55,
+  "tools_by_name": {
+    "bash": 39,
+    "read": 4,
+    "write": 6,
+    "edit": 6
+  },
+  "tokens_in": 127014,
+  "tokens_out": 69169,
+  "bash_total": 11,
+  "bash_with_network": 9,
+  "curl_to_source": 9,
+  "network_cmds_sample": [
+    "cd /tmp/disc-pi-k25iafj4/run && ls -la && curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o original.html -w \\\"%{http_code}\\ \\\" && wc -c original.html",
+    "cd /tmp/disc-pi-k25iafj4/run && mkdir -p assets && curl -sL \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o assets/disc_patched.js && wc -c assets/disc_patched.js && head -100 assets/disc_patched.js",
+    "cd /tmp/disc-pi-k25iafj4/run && for u in \\\"js/app.js?v=0.0.0.1\\\" \\\"js/tracker.js\\\" \\\"js/disc_patched.js\\\" \\\"js/app.js\\\" \\\"js/disc.js\\\" \\\"js/disc_patched.js?v0.0.0.6\\\"; do echo \\\"== $u\\\"; curl -s \\\"https://stratoplan-school.com/$u\\\" -o /tmp/x -w \\\"%{http_code} %{size_download}\\ \\\"; done; ls assets",
+    "cd /tmp && curl -sI \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" | head -15; echo ===; curl -s -A \\\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\\\" -H \\\"Referer: https://stratoplan-school.com/disc/\\\" \\\"https://stratoplan-scho",
+    "cd /tmp && curl -s \\\"http://archive.org/wayback/available?url=stratoplan-school.com/js/disc_patched.js\\\" ; echo; curl -s \\\"http://archive.org/wayback/available?url=stratoplan-school.com/js/app.js\\\" ; echo; curl -s \\\"https://web.archive.org/cdx/search/cdx?url=stratoplan-school.com/js/*&output=text&li"
+  ],
+  "errors": 5,
+  "first_ts": "2026-11-14T12:55:28.087Z",
+  "last_ts": "2026-11-14T13:07:39.582Z"
+}

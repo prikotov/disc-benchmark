@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T16-06-36-452Z_01a1dacf-88a3-702b-9c6e-48264c89c40a.jsonl",
+  "turns": 189,
+  "tool_calls": 186,
+  "tools_by_name": {
+    "bash": 123,
+    "read": 22,
+    "write": 8,
+    "edit": 33
+  },
+  "tokens_in": 302760,
+  "tokens_out": 197221,
+  "bash_total": 18,
+  "bash_with_network": 8,
+  "curl_to_source": 8,
+  "network_cmds_sample": [
+    "curl -s https://stratoplan-school.com/disc/ -o /tmp/disc_orig.html && wc -c /tmp/disc_orig.html",
+    "cd /tmp && curl -s https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6 -o disc_patched.js; curl -s https://stratoplan-school.com/js/app.js?v=0.0.0.1 -o app.js; curl -s https://stratoplan-school.com/js/tracker.js -o tracker.js; ls -la",
+    "cd /tmp && curl -s -o app.js \\\"https://stratoplan-school.com/js/app.js\\\" ; curl -s -o disc_patched.js \\\"https://stratoplan-school.com/js/disc_patched.js\\\"; curl -s -o tracker.js \\\"https://stratoplan-school.com/js/tracker.js\\\"; head -c 80 disc_patched.js | tr -d '\\\\0'; echo; wc -c disc_patched.js app",
+    "cd /tmp && curl -s -o app.js \\\"https://stratoplan-school.com/disc/js/app.js\\\" -w \\\"%{http_code}\\ \\\"; curl -s -o disc_patched.js \\\"https://stratoplan-school.com/disc/js/disc_patched.js\\\" -w \\\"%{http_code}\\ \\\"; wc -c app.js disc_patched.js; head -c 500 disc_patched.js",
+    "cd /tmp && curl -s -o result.html \\\"https://stratoplan-school.com/disc/result/\\\" -w \\\"%{http_code}\\ \\\"; wc -c result.html"
+  ],
+  "errors": 20,
+  "first_ts": "2026-11-14T16:06:36.452Z",
+  "last_ts": "2026-11-14T16:55:04.953Z"
+}

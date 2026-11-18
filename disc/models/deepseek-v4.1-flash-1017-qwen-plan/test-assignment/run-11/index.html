@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="data:,">
+<title>Тест DISC — узнайте свой тип личности</title>
+<meta name="description" content="Бесплатный тест DISC: 24 блока прилагательных, 8 шагов. Узнайте свои баллы по шкалам доминирование, влияние, стабильность и добросовестность.">
+<style>
+  :root{
+    --ink:#14231b;
+    --muted:#607066;
+    --line:#e0e9e2;
+    --bg:#f5f8f5;
+    --card:#ffffff;
+    --brand:#268347;
+    --brand-dark:#237a3c;
+    --brand-soft:#eaf6ee;
+    --blue:#2559b8;
+    --d:#c8462a;
+    --d-soft:#fceee9;
+    --i:#946900;
+    --i-soft:#fff6dc;
+    --s:#237a3c;
+    --s-soft:#e9f6ed;
+    --c:#2559b8;
+    --c-soft:#ebf1fd;
+    --shadow:0 28px 70px rgba(22,49,32,.10);
+    --shadow-soft:0 10px 26px rgba(22,49,32,.07);
+    --radius:26px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:var(--font);
+    font-size:16px;
+    line-height:1.5;
+    color:var(--ink);
+    background:
+      radial-gradient(980px 560px at 88% -12%, rgba(47,158,79,.13), transparent 64%),
+      radial-gradient(860px 540px at 0% 0%, rgba(37,89,184,.09), transparent 60%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  button{font:inherit;color:inherit}
+  button,input{font-family:inherit}
+  h1,h2,h3,p,ul,figure{margin:0}
+  svg{display:block}
+  [hidden]{display:none !important}
+  ::selection{background:rgba(47,158,79,.22)}
+  :focus-visible{outline:3px solid rgba(37,89,184,.42);outline-offset:2px}
+
+  .shell{width:min(1180px,calc(100% - 44px));margin:0 auto}
+  .sr-only{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+  }
+
+  /* ---------- header ---------- */
+  .site-header{padding:6px 0 0}
+  .header-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 0}
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .brand__mark{flex:none;filter:drop-shadow(0 6px 12px rgba(22,49,32,.12))}
+  .brand__text{display:flex;flex-direction:column;line-height:1.15}
+  .brand__text strong{font-size:19px;font-weight:800;letter-spacing:.055em}
+  .brand__text small{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .header-note{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 13px;border:1px solid var(--line);border-radius:999px;
+    background:rgba(255,255,255,.72);backdrop-filter:blur(6px);
+    color:#52655a;font-size:12.5px;font-weight:600;white-space:nowrap;
+  }
+  .header-note svg{color:var(--brand-dark)}
+
+  /* ---------- shared buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    border:1px solid transparent;border-radius:999px;
+    padding:13px 24px;font-size:15px;font-weight:650;line-height:1.15;
+    cursor:pointer;user-select:none;text-decoration:none;white-space:nowrap;
+    transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease;
+  }
+  .btn svg{flex:none}
+  .btn--primary{
+    color:#fff;background:var(--brand);
+    box-shadow:0 12px 26px rgba(47,158,79,.24),inset 0 1px 0 rgba(255,255,255,.2);
+  }
+  .btn--primary:hover{background:var(--brand-dark);transform:translateY(-1px);box-shadow:0 15px 30px rgba(35,122,60,.26)}
+  .btn--primary:active{transform:translateY(0)}
+  .btn--ghost{
+    color:var(--ink);background:#fff;border-color:#d7e2da;
+    box-shadow:0 2px 0 rgba(22,49,32,.03);
+  }
+  .btn--ghost:hover{background:#f3f8f4;border-color:#c4d5c9}
+  .btn--lg{padding:17px 30px;font-size:16.5px}
+  .btn:disabled{opacity:.42;cursor:not-allowed;transform:none;box-shadow:none}
+
+  /* ---------- intro ---------- */
+  .view-intro{padding:26px 0 54px}
+  .hero{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:56px;align-items:center;min-height:min(660px,calc(100vh - 210px))}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:7px 13px;border:1px solid var(--line);border-radius:999px;
+    background:rgba(255,255,255,.8);box-shadow:var(--shadow-soft);
+    font-size:12px;font-weight:650;letter-spacing:.025em;color:#43574b;
+  }
+  .eyebrow__dot{width:7px;height:7px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 4px rgba(47,158,79,.13)}
+  .hero h1{
+    margin:20px 0 18px;
+    font-size:clamp(41px,5.3vw,67px);
+    line-height:1.01;
+    letter-spacing:-.045em;
+    font-weight:800;
+  }
+  .hero h1 span{color:var(--brand-dark)}
+  .hero__lead{max-width:570px;color:var(--muted);font-size:16.5px;line-height:1.67}
+  .hero__actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:30px}
+  .hero__meta{font-size:12.5px;line-height:1.5;color:#66796d}
+  .facts{display:flex;flex-wrap:wrap;gap:12px 22px;list-style:none;padding:0;margin:30px 0 0}
+  .facts li{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#4b6154}
+  .facts svg{color:var(--brand-dark)}
+
+  .hero__visual{display:flex;flex-direction:column;gap:15px;justify-self:end;width:min(100%,455px)}
+  .preview{
+    position:relative;background:#fff;border:1px solid rgba(22,49,32,.10);
+    border-radius:24px;padding:25px 25px 21px;box-shadow:var(--shadow);
+    transform:rotate(-1.1deg);
+  }
+  .preview::after{
+    content:"";position:absolute;z-index:-1;left:38px;right:-13px;bottom:-15px;height:76px;
+    border-radius:22px;background:linear-gradient(100deg,rgba(47,158,79,.20),rgba(37,89,184,.12));
+    filter:blur(1px);
+  }
+  .preview__head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .preview__label{font-size:10.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#5f7367}
+  .preview__badge{
+    display:inline-flex;padding:5px 9px;border-radius:7px;background:var(--brand-soft);
+    color:var(--brand-dark);font-size:10px;font-weight:800;letter-spacing:.12em;
+  }
+  .preview__title{margin-top:12px;font-size:27px;font-weight:800;letter-spacing:-.03em}
+  .preview__rows{display:grid;gap:14px;margin-top:22px}
+  .preview__row{display:flex;align-items:center;gap:10px}
+  .preview__letter{
+    display:grid;place-items:center;flex:none;width:27px;height:27px;border-radius:8px;
+    color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.02em;
+  }
+  .preview__letter--d{background:var(--d)}
+  .preview__letter--i{background:var(--i)}
+  .preview__letter--s{background:var(--s)}
+  .preview__letter--c{background:var(--c)}
+  .preview__name{flex:none;width:117px;font-size:12.5px;color:#4d6154}
+  .preview__track{flex:1;height:8px;border-radius:99px;background:#eef3ef;overflow:hidden}
+  .preview__track i{display:block;height:100%;border-radius:99px}
+  .preview__track i.t--d{background:var(--d)}
+  .preview__track i.t--i{background:var(--i)}
+  .preview__track i.t--s{background:var(--s)}
+  .preview__track i.t--c{background:var(--c)}
+  .preview__foot{
+    display:flex;align-items:center;gap:8px;margin-top:22px;padding-top:16px;
+    border-top:1px solid #eef3ef;font-size:12px;color:#718278;
+  }
+  .preview-note{display:flex;align-items:center;gap:8px;padding:0 10px;font-size:12px;line-height:1.45;color:#5f7367}
+  .preview-note svg{flex:none;color:var(--brand-dark)}
+
+  /* ---------- test ---------- */
+  .view-test{padding:16px 0 46px}
+  .test{
+    width:100%;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:var(--shadow);
+    overflow:hidden;overflow:clip;
+  }
+  .test__head{
+    padding:37px 48px 17px;text-align:center;
+    background:linear-gradient(180deg,#fbfdfb 0%,#fff 100%);
+  }
+  .test__eyebrow{font-size:10.5px;font-weight:750;letter-spacing:.17em;text-transform:uppercase;color:var(--brand-dark)}
+  .test__head h2{margin-top:8px;font-size:clamp(28px,3.4vw,38px);line-height:1.1;letter-spacing:-.035em;font-weight:800}
+  .test__sub{margin-top:9px;font-size:15px;font-weight:550;color:#4a5f52}
+  .test__lead{max-width:780px;margin:12px auto 0;font-size:14px;line-height:1.6;color:var(--muted)}
+  .test__lead .inline-icon{display:inline-block;vertical-align:-3px;margin:0 2px;color:#7c8f83}
+  kbd{
+    display:inline-block;min-width:20px;padding:1px 5px;margin:0 1px;
+    border:1px solid #d8e2da;border-bottom-width:2px;border-radius:5px;
+    background:#fff;font-family:var(--font);font-size:11px;font-weight:700;line-height:1.4;
+    text-align:center;color:#51655a;
+  }
+
+  .tabs{
+    display:flex;gap:8px;padding:11px 48px 6px;overflow-x:auto;
+    scrollbar-width:none;-ms-overflow-style:none;justify-content:center;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:none;border:1px solid transparent;border-radius:10px;background:#f0f5f1;
+    padding:10px 14px;font-size:13px;font-weight:650;color:#4e6356;cursor:pointer;
+    transition:background .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+  }
+  .tab:hover{background:#e7f0e9;color:#2f4336}
+  .tab.is-active{
+    background:var(--brand-dark);color:#fff;
+    box-shadow:0 7px 16px rgba(35,122,60,.22);
+  }
+  .tab.is-active:hover{background:var(--brand-dark);color:#fff}
+
+  .panes{padding:16px 48px 4px}
+  .pane:not([hidden]){animation:paneIn .24s ease both}
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+  .qcard{
+    display:flex;flex-direction:column;min-width:0;background:#fff;border:1px solid #e3ebe5;border-radius:16px;
+    box-shadow:0 1px 0 rgba(22,49,32,.03);
+    transition:border-color .18s ease,box-shadow .18s ease;
+  }
+  .qcard:hover{border-color:#d4e2d8;box-shadow:var(--shadow-soft)}
+  .qcard__head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:13px 15px 10px;
+  }
+  .qcard__foot{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-top:auto;padding:11px 15px 13px;
+  }
+  .qcard__labelwrap{display:inline-flex;align-items:center;gap:6px;min-width:0}
+  .qcard__label{font-size:14.5px;font-weight:750;letter-spacing:-.005em;color:#263a2d}
+  .qcard__foot .qcard__label{color:#5e7065;font-weight:650}
+  .qcard__labelwrap svg{color:#93a399}
+  .qcard__index{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:27px;padding:3px 6px;border-radius:6px;background:#f2f6f3;
+    font-size:10.5px;font-weight:750;letter-spacing:.04em;color:#5c7164;
+    font-variant-numeric:tabular-nums;
+  }
+  .rank-list{
+    list-style:none;margin:0 11px;padding:0;border:1px solid #e5ece7;border-radius:11px;
+    overflow:hidden;background:#fff;
+  }
+  .rank-item{
+    position:relative;display:flex;align-items:center;gap:10px;
+    min-height:54px;padding:11px 10px 11px 12px;
+    border-top:1px solid #edf2ee;background:#fff;
+    font-size:15px;line-height:1.3;color:#2c4034;
+    cursor:grab;user-select:none;-webkit-user-select:none;
+    -webkit-touch-callout:none;
+    transition:background .13s ease,box-shadow .13s ease;
+  }
+  .rank-list{counter-reset:rank}
+  .rank-item::before{
+    counter-increment:rank;content:counter(rank);
+    display:inline-flex;align-items:center;justify-content:center;flex:none;
+    width:22px;height:22px;border-radius:50%;
+    background:#f0f5f1;color:#5c7164;
+    font-size:10.5px;font-weight:750;line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .rank-item:first-child{border-top:0}
+  .rank-item__text{flex:1;min-width:0;overflow-wrap:anywhere}
+  .rank-item__grip{
+    display:inline-flex;align-items:center;justify-content:center;flex:none;
+    width:27px;height:30px;border-radius:7px;color:#a4b2a8;
+    cursor:grab;touch-action:none;
+    transition:color .13s ease,background .13s ease;
+  }
+  .rank-item__grip:hover{color:var(--brand-dark);background:#f1f7f2}
+  .rank-item__grip.is-active{color:var(--brand-dark);background:#e8f4eb;cursor:grabbing}
+  .rank-item.is-pressed{background:#f8fbf9}
+  .rank-item.is-dragging{
+    position:relative;z-index:3;opacity:.82;cursor:grabbing;
+    background:#fbfefc;outline:2px dashed rgba(47,158,79,.48);outline-offset:-2px;
+    border-radius:9px;box-shadow:0 12px 24px rgba(22,49,32,.13);
+  }
+  .rank-item.is-dragging .rank-item__grip{cursor:grabbing}
+  .rank-list.is-reordering{user-select:none}
+  body.is-dragging,body.is-dragging *{cursor:grabbing !important;user-select:none !important}
+  @media (hover:hover){
+    .rank-item:hover{background:#f7fbf8}
+    .rank-item.is-dragging:hover{background:#fbfefc}
+  }
+
+  .test__footer{
+    position:sticky;bottom:0;z-index:6;
+    padding:13px 48px 28px;
+    background:rgba(255,255,255,.965);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    box-shadow:0 -12px 30px rgba(22,49,32,.06);
+  }
+  .progress-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;font-size:12px;font-weight:600;color:#6b7d71}
+  .progress-head #percentLabel{font-variant-numeric:tabular-nums;color:#4f6557}
+  .progress{height:8px;border-radius:999px;background:#e9f0eb;overflow:hidden}
+  .progress__bar{
+    height:100%;width:12.5%;border-radius:999px;
+    background:linear-gradient(90deg,var(--brand) 0%,#65cf82 100%);
+    transition:width .28s ease;
+  }
+  .actions{display:flex;align-items:center;gap:11px;margin-top:19px}
+  .actions__spacer{flex:1}
+  .actions .btn{min-width:118px}
+
+  /* ---------- result ---------- */
+  .view-result{padding:18px 0 48px}
+  .result{
+    width:min(900px,100%);margin:0 auto;padding:38px 42px 34px;
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .result__head{text-align:center}
+  .result__badge{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:6px 11px;border-radius:999px;background:var(--brand-soft);
+    color:var(--brand-dark);font-size:11.5px;font-weight:750;letter-spacing:.02em;
+  }
+  .result__head h2{margin-top:13px;font-size:clamp(28px,3.5vw,38px);line-height:1.1;letter-spacing:-.035em;font-weight:800}
+  .result__intro{margin-top:8px;color:var(--muted);font-size:14.5px}
+  .result__score{
+    display:inline-flex;align-items:center;justify-content:center;
+    margin-top:18px;padding:10px 18px;border:1px solid #dfe9e2;border-radius:11px;
+    background:#f6faf7;font-size:19px;font-weight:750;letter-spacing:.015em;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .score-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:25px}
+  .score-card{
+    display:flex;flex-direction:column;gap:10px;
+    padding:14px 15px 13px;border:1px solid transparent;border-radius:15px;
+  }
+  .score-card--d{background:var(--d-soft);border-color:#f3d9d0}
+  .score-card--i{background:var(--i-soft);border-color:#f1e3b7}
+  .score-card--s{background:var(--s-soft);border-color:#cfe9d7}
+  .score-card--c{background:var(--c-soft);border-color:#d5e1f7}
+  .score-card__top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .score-card__letter{
+    display:grid;place-items:center;width:32px;height:32px;border-radius:9px;
+    color:#fff;font-size:14px;font-weight:800;letter-spacing:.02em;
+  }
+  .score-card--d .score-card__letter{background:var(--d)}
+  .score-card--i .score-card__letter{background:var(--i)}
+  .score-card--s .score-card__letter{background:var(--s)}
+  .score-card--c .score-card__letter{background:var(--c)}
+  .score-card__value{font-size:27px;line-height:1;font-weight:800;letter-spacing:-.025em;font-variant-numeric:tabular-nums;color:#23372a}
+  .score-card__name{font-size:11.5px;line-height:1.3;color:#5d7164}
+
+  .bars-wrap{margin-top:26px;padding:20px 20px 17px;border:1px solid #e9f0eb;border-radius:17px;background:#fbfdfb}
+  .bars{display:grid;gap:13px}
+  .bar-row{display:grid;grid-template-columns:168px minmax(0,1fr) 42px;gap:13px;align-items:center}
+  .bar-row__label{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#4f6356;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bar-row__letter{
+    display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:6px;
+    color:#fff;font-size:10.5px;font-weight:800;
+  }
+  .bar-row__letter--d{background:var(--d)}
+  .bar-row__letter--i{background:var(--i)}
+  .bar-row__letter--s{background:var(--s)}
+  .bar-row__letter--c{background:var(--c)}
+  .bar-track{position:relative;height:10px;border-radius:999px;background:#eaf1ec;overflow:hidden}
+  .bar-track::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(22,49,32,.22)}
+  .bar-fill{position:absolute;top:0;bottom:0;width:0;border-radius:999px;transition:width .55s ease,left .55s ease,right .55s ease}
+  .bar-fill--d{background:var(--d)}
+  .bar-fill--i{background:var(--i)}
+  .bar-fill--s{background:var(--s)}
+  .bar-fill--c{background:var(--c)}
+  .bar-row__value{text-align:right;font-size:13px;font-weight:750;color:#31483a;font-variant-numeric:tabular-nums}
+  .bars-scale{margin-top:11px;text-align:right;font-size:11px;color:#5f7367;font-variant-numeric:tabular-nums}
+  .result__note{
+    margin-top:23px;padding:12px 15px;border:1px solid #edf3ef;border-radius:12px;
+    background:#f8fbf9;font-size:12.5px;line-height:1.6;color:#677a6d;
+  }
+  .result__actions{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-top:25px}
+
+  .site-footer{padding:4px 0 32px;color:#5f7367;font-size:11.5px;text-align:center}
+
+  @keyframes paneIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  @keyframes heroIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .view:not([hidden]){animation:heroIn .3s ease both}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1050px){
+    .hero{grid-template-columns:minmax(0,1fr) minmax(330px,.82fr);gap:36px}
+    .test__head{padding:32px 32px 15px}
+    .tabs{padding-left:32px;padding-right:32px}
+    .panes{padding-left:32px;padding-right:32px}
+    .test__footer{padding-left:32px;padding-right:32px}
+    .grid3{gap:13px}
+    .rank-item{font-size:14.5px;padding-right:9px}
+    .preview__name{width:106px;font-size:12px}
+  }
+
+  @media (max-width:900px){
+    .shell{width:calc(100% - 32px)}
+    .view-intro{padding-top:12px}
+    .hero{grid-template-columns:1fr;gap:34px;min-height:0;padding-top:8px}
+    .hero__visual{justify-self:stretch;width:min(100%,520px);margin:0 auto}
+    .preview{transform:none}
+    .preview::after{display:none}
+    .hero h1{font-size:clamp(40px,9.2vw,58px)}
+    .view-test{padding-top:8px}
+    .test{border-radius:20px}
+    .test__head{padding:27px 20px 13px}
+    .tabs{padding:8px 20px 4px;justify-content:flex-start;scroll-snap-type:x proximity}
+    .tab{scroll-snap-align:center}
+    .panes{padding:14px 20px 4px}
+    .grid3{grid-template-columns:1fr;gap:13px}
+    .qcard__head{padding:12px 15px 9px}
+    .rank-item{min-height:53px}
+    .test__footer{padding:12px 20px calc(14px + env(safe-area-inset-bottom))}
+    .progress-head{margin-bottom:7px}
+    .actions{margin-top:14px}
+    .actions .btn{padding:12px 18px;font-size:14.5px}
+    .actions .btn--primary{flex:1;min-width:0}
+    .result{padding:30px 24px 28px}
+    .score-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .bar-row{grid-template-columns:145px minmax(0,1fr) 38px;gap:10px}
+  }
+
+  @media (max-width:600px){
+    .shell{width:calc(100% - 24px)}
+    .header-inner{padding:14px 0 6px}
+    .header-note{display:none}
+    .brand__text strong{font-size:17px}
+    .brand__text small{font-size:9.5px}
+    .view-intro{padding-bottom:34px}
+    .hero{gap:26px}
+    .eyebrow{font-size:11px}
+    .hero h1{margin-top:16px}
+    .hero__lead{font-size:15.5px}
+    .hero__actions{gap:12px;margin-top:24px}
+    .hero__actions .btn--lg{width:100%;padding:15px 24px;font-size:16px}
+    .hero__meta{display:none}
+    .facts{gap:9px 16px;margin-top:22px}
+    .preview{padding:19px;border-radius:20px}
+    .preview__title{font-size:23px}
+    .preview__name{width:99px;font-size:11.5px}
+    .preview__rows{gap:12px;margin-top:17px}
+    .preview__foot{margin-top:17px}
+    .test__head{padding:23px 15px 11px}
+    .test__sub{font-size:13.5px}
+    .test__lead{font-size:12.5px}
+    .tabs{padding:7px 15px 3px;gap:6px}
+    .tab{padding:9px 12px;font-size:12px}
+    .panes{padding:12px 15px 3px}
+    .qcard__head{padding:11px 13px 8px}
+    .qcard__foot{padding:10px 13px 12px}
+    .qcard__label{font-size:13.5px}
+    .rank-list{margin:0 9px}
+    .rank-item{padding:10px 8px 10px 10px;font-size:14px;gap:9px;min-height:51px}
+    .rank-item::before{width:20px;height:20px;font-size:10px}
+    .rank-item__grip{width:25px;height:28px}
+    .test__footer{padding-left:15px;padding-right:15px}
+    .actions{gap:8px;margin-top:12px}
+    .actions .btn{padding:11px 12px;font-size:13.5px;gap:7px}
+    .actions .btn svg{width:17px;height:17px}
+    .result{padding:25px 16px 22px;border-radius:20px}
+    .result__score{font-size:16px;padding:9px 12px}
+    .score-grid{gap:8px;margin-top:20px}
+    .score-card{padding:12px}
+    .score-card__value{font-size:24px}
+    .bars-wrap{padding:16px 13px 14px}
+    .bar-row{grid-template-columns:minmax(0,1fr) 76px 34px;gap:8px}
+    .bar-row__label{font-size:11px;gap:6px}
+    .bar-row__letter{width:19px;height:19px;font-size:9.5px}
+    .bar-row__value{font-size:12px}
+    .result__actions .btn{flex:1;min-width:0;padding:12px 14px;font-size:14px}
+    .site-footer{padding-bottom:24px;font-size:10.5px}
+  }
+
+  @media (max-width:480px){
+    .actions__spacer{display:none}
+  }
+
+  @media (max-width:390px){
+    .bar-row{grid-template-columns:minmax(0,1fr) 62px 30px}
+    .bar-row__label{font-size:10.5px}
+    .bar-row__letter{display:none}
+    .score-card__name{font-size:10.5px}
+    .hero h1{font-size:37px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="site-header">
+    <div class="shell header-inner">
+      <div class="brand" aria-label="DISC — тест типов личности">
+        <span class="brand__mark" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <rect x="2" y="2" width="16" height="16" rx="5" fill="#c8462a"/>
+            <rect x="22" y="2" width="16" height="16" rx="5" fill="#a97700"/>
+            <rect x="2" y="22" width="16" height="16" rx="5" fill="#237a3c"/>
+            <rect x="22" y="22" width="16" height="16" rx="5" fill="#2559b8"/>
+          </svg>
+        </span>
+        <span class="brand__text"><strong>DISC</strong><small>тест типов личности</small></span>
+      </div>
+      <div class="header-note">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 4.7V8l2.2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>5 минут · 8 шагов</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <!-- ============ INTRO ============ -->
+    <section class="view view-intro" id="view-intro">
+      <div class="hero">
+        <div class="hero__copy">
+          <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span>Бесплатный тест для руководителей</p>
+          <h1>Тест DISC:<br><span>узнайте свой тип</span></h1>
+          <p class="hero__lead">24 блока прилагательных и 8 коротких шагов. Расставьте варианты по порядку — от наиболее похожего на вас до наименее похожего — и сразу увидите баллы по четырём шкалам.</p>
+          <div class="hero__actions">
+            <button class="btn btn--primary btn--lg" id="startBtn" type="button" data-disc-open data-modal-open="wizardmodal">
+              Пройти тест DISC
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <span class="hero__meta">Без регистрации<br>результат сразу на экране</span>
+          </div>
+          <ul class="facts">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#eaf6ee"/><path d="M5 8.2l2 2 4-4.4" stroke="#237a3c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              8 шагов
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#eaf6ee"/><path d="M5 8.2l2 2 4-4.4" stroke="#237a3c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              24 вопроса
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#eaf6ee"/><path d="M5 8.2l2 2 4-4.4" stroke="#237a3c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              4 шкалы
+            </li>
+          </ul>
+        </div>
+
+        <aside class="hero__visual" aria-label="Пример результата теста">
+          <div class="preview">
+            <div class="preview__head">
+              <span class="preview__label">Пример результата</span>
+              <span class="preview__badge">DISC</span>
+            </div>
+            <div class="preview__title">Ваш профиль</div>
+            <div class="preview__rows">
+              <div class="preview__row"><span class="preview__letter preview__letter--d">D</span><span class="preview__name">Доминирование</span><span class="preview__track"><i class="t--d" style="width:72%"></i></span></div>
+              <div class="preview__row"><span class="preview__letter preview__letter--i">I</span><span class="preview__name">Влияние</span><span class="preview__track"><i class="t--i" style="width:47%"></i></span></div>
+              <div class="preview__row"><span class="preview__letter preview__letter--s">S</span><span class="preview__name">Стабильность</span><span class="preview__track"><i class="t--s" style="width:34%"></i></span></div>
+              <div class="preview__row"><span class="preview__letter preview__letter--c">C</span><span class="preview__name">Добросовестность</span><span class="preview__track"><i class="t--c" style="width:58%"></i></span></div>
+            </div>
+            <div class="preview__foot">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 13.5V9M6.3 13.5V6M10.2 13.5V8M14 13.5V3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Баллы по четырём поведенческим шкалам
+            </div>
+          </div>
+          <p class="preview-note">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 7V5.4a2.5 2.5 0 0 1 5 0V7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Всё считается в браузере — данные никуда не отправляются
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============ TEST ============ -->
+    <section class="view view-test" id="view-test" hidden>
+      <div class="test disc-modal" id="wizardmodal" role="region" aria-labelledby="testTitle" aria-hidden="true">
+        <div class="test__head disc-modal__head">
+          <p class="test__eyebrow">Бесплатный тест</p>
+          <h2 class="disc-modal__title" id="testTitle" tabindex="-1">Тестирование DISC</h2>
+          <p class="test__sub disc-modal__sub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+          <p class="test__lead disc-modal__lead">
+            Разместите блоки в порядке от наиболее похожего на вас до наименее похожего.
+            Перетаскивайте за ручку
+            <svg class="inline-icon" width="15" height="16" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg>
+            или меняйте порядок клавишами <kbd>↑</kbd> <kbd>↓</kbd>.
+          </p>
+        </div>
+
+        <div class="tabs disc-modal__tabs" id="stepTabs" role="tablist" aria-label="Шаги теста">
+          <button class="tab disc-tab is-active" type="button" role="tab" id="tab-step-0" aria-controls="tab1" aria-selected="true" tabindex="0" data-step-btn="0">Первый</button>
+          <button class="tab disc-tab" type="button" role="tab" id="tab-step-1" aria-controls="tab2" aria-selected="false" tabindex="-1" data-step-btn="1">Второй</button>
+          <button class="tab disc-tab" type="button" role="tab" id="tab-step-2" aria-controls="tab3" aria-selected="false" tabindex="-1" data-step-btn="2">Третий</button>
+          <button class="tab disc-tab" type="button" role="tab" id="tab-step-3" aria-controls="tab4" aria-selected="false" tabindex="-1" data-step-btn="3">Четвертый</button>
+          <button class="tab disc-tab" type="button" role="tab" id="tab-step-4" aria-controls="tab5" aria-selected="false" tabindex="-1" data-step-btn="4">Пятый</button>
+          <button class="tab disc-tab" type="button" role="tab" id="tab-step-5" aria-controls="tab6" aria-selected="false" tabindex="-1" data-step-btn="5">Шестой</button>
+          <button class="tab disc-tab" type="button" role="tab" id="tab-step-6" aria-controls="tab7" aria-selected="false" tabindex="-1" data-step-btn="6">Седьмой</button>
+          <button class="tab disc-tab" type="button" role="tab" id="tab-step-7" aria-controls="tab8" aria-selected="false" tabindex="-1" data-step-btn="7">Восьмой</button>
+        </div>
+
+        <div class="panes disc-modal__body" id="panes">
+        <div class="pane disc-pane is-active" role="tabpanel" id="tab1" aria-labelledby="tab-step-0" data-step-pane="0">
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">01</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list1" aria-label="Вопрос 1: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Экспресcивный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Экспресcивный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Покладистый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Покладистый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Волевой. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Волевой</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Осторожный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Осторожный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">02</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list2" aria-label="Вопрос 2: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Пылкий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Пылкий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Разговорчивый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Разговорчивый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Добродушный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Добродушный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Сдержанный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Сдержанный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">03</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list3" aria-label="Вопрос 3: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Любитель приключений. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Любитель приключений</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Энтузиаст. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Энтузиаст</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Исполнитель инструкций. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Исполнитель инструкций</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Верный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Верный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        <div class="pane disc-pane" role="tabpanel" id="tab2" aria-labelledby="tab-step-1" data-step-pane="1" hidden>
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">04</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list4" aria-label="Вопрос 4: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Настойчивый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Настойчивый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Осторожный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Осторожный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Эмоциональный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Эмоциональный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Удовлетворенный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Удовлетворенный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">05</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list5" aria-label="Вопрос 5: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Довольный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Довольный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Нетерпеливый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Нетерпеливый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Убедительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Убедительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Безропотный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Безропотный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">06</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list6" aria-label="Вопрос 6: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Смиренный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Смиренный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Умеющий слушать. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Умеющий слушать</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Душа компании. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Душа компании</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Волевой. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Волевой</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        <div class="pane disc-pane" role="tabpanel" id="tab3" aria-labelledby="tab-step-2" data-step-pane="2" hidden>
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">07</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list7" aria-label="Вопрос 7: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Правильный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Правильный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Первопроходец. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Первопроходец</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Спокойный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Спокойный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Влиятельный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Влиятельный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">08</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list8" aria-label="Вопрос 8: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Почтительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Почтительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Контактный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Контактный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Агрессивный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Агрессивный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Мягкий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Мягкий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">09</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list9" aria-label="Вопрос 9: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Весельчак. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Весельчак</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Покорный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Покорный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Тактичный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Тактичный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Соперничающий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Соперничающий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        <div class="pane disc-pane" role="tabpanel" id="tab4" aria-labelledby="tab-step-3" data-step-pane="3" hidden>
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">10</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list10" aria-label="Вопрос 10: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Точный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Точный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Доминирующий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Доминирующий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Охотный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Охотный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Притягательный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Притягательный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">11</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list11" aria-label="Вопрос 11: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Уравновешенный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Уравновешенный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Уступчивый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Уступчивый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Идущий на риск. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Идущий на риск</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Услужливый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Услужливый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">12</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list12" aria-label="Вопрос 12: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Осмотрительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Осмотрительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Добрососедский. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Добрососедский</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Энергичный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Энергичный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Убедительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Убедительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        <div class="pane disc-pane" role="tabpanel" id="tab5" aria-labelledby="tab-step-4" data-step-pane="4" hidden>
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">13</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list13" aria-label="Вопрос 13: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Уравновешенный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Уравновешенный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Мотивирующий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Мотивирующий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Щепетильный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Щепетильный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Решительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Решительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">14</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list14" aria-label="Вопрос 14: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Уверенный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Уверенный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Готовый к сотрудничеству. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Готовый к сотрудничеству</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Беззаботный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Беззаботный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Аргументирующий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Аргументирующий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">15</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list15" aria-label="Вопрос 15: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Сдержанный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Сдержанный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Прямой. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Прямой</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Строгий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Строгий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Убедительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Убедительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        <div class="pane disc-pane" role="tabpanel" id="tab6" aria-labelledby="tab-step-5" data-step-pane="5" hidden>
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">16</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list16" aria-label="Вопрос 16: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Застенчивый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Застенчивый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Требовательный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Требовательный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Терпеливый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Терпеливый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Очаровательный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Очаровательный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">17</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list17" aria-label="Вопрос 17: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Неугомонный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Неугомонный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Дисциплинированный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Дисциплинированный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Вдохновляющий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Вдохновляющий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Внимательный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Внимательный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">18</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list18" aria-label="Вопрос 18: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Обязательный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Обязательный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Оживленный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Оживленный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Решительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Решительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Точный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Точный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        <div class="pane disc-pane" role="tabpanel" id="tab7" aria-labelledby="tab-step-6" data-step-pane="6" hidden>
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">19</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list19" aria-label="Вопрос 19: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Добросовестный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Добросовестный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Компанейский. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Компанейский</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Добрый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Добрый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Уверенный в себе. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Уверенный в себе</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">20</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list20" aria-label="Вопрос 20: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Дипломатичный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Дипломатичный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Отважный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Отважный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Сочувствующий. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Сочувствующий</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Оптимистичный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Оптимистичный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">21</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list21" aria-label="Вопрос 21: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Настойчивый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Настойчивый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Общительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Общительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Постоянный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Постоянный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Организованный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Организованный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        <div class="pane disc-pane" role="tabpanel" id="tab8" aria-labelledby="tab-step-7" data-step-pane="7" hidden>
+          <div class="grid3">
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">22</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list22" aria-label="Вопрос 22: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Соглашающийся. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Соглашающийся</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Владеющий собой. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Владеющий собой</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Шутливый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Шутливый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Настойчивый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Настойчивый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">23</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list23" aria-label="Вопрос 23: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Обаятельный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Обаятельный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Позитивный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Позитивный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Снисходительный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Снисходительный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Требовательный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Требовательный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          <article class="qcard disc-card">
+            <div class="disc-card__title qcard__head">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наиболее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="qcard__index" aria-hidden="true">24</span>
+            </div>
+            <ul class="rank-list disc-list" id="draggable-list24" aria-label="Вопрос 24: расположите варианты от наиболее похожего на вас до наименее похожего">
+              <li class="rank-item disc-item" data-type="i" tabindex="0" draggable="false" aria-label="Позиция 1 из 4: Коммуникабельный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Коммуникабельный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="d" tabindex="0" draggable="false" aria-label="Позиция 2 из 4: Смелый. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Смелый</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="c" tabindex="0" draggable="false" aria-label="Позиция 3 из 4: Перфекционист. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Перфекционист</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="rank-item disc-item" data-type="s" tabindex="0" draggable="false" aria-label="Позиция 4 из 4: Сдержанный. Стрелки вверх и вниз меняют порядок.">
+                <span class="rank-item__text">Сдержанный</span>
+                <span class="rank-item__grip" aria-hidden="true" title="Перетащите, чтобы изменить порядок"><svg width="16" height="18" viewBox="0 0 16 18" fill="none" aria-hidden="true"><circle cx="5" cy="4" r="1.35" fill="currentColor"/><circle cx="11" cy="4" r="1.35" fill="currentColor"/><circle cx="5" cy="9" r="1.35" fill="currentColor"/><circle cx="11" cy="9" r="1.35" fill="currentColor"/><circle cx="5" cy="14" r="1.35" fill="currentColor"/><circle cx="11" cy="14" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="disc-card__foot qcard__foot">
+              <span class="qcard__labelwrap"><span class="qcard__label">Я наименее</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </article>
+          </div>
+        </div>
+        </div>
+
+        <div class="test__footer">
+          <div class="progress-head">
+            <span id="stepLabel">Шаг 1 из 8</span>
+            <span id="percentLabel">13%</span>
+          </div>
+          <div class="progress disc-progress" id="progressTrack" role="progressbar" aria-label="Прогресс теста" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+            <div class="progress__bar" id="discProgress"></div>
+          </div>
+          <div class="actions">
+            <button class="btn btn--ghost disc-btn disc-btn--ghost" type="button" id="prevBtn" data-disc-prev disabled>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M14 9H4M8 4L3 9l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Назад
+            </button>
+            <span class="actions__spacer" aria-hidden="true"></span>
+            <button class="btn btn--primary disc-btn disc-btn--primary" type="button" id="nextBtn" data-disc-next>
+              Далее
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M4 9h10M10 4l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="btn btn--primary disc-btn disc-btn--primary" type="button" id="finishBtn" data-disc-finish hidden>
+              Завершить тест
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3.5 9.5l3.5 3.4 7.5-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESULT ============ -->
+    <section class="view view-result" id="view-result" hidden>
+      <div class="result" id="result">
+        <div class="result__head">
+          <span class="result__badge">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#d7efdf"/><path d="M4.8 8.2l2.1 2.1 4.3-4.6" stroke="#237a3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Тест завершён
+          </span>
+          <h2 class="result__score-title" id="resultTitle" tabindex="-1">Ваш DISC-профиль:</h2>
+          <p class="result__intro">Спасибо за ответы. Вот ваши баллы по четырём шкалам поведения.</p>
+          <div class="result__score"><span id="scoreLine">D:0, I:0, S:0, C:0</span></div>
+        </div>
+
+        <div class="score-grid" aria-label="Баллы по шкалам">
+          <div class="score-card score-card--d">
+            <div class="score-card__top"><span class="score-card__letter" aria-hidden="true">D</span><span class="score-card__value" data-score-type="d">0</span></div>
+            <span class="score-card__name">Доминирование</span>
+          </div>
+          <div class="score-card score-card--i">
+            <div class="score-card__top"><span class="score-card__letter" aria-hidden="true">I</span><span class="score-card__value" data-score-type="i">0</span></div>
+            <span class="score-card__name">Влияние</span>
+          </div>
+          <div class="score-card score-card--s">
+            <div class="score-card__top"><span class="score-card__letter" aria-hidden="true">S</span><span class="score-card__value" data-score-type="s">0</span></div>
+            <span class="score-card__name">Стабильность</span>
+          </div>
+          <div class="score-card score-card--c">
+            <div class="score-card__top"><span class="score-card__letter" aria-hidden="true">C</span><span class="score-card__value" data-score-type="c">0</span></div>
+            <span class="score-card__name">Добросовестность</span>
+          </div>
+        </div>
+
+        <div class="bars-wrap" aria-label="Диаграмма баллов">
+          <div class="bars">
+            <div class="bar-row">
+              <div class="bar-row__label"><span class="bar-row__letter bar-row__letter--d" aria-hidden="true">D</span>Доминирование</div>
+              <div class="bar-track"><span class="bar-fill bar-fill--d" data-bar="d"></span></div>
+              <div class="bar-row__value" data-bar-value="d">0</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row__label"><span class="bar-row__letter bar-row__letter--i" aria-hidden="true">I</span>Влияние</div>
+              <div class="bar-track"><span class="bar-fill bar-fill--i" data-bar="i"></span></div>
+              <div class="bar-row__value" data-bar-value="i">0</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row__label"><span class="bar-row__letter bar-row__letter--s" aria-hidden="true">S</span>Стабильность</div>
+              <div class="bar-track"><span class="bar-fill bar-fill--s" data-bar="s"></span></div>
+              <div class="bar-row__value" data-bar-value="s">0</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row__label"><span class="bar-row__letter bar-row__letter--c" aria-hidden="true">C</span>Добросовестность</div>
+              <div class="bar-track"><span class="bar-fill bar-fill--c" data-bar="c"></span></div>
+              <div class="bar-row__value" data-bar-value="c">0</div>
+            </div>
+          </div>
+          <p class="bars-scale" id="scaleNote">Масштаб: от −24 до +24</p>
+        </div>
+
+        <p class="result__note">Баллы по каждой шкале — это разница между числом выборов «Я наиболее» и «Я наименее» для этого типа. В тесте 24 блока, поэтому значение может быть от −24 до +24.</p>
+
+        <div class="result__actions">
+          <button class="btn btn--primary" type="button" id="restartBtn">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M15 9a6 6 0 1 1-1.9-4.4M15 3v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Пройти заново
+          </button>
+          <button class="btn btn--ghost" type="button" id="homeBtn">На главную</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">DISC-тест · работает офлайн, данные не покидают браузер</footer>
+</div>
+<div class="sr-only" id="liveRegion" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  const views = {
+    intro: $('#view-intro'),
+    test: $('#view-test'),
+    result: $('#view-result')
+  };
+
+  const tabs = $$('[data-step-btn]');
+  const panes = $$('[data-step-pane]');
+  const lists = $$('.disc-list');
+  const totalSteps = 8;
+
+  const prevBtn = $('#prevBtn');
+  const nextBtn = $('#nextBtn');
+  const finishBtn = $('#finishBtn');
+  const stepLabel = $('#stepLabel');
+  const percentLabel = $('#percentLabel');
+  const progressBar = $('#discProgress');
+  const progressTrack = $('#progressTrack');
+  const tabsScroller = $('#stepTabs');
+  const liveRegion = $('#liveRegion');
+  const testTitle = $('#testTitle');
+  const resultTitle = $('#resultTitle');
+  const scoreLine = $('#scoreLine');
+  const scaleNote = $('#scaleNote');
+  const startBtn = $('#startBtn');
+  const restartBtn = $('#restartBtn');
+  const homeBtn = $('#homeBtn');
+
+  const initialOrder = lists.map((ul) => Array.from(ul.children));
+  let step = 0;
+  let currentView = 'intro';
+
+  const itemText = (item) => {
+    const node = $('.rank-item__text', item);
+    return (node ? node.textContent : item.textContent).replace(/\s+/g, ' ').trim();
+  };
+
+  const updateListLabels = (list) => {
+    const items = Array.from(list.children);
+    items.forEach((item, index) => {
+      item.setAttribute(
+        'aria-label',
+        `Позиция ${index + 1} из ${items.length}: ${itemText(item)}. Стрелки вверх и вниз меняют порядок.`
+      );
+    });
+  };
+
+  const announce = (message) => {
+    if (!liveRegion) return;
+    liveRegion.textContent = '';
+    window.setTimeout(() => {
+      liveRegion.textContent = message;
+    }, 30);
+  };
+
+  const showView = (name) => {
+    Object.keys(views).forEach((key) => {
+      views[key].hidden = key !== name;
+    });
+    const wizard = $('#wizardmodal');
+    if (wizard) {
+      const isOpen = name === 'test';
+      wizard.classList.toggle('is-open', isOpen);
+      wizard.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    }
+    currentView = name;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
+  const centerActiveTab = () => {
+    if (!tabsScroller) return;
+    const tab = tabs[step];
+    if (!tab) return;
+    if (tabsScroller.scrollWidth <= tabsScroller.clientWidth + 2) {
+      tabsScroller.scrollLeft = 0;
+      return;
+    }
+    const scrollerRect = tabsScroller.getBoundingClientRect();
+    const tabRect = tab.getBoundingClientRect();
+    const target = tabsScroller.scrollLeft + (tabRect.left - scrollerRect.left) + tabRect.width / 2 - tabsScroller.clientWidth / 2;
+    const max = Math.max(0, tabsScroller.scrollWidth - tabsScroller.clientWidth);
+    const left = Math.min(Math.max(0, target), max);
+    if (Math.abs(tabsScroller.scrollLeft - left) > 2) {
+      tabsScroller.scrollTo({ left, behavior: 'smooth' });
+    }
+  };
+
+  const setStep = (next, options = {}) => {
+    step = Math.max(0, Math.min(totalSteps - 1, Number(next) || 0));
+
+    tabs.forEach((tab) => {
+      const active = Number(tab.dataset.stepBtn) === step;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      tab.tabIndex = active ? 0 : -1;
+    });
+
+    panes.forEach((pane) => {
+      const active = Number(pane.dataset.stepPane) === step;
+      pane.classList.toggle('is-active', active);
+      pane.hidden = !active;
+    });
+
+    prevBtn.disabled = step === 0;
+    nextBtn.hidden = step === totalSteps - 1;
+    finishBtn.hidden = step !== totalSteps - 1;
+
+    const percent = ((step + 1) / totalSteps) * 100;
+    progressBar.style.width = percent + '%';
+    stepLabel.textContent = `Шаг ${step + 1} из ${totalSteps}`;
+    percentLabel.textContent = Math.round(percent) + '%';
+    progressTrack.setAttribute('aria-valuenow', String(step + 1));
+    progressTrack.setAttribute('aria-valuetext', `Шаг ${step + 1} из ${totalSteps}`);
+
+    centerActiveTab();
+
+    if (options.scroll !== false && currentView === 'test') {
+      const top = $('#wizardmodal').getBoundingClientRect().top;
+      if (top < -4) {
+        $('#wizardmodal').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    if (options.announce) {
+      announce(`Шаг ${step + 1} из ${totalSteps}`);
+    }
+  };
+
+  // Как в оригинале: первый пункт — «Я наиболее», последний — «Я наименее».
+  // Балл типа = число первых мест минус число последних мест.
+  const computeScore = () => {
+    const score = { d: 0, i: 0, s: 0, c: 0 };
+    lists.forEach((list) => {
+      const items = Array.from(list.children);
+      if (!items.length) return;
+      const major = items[0].dataset.type;
+      const minor = items[items.length - 1].dataset.type;
+      if (Object.prototype.hasOwnProperty.call(score, major)) score[major] += 1;
+      if (Object.prototype.hasOwnProperty.call(score, minor)) score[minor] -= 1;
+    });
+    return score;
+  };
+
+  const renderScore = (score) => {
+    const types = ['d', 'i', 's', 'c'];
+    scoreLine.textContent = `D:${score.d}, I:${score.i}, S:${score.s}, C:${score.c}`;
+
+    types.forEach((type) => {
+      $$(`[data-score-type="${type}"]`).forEach((node) => {
+        node.textContent = String(score[type]);
+      });
+      $$(`[data-bar-value="${type}"]`).forEach((node) => {
+        node.textContent = String(score[type]);
+      });
+    });
+
+    const maxAbs = Math.max(4, ...types.map((type) => Math.abs(score[type])));
+    scaleNote.textContent = `Масштаб: от −${maxAbs} до +${maxAbs}`;
+
+    types.forEach((type) => {
+      const fill = $(`[data-bar="${type}"]`);
+      if (!fill) return;
+      const value = score[type];
+      const halfWidth = (Math.abs(value) / maxAbs) * 50;
+      fill.style.width = halfWidth + '%';
+      if (value < 0) {
+        fill.style.left = 'auto';
+        fill.style.right = '50%';
+      } else {
+        fill.style.left = '50%';
+        fill.style.right = 'auto';
+      }
+      const track = fill.parentElement;
+      if (track) {
+        track.setAttribute('role', 'img');
+        track.setAttribute('aria-label', `${type.toUpperCase()}: ${value}`);
+      }
+    });
+  };
+
+  const resetTest = () => {
+    lists.forEach((list, index) => {
+      initialOrder[index].forEach((item) => list.appendChild(item));
+      updateListLabels(list);
+    });
+    setStep(0, { scroll: false });
+  };
+
+  const finishTest = () => {
+    renderScore(computeScore());
+    showView('result');
+    window.requestAnimationFrame(() => {
+      resultTitle.focus({ preventScroll: true });
+    });
+    announce('Тест завершён. Ваши баллы показаны на экране.');
+  };
+
+  /* ---------- tabs ---------- */
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => {
+      setStep(Number(tab.dataset.stepBtn), { announce: true });
+    });
+    tab.addEventListener('keydown', (event) => {
+      let target = null;
+      if (event.key === 'ArrowRight') target = (index + 1) % tabs.length;
+      if (event.key === 'ArrowLeft') target = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === 'Home') target = 0;
+      if (event.key === 'End') target = tabs.length - 1;
+      if (target === null) return;
+      event.preventDefault();
+      setStep(target, { announce: true });
+      tabs[target].focus();
+    });
+  });
+
+  prevBtn.addEventListener('click', () => setStep(step - 1, { announce: true }));
+  nextBtn.addEventListener('click', () => {
+    const target = step + 1;
+    setStep(target, { announce: true });
+    if (target === totalSteps - 1) finishBtn.focus({ preventScroll: true });
+  });
+  finishBtn.addEventListener('click', finishTest);
+
+  startBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    resetTest();
+    showView('test');
+    window.requestAnimationFrame(() => {
+      testTitle.focus({ preventScroll: true });
+      centerActiveTab();
+    });
+    announce('Тест начался. Шаг 1 из 8.');
+  });
+
+  restartBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    resetTest();
+    showView('test');
+    window.requestAnimationFrame(() => {
+      testTitle.focus({ preventScroll: true });
+      centerActiveTab();
+    });
+    announce('Тест начался заново. Шаг 1 из 8.');
+  });
+
+  homeBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    showView('intro');
+    window.requestAnimationFrame(() => startBtn.focus({ preventScroll: true }));
+  });
+
+  /* ---------- keyboard reordering ---------- */
+  const moveItem = (item, direction) => {
+    const list = item.parentElement;
+    const items = Array.from(list.children);
+    const index = items.indexOf(item);
+    let target = index;
+
+    if (direction === 'up') target = Math.max(0, index - 1);
+    if (direction === 'down') target = Math.min(items.length - 1, index + 1);
+    if (direction === 'first') target = 0;
+    if (direction === 'last') target = items.length - 1;
+    if (target === index) return;
+
+    if (target === 0) {
+      list.insertBefore(item, list.firstElementChild);
+    } else if (target > index) {
+      list.insertBefore(item, items[target].nextElementSibling);
+    } else {
+      list.insertBefore(item, items[target]);
+    }
+
+    updateListLabels(list);
+    item.focus({ preventScroll: true });
+    announce(`«${itemText(item)}»: позиция ${Array.from(list.children).indexOf(item) + 1} из ${list.children.length}.`);
+  };
+
+  lists.forEach((list) => {
+    list.addEventListener('keydown', (event) => {
+      const item = event.target.closest('.disc-item');
+      if (!item || item.parentElement !== list) return;
+      let direction = null;
+      if (event.key === 'ArrowUp') direction = 'up';
+      if (event.key === 'ArrowDown') direction = 'down';
+      if (event.key === 'Home') direction = 'first';
+      if (event.key === 'End') direction = 'last';
+      if (!direction) return;
+      event.preventDefault();
+      moveItem(item, direction);
+    });
+
+    updateListLabels(list);
+  });
+
+  /* ---------- pointer drag ---------- */
+  const COARSE_POINTER = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  let drag = null;
+
+  const endDrag = (event) => {
+    if (!drag) return;
+    const state = drag;
+    drag = null;
+
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', endDrag);
+    window.removeEventListener('pointercancel', endDrag);
+
+    state.item.classList.remove('is-pressed', 'is-dragging');
+    state.list.classList.remove('is-reordering');
+    if (state.handle) state.handle.classList.remove('is-active');
+    document.body.classList.remove('is-dragging');
+
+    if (state.started) {
+      updateListLabels(state.list);
+      const position = Array.from(state.list.children).indexOf(state.item) + 1;
+      announce(`«${itemText(state.item)}»: позиция ${position} из ${state.list.children.length}.`);
+    }
+
+    if (event && event.pointerId !== undefined) {
+      try { state.item.releasePointerCapture(event.pointerId); } catch (_) {}
+    }
+  };
+
+  function onPointerMove(event) {
+    if (!drag) return;
+
+    if (!drag.started) {
+      const dx = event.clientX - drag.startX;
+      const dy = event.clientY - drag.startY;
+      if (Math.sqrt(dx * dx + dy * dy) < 5) return;
+      drag.started = true;
+      drag.item.classList.add('is-dragging');
+      drag.list.classList.add('is-reordering');
+      document.body.classList.add('is-dragging');
+    }
+
+    event.preventDefault();
+
+    const siblings = Array.from(drag.list.children).filter((node) => node !== drag.item);
+    let before = null;
+
+    for (const sibling of siblings) {
+      const rect = sibling.getBoundingClientRect();
+      if (event.clientY < rect.top + rect.height / 2) {
+        before = sibling;
+        break;
+      }
+    }
+
+    if (before) {
+      if (drag.item.nextElementSibling !== before) {
+        drag.list.insertBefore(drag.item, before);
+      }
+    } else if (drag.list.lastElementChild !== drag.item) {
+      drag.list.appendChild(drag.item);
+    }
+
+    const edge = 58;
+    if (event.clientY < edge) {
+      window.scrollBy(0, -10);
+    } else if (event.clientY > window.innerHeight - edge) {
+      window.scrollBy(0, 10);
+    }
+  }
+
+  document.addEventListener('pointerdown', (event) => {
+    if (drag) return;
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (!event.isPrimary) return;
+
+    const item = event.target.closest('.disc-item');
+    if (!item) return;
+    const handle = event.target.closest('.rank-item__grip');
+    const needsHandle = event.pointerType !== 'mouse' || COARSE_POINTER;
+    if (needsHandle && !handle) return;
+
+    event.preventDefault();
+
+    drag = {
+      item,
+      list: item.parentElement,
+      handle,
+      startX: event.clientX,
+      startY: event.clientY,
+      started: false,
+      pointerId: event.pointerId
+    };
+
+    item.classList.add('is-pressed');
+    if (handle) handle.classList.add('is-active');
+
+    try { item.setPointerCapture(event.pointerId); } catch (_) {}
+
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+  });
+
+  /* ---------- boot ---------- */
+  setStep(0, { scroll: false });
+  showView('intro');
+})();
+</script>
+</body>
+</html>

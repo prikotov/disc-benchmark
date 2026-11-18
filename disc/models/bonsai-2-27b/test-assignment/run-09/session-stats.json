@@ -1,0 +1,27 @@
+{
+  "session_file": "2026-11-14T18-30-15-405Z_01a1db53-0c6c-749d-a87a-55fb5ca971df.jsonl",
+  "turns": 206,
+  "tool_calls": 205,
+  "tools_by_name": {
+    "bash": 111,
+    "read": 37,
+    "write": 13,
+    "edit": 43,
+    "grep": 1
+  },
+  "tokens_in": 385713,
+  "tokens_out": 179305,
+  "bash_total": 22,
+  "bash_with_network": 14,
+  "curl_to_source": 11,
+  "network_cmds_sample": [
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-a9bnu00q/run && curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o page.html --max-time 30 && echo \\\"EXIT: $?\\\" && wc -c page.html",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-a9bnu00q/run && curl -sL \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o disc_patched.js --max-time 30 && wc -c disc_patched.js && curl -sL \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" -o app.js --max-time 30 && wc -c app.js && ",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-a9bnu00q/run && for u in \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" \\\"https://stratoplan-school.com/js/tracker.js\\\"; do code=$(curl -sI -o /dev/null -w \\\"%{http_code}\\\" \\\"$u\\\" --max",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-a9bnu00q/run && rm -f disc_patched.js app.js fab.js && curl -sL \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" -o app.js -w \\\"app.js: %{http_code} %{size_download}\\ \\\" --max-time 30; curl -sL \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-a9bnu00q/run && curl -sI \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" --max-time 20 | head -20"
+  ],
+  "errors": 27,
+  "first_ts": "2026-11-14T18:30:15.405Z",
+  "last_ts": "2026-11-14T19:30:15.208Z"
+}

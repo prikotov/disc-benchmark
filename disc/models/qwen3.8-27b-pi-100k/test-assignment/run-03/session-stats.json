@@ -1,0 +1,24 @@
+{
+  "session_file": "2026-11-14T19-43-58-246Z_01a1db96-8925-7265-bd18-c895f2c4eff4.jsonl",
+  "turns": 31,
+  "tool_calls": 30,
+  "tools_by_name": {
+    "bash": 17,
+    "read": 6,
+    "write": 3,
+    "edit": 4
+  },
+  "tokens_in": 134756,
+  "tokens_out": 14326,
+  "bash_total": 4,
+  "bash_with_network": 3,
+  "curl_to_source": 3,
+  "network_cmds_sample": [
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-1hbrhmnw/run && ls -la && curl -sL \\\"https://stratoplan-school.com/disc/\\\" -o page.html && wc -c page.html",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-1hbrhmnw/run && curl -s \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o disc_patched.js && wc -c disc_patched.js && head -100 disc_patched.js",
+    "curl -sL \\\"https://stratoplan-school.com/disc/result/\\\" | grep -o -E '<h1[^>]*>[^<]*|Ваш DISC[^<]*|D:[0-9-][^<]*' | head; echo ===; curl -sL \\\"https://stratoplan-school.com/disc/\\\" | sed -n '/<h1/,/<\\\\/h1/p' | head -5"
+  ],
+  "errors": 3,
+  "first_ts": "2026-11-14T19:43:58.246Z",
+  "last_ts": "2026-11-14T20:43:58.057Z"
+}

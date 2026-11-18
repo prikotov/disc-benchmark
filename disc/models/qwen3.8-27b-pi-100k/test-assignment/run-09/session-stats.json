@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T21-26-37-768Z_01a1dbf4-85c7-7036-a68d-38d14ee0b0ef.jsonl",
+  "turns": 26,
+  "tool_calls": 25,
+  "tools_by_name": {
+    "bash": 17,
+    "read": 2,
+    "write": 2,
+    "edit": 4
+  },
+  "tokens_in": 25441,
+  "tokens_out": 18464,
+  "bash_total": 6,
+  "bash_with_network": 5,
+  "curl_to_source": 5,
+  "network_cmds_sample": [
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-dkhbddwt/run && curl -sL -A \\\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0 Safari/537.36\\\" https://stratoplan-school.com/disc/ -o page.html && wc -c page.html",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-dkhbddwt/run && curl -sL https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6 -o disc_patched.js && wc -c disc_patched.js && head -50 disc_patched.js",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-dkhbddwt/run && curl -sL -A \\\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0 Safari/537.36\\\" -e \\\"https://stratoplan-school.com/disc/\\\" -w \\\"HTTP %{http_code} size %{size_download}\\ \\\" https://stratoplan-school.com/js/",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-dkhbddwt/run && curl -sL -A \\\"Mozilla/5.0 (X11; Linux x86_64) Chrome/143.0\\\" -e \\\"https://stratoplan-school.com/disc/\\\" \\\"https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6\\\" -o disc.js && head -c 400 disc.js && echo && wc -c disc.js",
+    "cd /home/dp/MyProjects/disc/.tmpwork/disc-pi-dkhbddwt/run && curl -sL -A \\\"Mozilla/5.0 Chrome/143.0\\\" \\\"https://stratoplan-school.com/disc/result/\\\" -o result.html && grep -noE '(disc_result[._-][a-z0-9]*|score[a-zA-Z]*|\\\"d\\\"|\\\"i\\\"|\\\"s\\\"|\\\"c\\\"|Доминиру|типа)' result.html | sort | uniq -c | head -30;"
+  ],
+  "errors": 0,
+  "first_ts": "2026-11-14T21:26:37.768Z",
+  "last_ts": "2026-11-14T21:29:02.140Z"
+}

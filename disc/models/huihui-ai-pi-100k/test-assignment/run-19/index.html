@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тестирование DISC — тест на типы поведения</title>
+<style>
+  :root{
+    --bg:#f2f5f9;
+    --card:#ffffff;
+    --ink:#1c2430;
+    --muted:#66707f;
+    --line:#e2e7ef;
+    --brand:#2b59c3;
+    --brand-ink:#ffffff;
+    --d:#d64545;
+    --i:#e8930c;
+    --s:#2f9e63;
+    --c:#3b6fe0;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px -12px rgba(16,24,40,.15);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 500px at 50% -200px, #dfe8f5 0%, rgba(223,232,245,0) 70%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .app{
+    max-width:1120px;
+    margin:0 auto;
+    padding:32px 20px 56px;
+  }
+
+  /* ===== header ===== */
+  .app__head{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+    margin-bottom:22px;
+  }
+  .brand{
+    flex:0 0 auto;
+    width:56px;height:56px;
+    border-radius:16px;
+    background:var(--card);
+    box-shadow:var(--shadow);
+    display:grid;
+    place-items:center;
+  }
+  .app__title{
+    margin:0;
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  .app__sub{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:15px;
+  }
+  .app__lead{
+    margin:10px 0 0;
+    font-size:15px;
+    font-weight:600;
+  }
+  .app__lead .hint{
+    display:inline-block;
+    color:var(--brand);
+  }
+
+  /* ===== tabs ===== */
+  .tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:10px 2px;
+    margin-bottom:6px;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    border-radius:999px;
+    padding:8px 16px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .tab:hover{border-color:#c9d2e0}
+  .tab.is-active,
+  .tab[aria-selected="true"]{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:#fff;
+  }
+
+  /* ===== panes / cards ===== */
+  .pane{display:none}
+  .pane.is-active{display:block; animation:fade .18s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .grid3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  @media (max-width:980px){
+    .grid3{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:640px){
+    .grid3{grid-template-columns:1fr}
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px 14px 12px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .card__cap{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .card__cap--top{color:#2b7a4b}
+  .card__cap--foot{color:#a05a2c}
+  .card__cap svg{flex:0 0 auto}
+
+  /* ===== dragger list ===== */
+  .disc-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-height:100%;
+  }
+  .disc-item{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#fbfcfe;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px 10px 8px;
+    font-size:15px;
+    font-weight:500;
+    user-select:none;
+    -webkit-user-select:none;
+    cursor:grab;
+    touch-action:auto;
+    will-change:transform;
+  }
+  .disc-item.is-dragging{
+    cursor:grabbing;
+    background:#fff;
+    border-color:#b9c6dd;
+    box-shadow:0 8px 20px -8px rgba(16,24,40,.35);
+  }
+  .disc-index{
+    flex:0 0 auto;
+    width:22px;height:22px;
+    border-radius:7px;
+    display:grid;
+    place-items:center;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    background:#dde4ef;
+    transition:background .15s,color .15s;
+  }
+  .disc-item[data-type="d"] .disc-index{background:var(--d)}
+  .disc-item[data-type="i"] .disc-index{background:var(--i)}
+  .disc-item[data-type="s"] .disc-index{background:var(--s)}
+  .disc-item[data-type="c"] .disc-index{background:var(--c)}
+  .disc-item.is-top .disc-index{box-shadow:0 0 0 3px rgba(43,122,75,.25)}
+  .disc-item.is-bottom .disc-index{box-shadow:0 0 0 3px rgba(160,90,44,.25)}
+  .disc-handle{
+    flex:0 0 auto;
+    display:grid;
+    place-items:center;
+    width:26px;height:30px;
+    margin-right:-4px;
+    border-radius:8px;
+    color:#9aa5b5;
+    cursor:grab;
+    touch-action:none;
+  }
+  .disc-handle:hover{background:#eef2f8;color:#5c6a80}
+  .disc-item.is-dragging .disc-handle{color:#5c6a80}
+  .disc-text{
+    flex:1 1 auto;
+    min-width:0;
+  }
+
+  /* ===== progress + actions ===== */
+  .wizard-foot{
+    margin-top:18px;
+  }
+  .progress{
+    height:6px;
+    border-radius:999px;
+    background:#dde4ef;
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .progress__bar{
+    height:100%;
+    width:12.5%;
+    border-radius:999px;
+    background:linear-gradient(90deg,#2b59c3 0%, #3b6fe0 100%);
+    transition:width .25s ease;
+  }
+  .actions{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border-radius:11px;
+    border:1px solid transparent;
+    padding:11px 20px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s,border-color .15s,transform .05s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn--ghost{
+    background:var(--card);
+    border-color:var(--line);
+    color:var(--ink);
+  }
+  .btn--ghost:hover:not(:disabled){border-color:#c9d2e0}
+  .btn--ghost:disabled{opacity:.45;cursor:default}
+  .btn--primary{
+    background:var(--brand);
+    color:var(--brand-ink);
+  }
+  .btn--primary:hover{background:#2550ad}
+  .btn--done{
+    background:var(--s);
+    color:#fff;
+  }
+  .btn--done:hover{background:#288a55}
+
+  /* ===== result ===== */
+  .result{
+    display:none;
+    margin-top:4px;
+  }
+  .result.is-shown{display:block; animation:fade .2s ease}
+  .result__card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:32px 28px 28px;
+    max-width:760px;
+    margin:0 auto;
+    text-align:center;
+  }
+  .result__badge{
+    width:54px;height:54px;
+    margin:0 auto 14px;
+    border-radius:16px;
+    display:grid;place-items:center;
+    background:#e9f6ee;
+    color:var(--s);
+  }
+  .result__title{
+    margin:0 0 6px;
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  .result__line{
+    margin:0 0 22px;
+    color:var(--muted);
+    font-size:15px;
+  }
+  .result__score{
+    display:inline-block;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:.01em;
+    background:#f6f8fb;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 26px;
+    margin-bottom:24px;
+    font-variant-numeric:tabular-nums;
+  }
+  .result__grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:26px;
+    text-align:left;
+  }
+  @media (max-width:640px){
+    .result__grid{grid-template-columns:repeat(2,1fr)}
+  }
+  .result__tile{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    background:#fbfcfe;
+  }
+  .result__tile b{
+    display:block;
+    font-size:22px;
+    font-variant-numeric:tabular-nums;
+    margin-bottom:2px;
+  }
+  .result__tile span{
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.35;
+    display:block;
+  }
+  .result__tile[data-k="d"] b{color:var(--d)}
+  .result__tile[data-k="i"] b{color:var(--i)}
+  .result__tile[data-k="s"] b{color:var(--s)}
+  .result__tile[data-k="c"] b{color:var(--c)}
+  .result__note{
+    margin:0 auto 20px;
+    max-width:560px;
+    color:var(--muted);
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+<main class="app">
+
+  <header class="app__head">
+    <div class="brand" aria-hidden="true">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="16" height="16" rx="5" fill="#d64545"/>
+        <rect x="22" y="2" width="16" height="16" rx="5" fill="#e8930c"/>
+        <rect x="2" y="22" width="16" height="16" rx="5" fill="#2f9e63"/>
+        <rect x="22" y="22" width="16" height="16" rx="5" fill="#3b6fe0"/>
+        <text x="10" y="14.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#fff">D</text>
+        <text x="30" y="14.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#fff">I</text>
+        <text x="10" y="34.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#fff">S</text>
+        <text x="30" y="34.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#fff">C</text>
+      </svg>
+    </div>
+    <div>
+      <h1 class="app__title">Тестирование DISC</h1>
+      <p class="app__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+      <p class="app__lead">Разместите блоки в порядке от <span class="hint">наиболее похожего на вас</span> до наименее похожего</p>
+    </div>
+  </header>
+
+  <!-- ============ wizard ============ -->
+  <section id="wizard" aria-label="Тест DISC">
+    <nav class="tabs" role="tablist" aria-label="Шаги">
+      <button class="tab is-active" type="button" role="tab" aria-selected="true" data-step="0">Первый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step="1">Второй</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step="2">Третий</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step="3">Четвертый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step="4">Пятый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step="5">Шестой</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step="6">Седьмой</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step="7">Восьмой</button>
+    </nav>
+
+    <div id="panes"></div>
+
+    <div class="wizard-foot">
+      <div class="progress" aria-hidden="true">
+        <div class="progress__bar" id="discProgress"></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn--ghost" type="button" id="btnPrev">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3.5 5.5 8 10 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Назад
+        </button>
+        <button class="btn btn--primary" type="button" id="btnNext">
+          Далее
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn btn--done" type="button" id="btnFinish" hidden>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8.5 6 12 13.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Завершить тест
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ result ============ -->
+  <section class="result" id="result" aria-live="polite">
+    <div class="result__card">
+      <div class="result__badge" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4.5 15 11 21.5 23.5 8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2 class="result__title">Тест завершён</h2>
+      <p class="result__line">Ваш DISC-профиль:</p>
+      <div class="result__score" id="scoreLine">D:0, I:0, S:0, C:0</div>
+
+      <div class="result__grid">
+        <div class="result__tile" data-k="d"><b id="sc-d">0</b><span>D — Dominance («доминирование»)</span></div>
+        <div class="result__tile" data-k="i"><b id="sc-i">0</b><span>I — Influence («влияние»)</span></div>
+        <div class="result__tile" data-k="s"><b id="sc-s">0</b><span>S — Stability («стабильность»)</span></div>
+        <div class="result__tile" data-k="c"><b id="sc-c">0</b><span>C — Compliance («соответствие»)</span></div>
+      </div>
+
+      <p class="result__note">Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем вам научиться использовать этот инструмент для самотестирования, а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</p>
+
+      <button class="btn btn--ghost" type="button" id="btnRestart">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 1.8v3h-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Пройти заново
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+"use strict";
+
+// ===================== data (verbatim from original) =====================
+const LISTS = [
+  [{"t": "i", "x": "Экспресcивный"}, {"t": "c", "x": "Покладистый"}, {"t": "d", "x": "Волевой"}, {"t": "s", "x": "Осторожный"}],
+  [{"t": "d", "x": "Пылкий"}, {"t": "i", "x": "Разговорчивый"}, {"t": "s", "x": "Добродушный"}, {"t": "c", "x": "Сдержанный"}],
+  [{"t": "i", "x": "Любитель приключений"}, {"t": "c", "x": "Энтузиаст"}, {"t": "d", "x": "Исполнитель инструкций"}, {"t": "s", "x": "Верный"}],
+  [{"t": "d", "x": "Настойчивый"}, {"t": "c", "x": "Осторожный"}, {"t": "i", "x": "Эмоциональный"}, {"t": "s", "x": "Удовлетворенный"}],
+  [{"t": "s", "x": "Довольный"}, {"t": "d", "x": "Нетерпеливый"}, {"t": "i", "x": "Убедительный"}, {"t": "c", "x": "Безропотный"}],
+  [{"t": "c", "x": "Смиренный"}, {"t": "s", "x": "Умеющий слушать"}, {"t": "i", "x": "Душа компании"}, {"t": "d", "x": "Волевой"}],
+  [{"t": "c", "x": "Правильный"}, {"t": "d", "x": "Первопроходец"}, {"t": "s", "x": "Спокойный"}, {"t": "i", "x": "Влиятельный"}],
+  [{"t": "c", "x": "Почтительный"}, {"t": "i", "x": "Контактный"}, {"t": "d", "x": "Агрессивный"}, {"t": "s", "x": "Мягкий"}],
+  [{"t": "i", "x": "Весельчак"}, {"t": "s", "x": "Покорный"}, {"t": "c", "x": "Тактичный"}, {"t": "d", "x": "Соперничающий"}],
+  [{"t": "c", "x": "Точный"}, {"t": "d", "x": "Доминирующий"}, {"t": "s", "x": "Охотный"}, {"t": "i", "x": "Притягательный"}],
+  [{"t": "i", "x": "Уравновешенный"}, {"t": "c", "x": "Уступчивый"}, {"t": "d", "x": "Идущий на риск"}, {"t": "s", "x": "Услужливый"}],
+  [{"t": "c", "x": "Осмотрительный"}, {"t": "s", "x": "Добрососедский"}, {"t": "d", "x": "Энергичный"}, {"t": "i", "x": "Убедительный"}],
+  [{"t": "s", "x": "Уравновешенный"}, {"t": "i", "x": "Мотивирующий"}, {"t": "c", "x": "Щепетильный"}, {"t": "d", "x": "Решительный"}],
+  [{"t": "i", "x": "Уверенный"}, {"t": "c", "x": "Готовый к сотрудничеству"}, {"t": "s", "x": "Беззаботный"}, {"t": "d", "x": "Аргументирующий"}],
+  [{"t": "s", "x": "Сдержанный"}, {"t": "d", "x": "Прямой"}, {"t": "c", "x": "Строгий"}, {"t": "i", "x": "Убедительный"}],
+  [{"t": "c", "x": "Застенчивый"}, {"t": "d", "x": "Требовательный"}, {"t": "s", "x": "Терпеливый"}, {"t": "i", "x": "Очаровательный"}],
+  [{"t": "d", "x": "Неугомонный"}, {"t": "c", "x": "Дисциплинированный"}, {"t": "i", "x": "Вдохновляющий"}, {"t": "s", "x": "Внимательный"}],
+  [{"t": "s", "x": "Обязательный"}, {"t": "i", "x": "Оживленный"}, {"t": "d", "x": "Решительный"}, {"t": "c", "x": "Точный"}],
+  [{"t": "c", "x": "Добросовестный"}, {"t": "i", "x": "Компанейский"}, {"t": "s", "x": "Добрый"}, {"t": "d", "x": "Уверенный в себе"}],
+  [{"t": "c", "x": "Дипломатичный"}, {"t": "d", "x": "Отважный"}, {"t": "s", "x": "Сочувствующий"}, {"t": "i", "x": "Оптимистичный"}],
+  [{"t": "d", "x": "Настойчивый"}, {"t": "i", "x": "Общительный"}, {"t": "s", "x": "Постоянный"}, {"t": "c", "x": "Организованный"}],
+  [{"t": "c", "x": "Соглашающийся"}, {"t": "s", "x": "Владеющий собой"}, {"t": "d", "x": "Шутливый"}, {"t": "i", "x": "Настойчивый"}],
+  [{"t": "i", "x": "Обаятельный"}, {"t": "d", "x": "Позитивный"}, {"t": "s", "x": "Снисходительный"}, {"t": "c", "x": "Требовательный"}],
+  [{"t": "i", "x": "Коммуникабельный"}, {"t": "d", "x": "Смелый"}, {"t": "c", "x": "Перфекционист"}, {"t": "s", "x": "Сдержанный"}]
+];
+const STEP_COUNT = 8; // 8 шагов, по 3 списка в каждом — как в оригинале
+
+// ===================== render panes =====================
+const UP_SVG = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 9.5v-7M2.8 5.8 6 2.5l3.2 3.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DOWN_SVG = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 2.5v7M2.8 6.2 6 9.5l3.2-3.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const HANDLE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 4C5 3.86 5 3.791 5.008 3.733C5.03345 3.54971 5.11803 3.37973 5.24888 3.24888C5.37973 3.11803 5.54971 3.03345 5.733 3.008C5.79 3 5.86 3 6 3C6.14 3 6.209 3 6.267 3.008C6.45029 3.03345 6.62027 3.11803 6.75112 3.24888C6.88197 3.37973 6.96655 3.54971 6.992 3.733C7 3.79 7 3.86 7 4C7 4.14 7 4.209 6.992 4.267C6.96655 4.45029 6.88197 4.62027 6.75112 4.75112C6.62027 4.88197 6.45029 4.96655 6.267 4.992C6.21 5 6.14 5 6 5C5.86 5 5.791 5 5.733 4.992C5.54971 4.96655 5.37973 4.88197 5.24888 4.75112C5.11803 4.62027 5.03345 4.45029 5.008 4.267C5 4.21 5 4.14 5 4ZM5 8C5 7.86 5 7.791 5.008 7.733C5.03345 7.54971 5.11803 7.37973 5.24888 7.24888C5.37973 7.11803 5.54971 7.03345 5.733 7.008C5.79 7 5.86 7 6 7C6.14 7 6.209 7 6.267 7.008C6.45029 7.03345 6.62027 7.11803 6.75112 7.24888C6.88197 7.37973 6.96655 7.54971 6.992 7.733C7 7.79 7 7.86 7 8C7 8.14 7 8.209 6.992 8.267C6.96655 8.45029 6.88197 8.62027 6.75112 8.75112C6.62027 8.88197 6.45029 8.96655 6.267 8.992C6.21 9 6.14 9 6 9C5.86 9 5.791 9 5.733 8.992C5.54971 8.96655 5.37973 8.88197 5.24888 8.75112C5.11803 8.62027 5.03345 8.45029 5.008 8.267C5 8.21 5 8.14 5 8ZM5 12C5 11.861 5 11.791 5.008 11.733C5.0336 11.55 5.11812 11.3804 5.24876 11.2498C5.37939 11.1191 5.54904 11.0346 5.732 11.009C5.791 11.001 5.86 11.001 5.999 11.001C6.138 11.001 6.209 11.001 6.266 11.009C6.44896 11.0346 6.61861 11.1191 6.74924 11.2498C6.87988 11.3804 6.9644 11.55 6.99 11.733C6.998 11.791 6.998 11.861 6.998 12C6.998 12.139 6.998 12.209 6.99 12.267C6.9644 12.45 6.87988 12.6196 6.74924 12.7502C6.61861 12.8809 6.44896 12.9654 6.266 12.991C6.208 12.999 6.138 12.999 5.999 12.999C5.86 12.999 5.79 12.999 5.732 12.991C5.54904 12.9654 5.37939 12.8809 5.24876 12.7502C5.11812 12.6196 5.0336 12.45 5.008 12.267C5 12.209 5 12.139 5 12ZM9 4C9 3.86 9 3.791 9.008 3.733C9.03345 3.54971 9.11803 3.37973 9.24888 3.24888C9.37973 3.11803 9.54971 3.03345 9.733 3.008C9.79 3 9.86 3 10 3C10.14 3 10.209 3 10.267 3.008C10.4503 3.03345 10.6203 3.11803 10.7511 3.24888C10.882 3.37973 10.9665 3.54971 10.992 3.733C11 3.79 11 3.86 11 4C11 4.14 11 4.209 10.992 4.267C10.9665 4.45029 10.882 4.62027 10.7511 4.75112C10.6203 4.88197 10.4503 4.96655 10.267 4.992C10.21 5 10.14 5 10 5C9.86 5 9.791 5 9.733 4.992C9.54971 4.96655 9.37973 4.88197 9.24888 4.75112C9.11803 4.62027 9.03345 4.45029 9.008 4.267C9 4.21 9 4.14 9 4ZM9 8C9 7.86 9 7.791 9.008 7.733C9.03345 7.54971 9.11803 7.37973 9.24888 7.24888C9.37973 7.11803 9.54971 7.03345 9.733 7.008C9.79 7 9.86 7 10 7C10.14 7 10.209 7 10.267 7.008C10.4503 7.03345 10.6203 7.11803 10.7511 7.24888C10.882 7.37973 10.9665 7.54971 10.992 7.733C11 7.79 11 7.86 11 8C11 8.14 11 8.209 10.992 8.267C10.9665 8.45029 10.882 8.62027 10.7511 8.75112C10.6203 8.88197 10.4503 8.96655 10.267 8.992C10.21 9 10.14 9 10 9C9.86 9 9.791 9 9.733 8.992C9.54971 8.96655 9.37973 8.88197 9.24888 8.75112C9.11803 8.62027 9.03345 8.45029 9.008 8.267C9 8.21 9 8.14 9 8ZM9 12C9 11.861 9 11.791 9.008 11.733C9.0336 11.55 9.11812 11.3804 9.24876 11.2498C9.37939 11.1191 9.54904 11.0346 9.732 11.009C9.791 11.001 9.86 11.001 9.999 11.001C10.139 11.001 10.209 11.001 10.266 11.009C10.449 11.0346 10.6186 11.1191 10.7492 11.2498C10.8799 11.3804 10.9644 11.55 10.99 11.733C10.998 11.791 10.998 11.861 10.998 12C10.998 12.139 10.998 12.209 10.99 12.267C10.9644 12.45 10.87988 12.6196 10.7492 12.7502C10.6186 12.8809 10.449 12.9654 10.266 12.991C10.208 12.999 10.138 12.999 9.999 12.999C9.86 12.999 9.79 12.999 9.732 12.991C9.54904 12.9654 9.37939 12.8809 9.24876 12.7502C9.11812 12.6196 9.0336 12.45 9.008 12.267C9 12.209 9 12.139 9 12Z" fill="#B3B3B3"/></svg>';
+
+function makeItem(item){
+  const li = document.createElement("li");
+  li.className = "disc-item";
+  li.setAttribute("data-type", item.t);
+  const idx = document.createElement("span");
+  idx.className = "disc-index";
+  idx.textContent = "1";
+  idx.setAttribute("aria-hidden", "true");
+  const handle = document.createElement("span");
+  handle.className = "disc-handle";
+  handle.setAttribute("aria-hidden", "true");
+  handle.innerHTML = HANDLE_SVG;
+  const text = document.createElement("span");
+  text.className = "disc-text";
+  text.textContent = item.x;
+  li.appendChild(handle);
+  li.appendChild(idx);
+  li.appendChild(text);
+  return li;
+}
+
+function refreshList(ul){
+  Array.from(ul.children).forEach((li, i) => {
+    li.querySelector(".disc-index").textContent = String(i + 1);
+    li.classList.toggle("is-top", i === 0);
+    li.classList.toggle("is-bottom", i === ul.children.length - 1);
+  });
+}
+
+const panesEl = document.getElementById("panes");
+for (let step = 0; step < STEP_COUNT; step++){
+  const pane = document.createElement("div");
+  pane.className = "pane" + (step === 0 ? " is-active" : "");
+  pane.dataset.pane = String(step);
+  pane.setAttribute("role", "tabpanel");
+  const grid = document.createElement("div");
+  grid.className = "grid3";
+  for (let card = 0; card < 3; card++){
+    const listIdx = step * 3 + card;
+    const cardEl = document.createElement("div");
+    cardEl.className = "card";
+    const capTop = document.createElement("div");
+    capTop.className = "card__cap card__cap--top";
+    capTop.innerHTML = UP_SVG;
+    capTop.appendChild(document.createTextNode("Я наиболее"));
+    const ul = document.createElement("ul");
+    ul.className = "disc-list";
+    LISTS[listIdx].forEach(it => ul.appendChild(makeItem(it)));
+    const capFoot = document.createElement("div");
+    capFoot.className = "card__cap card__cap--foot";
+    capFoot.appendChild(document.createTextNode("Я наименее "));
+    const spanFoot = document.createElement("span");
+    spanFoot.innerHTML = DOWN_SVG;
+    capFoot.appendChild(spanFoot);
+    cardEl.appendChild(capTop);
+    cardEl.appendChild(ul);
+    cardEl.appendChild(capFoot);
+    grid.appendChild(cardEl);
+  }
+  pane.appendChild(grid);
+  panesEl.appendChild(pane);
+}
+
+// ===================== step navigation =====================
+let step = 0;
+const tabs = Array.from(document.querySelectorAll(".tab"));
+const panes = Array.from(document.querySelectorAll(".pane"));
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const btnFinish = document.getElementById("btnFinish");
+const progressEl = document.getElementById("discProgress");
+
+function render(){
+  tabs.forEach(t => {
+    const on = Number(t.dataset.step) === step;
+    t.classList.toggle("is-active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  panes.forEach(p => p.classList.toggle("is-active", Number(p.dataset.pane) === step));
+  btnPrev.disabled = step === 0;
+  btnNext.hidden = step === STEP_COUNT - 1;
+  btnFinish.hidden = step !== STEP_COUNT - 1;
+  progressEl.style.width = (((step + 1) / STEP_COUNT) * 100) + "%";
+}
+
+function setStep(n){
+  step = Math.max(0, Math.min(STEP_COUNT - 1, n));
+  render();
+}
+
+tabs.forEach(t => t.addEventListener("click", () => setStep(Number(t.dataset.step))));
+btnPrev.addEventListener("click", () => setStep(step - 1));
+btnNext.addEventListener("click", () => setStep(step + 1));
+
+// ===================== collect + score (as in original) =====================
+function collectPayload(){
+  const payload = [];
+  const lists = document.querySelectorAll(".disc-list");
+  lists.forEach((ul, listIndex) => {
+    Array.from(ul.children).forEach((li, idx) => {
+      payload.push({ list: listIndex, pos: idx, type: li.getAttribute("data-type") });
+    });
+  });
+  return payload;
+}
+
+function score(payload){
+  // позиция 0 — «наиболее», позиция 3 — «наименее» (как в оригинале)
+  const maj = [];
+  const min = [];
+  payload.forEach((x) => {
+    if (x.pos === 0) maj.push(x.type);
+    if (x.pos === 3) min.push(x.type);
+  });
+  const count = (arr, ch) => arr.reduce((a, v) => a + (v === ch ? 1 : 0), 0);
+  return {
+    d: count(maj, "d") - count(min, "d"),
+    i: count(maj, "i") - count(min, "i"),
+    s: count(maj, "s") - count(min, "s"),
+    c: count(maj, "c") - count(min, "c"),
+  };
+}
+
+// ===================== finish / result =====================
+const wizardEl = document.getElementById("wizard");
+const resultEl = document.getElementById("result");
+const scoreLine = document.getElementById("scoreLine");
+
+btnFinish.addEventListener("click", () => {
+  const res = score(collectPayload());
+  scoreLine.textContent = `D:${res.d}, I:${res.i}, S:${res.s}, C:${res.c}`;
+  document.getElementById("sc-d").textContent = String(res.d);
+  document.getElementById("sc-i").textContent = String(res.i);
+  document.getElementById("sc-s").textContent = String(res.s);
+  document.getElementById("sc-c").textContent = String(res.c);
+  wizardEl.style.display = "none";
+  resultEl.classList.add("is-shown");
+  window.scrollTo({ top: 0, behavior: "auto" });
+});
+
+document.getElementById("btnRestart").addEventListener("click", () => {
+  // вернуть исходный порядок (эквивалент новой страницы в оригинале)
+  document.querySelectorAll(".disc-list").forEach(ul => {
+    const n = Array.from(ul.children).length; // 4
+    ul.innerHTML = "";
+    const listIdx = Array.from(panesEl.querySelectorAll(".disc-list")).indexOf(ul);
+    LISTS[listIdx].forEach(it => ul.appendChild(makeItem(it)));
+    refreshList(ul);
+  });
+  resultEl.classList.remove("is-shown");
+  wizardEl.style.display = "";
+  setStep(0);
+  window.scrollTo({ top: 0, behavior: "auto" });
+});
+
+// ===================== drag & drop (Pointer Events, self-contained) =====================
+function makeSortable(ul){
+  let st = null;
+
+  ul.addEventListener("pointerdown", (e) => {
+    const item = e.target.closest("li.disc-item");
+    if (!item || st) return;
+    // как в оригинале: мышь — тащим за весь элемент; сенсорный ввод — только за handle
+    if (e.pointerType !== "mouse" && !e.target.closest(".disc-handle")) return;
+    e.preventDefault();
+    const order = Array.from(ul.children);
+    const firsts = new Map(order.map(el => [el, el.getBoundingClientRect()]));
+    st = { item, order, firsts, startY: e.clientY, pid: e.pointerId };
+    try { item.setPointerCapture(e.pointerId); } catch (_) { /* синтетические/edge-события: pointer capture необязателен */ }
+    item.classList.add("is-dragging");
+  });
+
+  ul.addEventListener("pointermove", (e) => {
+    if (!st || e.pointerId !== st.pid) return;
+    e.preventDefault();
+    const dy = e.clientY - st.startY;
+    st.item.style.transform = `translate3d(0,${dy}px,0)`;
+    const visualCenter = st.item.getBoundingClientRect().top + st.item.offsetHeight / 2;
+
+    // желаемый индекс по статичным позициям остальных (они неподвижны)
+    let desired = 0;
+    for (const el of st.order){
+      if (el === st.item) continue;
+      const r = st.firsts.get(el);
+      if (e.clientY > r.top + r.height / 2) desired++;
+    }
+    const current = Array.from(ul.children).indexOf(st.item);
+    if (desired !== current){
+      const others = Array.from(ul.children).filter(el => el !== st.item);
+      ul.insertBefore(st.item, others[desired] || null);
+      // компенсация смены layout-позиции: визуальное место не меняется
+      st.item.style.transform = "translate3d(0,0px,0)";
+      const layoutCenter = st.item.getBoundingClientRect().top + st.item.offsetHeight / 2;
+      st.item.style.transform = `translate3d(0,${visualCenter - layoutCenter}px,0)`;
+      refreshList(ul);
+    }
+  });
+
+  const finish = (e) => {
+    if (!st || (e && e.pointerId !== st.pid)) return;
+    const it = st.item;
+    st = null;
+    it.style.transition = "transform 130ms ease";
+    requestAnimationFrame(() => { it.style.transform = ""; });
+    const done = () => {
+      it.style.transition = "";
+      it.classList.remove("is-dragging");
+    };
+    it.addEventListener("transitionend", done, { once: true });
+    setTimeout(done, 170); // страховка, если transitionend не придёт
+    refreshList(ul);
+  };
+
+  ul.addEventListener("pointerup", finish);
+  ul.addEventListener("pointercancel", finish);
+}
+
+document.querySelectorAll(".disc-list").forEach(ul => {
+  refreshList(ul);
+  makeSortable(ul);
+});
+
+render();
+</script>
+</body>
+</html>

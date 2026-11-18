@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Тест</title>
+    <style>
+        :root {
+            --primary: #268AC5;
+            --bg: #F8F9FA;
+            --text: #333;
+            --white: #fff;
+            --border: #ddd;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 900px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .step-view {
+            display: none;
+        }
+
+        .step-view.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .card-foot {
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            user-select: none;
+        }
+
+        .item {
+            background: #f9f9f9;
+            border: 1px-solid var(--border);
+            border: 1px solid var(--border);
+            margin: 5px 0;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: grab;
+            text-align: center;
+            transition: background 0.2s, transform 0.1s;
+            font-size: 15px;
+        }
+
+        .item:active {
+            cursor: grabbing;
+        }
+
+        .item.dragging {
+            opacity: 0.5;
+            background: #eef;
+            transform: scale(0.98);
+        }
+
+        .item.over {
+            border-color: var(--primary);
+            background: #eef;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #666;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .result-view {
+            display: none;
+            text-align: center;
+        }
+
+        .result-view.active {
+            display: block;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .result-item {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 12px;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .result-type {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+        }
+
+        .result-value {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+
+        .result-desc {
+            margin-top: 20px;
+            line-height: 1.6;
+            color: #555;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <h1>DISC Тест</h1>
+            <p>Распределите качества, которые наиболее и наименее соответствуют вам.</p>
+        </div>
+
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+
+        <div id="wizard">
+            <!-- Steps will be injected here -->
+        </div>
+
+        <div class="actions" id="actions">
+            <button class="btn btn-ghost" id="btn-prev">Назад</button>
+            <button class="btn btn-primary" id="btn-next">Далее</button>
+            <button class="btn btn-primary" id="btn-finish" style="display: none;">Завершить тест</button>
+        </div>
+
+        <div id="results" class="result-view">
+            <h2>Ваши результаты</h2>
+            <div class="results-grid" id="results-grid">
+                <!-- Result scores -->
+            </div>
+            <div class="result-desc">
+                <p><b>D (Доминирование):</b> Решительность, уверенность, настойчивость.</p>
+                <p><b>I (Влияние):</b> Общительность, оптимизм, вдохновение.</p>
+                <p><b>S (Стабильность):</b> Терпение, верность, спокойствие.</p>
+                <p><b>C (Соответствие):</b> Точность, дисциплина, осторожность.</p>
+            </div>
+            <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 30px;">Пройти заново</button>
+        </div>
+    </div>
+
+    <script>
+        const TEST_DATA = [
+          [{"text": "Экспресcивный","type": "i"},{"text": "Покладистый","type": "c"},{"text": "Волевой","type": "d"},{"text": "Осторожный","type": "s"}],
+          [{"text": "Пылкий","type": "d"},{"text": "Разговорчивый","type": "i"},{"text": "Добродушный","type": "s"},{"text": "Сдержанный","type": "c"}],
+          [{"text": "Любитель приключений","type": "i"},{"text": "Энтузиаст","type": "c"},{"text": "Исполнитель инструкций","type": "d"},{"text": "Верный","type": "s"}],
+          [{"text": "Настойчивый","type": "d"},{"text": "Осторожный","type": "c"},{"text": "Эмоциональный","type": "i"},{"text": "Удовлетворенный","type": "s"}],
+          [{"text": "Довольный","type": "s"},{"text": "Нетерпеливый","type": "d"},{"text": "Убедительный","type": "i"},{"text": "Безропотный","type": "c"}],
+          [{"text": "Смиренный","type": "c"},{"text": "Умеющий слушать","type": "s"},{"text": "Душа компании","type": "i"},{"text": "Волевой","type": "d"}],
+          [{"text": "Правильный","type": "c"},{"text": "Первопроходец","type": "d"},{"text": "Спокойный","type": "s"},{"text": "Влиятельный","type": "i"}],
+          [{"text": "Почтительный","type": "c"},{"text": "Контактный","type": "i"},{"text": "Агрессивный","type": "d"},{"text": "Мягкий","type": "s"}],
+          [{"text": "Весельчак","type": "i"},{"text": "Покорный","type": "s"},{"text": "Тактичный","type": "c"},{"text": "Соперничающий","type": "d"}],
+          [{"text": "Точный","type": "c"},{"text": "Доминирующий","type": "d"},{"text": "Охотный","type": "s"},{"text": "Притягательный","type": "i"}],
+          [{"text": "Уравновешенный","type": "i"},{"text": "Уступчивый","type": "c"},{"text": "Идущий на риск","type": "d"},{"text": "Услужливый","type": "s"}],
+          [{"text": "Осмотрительный","type": "c"},{"text": "Добрососедский","type": "s"},{"text": "Энергичный","type": "d"},{"text": "Убедительный","type": "i"}],
+          [{"text": "Уравновешенный","type": "s"},{"text": "Мотивирующий","type": "i"},{"text": "Щепетильный","type": "c"},{"text": "Решительный","type": "d"}],
+          [{"text": "Уверенный","type": "i"},{"text": "Готовый к сотрудничеству","type": "c"},{"text": "Беззаботный","type": "s"},{"text": "Аргументирующий","type": "d"}],
+          [{"text": "Сдержанный","type": "s"},{"text": "Прямой","type": "d"},{"text": "Строгий","type": "c"},{"text": "Убедительный","type": "i"}],
+          [{"text": "Застенчивый","type": "c"},{"text": "Требовательный","type": "d"},{"text": "Терпеливый","type": "s"},{"text": "Очаровательный","type": "i"}],
+          [{"text": "Неугомонный","type": "d"},{"text": "Дисциплинированный","type": "c"},{"text": "Вдохновляющий","type": "i"},{"text": "Внимательный","type": "s"}],
+          [{"text": "Обязательный","type": "s"},{"text": "Оживленный","type": "i"},{"text": "Решительный","type": "d"},{"text": "Точный","type": "c"}],
+          [{"text": "Добросовестный","type": "c"},{"text": "Компанейский","type": "i"},{"text": "Добрый","type": "s"},{"text": "Уверенный в себе","type": "d"}],
+          [{"text": "Дипломатичный","type": "c"},{"text": "Отважный","type": "d"},{"text": "Сочувствующий","type": "s"},{"text": "Оптимистичный","type": "i"}],
+          [{"text": "Настойчивый","type": "d"},{"text": "Общительный","type": "i"},{"text": "Постоянный","type": "s"},{"text": "Организованный","type": "c"}],
+          [{"text": "Соглашающийся","type": "c"},{"text": "Владеющий собой","type": "s"},{"text": "Шутливый","type": "d"},{"text": "Настойчивый","type": "i"}],
+          [{"text": "Обаятельный","type": "i"},{"text": "Позитивный","type": "d"},{"text": "Снисходительный","type": "s"},{"text": "Требовательный","type": "c"}],
+          [{"text": "Коммуникабельный","type": "i"},{"text": "Смелый","type": "d"},{"text": "Перфекционист","type": "c"},{"text": "Сдержанный","type": "s"}]
+        ];
+
+        let currentStep = 0;
+        const totalSteps = 8;
+        const listsPerStep = 3;
+        const state = TEST_DATA.map(list => [...list]);
+
+        function initWizard() {
+            const wizard = document.getElementById('wizard');
+            for (let i = 0; i < totalSteps; i++) {
+                const stepView = document.createElement('div');
+                stepView.className = 'step-view';
+                stepView.id = `step-${i}`;
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+                for (let j = 0; j < listsPerStep; j++) {
+                    const listIdx = i * listsPerStep + j;
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-title">Я наиболее</div>
+                        <ul class="list" data-list-idx="${listIdx}"></ul>
+                        <div class="card-foot">Я наименее</div>
+                    `;
+                    const listEl = card.querySelector('.list');
+                    renderList(listEl, listIdx);
+                    grid.appendChild(card);
+                }
+                stepView.appendChild(grid);
+                wizard.appendChild(stepView);
+            }
+            updateView();
+        }
+
+        function renderList(listEl, listIdx) {
+            listEl.innerHTML = '';
+            state[listIdx].forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'item';
+                li.textContent = item.text;
+                li.dataset.index = index;
+                li.draggable = true;
+                li.addEventListener('dragstart', handleDragStart);
+                li.addEventListener('dragover', handleDragOver);
+                li.addEventListener('drop', handleDrop);
+                li.addEventListener('dragend', handleDragEnd);
+                li.addEventListener('dragleave', handleDragLeave);
+                listEl.appendChild(li);
+            });
+        }
+
+        let draggedItem = null;
+        let draggedListIdx = null;
+
+        function handleDragStart(e) {
+            draggedItem = e.target;
+            draggedListIdx = parseInt(e.target.parentElement.dataset.listIdx);
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('item')) {
+                e.target.classList.add('over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            if (e.target.classList.contains('item')) {
+                e.target.classList.remove('over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const target = e.target;
+            if (!target.classList.contains('item')) return;
+            target.classList.remove('over');
+
+            const targetListIdx = parseInt(target.parentElement.dataset.listIdx);
+            if (targetListIdx !== draggedListIdx) return; // Internal only
+
+            const targetIdx = parseInt(target.dataset.index);
+            const itemIdx = parseInt(draggedItem.dataset.index);
+            
+            const item = state[draggedListIdx].splice(itemIdx, 1)[0];
+            state[draggedListIdx].splice(targetIdx, 0, item);
+            
+            renderList(target.parentElement, targetListIdx);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function updateView() {
+            document.querySelectorAll('.step-view').forEach((v, i) => {
+                v.classList.toggle('active', i === currentStep);
+            });
+            document.getElementById('btn-prev').disabled = currentStep === 0;
+            document.getElementById('btn-next').style.display = currentStep === totalSteps - 1 ? 'none' : 'block';
+            document.getElementById('btn-finish').style.display = currentStep === totalSteps - 1 ? 'block' : 'none';
+            document.getElementById('progress-bar').style.width = ((currentStep + 1) / totalSteps * 100) + '%';
+        }
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateView();
+            }
+        });
+
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                updateView();
+            }
+        });
+
+        document.getElementById('btn-finish').addEventListener('click', () => {
+            const scores = { d: 0, i: 0, s: 0, c: 0 };
+            state.forEach(list => {
+                const major = list[0].type;
+                const minor = list[3].type;
+                scores[major]++;
+                scores[minor]--;
+            });
+            
+            document.getElementById('wizard').style.display = 'none';
+            document.getElementById('actions').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.add('active');
+            
+            const grid = document.getElementById('results-grid');
+            grid.innerHTML = '';
+            ['D', 'I', 'S', 'C'].forEach(type => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.innerHTML = `<span class="result-type">${type}</span><span class="result-value">${scores[type.toLowerCase()]}</span>`;
+                grid.appendChild(item);
+            });
+        });
+
+        initWizard();
+    </script>
+</body>
+</html>

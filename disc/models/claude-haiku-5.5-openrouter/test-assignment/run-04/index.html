@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC для руководителей</title>
+<meta name="description" content="Бесплатный тест DISC: поведенческий профиль по четырём стилям — Доминирование, Влияние, Стабильность, Соответствие.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #eef2f7;
+    color: #1d2530;
+    line-height: 1.45;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { font: inherit; }
+  [hidden] { display: none !important; }
+
+  .app { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
+  .panel {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(20, 40, 70, .08);
+    padding: 28px;
+  }
+  h1 { font-size: 28px; margin: 0 0 12px; line-height: 1.2; }
+  h2 { font-size: 24px; margin: 0 0 8px; line-height: 1.25; }
+  p { margin: 0 0 12px; }
+  .muted { color: #5d6876; }
+
+  .btn {
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background .15s, opacity .15s;
+  }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .btn--primary { background: #1f4e8c; color: #fff; }
+  .btn--primary:hover:not(:disabled) { background: #173c6c; }
+  .btn--ghost { background: #fff; color: #1d2530; border-color: #c4cdd8; }
+  .btn--ghost:hover:not(:disabled) { background: #f4f7fb; }
+  .btn:focus-visible, .disc-tab:focus-visible, .close:focus-visible {
+    outline: 3px solid #7aa7e0; outline-offset: 2px;
+  }
+
+  /* start */
+  .start { text-align: center; padding: 40px 28px; }
+  .start p { max-width: 640px; margin-left: auto; margin-right: auto; }
+  .start .btn { margin-top: 12px; }
+
+  /* test header */
+  .test-head { position: relative; padding-right: 48px; margin-bottom: 16px; }
+  .test-head .sub { font-weight: 600; margin: 0 0 6px; }
+  .close {
+    position: absolute; top: -4px; right: -4px;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 0; background: transparent; color: #5d6876;
+    font-size: 28px; line-height: 1; cursor: pointer;
+  }
+  .close:hover { background: #eef2f7; color: #1d2530; }
+
+  /* tabs */
+  .disc-tabs {
+    position: relative;
+    display: flex; gap: 6px;
+    overflow-x: auto;
+    padding: 4px 2px 10px;
+    margin-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .disc-tabs::-webkit-scrollbar { display: none; }
+  .disc-tab {
+    flex: 0 0 auto;
+    border: 1px solid #d0d8e2;
+    background: #fff;
+    color: #1d2530;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .disc-tab:hover { background: #f4f7fb; }
+  .disc-tab.is-active { background: #1f4e8c; border-color: #1f4e8c; color: #fff; }
+
+  .disc-progress { height: 6px; background: #e3e9f1; border-radius: 3px; overflow: hidden; margin: 8px 0 20px; }
+  .disc-progress__bar { height: 100%; width: 0; background: #1f4e8c; transition: width .25s ease; }
+
+  /* panes & cards */
+  .disc-pane { display: none; }
+  .disc-pane.is-active { display: block; }
+  .disc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .disc-card {
+    border: 1px solid #dde4ed;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+    background: #fbfcfe;
+  }
+  .disc-card__title { font-weight: 700; font-size: 16px; }
+  .disc-card__foot { font-size: 14px; color: #5d6876; font-weight: 600; }
+  .disc-list {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .disc-list.is-reordering { user-select: none; -webkit-user-select: none; }
+  .disc-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: #fff;
+    border: 1px solid #cfd8e3;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 15px;
+    cursor: grab;
+    user-select: none; -webkit-user-select: none;
+    transition: background .15s, box-shadow .15s;
+  }
+  .disc-item:hover { background: #f4f8fd; }
+  .disc-item.is-dragging { opacity: .35; }
+  .disc-handle {
+    display: inline-flex; flex: 0 0 auto;
+    padding: 4px 2px;
+    cursor: grab;
+    touch-action: none;
+  }
+  .disc-handle svg { display: block; }
+  .disc-ghost {
+    position: fixed; z-index: 1000;
+    pointer-events: none;
+    margin: 0;
+    background: #fff;
+    border-color: #1f4e8c;
+    box-shadow: 0 10px 28px rgba(20, 40, 70, .25);
+    cursor: grabbing;
+  }
+
+  .disc-actions {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    margin-top: 24px;
+  }
+  .disc-actions .spacer { flex: 1; }
+
+  /* result */
+  .result-note { font-size: 14px; color: #5d6876; margin-top: 20px; }
+  .scores { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 20px 0 8px; }
+  .score {
+    border: 1px solid #dde4ed; border-radius: 12px;
+    padding: 18px 12px; text-align: center; background: #fbfcfe;
+  }
+  .score__letter { font-size: 30px; font-weight: 800; color: #1f4e8c; line-height: 1; }
+  .score__name { font-size: 13px; color: #5d6876; margin: 6px 0 10px; }
+  .score__value { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .score-line { font-size: 15px; font-weight: 600; margin: 4px 0 0; }
+  .result-actions { margin-top: 24px; }
+
+  @media (max-width: 760px) {
+    .app { padding: 12px 10px 32px; }
+    .panel { padding: 18px 14px; border-radius: 12px; }
+    h1 { font-size: 23px; }
+    h2 { font-size: 20px; }
+    .start { padding: 26px 16px; }
+    .disc-grid { grid-template-columns: 1fr; gap: 12px; }
+    .disc-actions .btn { flex: 1 1 0; padding: 12px 10px; }
+    .disc-actions .spacer { display: none; }
+    .scores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+
+  <section id="screen-start" class="panel start">
+    <h1>Бесплатный тест DISC для руководителей</h1>
+    <p>Тест помогает понять паттерны поведения в разных ситуациях: как мы принимаем решения, общаемся, реагируем на задачи и дедлайны.</p>
+    <p class="muted">Тест состоит из 8 шагов. В каждом шаге три карточки по четыре описания: расставьте их перетаскиванием от наиболее похожего на вас до наименее похожего.</p>
+    <button id="btn-start" class="btn btn--primary" type="button">Пройти тест</button>
+  </section>
+
+  <section id="screen-test" class="panel" hidden>
+    <div id="test-top" class="test-head">
+      <h2 id="test-title">Тестирование DISC</h2>
+      <p class="sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+      <p class="muted">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+      <button id="btn-close" class="close" type="button" aria-label="Закрыть тест">×</button>
+    </div>
+
+    <div id="tabs" class="disc-tabs" role="tablist" aria-label="Шаги"></div>
+
+    <div class="disc-progress" aria-hidden="true">
+      <div id="progress" class="disc-progress__bar"></div>
+    </div>
+
+    <div id="rootwizard"></div>
+
+    <div class="disc-actions">
+      <button id="btn-prev" class="btn btn--ghost" type="button">Назад</button>
+      <span class="spacer"></span>
+      <button id="btn-next" class="btn btn--primary" type="button">Далее</button>
+      <button id="btn-finish" class="btn btn--primary" type="button" hidden>Завершить тест</button>
+    </div>
+  </section>
+
+  <section id="screen-result" class="panel" hidden>
+    <h2>Ваш DISC-профиль</h2>
+    <div id="scores" class="scores"></div>
+    <p id="score-line" class="score-line"></p>
+    <p class="result-note">* Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем вам научиться использовать этот инструмент для самотестирования, а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</p>
+    <div class="result-actions">
+      <button id="btn-again" class="btn btn--ghost" type="button">Пройти тест заново</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  // Данные теста: 8 шагов × 3 карточки × 4 пункта; пункт = [тип, текст].
+  // Тип: d — доминирование, i — влияние, s — стабильность, c — соответствие.
+  // Порядок пунктов в карточке — исходный порядок оригинала.
+  const STEPS = [[[["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],[["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],[["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]],[[["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],[["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],[["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]],[[["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],[["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],[["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]],[[["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],[["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],[["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]],[[["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],[["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],[["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]],[[["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],[["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],[["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]],[[["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],[["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],[["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]],[[["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],[["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],[["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]]];
+
+  const TYPE_NAMES = {
+    d: 'Доминирование',
+    i: 'Влияние',
+    s: 'Стабильность',
+    c: 'Соответствие'
+  };
+  const TAB_NAMES = ['Первый', 'Второй', 'Третий', 'Четвертый', 'Пятый', 'Шестой', 'Седьмой', 'Восьмой'];
+  const TOTAL = STEPS.length;
+  const MOBILE_MQ = window.matchMedia('(max-width: 767px)');
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  };
+
+  const HANDLE_SVG = (() => {
+    const pts = [[5, 4], [5, 8], [5, 12], [11, 4], [11, 8], [11, 12]];
+    const dots = pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3"/>`).join('');
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="#9aa5b1" aria-hidden="true">${dots}</svg>`;
+  })();
+
+  const screens = { start: $('#screen-start'), test: $('#screen-test'), result: $('#screen-result') };
+  const tabsEl = $('#tabs');
+  const bodyEl = $('#rootwizard');
+  const progressEl = $('#progress');
+  const btnPrev = $('#btn-prev');
+  const btnNext = $('#btn-next');
+  const btnFinish = $('#btn-finish');
+
+  let step = 0;
+
+  const showScreen = (name) => {
+    Object.entries(screens).forEach(([k, node]) => { node.hidden = k !== name; });
+    window.scrollTo(0, 0);
+  };
+
+  // ---------- построение теста ----------
+  const buildTest = () => {
+    tabsEl.innerHTML = '';
+    bodyEl.innerHTML = '';
+
+    STEPS.forEach((cards, s) => {
+      const tab = el('button', 'disc-tab', TAB_NAMES[s]);
+      tab.type = 'button';
+      tab.setAttribute('role', 'tab');
+      tab.dataset.step = String(s);
+      tab.addEventListener('click', () => goTo(s));
+      tabsEl.appendChild(tab);
+
+      const pane = el('div', 'disc-pane');
+      pane.dataset.step = String(s);
+      pane.setAttribute('role', 'tabpanel');
+      const grid = el('div', 'disc-grid');
+
+      cards.forEach((items) => {
+        const card = el('div', 'disc-card');
+        card.appendChild(el('div', 'disc-card__title', 'Я наиболее'));
+        const ul = el('ul', 'disc-list');
+        items.forEach(([type, text]) => {
+          const li = el('li', 'disc-item', text);
+          li.dataset.type = type;
+          const h = el('span', 'disc-handle');
+          h.setAttribute('aria-hidden', 'true');
+          h.innerHTML = HANDLE_SVG;
+          li.appendChild(h);
+          ul.appendChild(li);
+        });
+        card.appendChild(ul);
+        card.appendChild(el('div', 'disc-card__foot', 'Я наименее'));
+        grid.appendChild(card);
+      });
+
+      pane.appendChild(grid);
+      bodyEl.appendChild(pane);
+    });
+
+    step = 0;
+    render();
+  };
+
+  // ---------- навигация по шагам ----------
+  const render = () => {
+    $$('.disc-tab', tabsEl).forEach((t) => {
+      const on = Number(t.dataset.step) === step;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    $$('.disc-pane', bodyEl).forEach((p) => {
+      p.classList.toggle('is-active', Number(p.dataset.step) === step);
+    });
+
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === TOTAL - 1;
+    btnFinish.hidden = step !== TOTAL - 1;
+    progressEl.style.width = ((step + 1) / TOTAL * 100) + '%';
+
+    // центрируем активную вкладку в горизонтальном скролле
+    const active = $('.disc-tab.is-active', tabsEl);
+    if (active && tabsEl.scrollWidth > tabsEl.clientWidth) {
+      const left = active.offsetLeft - (tabsEl.clientWidth - active.offsetWidth) / 2;
+      tabsEl.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    }
+  };
+
+  const goTo = (n) => {
+    const next = Math.max(0, Math.min(TOTAL - 1, n));
+    const changed = next !== step;
+    step = next;
+    render();
+    // на мобильных после перехода возвращаем вид к началу шага
+    if (changed && MOBILE_MQ.matches) {
+      $('#test-top').scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+  };
+
+  // ---------- перетаскивание (мышь — за весь пункт, касание/перо — за точки) ----------
+  let drag = null;
+  let loopOn = false;
+
+  const placeAt = (y) => {
+    const { li, ul } = drag;
+    let before = null;
+    for (const s of $$('li', ul)) {
+      if (s === li) continue;
+      const r = s.getBoundingClientRect();
+      if (y < r.top + r.height / 2) { before = s; break; }
+    }
+    if (before) {
+      if (li.nextElementSibling !== before) ul.insertBefore(li, before);
+    } else if (ul.lastElementChild !== li) {
+      ul.appendChild(li);
+    }
+  };
+
+  const autoScrollLoop = () => {
+    if (!drag) { loopOn = false; return; }
+    const y = drag.lastY;
+    const edge = 90;
+    let dy = 0;
+    if (y < edge) dy = -Math.ceil((edge - y) / 4);
+    else if (y > window.innerHeight - edge) dy = Math.ceil((y - (window.innerHeight - edge)) / 4);
+    if (dy) {
+      window.scrollBy(0, dy);
+      placeAt(y);
+    }
+    requestAnimationFrame(autoScrollLoop);
+  };
+
+  const onPointerDown = (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    const li = e.target.closest('.disc-item');
+    if (!li || !bodyEl.contains(li)) return;
+    const onHandle = !!e.target.closest('.disc-handle');
+    if (e.pointerType !== 'mouse' && !onHandle) return;
+
+    e.preventDefault();
+    const rect = li.getBoundingClientRect();
+    const ghost = li.cloneNode(true);
+    ghost.classList.add('disc-ghost');
+    ghost.style.width = rect.width + 'px';
+    ghost.style.left = rect.left + 'px';
+    ghost.style.top = rect.top + 'px';
+    document.body.appendChild(ghost);
+
+    li.classList.add('is-dragging');
+    li.parentElement.classList.add('is-reordering');
+    drag = {
+      li,
+      ul: li.parentElement,
+      ghost,
+      pointerId: e.pointerId,
+      offsetY: e.clientY - rect.top,
+      lastY: e.clientY
+    };
+    if (!loopOn) { loopOn = true; requestAnimationFrame(autoScrollLoop); }
+  };
+
+  const onPointerMove = (e) => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    e.preventDefault();
+    drag.lastY = e.clientY;
+    drag.ghost.style.top = (e.clientY - drag.offsetY) + 'px';
+    placeAt(e.clientY);
+  };
+
+  const onPointerUp = (e) => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    drag.li.classList.remove('is-dragging');
+    drag.ul.classList.remove('is-reordering');
+    drag.ghost.remove();
+    drag = null;
+  };
+
+  bodyEl.addEventListener('pointerdown', onPointerDown);
+  document.addEventListener('pointermove', onPointerMove, { passive: false });
+  document.addEventListener('pointerup', onPointerUp);
+  document.addEventListener('pointercancel', onPointerUp);
+
+  // ---------- подсчёт ----------
+  // Как в оригинале: позиция 0 (самый похожий) даёт +1 своему типу,
+  // позиция 3 (наименее похожий) даёт −1; суммируем по всем 24 карточкам.
+  const computeScore = () => {
+    const res = { d: 0, i: 0, s: 0, c: 0 };
+    $$('.disc-list', bodyEl).forEach((ul) => {
+      $$('li', ul).forEach((li, pos) => {
+        const type = li.dataset.type;
+        if (pos === 0) res[type] += 1;
+        if (pos === 3) res[type] -= 1;
+      });
+    });
+    return res;
+  };
+
+  const showResult = () => {
+    const res = computeScore();
+    const box = $('#scores');
+    box.innerHTML = '';
+    ['d', 'i', 's', 'c'].forEach((k) => {
+      const card = el('div', 'score');
+      card.appendChild(el('div', 'score__letter', k.toUpperCase()));
+      card.appendChild(el('div', 'score__name', TYPE_NAMES[k]));
+      card.appendChild(el('div', 'score__value', String(res[k])));
+      box.appendChild(card);
+    });
+    $('#score-line').textContent =
+      `D:${res.d}, I:${res.i}, S:${res.s}, C:${res.c}`;
+    showScreen('result');
+  };
+
+  // ---------- кнопки ----------
+  $('#btn-start').addEventListener('click', () => {
+    buildTest();
+    showScreen('test');
+  });
+  $('#btn-close').addEventListener('click', () => showScreen('start'));
+  btnPrev.addEventListener('click', () => goTo(step - 1));
+  btnNext.addEventListener('click', () => goTo(step + 1));
+  btnFinish.addEventListener('click', showResult);
+  $('#btn-again').addEventListener('click', () => {
+    buildTest();
+    showScreen('test');
+  });
+
+  showScreen('start');
+})();
+</script>
+</body>
+</html>

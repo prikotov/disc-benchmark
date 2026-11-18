@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — School of Management</title>
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --ink:#1c2333;
+    --muted:#5c6579;
+    --card:#ffffff;
+    --line:#e3e7f0;
+    --accent:#2f54eb;
+    --accent-2:#1f3cb0;
+    --ok:#12a150;
+    --radius:14px;
+    --shadow:0 10px 30px rgba(23,32,64,.12);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 500px at 80% -10%, #e6ecff 0%, transparent 60%),
+      var(--bg);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.no-scroll{overflow:hidden}
+
+  /* ===== landing ===== */
+  .page{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .hero{
+    max-width:680px;width:100%;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:var(--shadow);
+    padding:40px 36px;
+    text-align:center;
+  }
+  .hero__badge{
+    display:inline-flex;align-items:center;gap:10px;
+    background:#eef2ff;color:var(--accent-2);
+    border:1px solid #dfe6ff;border-radius:999px;
+    padding:6px 14px;font-size:13px;font-weight:600;letter-spacing:.04em;
+    text-transform:uppercase;margin-bottom:18px;
+  }
+  .hero h1{margin:0 0 12px;font-size:clamp(26px,4vw,36px);line-height:1.15}
+  .hero p{margin:0 auto 8px;max-width:52ch;color:var(--muted);font-size:15px}
+  .hero__score{
+    display:flex;justify-content:center;gap:10px;margin:20px 0 6px;
+  }
+  .hero__score span{
+    width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:20px;color:#fff;
+    box-shadow:inset 0 -3px 0 rgba(0,0,0,.14);
+  }
+  .hero__score .s-d{background:#e5484d}
+  .hero__score .s-i{background:#f5a524}
+  .hero__score .s-s{background:#30a46c}
+  .hero__score .s-c{background:#3b82f6}
+  .btn{
+    appearance:none;border:0;cursor:pointer;font-family:var(--font);
+    border-radius:12px;padding:14px 26px;font-size:16px;font-weight:700;
+    background:var(--accent);color:#fff;
+    transition:background .15s ease,transform .1s ease;
+  }
+  .btn:hover{background:var(--accent-2)}
+  .btn:active{transform:translateY(1px)}
+  .btn--ghost{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+  .btn--ghost:hover{background:#f5f7fc}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn:disabled:hover{background:var(--accent)}
+  .btn--ghost:disabled:hover{background:#fff}
+  .btn:focus-visible,.disc-item:focus-visible,.disc-tab:focus-visible,.disc-modal__close:focus-visible{
+    outline:3px solid rgba(47,84,235,.35);outline-offset:2px;
+  }
+  .hero__cta{margin-top:22px;display:inline-block}
+  .hero__hint{margin-top:14px;font-size:13px;color:var(--muted)}
+
+  /* ===== modal ===== */
+  .disc-modal{position:fixed;inset:0;z-index:50;display:none}
+  .disc-modal.is-open{display:block}
+  .disc-modal__overlay{
+    position:absolute;inset:0;background:rgba(15,22,43,.55);
+  }
+  .disc-modal__dialog{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(920px,calc(100vw - 24px));
+    max-height:calc(100dvh - 24px);
+    background:var(--card);
+    border-radius:18px;
+    box-shadow:0 30px 80px rgba(10,16,38,.35);
+    display:flex;flex-direction:column;
+    overflow:hidden;
+    animation:pop .18s ease;
+  }
+  @keyframes pop{from{opacity:0;transform:translate(-50%,-48%)}to{opacity:1;transform:translate(-50%,-50%)}}
+  .disc-modal__close{
+    position:absolute;top:12px;right:12px;z-index:2;
+    width:36px;height:36px;border-radius:10px;border:1px solid var(--line);
+    background:#fff;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .disc-modal__close:hover{background:#f3f5fa;color:var(--ink)}
+  .disc-modal__head{padding:22px 26px 14px}
+  .disc-modal__title{margin:0;font-size:22px}
+  .disc-modal__sub{margin-top:6px;color:var(--muted);font-size:13.5px}
+  .disc-modal__lead{margin-top:8px;font-weight:600;font-size:14px}
+
+  .disc-modal__tabs{
+    display:flex;gap:6px;overflow-x:auto;padding:0 20px 12px;
+    scrollbar-width:thin;
+  }
+  .disc-tab{
+    flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--muted);
+    font-size:13px;font-weight:600;border-radius:999px;padding:7px 14px;cursor:pointer;
+    transition:all .15s ease;font-family:var(--font);
+  }
+  .disc-tab:hover{color:var(--ink)}
+  .disc-tab.is-active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  .disc-modal__body{
+    overflow-y:auto;padding:2px 26px 26px;scrollbar-width:thin;
+  }
+
+  .disc-pane{display:none}
+  .disc-pane.is-active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .disc-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media (max-width:760px){.disc-grid3{grid-template-columns:1fr}}
+
+  .disc-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 14px 12px;
+    background:linear-gradient(180deg,#fbfcff 0%,#f6f8fd 100%);
+    display:flex;flex-direction:column;
+  }
+  .disc-card__title{font-weight:800;font-size:13.5px;color:var(--accent-2);margin-bottom:10px}
+  .disc-card__foot{margin-top:10px;font-weight:700;font-size:11.5px;color:var(--muted);text-align:left}
+
+  .disc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .disc-item{
+    position:relative;
+    display:flex;align-items:center;gap:10px;
+    background:#fff;border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;font-size:14px;font-weight:600;
+    cursor:grab;user-select:none;-webkit-user-select:none;
+    touch-action:none;
+    box-shadow:0 1px 2px rgba(20,30,60,.05);
+    transition:box-shadow .12s ease,border-color .12s ease;
+  }
+  .disc-item:hover{border-color:#c9d3ea;box-shadow:0 3px 8px rgba(20,30,60,.08)}
+  .disc-item.is-dragging{
+    cursor:grabbing;
+    border-color:var(--accent);
+    box-shadow:0 12px 24px rgba(31,59,176,.22);
+    background:#f4f7ff;z-index:1;
+  }
+  .disc-handle{
+    flex:0 0 auto;display:inline-flex;padding-right:2px;
+    color:#b3b3b3;cursor:grab;
+  }
+  .disc-item .disc-rank{
+    position:absolute;top:-7px;left:-7px;
+    width:20px;height:20px;border-radius:50%;
+    background:#7c89a6;color:#fff;font-size:11px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 5px rgba(20,30,60,.25);
+  }
+  .disc-item[data-pos="0"] .disc-rank{background:#e5484d}
+  .disc-item[data-pos="3"] .disc-rank{background:#94a3b8}
+
+  .disc-progress{
+    height:5px;border-radius:99px;background:#e6eaf4;margin:22px 0 14px;overflow:hidden;
+  }
+  .disc-progress__bar{height:100%;width:12.5%;background:linear-gradient(90deg,var(--accent),#6f8dff);transition:width .25s ease;border-radius:99px}
+
+  .disc-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+  /* ===== result ===== */
+  .result{display:none;padding:8px 0 4px}
+  .result.is-active{display:block;animation:fade .25s ease}
+  .result__title{margin:0;font-size:20px}
+  .result__profile{
+    margin:14px 0 20px;font-size:18px;font-weight:800;
+    background:#f4f7ff;border:1px solid #dbe4ff;border-radius:12px;
+    padding:16px 18px;
+  }
+  .result__profile b{color:var(--accent-2)}
+  .result__bars{display:grid;gap:12px;margin-bottom:8px}
+  .rbar{display:grid;grid-template-columns:110px 1fr 44px;align-items:center;gap:12px}
+  .rbar__label{font-weight:800;font-size:15px}
+  .rbar__track{height:14px;border-radius:99px;background:#eef1f8;overflow:hidden;position:relative}
+  .rbar__fill{position:absolute;top:0;bottom:0;border-radius:99px}
+  .rbar__val{font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+  .rbar.neg .rbar__track::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:#c6cede}
+  .result__note{color:var(--muted);font-size:13.5px;margin:18px 0 20px}
+  .result__actions{display:flex;gap:10px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<main class="page">
+  <section class="hero">
+    <div class="hero__badge">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M8 1.5 3 4v3.2c0 3 2.1 5.6 5 6.6 2.9-1 5-3.6 5-6.6V4L8 1.5Z" stroke="#2f54eb" stroke-width="1.4" stroke-linejoin="round"/>
+        <path d="m5.8 8 1.5 1.5L10.4 6.4" stroke="#2f54eb" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Школа менеджмента
+    </div>
+    <h1>Тестирование DISC: определите свой стиль поведения</h1>
+    <p>8 коротких шагов. В каждом — расставьте определения по степени близости вам: от наиболее похожего на вас до наименее похожего.</p>
+    <p>По итогам вы увидите свой DISC-профиль — уровни по четырём поведенческим измерениям: D (Доминирование), I (Влияние), S (Стабильность), C (Соответствие).</p>
+    <div class="hero__score" aria-hidden="true">
+      <span class="s-d">D</span><span class="s-i">I</span><span class="s-s">S</span><span class="s-c">C</span>
+    </div>
+    <button class="btn hero__cta" type="button" id="btnOpen">Пройти тест</button>
+    <div class="hero__hint">Баллы считаются локально, данные никуда не отправляются.</div>
+  </section>
+</main>
+
+<!-- ===== DISC MODAL ===== -->
+<div class="disc-modal" id="wizardmodal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+  <div class="disc-modal__overlay" data-disc-close></div>
+
+  <div class="disc-modal__dialog">
+    <button class="disc-modal__close" type="button" data-disc-close aria-label="Закрыть">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M2 2l10 10M12 2 2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <div class="disc-modal__head" id="discModalHead">
+      <h2 class="disc-modal__title" id="discTitle">Тестирование DISC</h2>
+      <div class="disc-modal__sub">Помните — чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="disc-modal__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+
+    <div class="disc-modal__tabs" id="discTabs" role="tablist" aria-label="Шаги"></div>
+
+    <div class="disc-modal__body" id="discBody">
+      <div id="discPanes"></div>
+
+      <div class="result" id="discResult">
+        <h3 class="result__title">Ваш результат</h3>
+        <div class="result__profile" id="discResultLine"></div>
+        <div class="result__bars" id="discResultBars"></div>
+        <div class="result__note">
+          Оценка каждого измерения рассчитывается по месту соответствующих определений в вашем
+          ранжировании: определения, которые вы поставили на первое место, повышают соответствующий
+          показатель, на последнее — понижают. Диапазон значений по каждому измерению: от −8 до +8.
+          Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов —
+          этот инструмент помогает в самотестировании и в работе с командами и коллегами.
+        </div>
+        <div class="result__actions">
+          <button class="btn" type="button" id="btnRestart">Пройти заново</button>
+          <button class="btn btn--ghost" type="button" id="btnCloseResult">Закрыть</button>
+        </div>
+      </div>
+
+      <div class="disc-progress" id="discProgressWrap" aria-hidden="true">
+        <div class="disc-progress__bar" id="discProgress"></div>
+      </div>
+
+      <div class="disc-actions" id="discActions">
+        <button class="btn btn--ghost" type="button" id="btnPrev">
+          <span style="display:inline-flex;align-items:center;gap:8px">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M7.5 2 4 6l3.5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Назад
+          </span>
+        </button>
+        <span style="flex:1"></span>
+        <button class="btn" type="button" id="btnNext">
+          <span style="display:inline-flex;align-items:center;gap:8px">
+            Далее
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 2 8 6l-3.5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+        <button class="btn" type="button" id="btnFinish" hidden>
+          <span style="display:inline-flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2.5 7.5 3 3 6-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Завершить тест
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ===================== data (как в оригинале) =====================
+  const STEPS = [
+    [
+      [ {t:"i", w:"Экспресcивный"}, {t:"c", w:"Покладистый"}, {t:"d", w:"Волевой"}, {t:"s", w:"Осторожный"} ],
+      [ {t:"d", w:"Пылкий"}, {t:"i", w:"Разговорчивый"}, {t:"s", w:"Добродушный"}, {t:"c", w:"Сдержанный"} ],
+      [ {t:"i", w:"Любитель приключений"}, {t:"c", w:"Энтузиаст"}, {t:"d", w:"Исполнитель инструкций"}, {t:"s", w:"Верный"} ]
+    ],
+    [
+      [ {t:"d", w:"Настойчивый"}, {t:"c", w:"Осторожный"}, {t:"i", w:"Эмоциональный"}, {t:"s", w:"Удовлетворенный"} ],
+      [ {t:"s", w:"Довольный"}, {t:"d", w:"Нетерпеливый"}, {t:"i", w:"Убедительный"}, {t:"c", w:"Безропотный"} ],
+      [ {t:"c", w:"Смиренный"}, {t:"s", w:"Умеющий слушать"}, {t:"i", w:"Душа компании"}, {t:"d", w:"Волевой"} ]
+    ],
+    [
+      [ {t:"c", w:"Правильный"}, {t:"d", w:"Первопроходец"}, {t:"s", w:"Спокойный"}, {t:"i", w:"Влиятельный"} ],
+      [ {t:"c", w:"Почтительный"}, {t:"i", w:"Контактный"}, {t:"d", w:"Агрессивный"}, {t:"s", w:"Мягкий"} ],
+      [ {t:"i", w:"Весельчак"}, {t:"s", w:"Покорный"}, {t:"c", w:"Тактичный"}, {t:"d", w:"Соперничающий"} ]
+    ],
+    [
+      [ {t:"c", w:"Точный"}, {t:"d", w:"Доминирующий"}, {t:"s", w:"Охотный"}, {t:"i", w:"Притягательный"} ],
+      [ {t:"i", w:"Уравновешенный"}, {t:"c", w:"Уступчивый"}, {t:"d", w:"Идущий на риск"}, {t:"s", w:"Услужливый"} ],
+      [ {t:"c", w:"Осмотрительный"}, {t:"s", w:"Добрососедский"}, {t:"d", w:"Энергичный"}, {t:"i", w:"Убедительный"} ]
+    ],
+    [
+      [ {t:"s", w:"Уравновешенный"}, {t:"i", w:"Мотивирующий"}, {t:"c", w:"Щепетильный"}, {t:"d", w:"Решительный"} ],
+      [ {t:"i", w:"Уверенный"}, {t:"c", w:"Готовый к сотрудничеству"}, {t:"s", w:"Беззаботный"}, {t:"d", w:"Аргументирующий"} ],
+      [ {t:"s", w:"Сдержанный"}, {t:"d", w:"Прямой"}, {t:"c", w:"Строгий"}, {t:"i", w:"Убедительный"} ]
+    ],
+    [
+      [ {t:"c", w:"Застенчивый"}, {t:"d", w:"Требовательный"}, {t:"s", w:"Терпеливый"}, {t:"i", w:"Очаровательный"} ],
+      [ {t:"d", w:"Неугомонный"}, {t:"c", w:"Дисциплинированный"}, {t:"i", w:"Вдохновляющий"}, {t:"s", w:"Внимательный"} ],
+      [ {t:"s", w:"Обязательный"}, {t:"i", w:"Оживленный"}, {t:"d", w:"Решительный"}, {t:"c", w:"Точный"} ]
+    ],
+    [
+      [ {t:"c", w:"Добросовестный"}, {t:"i", w:"Компанейский"}, {t:"s", w:"Добрый"}, {t:"d", w:"Уверенный в себе"} ],
+      [ {t:"c", w:"Дипломатичный"}, {t:"d", w:"Отважный"}, {t:"s", w:"Сочувствующий"}, {t:"i", w:"Оптимистичный"} ],
+      [ {t:"d", w:"Настойчивый"}, {t:"i", w:"Общительный"}, {t:"s", w:"Постоянный"}, {t:"c", w:"Организованный"} ]
+    ],
+    [
+      [ {t:"c", w:"Соглашающийся"}, {t:"s", w:"Владеющий собой"}, {t:"d", w:"Шутливый"}, {t:"i", w:"Настойчивый"} ],
+      [ {t:"i", w:"Обаятельный"}, {t:"d", w:"Позитивный"}, {t:"s", w:"Снисходительный"}, {t:"c", w:"Требовательный"} ],
+      [ {t:"i", w:"Коммуникабельный"}, {t:"d", w:"Смелый"}, {t:"c", w:"Перфекционист"}, {t:"s", w:"Сдержанный"} ]
+    ]
+  ];
+  const STEP_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+  const TOTAL = STEPS.length;
+
+  const TYPE_META = {
+    d: { label:"D — Доминирование", color:"#e5484d" },
+    i: { label:"I — Влияние",       color:"#f5a524" },
+    s: { label:"S — Стабильность",  color:"#30a46c" },
+    c: { label:"C — Соответствие",  color:"#3b82f6" }
+  };
+
+  const HANDLE_SVG =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="18" viewBox="0 0 16 20" fill="none" aria-hidden="true">` +
+    `<g fill="#B3B3B3">` +
+    `<circle cx="6" cy="3" r="1.6"/><circle cx="11" cy="3" r="1.6"/>` +
+    `<circle cx="6" cy="10" r="1.6"/><circle cx="11" cy="10" r="1.6"/>` +
+    `<circle cx="6" cy="17" r="1.6"/><circle cx="11" cy="17" r="1.6"/>` +
+    `</g></svg>`;
+
+  const esc = (s) => String(s).replace(/[&<>"']/g, (m) => (
+    { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[m]
+  ));
+
+  // ===================== build DOM =====================
+  const wizard   = document.getElementById("wizardmodal");
+  const head     = document.getElementById("discModalHead");
+  const tabsEl   = document.getElementById("discTabs");
+  const bodyEl   = document.getElementById("discBody");
+  const panesEl  = document.getElementById("discPanes");
+  const resultEl = document.getElementById("discResult");
+  const progWrap = document.getElementById("discProgressWrap");
+  const progBar  = document.getElementById("discProgress");
+  const actions  = document.getElementById("discActions");
+  const btnOpen  = document.getElementById("btnOpen");
+  const btnPrev  = document.getElementById("btnPrev");
+  const btnNext  = document.getElementById("btnNext");
+  const btnFinish= document.getElementById("btnFinish");
+  const btnRestart = document.getElementById("btnRestart");
+  const btnCloseResult = document.getElementById("btnCloseResult");
+
+  STEPS.forEach((cards, s) => {
+    const tabs = document.createElement("button");
+    tabs.type = "button";
+    tabs.className = "disc-tab";
+    tabs.setAttribute("role", "tab");
+    tabs.dataset.stepBtn = s;
+    tabs.textContent = STEP_NAMES[s];
+    tabsEl.appendChild(tabs);
+
+    const pane = document.createElement("div");
+    pane.className = "disc-pane";
+    pane.dataset.stepPane = s;
+    pane.setAttribute("role", "tabpanel");
+    const grid = document.createElement("div");
+    grid.className = "disc-grid3";
+    cards.forEach((opts) => {
+      const card = document.createElement("div");
+      card.className = "disc-card";
+      const ul = document.createElement("ul");
+      ul.className = "disc-list";
+      opts.forEach((o) => {
+        const li = document.createElement("li");
+        li.className = "disc-item";
+        li.dataset.type = o.t;
+        li.tabIndex = 0;
+        li.innerHTML =
+          `<span class="disc-rank"></span>` +
+          `<span class="disc-handle">${HANDLE_SVG}</span>` +
+          `<span class="disc-text">${esc(o.w)}</span>`;
+        ul.appendChild(li);
+      });
+      card.insertAdjacentHTML("afterbegin",
+        `<div class="disc-card__title">Я наиболее</div>`);
+      card.append(ul);
+      card.insertAdjacentHTML("beforeend", `<div class="disc-card__foot">Я наименее</div>`);
+      grid.append(card);
+    });
+    pane.append(grid);
+    panesEl.append(pane);
+  });
+
+  const tabs = Array.from(tabsEl.querySelectorAll(".disc-tab"));
+  const panes = Array.from(panesEl.querySelectorAll(".disc-pane"));
+  const lists = Array.from(panesEl.querySelectorAll(".disc-list"));
+
+  // оригинальные порядки (для «Пройти заново»)
+  const originalOrders = lists.map((ul) => Array.from(ul.children).map((li) => li.querySelector(".disc-text").textContent));
+
+  // ===================== drag & drop (Pointer Events) =====================
+  function rankLabels(ul) {
+    Array.from(ul.children).forEach((li, i) => {
+      li.dataset.pos = i;
+      const r = li.querySelector(".disc-rank");
+      r.textContent = i + 1;
+      r.title = i === 0 ? "Наиболее похоже" : (i === 3 ? "Наименее похоже" : "Позиция " + (i + 1));
+    });
+  }
+
+  function makeSortable(ul) {
+    let active = null;
+    let pid = null;
+    let startY = 0, moved = false;
+
+    const findTarget = (y) => {
+      const kids = Array.from(ul.children).filter((el) => el.tagName === "LI" && el !== active);
+      for (const el of kids) {
+        const r = el.getBoundingClientRect();
+        if (y < r.top + r.height / 2) return el;
+      }
+      return null;
+    };
+
+    ul.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      const li = e.target.closest(".disc-item");
+      if (!li || !ul.contains(li)) return;
+      e.preventDefault();
+      active = li; pid = e.pointerId;
+      startY = e.clientY; moved = false;
+      li.setPointerCapture(pid);
+    });
+
+    ul.addEventListener("pointermove", (e) => {
+      if (!active || e.pointerId !== pid) return;
+      if (!moved) {
+        if (Math.abs(e.clientY - startY) < 4) return;
+        moved = true;
+        active.classList.add("is-dragging");
+      }
+      const before = findTarget(e.clientY);
+      if (before) ul.insertBefore(active, before);
+      else ul.appendChild(active);
+      rankLabels(ul);
+    });
+
+    const finish = (e) => {
+      if (!active || e.pointerId !== pid) return;
+      active.classList.remove("is-dragging");
+      try { active.releasePointerCapture(pid); } catch (_) {}
+      active = null; pid = null;
+      rankLabels(ul);
+    };
+    ul.addEventListener("pointerup", finish);
+    ul.addEventListener("pointercancel", finish);
+
+    // клавиатура: стрелки вверх/вниз
+    ul.addEventListener("keydown", (e) => {
+      const li = e.target.closest(".disc-item");
+      if (!li || !ul.contains(li)) return;
+      if (e.key === "ArrowUp" && li.previousElementSibling) {
+        e.preventDefault();
+        ul.insertBefore(li, li.previousElementSibling);
+        rankLabels(ul); li.focus();
+      } else if (e.key === "ArrowDown" && li.nextElementSibling) {
+        e.preventDefault();
+        ul.insertBefore(li.nextElementSibling, li);
+        rankLabels(ul); li.focus();
+      }
+    });
+
+    if (typeof MutationObserver !== "undefined") {
+      new MutationObserver(() => rankLabels(ul)).observe(ul, { childList: true });
+    }
+
+    rankLabels(ul);
+  }
+  lists.forEach(makeSortable);
+
+  // ===================== scoring (как в оригинале) =====================
+  function collectPayload() {
+    const payload = [];
+    lists.forEach((ul, li) => {
+      Array.from(ul.children).forEach((item, pos) => {
+        payload.push({ list: li, pos, type: item.dataset.type });
+      });
+    });
+    return payload;
+  }
+
+  function score(payload) {
+    const maj = [], min = [];
+    payload.forEach((x) => {
+      if (x.pos === 0) maj.push(x.type);
+      if (x.pos === 3) min.push(x.type);
+    });
+    const count = (arr, ch) => arr.reduce((a, v) => a + (v === ch ? 1 : 0), 0);
+    return {
+      D: count(maj, "d") - count(min, "d"),
+      I: count(maj, "i") - count(min, "i"),
+      S: count(maj, "s") - count(min, "s"),
+      C: count(maj, "c") - count(min, "c")
+    };
+  }
+
+  // ===================== wizard state =====================
+  let step = 0;
+  let finished = false;
+  let lastFocus = null;
+
+  const syncScrollLock = () => {
+    document.documentElement.classList.toggle("no-scroll", wizard.classList.contains("is-open"));
+    document.body.classList.toggle("no-scroll", wizard.classList.contains("is-open"));
+  };
+
+  const openWizard = () => {
+    lastFocus = document.activeElement;
+    wizard.classList.add("is-open");
+    wizard.setAttribute("aria-hidden", "false");
+    syncScrollLock();
+    finished = false;
+    step = 0;
+    render();
+    wizard.querySelector(".disc-modal__close").focus({ preventScroll: true });
+  };
+
+  const closeWizard = () => {
+    wizard.classList.remove("is-open");
+    wizard.setAttribute("aria-hidden", "true");
+    syncScrollLock();
+    if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus({ preventScroll: true });
+  };
+
+  const showResult = (res) => {
+    finished = true;
+    tabs.forEach((t) => { t.classList.remove("is-active"); t.setAttribute("aria-selected", "false"); t.disabled = true; });
+    panes.forEach((p) => p.classList.remove("is-active"));
+    head.style.display = "none";
+    tabsEl.style.display = "none";
+    progWrap.style.display = "none";
+    actions.style.display = "none";
+    resultEl.classList.add("is-active");
+
+    document.getElementById("discResultLine").innerHTML =
+      `Ваш DISC-профиль: <b>D:${res.D}, I:${res.I}, S:${res.S}, C:${res.C}</b>`;
+
+    const bars = document.getElementById("discResultBars");
+    bars.innerHTML = "";
+    [["D","d"],["I","i"],["S","s"],["C","c"]].forEach(([K, k]) => {
+      const v = res[K];
+      const meta = TYPE_META[k];
+      const row = document.createElement("div");
+      row.className = "rbar" + (v < 0 ? " neg" : "");
+      const abs = Math.abs(v);
+      const left = v < 0 ? (50 - (abs / 8) * 50) : 50;
+      const width = (abs / 8) * 50;
+      row.innerHTML =
+        `<div class="rbar__label">${meta.label}</div>` +
+        `<div class="rbar__track"><div class="rbar__fill" style="left:${left}%;width:${width}%;background:${meta.color}"></div></div>` +
+        `<div class="rbar__val">${v > 0 ? "+" + v : v}</div>`;
+      bars.appendChild(row);
+    });
+
+    bodyEl.scrollTo(0, 0);
+  };
+
+  const hideResult = () => {
+    finished = false;
+    tabs.forEach((t) => { t.disabled = false; });
+    head.style.display = "";
+    tabsEl.style.display = "";
+    progWrap.style.display = "";
+    actions.style.display = "";
+    resultEl.classList.remove("is-active");
+  };
+
+  const render = () => {
+    tabs.forEach((t) => {
+      const is = Number(t.dataset.stepBtn) === step;
+      t.classList.toggle("is-active", is);
+      t.setAttribute("aria-selected", is ? "true" : "false");
+    });
+    panes.forEach((p) => p.classList.toggle("is-active", Number(p.dataset.stepPane) === step));
+
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === TOTAL - 1;
+    btnFinish.hidden = step !== TOTAL - 1;
+
+    progBar.style.width = ((step + 1) / TOTAL) * 100 + "%";
+
+    // центрируем активный таб (мобилка)
+    const activeTab = tabs[step];
+    if (activeTab && tabsEl.scrollWidth > tabsEl.clientWidth) {
+      const c = tabsEl.getBoundingClientRect();
+      const t = activeTab.getBoundingClientRect();
+      const target = tabsEl.scrollLeft + (t.left - c.left) + t.width / 2 - tabsEl.clientWidth / 2;
+      tabsEl.scrollTo({ left: Math.max(0, Math.min(target, tabsEl.scrollWidth - tabsEl.clientWidth)), behavior: "smooth" });
+    }
+    bodyEl.scrollTo(0, 0);
+  };
+
+  const setStep = (n) => {
+    if (finished) return;
+    step = Math.max(0, Math.min(TOTAL - 1, n));
+    render();
+  };
+
+  // ===================== wiring =====================
+  btnOpen.addEventListener("click", (e) => { e.preventDefault(); openWizard(); });
+
+  wizard.querySelectorAll("[data-disc-close]").forEach((x) =>
+    x.addEventListener("click", (e) => { e.preventDefault(); closeWizard(); }));
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (wizard.classList.contains("is-open")) closeWizard();
+  });
+
+  tabs.forEach((t) => t.addEventListener("click", () => setStep(Number(t.dataset.stepBtn))));
+  btnPrev.addEventListener("click", () => setStep(step - 1));
+  btnNext.addEventListener("click", () => setStep(step + 1));
+
+  btnFinish.addEventListener("click", () => {
+    const res = score(collectPayload());
+    showResult(res);
+  });
+
+  btnRestart.addEventListener("click", () => {
+    lists.forEach((ul, i) => {
+      const items = Array.from(ul.children).sort((a, b) => {
+        const oa = originalOrders[i].indexOf(a.querySelector(".disc-text").textContent);
+        const ob = originalOrders[i].indexOf(b.querySelector(".disc-text").textContent);
+        return oa - ob;
+      });
+      items.forEach((it) => ul.appendChild(it));
+      rankLabels(ul);
+    });
+    hideResult();
+    step = 0;
+    render();
+  });
+
+  btnCloseResult.addEventListener("click", closeWizard);
+
+  // init
+  render();
+  syncScrollLock();
+})();
+</script>
+</body>
+</html>

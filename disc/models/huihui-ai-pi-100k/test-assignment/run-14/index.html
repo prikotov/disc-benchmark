@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — Школа менеджмента Стратоплан</title>
+<style>
+  :root{
+    --blue:#1F5BD6; --green:#3A944A; --green-bar:#6FE28A;
+    --ink:#1C1C1C; --muted:#2C2C2C; --bg:#F4F7FB;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink); background:var(--bg); min-height:100vh;
+  }
+  body.no-scroll{overflow:hidden}
+
+  /* ---------- landing ---------- */
+  .landing{max-width:920px;margin:0 auto;padding:72px 20px 96px;text-align:center}
+  .landing__badge{
+    display:inline-flex;align-items:center;gap:10px;
+    background:#EAF2FA;color:var(--blue);border:1px solid rgba(31,91,214,.25);
+    border-radius:999px;padding:10px 18px;font-size:15px;font-weight:600;
+  }
+  .landing__title{font-size:44px;line-height:1.12;font-weight:800;margin:26px 0 14px}
+  .landing__title span{color:var(--blue)}
+  .landing__sub{font-size:20px;color:#444;margin:0 0 34px}
+  .landing__features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 40px;text-align:left}
+  .feature{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:18px}
+  .feature svg{display:block;width:30px;height:30px;margin-bottom:10px}
+  .feature b{display:block;font-size:16px;margin-bottom:4px}
+  .feature p{margin:0;font-size:14px;color:#555;line-height:1.45}
+  .landing__note{margin-top:16px;font-size:14px;color:#777}
+
+  .btn{display:inline-block;border:1px solid rgba(0,0,0,.22);border-radius:999px;padding:16px 42px;font-size:24px;cursor:pointer;background:#fff;color:var(--ink);font-family:inherit;font-weight:600;transition:filter .15s ease, transform .05s ease}
+  .btn:hover{filter:brightness(.97)}
+  .btn:active{transform:translateY(1px)}
+  .btn--primary{border-color:transparent;background:var(--green);color:#fff}
+  .btn--blue{border-color:transparent;background:var(--blue);color:#fff}
+  .btn:disabled,.btn[hidden]{opacity:.45;cursor:not-allowed}
+  .btn--primary[hidden]{opacity:1;cursor:default}
+
+  /* ---------- dialog ---------- */
+  .modal{position:fixed;inset:0;z-index:100;display:none}
+  .modal.is-open{display:block}
+  .modal__overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+  .modal__dialog{
+    position:relative;margin:28px auto;background:#fff;border-radius:22px;
+    box-shadow:0 40px 120px rgba(0,0,0,.28);
+    width:min(1240px,calc(100% - 48px));max-height:calc(100vh - 56px);
+    display:flex;flex-direction:column;
+  }
+  .modal__close{
+    position:absolute;top:18px;right:18px;z-index:5;width:48px;height:48px;
+    border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.55;
+  }
+  .modal__close:hover{opacity:1}
+  .modal__close svg{width:26px;height:26px}
+  .modal__head{padding:34px 56px 14px;text-align:center}
+  .modal__title{font-size:34px;font-weight:800;margin:0}
+  .modal__sub{font-size:18px;color:#444;margin:10px 0 0}
+  .modal__lead{font-size:17px;color:#555;margin:14px 0 0}
+  .modal__tabs{padding:4px 56px 8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .tab{border:0;background:#EAF2FA;color:var(--muted);border-radius:10px;padding:14px 18px;font-size:22px;line-height:1;cursor:pointer;font-family:inherit;font-weight:600}
+  .tab.is-active{background:var(--blue);color:#fff}
+  .modal__scroll{background:#fff;overflow-y:auto;padding:8px 56px 30px}
+
+  .pane{display:none}
+  .pane.is-active{display:block}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:18px}
+  .card{border:1px solid rgba(0,0,0,.18);border-radius:10px;overflow:hidden;background:#fff}
+  .card__title{padding:16px 18px;font-size:24px;font-weight:800;color:var(--ink)}
+  .card__foot{padding:16px 18px;font-size:22px;font-weight:800;color:var(--ink)}
+  .list{list-style:none;margin:0 20px;padding:0;border:1px solid rgba(0,0,0,.12)}
+  .item{
+    position:relative;padding:18px 48px 18px 18px;font-size:20px;color:var(--muted);
+    border-top:1px solid rgba(0,0,0,.12);cursor:grab;user-select:none;
+    -webkit-user-select:none;background:#fff;touch-action:none;
+  }
+  .item:first-child{border-top:0}
+  .item.is-dragging{opacity:.55;cursor:grabbing}
+  .item__handle{
+    position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    cursor:grab;user-select:none;opacity:.75;
+  }
+  .item__handle svg{display:block;width:16px;height:16px}
+  .progress{margin:14px 56px 0;height:18px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden}
+  .progress__bar{height:100%;width:12.5%;border-radius:999px;background:var(--green-bar);transition:width .2s ease}
+  .actions{margin:14px 56px 6px;display:flex;justify-content:space-between;align-items:center}
+
+  /* ---------- result ---------- */
+  .result{display:none;text-align:center;padding:30px 24px 10px}
+  .result.is-active{display:block}
+  .result__score{
+    display:inline-block;background:#EAF2FA;color:var(--ink);
+    font-size:30px;font-weight:800;letter-spacing:.02em;
+    border-radius:14px;padding:22px 34px;margin-top:6px;
+  }
+  .result__note{max-width:640px;margin:22px auto 30px;font-size:16px;line-height:1.55;color:#555}
+  .result .btn{font-size:20px;padding:14px 36px}
+
+  @media (max-width:1024px){
+    .grid3{grid-template-columns:1fr;gap:14px}
+    .landing__features{grid-template-columns:1fr}
+    .landing__title{font-size:34px}
+    .modal__dialog{width:calc(100% - 24px);margin:12px auto}
+    .modal__head{padding:24px 18px 10px}
+    .modal__tabs{padding:0 18px 6px}
+    .tab{font-size:16px;padding:10px 12px}
+    .modal__scroll{padding:8px 18px 20px}
+    .card__title{font-size:20px}
+    .card__foot{font-size:18px}
+    .list{margin:0 12px}
+    .item{font-size:17px}
+    .progress{margin:12px 18px 0}
+    .actions{margin:12px 18px 0}
+    .btn{font-size:19px;padding:13px 26px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== landing ===== -->
+  <section id="landing" class="landing">
+    <span class="landing__badge">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+        <circle cx="9" cy="9" r="8" stroke="#1F5BD6" stroke-width="1.6"/>
+        <path d="M5.5 9l2.2 2.2L12.7 6" stroke="#1F5BD6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Школа менеджмента Стратоплан
+    </span>
+    <h1 class="landing__title">Бесплатный тест DISC <span>для руководителей</span></h1>
+    <p class="landing__sub">Определите ваш управленческий стиль за 5 минут</p>
+
+    <div class="landing__features">
+      <div class="feature">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect x="3" y="4" width="26" height="24" rx="4" fill="#EAF2FA" stroke="#1F5BD6" stroke-width="2"/>
+          <path d="M10 16l4 4 8-8" stroke="#1F5BD6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <b>8 шагов</b>
+        <p>Каждый шаг — три карточки с описаниями личности.</p>
+      </div>
+      <div class="feature">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M6 9h20M6 16h20M6 23h14" stroke="#1F5BD6" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="26" cy="23" r="3.4" fill="#EAF2FA" stroke="#1F5BD6" stroke-width="2"/>
+        </svg>
+        <b>Перетаскивание</b>
+        <p>Расставьте варианты от наиболее похожего на вас к наименее.</p>
+      </div>
+      <div class="feature">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16 5v10l6 4" stroke="#1F5BD6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="16" cy="16" r="12" stroke="#1F5BD6" stroke-width="2" fill="#EAF2FA"/>
+        </svg>
+        <b>5 минут</b>
+        <p>Результат — профиль D·I·S·C — сразу после завершения.</p>
+      </div>
+    </div>
+
+    <button class="btn btn--blue" type="button" id="btnStart">Пройти онлайн-тест</button>
+    <p class="landing__note">Чем честнее вы с тестом, тем точнее результаты.</p>
+  </section>
+
+  <!-- ===== dialog: тест ===== -->
+  <div class="modal" id="testModal" role="dialog" aria-modal="true" aria-labelledby="testTitle" aria-hidden="true">
+    <div class="modal__overlay" data-action="close"></div>
+
+    <div class="modal__dialog">
+      <button class="modal__close" type="button" data-action="close" aria-label="Закрыть">
+        <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+          <path d="M5 5l16 16M21 5L5 21" stroke="#7A7A7A" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="modal__head" id="modalHead">
+        <h2 class="modal__title" id="testTitle">Тестирование DISC</h2>
+        <p class="modal__sub" id="testSub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+        <p class="modal__lead" id="testLead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+      </div>
+
+      <div class="modal__tabs" id="tabs" role="tablist" aria-label="Шаги"></div>
+
+      <div class="modal__scroll" id="body">
+        <!-- panes injected by script -->
+        <div class="result" id="result">
+          <div class="result__score" id="scoreText">D:0, I:0, S:0, C:0</div>
+          <p class="result__note">Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов.
+          Вместо этого мы помогаем вам научиться использовать этот инструмент для самотестирования,
+          а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</p>
+          <button class="btn btn--primary" type="button" id="btnRestart">Пройти ещё раз</button>
+        </div>
+      </div>
+
+      <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+
+      <div class="actions">
+        <button class="btn" type="button" id="btnPrev">Назад</button>
+        <span></span>
+        <button class="btn btn--primary" type="button" id="btnNext">Далее</button>
+        <button class="btn btn--primary" type="button" id="btnFinish" hidden>Завершить тест</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ===================== данные (из источника; порядок вариантов внутри списка и их типы сохранены) =====================
+  var PANES = [[{"n": 1, "items": [{"t": "Экспресcивный", "y": "i"}, {"t": "Покладистый", "y": "c"}, {"t": "Волевой", "y": "d"}, {"t": "Осторожный", "y": "s"}]}, {"n": 2, "items": [{"t": "Пылкий", "y": "d"}, {"t": "Разговорчивый", "y": "i"}, {"t": "Добродушный", "y": "s"}, {"t": "Сдержанный", "y": "c"}]}, {"n": 3, "items": [{"t": "Любитель приключений", "y": "i"}, {"t": "Энтузиаст", "y": "c"}, {"t": "Исполнитель инструкций", "y": "d"}, {"t": "Верный", "y": "s"}]}], [{"n": 4, "items": [{"t": "Настойчивый", "y": "d"}, {"t": "Осторожный", "y": "c"}, {"t": "Эмоциональный", "y": "i"}, {"t": "Удовлетворенный", "y": "s"}]}, {"n": 5, "items": [{"t": "Довольный", "y": "s"}, {"t": "Нетерпеливый", "y": "d"}, {"t": "Убедительный", "y": "i"}, {"t": "Безропотный", "y": "c"}]}, {"n": 6, "items": [{"t": "Смиренный", "y": "c"}, {"t": "Умеющий слушать", "y": "s"}, {"t": "Душа компании", "y": "i"}, {"t": "Волевой", "y": "d"}]}], [{"n": 7, "items": [{"t": "Правильный", "y": "c"}, {"t": "Первопроходец", "y": "d"}, {"t": "Спокойный", "y": "s"}, {"t": "Влиятельный", "y": "i"}]}, {"n": 8, "items": [{"t": "Почтительный", "y": "c"}, {"t": "Контактный", "y": "i"}, {"t": "Агрессивный", "y": "d"}, {"t": "Мягкий", "y": "s"}]}, {"n": 9, "items": [{"t": "Весельчак", "y": "i"}, {"t": "Покорный", "y": "s"}, {"t": "Тактичный", "y": "c"}, {"t": "Соперничающий", "y": "d"}]}], [{"n": 10, "items": [{"t": "Точный", "y": "c"}, {"t": "Доминирующий", "y": "d"}, {"t": "Охотный", "y": "s"}, {"t": "Притягательный", "y": "i"}]}, {"n": 11, "items": [{"t": "Уравновешенный", "y": "i"}, {"t": "Уступчивый", "y": "c"}, {"t": "Идущий на риск", "y": "d"}, {"t": "Услужливый", "y": "s"}]}, {"n": 12, "items": [{"t": "Осмотрительный", "y": "c"}, {"t": "Добрососедский", "y": "s"}, {"t": "Энергичный", "y": "d"}, {"t": "Убедительный", "y": "i"}]}], [{"n": 13, "items": [{"t": "Уравновешенный", "y": "s"}, {"t": "Мотивирующий", "y": "i"}, {"t": "Щепетильный", "y": "c"}, {"t": "Решительный", "y": "d"}]}, {"n": 14, "items": [{"t": "Уверенный", "y": "i"}, {"t": "Готовый к сотрудничеству", "y": "c"}, {"t": "Беззаботный", "y": "s"}, {"t": "Аргументирующий", "y": "d"}]}, {"n": 15, "items": [{"t": "Сдержанный", "y": "s"}, {"t": "Прямой", "y": "d"}, {"t": "Строгий", "y": "c"}, {"t": "Убедительный", "y": "i"}]}], [{"n": 16, "items": [{"t": "Застенчивый", "y": "c"}, {"t": "Требовательный", "y": "d"}, {"t": "Терпеливый", "y": "s"}, {"t": "Очаровательный", "y": "i"}]}, {"n": 17, "items": [{"t": "Неугомонный", "y": "d"}, {"t": "Дисциплинированный", "y": "c"}, {"t": "Вдохновляющий", "y": "i"}, {"t": "Внимательный", "y": "s"}]}, {"n": 18, "items": [{"t": "Обязательный", "y": "s"}, {"t": "Оживленный", "y": "i"}, {"t": "Решительный", "y": "d"}, {"t": "Точный", "y": "c"}]}], [{"n": 19, "items": [{"t": "Добросовестный", "y": "c"}, {"t": "Компанейский", "y": "i"}, {"t": "Добрый", "y": "s"}, {"t": "Уверенный в себе", "y": "d"}]}, {"n": 20, "items": [{"t": "Дипломатичный", "y": "c"}, {"t": "Отважный", "y": "d"}, {"t": "Сочувствующий", "y": "s"}, {"t": "Оптимистичный", "y": "i"}]}, {"n": 21, "items": [{"t": "Настойчивый", "y": "d"}, {"t": "Общительный", "y": "i"}, {"t": "Постоянный", "y": "s"}, {"t": "Организованный", "y": "c"}]}], [{"n": 22, "items": [{"t": "Соглашающийся", "y": "c"}, {"t": "Владеющий собой", "y": "s"}, {"t": "Шутливый", "y": "d"}, {"t": "Настойчивый", "y": "i"}]}, {"n": 23, "items": [{"t": "Обаятельный", "y": "i"}, {"t": "Позитивный", "y": "d"}, {"t": "Снисходительный", "y": "s"}, {"t": "Требовательный", "y": "c"}]}, {"n": 24, "items": [{"t": "Коммуникабельный", "y": "i"}, {"t": "Смелый", "y": "d"}, {"t": "Перфекционист", "y": "c"}, {"t": "Сдержанный", "y": "s"}]}]];
+  var STEP_COUNT = PANES.length;
+
+  function qs(s, r) { r = r || document; return r.querySelector(s); }
+  function qsa(s, r) { r = r || document; return Array.prototype.slice.call(r.querySelectorAll(s)); }
+
+  var modal = qs("#testModal");
+  var tabsBox = qs("#tabs");
+  var body = qs("#body");
+  var resultBox = qs("#result");
+  var scoreText = qs("#scoreText");
+  var progressBar = qs("#progressBar");
+  var progressWrap = progressBar.parentElement;
+  var actionsWrap = qs(".actions");
+  var btnPrev = qs("#btnPrev");
+  var btnNext = qs("#btnNext");
+  var btnFinish = qs("#btnFinish");
+  var btnStart = qs("#btnStart");
+  var btnRestart = qs("#btnRestart");
+
+  var step = 0;
+  var finished = false;
+  var lists = [];
+
+  var TAB_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+
+  var HANDLE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true">' +
+    '<g fill="#B3B3B3">' +
+    '<circle cx="5" cy="4" r="1.5"/><circle cx="5" cy="8" r="1.5"/><circle cx="5" cy="12" r="1.5"/>' +
+    '<circle cx="11" cy="4" r="1.5"/><circle cx="11" cy="8" r="1.5"/><circle cx="11" cy="12" r="1.5"/>' +
+    '</g></svg>';
+
+  function esc(t) {
+    return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  // ===================== построение панелей =====================
+  (function buildPanes() {
+    var frag = document.createDocumentFragment();
+    PANES.forEach(function (paneData, i) {
+      var pane = document.createElement("div");
+      pane.className = "pane";
+      pane.setAttribute("data-step-pane", String(i));
+      pane.setAttribute("data-index", String(i));
+      pane.setAttribute("role", "tabpanel");
+
+      var grid = document.createElement("div");
+      grid.className = "grid3";
+
+      paneData.forEach(function (card) {
+        var el = document.createElement("div");
+        el.className = "card";
+        var lis = card.items.map(function (it) {
+          return '<li class="item" data-type="' + it.y + '">' + esc(it.t) +
+            '<span class="item__handle" aria-hidden="true">' + HANDLE_SVG + '</span></li>';
+        }).join("");
+        el.innerHTML =
+          '<div class="card__title">Я наиболее</div>' +
+          '<ul class="list">' + lis + '</ul>' +
+          '<div class="card__foot">Я наименее</div>';
+        grid.appendChild(el);
+      });
+
+      pane.appendChild(grid);
+      frag.appendChild(pane);
+    });
+    body.insertBefore(frag, resultBox);
+    lists = qsa(".list", body);
+  })();
+
+  (function buildTabs() {
+    for (var i = 0; i < STEP_COUNT; i++) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tab";
+      b.setAttribute("role", "tab");
+      b.setAttribute("data-step-btn", String(i));
+      b.textContent = TAB_NAMES[i];
+      b.addEventListener("click", function () { setStep(Number(this.getAttribute("data-step-btn"))); });
+      tabsBox.appendChild(b);
+    }
+  })();
+
+  // ===================== шаги / навигация =====================
+  function setStep(n) {
+    if (finished) return;
+    step = Math.max(0, Math.min(STEP_COUNT - 1, n));
+    render();
+  }
+
+  function render() {
+    qsa(".tab", tabsBox).forEach(function (t) {
+      var is = Number(t.getAttribute("data-step-btn")) === step;
+      t.classList.toggle("is-active", is);
+      t.setAttribute("aria-selected", is ? "true" : "false");
+    });
+    qsa(".pane", body).forEach(function (p) {
+      p.classList.toggle("is-active", Number(p.getAttribute("data-step-pane")) === step);
+    });
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === STEP_COUNT - 1;
+    btnFinish.hidden = step !== STEP_COUNT - 1;
+    progressBar.style.width = (((step + 1) / STEP_COUNT) * 100) + "%";
+  }
+
+  // ===================== сбор ответов и подсчёт (как в оригинале: позиция 0 — +1, позиция 3 — −1 по типу) =====================
+  function collectPayload() {
+    var payload = [];
+    lists.forEach(function (ul, listIndex) {
+      qsa("li", ul).forEach(function (li, idx) {
+        payload.push({ list: listIndex, pos: idx, type: li.getAttribute("data-type") });
+      });
+    });
+    return payload;
+  }
+
+  function score(payload) {
+    var maj = [], min = [];
+    payload.forEach(function (x) {
+      if (x.pos === 0) maj.push(x.type);
+      if (x.pos === 3) min.push(x.type);
+    });
+    function count(arr, ch) {
+      return arr.reduce(function (a, v) { return a + (v === ch ? 1 : 0); }, 0);
+    }
+    return {
+      d: count(maj, "d") - count(min, "d"),
+      i: count(maj, "i") - count(min, "i"),
+      s: count(maj, "s") - count(min, "s"),
+      c: count(maj, "c") - count(min, "c")
+    };
+  }
+
+  // ===================== завершение: баллы в том же приложении (вместо email-шага и result-страницы) =====================
+  function finish() {
+    var res = score(collectPayload());
+    finished = true;
+
+    qsa(".pane", body).forEach(function (p) { p.classList.remove("is-active"); });
+    tabsBox.style.display = "none";
+    resultBox.classList.add("is-active");
+    progressWrap.style.display = "none";
+    actionsWrap.style.display = "none";
+    btnNext.hidden = true;
+    btnFinish.hidden = true;
+
+    scoreText.textContent = "D:" + Number(res.d) + ", I:" + Number(res.i) + ", S:" + Number(res.s) + ", C:" + Number(res.c);
+    body.scrollTop = 0;
+  }
+
+  function restart() {
+    finished = false;
+    // порядок списков — к исходному (как на странице источника)
+    lists.forEach(function (ul, li) {
+      var items = PANES[Math.floor(li / 3)][li % 3].items;
+      ul.innerHTML = items.map(function (it) {
+        return '<li class="item" data-type="' + it.y + '">' + esc(it.t) +
+          '<span class="item__handle" aria-hidden="true">' + HANDLE_SVG + '</span></li>';
+      }).join("");
+    });
+    resultBox.classList.remove("is-active");
+    tabsBox.style.display = "";
+    progressWrap.style.display = "";
+    actionsWrap.style.display = "";
+    setStep(0);
+    body.scrollTop = 0;
+  }
+
+  // ===================== модалка =====================
+  function openModal() {
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.documentElement.classList.add("no-scroll");
+    document.body.classList.add("no-scroll");
+    render();
+  }
+  function closeModal() {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.documentElement.classList.remove("no-scroll");
+    document.body.classList.remove("no-scroll");
+    btnStart.focus({ preventScroll: true });
+  }
+
+  btnStart.addEventListener("click", openModal);
+  btnPrev.addEventListener("click", function () { setStep(step - 1); });
+  btnNext.addEventListener("click", function () { setStep(step + 1); body.scrollTop = 0; });
+  btnFinish.addEventListener("click", finish);
+  btnRestart.addEventListener("click", restart);
+  qsa("[data-action='close']").forEach(function (el) { el.addEventListener("click", closeModal); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+  });
+
+  // ===================== drag & drop (Pointer Events: мышь и тач; перестановка живёт прямо в DOM) =====================
+  var drag = null;
+
+  function getItems(ul) { return qsa("li.item", ul); }
+
+  function onDown(e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    var li = e.target && e.target.closest ? e.target.closest("li.item") : null;
+    if (!li) return;
+    e.preventDefault();
+    var rect = li.getBoundingClientRect();
+    drag = {
+      li: li,
+      ul: li.parentElement,
+      originTop: rect.top,
+      originY: e.clientY
+    };
+    try { li.setPointerCapture && li.setPointerCapture(e.pointerId); } catch (_) { /* синтетические события: захват не обязателен */ }
+    li.classList.add("is-dragging");
+    li.addEventListener("pointermove", onMove);
+    li.addEventListener("pointerup", onUp);
+    li.addEventListener("pointercancel", onUp);
+  }
+
+  function onMove(e) {
+    if (!drag) return;
+    var li = drag.li, ul = drag.ul;
+
+    // желаемая позиция: перед первым «чужим» элементом, чья середина ниже указателя
+    var others = getItems(ul).filter(function (x) { return x !== li; });
+    var target = null;
+    for (var k = 0; k < others.length; k++) {
+      var r = others[k].getBoundingClientRect();
+      if (e.clientY < r.top + r.height / 2) { target = others[k]; break; }
+    }
+    if (target) {
+      if (li.nextElementSibling !== target) ul.insertBefore(li, target);
+    } else if (li.nextElementSibling) {
+      ul.appendChild(li);
+    }
+
+    // визуальное следование за указателем (пересчёт с учётом нового «родного» места)
+    var wantTop = drag.originTop + (e.clientY - drag.originY);
+    var curTop = li.getBoundingClientRect().top;
+    var dy = wantTop - curTop;
+    if (Math.abs(dy) > 0.5) li.style.transform = "translateY(" + dy + "px)";
+  }
+
+  function onUp(e) {
+    if (!drag) return;
+    var li = drag.li;
+    li.classList.remove("is-dragging");
+    li.style.transform = "";
+    li.removeEventListener("pointermove", onMove);
+    li.removeEventListener("pointerup", onUp);
+    li.removeEventListener("pointercancel", onUp);
+    try { li.releasePointerCapture && li.releasePointerCapture(e.pointerId); } catch (_) {}
+    drag = null;
+  }
+
+  document.addEventListener("pointerdown", onDown);
+
+  // ===================== init =====================
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "session_file": "2026-11-14T08-04-54-398Z_01a1d916-85fd-76d9-8757-924831d45010.jsonl",
+  "turns": 33,
+  "tool_calls": 32,
+  "tools_by_name": {
+    "read": 5,
+    "bash": 21,
+    "write": 1,
+    "edit": 5
+  },
+  "tokens_in": 44886,
+  "tokens_out": 16145,
+  "bash_total": 3,
+  "bash_with_network": 3,
+  "curl_to_source": 3,
+  "network_cmds_sample": [
+    "curl -sL https://stratoplan-school.com/disc/ -o /tmp/disc.html && wc -c /tmp/disc.html",
+    "cd /tmp && curl -sL \\\"https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6\\\" -o disc.js && wc -c disc.js && curl -sL \\\"https://stratoplan-school.com/disc/css/main_patched.css?v=0.0.1.1\\\" -o main.css && wc -c main.css",
+    "curl -sL \\\"https://stratoplan-school.com/disc/result/\\\" -o /tmp/disc_result.html; wc -c /tmp/disc_result.html; grep -o 'src=\\\"[^\\\"]*\\\"' /tmp/disc_result.html | sort -u"
+  ],
+  "errors": 4,
+  "first_ts": "2026-11-14T08:04:54.398Z",
+  "last_ts": "2026-11-14T08:06:50.418Z"
+}

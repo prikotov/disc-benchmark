@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-14T06-58-19-653Z_01a1d8d9-9185-7038-bdf7-027ab11dd975.jsonl",
+  "turns": 74,
+  "tool_calls": 74,
+  "tools_by_name": {
+    "bash": 61,
+    "read": 7,
+    "write": 1,
+    "edit": 5
+  },
+  "tokens_in": 115790,
+  "tokens_out": 56864,
+  "bash_total": 16,
+  "bash_with_network": 4,
+  "curl_to_source": 4,
+  "network_cmds_sample": [
+    "cd /tmp/disc-pi-hph2n39g/run && curl -sL 'https://stratoplan-school.com/disc/' -o disc.html && wc -c disc.html && grep -o 'src=\\\"[^\\\"]*\\\"' disc.html | sort -u | head -50",
+    "cd /tmp/disc-pi-hph2n39g/run && curl -sL 'https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6' -o disc_patched.js && curl -sL 'https://stratoplan-school.com/js/app.js?v=0.0.0.1' -o app.js && wc -c disc_patched.js app.js",
+    "cd /tmp/disc-pi-hph2n39g/run && UA='Mozilla/5.0' && curl -sI -A \\\"$UA\\\" 'https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6' | head -15; echo '---try no query---'; curl -s -A \\\"$UA\\\" 'https://stratoplan-school.com/js/disc_patched.js' -o /tmp/t1; head -c 200 /tmp/t1; echo; echo '---try disc s",
+    "cd /tmp/disc-pi-hph2n39g/run && UA='Mozilla/5.0' && curl -s -A \\\"$UA\\\" 'https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6' -o disc_patched.js && curl -s -A \\\"$UA\\\" 'https://stratoplan-school.com/disc/js/app.js?v=0.0.0.1' -o app.js && wc -c disc_patched.js app.js && grep -o '<link[^>]*c"
+  ],
+  "errors": 17,
+  "first_ts": "2026-11-14T06:58:19.653Z",
+  "last_ts": "2026-11-14T07:08:37.254Z"
+}

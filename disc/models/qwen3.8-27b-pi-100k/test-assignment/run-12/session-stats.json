@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-15T04-48-07-714Z_01a1dd88-ba22-75be-b7a9-39ade2a75eba.jsonl",
+  "turns": 62,
+  "tool_calls": 61,
+  "tools_by_name": {
+    "bash": 45,
+    "read": 4,
+    "write": 2,
+    "edit": 10
+  },
+  "tokens_in": 118597,
+  "tokens_out": 49644,
+  "bash_total": 9,
+  "bash_with_network": 6,
+  "curl_to_source": 6,
+  "network_cmds_sample": [
+    "curl -sL 'https://stratoplan-school.com/disc/' -o /tmp/disc.html -w '%{http_code} %{size_download}\\ ' && wc -c /tmp/disc.html",
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6' -o disc_patched.js -w '%{http_code} %{size_download}\\ ' && wc -l disc_patched.js",
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6' -o disc_patched.js -w '%{http_code} %{size_download}\\ '; head -c 300 disc_patched.js; echo; curl -sL 'https://stratoplan-school.com/disc/js/app.js?v=0.0.0.1' -o disc_app.js -w '%{http_code} %{size_download}\\ '; hea",
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/disc/css/main_patched.css?v=0.0.1.1' -o main_patched.css -w '%{http_code} %{size_download}\\ '; grep -c 'disc-' main_patched.css",
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/disc/result/' -o result.html -w '%{http_code} %{size_download}\\ '; grep -oE '<script[^>]*src=\\\"[^\\\"]*\\\"' result.html; grep -oE '<title>[^<]*</title>' result.html; grep -oE '<link[^>]*stylesheet[^>]*>' result.html | head"
+  ],
+  "errors": 6,
+  "first_ts": "2026-11-15T04:48:07.714Z",
+  "last_ts": "2026-11-15T04:56:29.803Z"
+}

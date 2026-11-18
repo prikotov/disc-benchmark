@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T20-58-38-779Z_01a1dbda-e73a-729f-b4dd-b1a32ed20e18.jsonl",
+  "turns": 55,
+  "tool_calls": 62,
+  "tools_by_name": {
+    "bash": 44,
+    "read": 6,
+    "write": 5,
+    "edit": 7
+  },
+  "tokens_in": 201356,
+  "tokens_out": 76862,
+  "bash_total": 17,
+  "bash_with_network": 5,
+  "curl_to_source": 5,
+  "network_cmds_sample": [
+    "mkdir -p /tmp/disc-src && cd /tmp/disc-src && curl -sL 'https://stratoplan-school.com/disc/' -o page.html && wc -c page.html && head -c 2000 page.html",
+    "cd /tmp/disc-src && curl -sL 'https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6' -o disc_patched.js && wc -c disc_patched.js",
+    "cd /tmp/disc-src && curl -sL 'https://stratoplan-school.com/disc/js/app.js?v=0.0.0.1' -o app.js && wc -c app.js",
+    "cd /tmp/disc-src && curl -sL 'https://stratoplan-school.com/disc/result/' -o result.html && wc -c result.html && grep -n 'script\\\\|token' result.html | head -30",
+    "cd /tmp/disc-src && curl -s -A 'Mozilla/5.0' -o disc_live.js 'https://stratoplan-school.com/disc/js/disc.js' && wc -c disc_live.js && curl -s -A 'Mozilla/5.0' 'https://stratoplan-school.com/disc/' -o page_live.html && diff -q page_live.html page.html && echo PAGE-SAME"
+  ],
+  "errors": 5,
+  "first_ts": "2026-11-14T20:58:38.779Z",
+  "last_ts": "2026-11-14T21:12:19.360Z"
+}

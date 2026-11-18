@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-15T07-03-16-335Z_01a1de04-746e-73d4-86a8-f56e252abe8c.jsonl",
+  "turns": 28,
+  "tool_calls": 29,
+  "tools_by_name": {
+    "bash": 23,
+    "write": 1,
+    "edit": 3,
+    "read": 2
+  },
+  "tokens_in": 62012,
+  "tokens_out": 17347,
+  "bash_total": 6,
+  "bash_with_network": 5,
+  "curl_to_source": 5,
+  "network_cmds_sample": [
+    "curl -sL https://stratoplan-school.com/disc/ -o /tmp/disc.html && wc -c /tmp/disc.html && head -c 3000 /tmp/disc.html",
+    "curl -sL https://stratoplan-school.com/js/disc_patched.js -o /tmp/disc.js && wc -c /tmp/disc.js",
+    "for u in \\\"https://stratoplan-school.com/disc/js/disc_patched.js\\\" \\\"https://stratoplan-school.com/js/disc_patched.js\\\"; do echo \\\"== $u\\\"; curl -sL \\\"$u\\\" | head -c 200; echo; done",
+    "curl -sL \\\"https://stratoplan-school.com/disc/js/disc_patched.js\\\" -o /tmp/disc_patched.js && cat /tmp/disc_patched.js",
+    "curl -sL \\\"https://stratoplan-school.com/disc/result/\\\" -o /tmp/result.html && wc -c /tmp/result.html && grep -o 'src=\\\"[^\\\"]*\\\\.js[^\\\"]*\\\"' /tmp/result.html | sort -u"
+  ],
+  "errors": 3,
+  "first_ts": "2026-11-15T07:03:16.335Z",
+  "last_ts": "2026-11-15T07:08:14.720Z"
+}

@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-18T04:00:35.970326+00:00",
+  "duration_s": 54.9,
+  "exit_code": 0,
+  "prompt_chars": 84559,
+  "verdict": {
+    "data": 4,
+    "logic": 1,
+    "ux": 3,
+    "impl": 4,
+    "total": 12,
+    "notes": "Данные перенесены идеально (84/84 прилагательных посимвольно, 96/96 типов, порядок 24 списков сохранён, латинская 'c' в 'Экспресcивный' воспроизведена). Подсчёт в коде выглядит корректным (позиция 1 = +1, позиция 4 = -1, только d/i/s/c), но автопрогон показал D:4,I:3,S:-4,C:-3 вместо эталонных D:5,I:2,S:-3,C:-4 — по правилам рубрики это принуждает logic ≤ 1; расхождение может быть артефактом драйвера (pointer-based drag не эмулируется, в final_orders 25 записей на 24 списка, и мой ручной пересчёт по final_orders тоже не сходится с displayed). UX: полный поток работает (старт → 8 шагов → результат, скриншоты сняты, 0 ошибок консоли), но драйвер зафиксировал result_marker_on_screen=false и returned_to_start после 'Завершить тест' — пограничный дефект показа результата.Impl: чистое одиночное офлайн-решение без внешних запросов, email/токен/редирект убраны, drag&drop своя pointer-реализация + клавиатурный рeordering, reset восстанавливает исходный порядок.",
+    "examples": "data: index.html содержит все 24 списка draggable-list1..24 с точными прилагательными и data-type (напр. '<li class=\"disc-item\" data-type=\"i\">Экспресcивный</li>'), порядок в списках = эталон; типы нигде не показаны пользователю. logic: computeScore(): 'const major = items[0]...score[major.dataset.type] += 1; const minor = items[3]...score[minor.dataset.type] -= 1' — алгоритм верен, но playthrough.displayed (D:4,I:3,S:-4,C:-3) ≠ эталон (D:5,I:2,S:-3,C:-4), displayed_match=false. ux: есть табы 'Первый…Восьмой', 'Назад/Далее/Завершить тест' (backBtn.disabled = step === 0), прогресс-бар, дисклеймер на результате; но playthrough: flow_ok=false, returned_to_start=true, 'результат не показан: приложение вернулось на старт'. impl: один файл, ни одного внешнего URL (check.external pass), результат в модальном окне ('.disc-result'), email-шага и fetch/XHR нет, кастомный DnD на pointer events + setPointerCapture, стрелки ↑/↓ для доступности, resetTest возвращает _origOrder."
+  }
+}

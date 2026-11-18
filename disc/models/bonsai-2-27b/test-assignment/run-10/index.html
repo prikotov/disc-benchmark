@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Бесплатный тест DISC для руководителей — Школа менеджмента Стратоплан</title>
+<meta name="description" content="Короткий тест DISC на типы личности. Определяйте ваш управленческий стиль за 5 минут — без отправки данных.">
+<style>
+/* ==========================================================================
+   Базовые переменные
+   ========================================================================== */
+:root {
+  --accent: #215FCB;
+  --accent-h: #268AC5;
+  --bg: #0C1226;
+  --panel: #ffffff;
+  --card-bg: #f7f8fa;
+  --ink: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --line-dark: #d1d5db;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg);
+}
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+
+/* ==========================================================================
+   Hero (главный экран)
+   ========================================================================== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 24px 96px;
+  background:
+    radial-gradient(900px 500px at 80% -10%, rgba(33, 95, 203, 0.22), transparent 60%),
+    radial-gradient(700px 420px at 10% 110%, rgba(38, 138, 197, 0.16), transparent 60%),
+    var(--bg);
+  color: #f3f4f6;
+  text-align: center;
+}
+.hero__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(1080px, 100%);
+  margin-bottom: 40px;
+}
+.hero__brand {
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9aa3b2;
+}
+.hero__uptitle-wrap {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 15px;
+  color: #c7ccd4;
+  margin-bottom: 26px;
+}
+.hero__uptitle-wrap li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero__uptitle-wrap li + li::before {
+  content: "";
+  width: 1px;
+  height: 18px;
+  background: #2a3556;
+}
+.hero__uptitle { font-weight: 500; }
+.hero__title {
+  margin: 0 0 14px;
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  max-width: 720px;
+}
+.hero__title span { color: var(--accent-h); }
+.hero__subtitle {
+  margin: 0 0 36px;
+  font-size: 17px;
+  color: #9aa3b2;
+  max-width: 560px;
+}
+.hero__hint {
+  margin: -20px 0 0;
+  font-size: 13px;
+  color: #5f6b84;
+}
+.cta {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  padding: 16px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(33, 95, 203, 0.35);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cta:hover { background: var(--accent-h); transform: translateY(-1px); box-shadow: 0 10px 28px rgba(38, 138, 197, 0.45); }
+.cta:active { transform: translateY(0); }
+.cta:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.hero__logo svg { height: 28px; color: #f3f4f6; }
+
+/* ==========================================================================
+   Модалка теста
+   ========================================================================== */
+.disc-modal[hidden] { display: none; }
+.disc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.disc-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 10, 22, 0.72);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.disc-modal__dialog {
+  position: relative;
+  width: min(1020px, 100%);
+  max-height: calc(100% - 48px);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border-radius: 14px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  animation: disc-modal-in 0.18s ease;
+}
+@keyframes disc-modal-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to   { opacity: 1; transform: none; }
+}
+.disc-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: #4b5563;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.disc-modal__close:hover { background: #fff; color: #111827; }
+.disc-modal__close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.disc-modal__body {
+  padding: 28px 28px 24px;
+  overflow-y: auto;
+}
+.disc-modal__title {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.disc-modal__sub {
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+}
+.disc-modal__lead {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+.disc-panes[hidden] { display: none; }
+
+/* Тэбы шагов */
+.disc-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  scrollbar-width: thin;
+}
+.disc-tabs::-webkit-scrollbar { height: 5px; }
+.disc-tabs::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+.disc-tab {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.disc-tab:hover { color: #374151; }
+.disc-tab[aria-selected="true"] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.disc-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+/* Шаги */
+.disc-panes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.disc-pane[hidden] { display: none; }
+.disc-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+}
+.disc-card__title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0 2px 10px;
+}
+.disc-card__foot {
+  margin-top: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 2px;
+}
+
+/* Элементы списка */
+.disc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.disc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 9px 12px;
+  background: #fff;
+  border: 1px solid var(--line-dark);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: border-color 0.1s, box-shadow 0.1s;
+}
+.disc-item:hover { border-color: #9ca3af; }
+.disc-item.is-dragging {
+  opacity: 0.5;
+  border-style: dashed;
+  cursor: grabbing;
+}
+.disc-item.is-over {
+  border-top: 2px solid var(--accent);
+  margin-bottom: 6px;
+}
+.disc-handle-ico { flex: 0 0 auto; color: #b3b3b3; pointer-events: none; }
+.disc-item .disc-handle { flex: 0 0 auto; pointer-events: auto; }
+.disc-item__text { min-width: 0; }
+
+/* Прогресс */
+.disc-progress {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--line);
+  margin: 18px 0 14px;
+  overflow: hidden;
+}
+.disc-progress__bar {
+  height: 100%;
+  width: 12.5%;
+  border-radius: 4px;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+/* Кнопки действий */
+.disc-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.disc-btn {
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.disc-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+.disc-btn--ghost {
+  background: transparent;
+  color: #4b5563;
+  border: 1px solid var(--line-dark);
+}
+.disc-btn--ghost:hover:not(:disabled) { background: #f3f4f6; border-color: #c3c9d1; }
+.disc-btn--primary {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+.disc-btn--primary:hover:not(:disabled) { background: var(--accent-h); border-color: var(--accent-h); }
+.disc-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.disc-actions button[hidden] { display: none; }
+
+/* ==========================================================================
+   Экран результата (показ в том же приложении, без редиректа)
+   ========================================================================== */
+.disc-result {
+  margin: 0;
+  padding: 8px 0;
+}
+.disc-result[hidden] { display: none; }
+.disc-result__title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.disc-result__score {
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  margin: 0 0 16px;
+  word-break: break-word;
+}
+.disc-result__note {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+}
+.disc-result__disclaimer {
+  margin: 0 0 22px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.disc-result__actions { display: flex; gap: 10px; }
+.disc-result__actions .disc-btn--primary {
+  border: 0;
+  background: var(--accent);
+}
+
+/* ==========================================================================
+   Подвал
+   ========================================================================== */
+.site-footer {
+  padding: 20px 24px 28px;
+  color: #5f6b84;
+  font-size: 12.5px;
+}
+.site-footer p { margin: 0; }
+.site-footer a { color: #8b95a8; text-decoration: underline; }
+
+/* ==========================================================================
+   Адаптивность
+   ========================================================================== */
+@media (max-width: 860px) {
+  .disc-panes { grid-template-columns: 1fr; }
+  .hero__top { flex-direction: column; text-align: center; }
+  .hero__uptitle-wrap li + li::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .disc-modal__dialog { animation: none; }
+  .disc-progress__bar { transition: none; }
+}
+
+/* Запрет прокрутки страницы во время показа модалки */
+html.no-scroll, html.no-scroll body { overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<main class="hero" id="hero">
+  <header class="hero__top" aria-hidden="true">
+    <svg class="hero__logo" xmlns="http://www.w3.org/2000/svg" width="192" height="32" viewBox="0 0 192 32" fill="currentColor" aria-hidden="true">
+      <path d="M11.46 13.2303C10.7362 13.6143 9.94001 13.8024 9.07951 13.8024C7.58368 13.8024 6.36933 13.3322 5.40428 12.3994C4.44727 11.4667 3.97279 10.2283 3.97279 8.66858C3.97279 7.11665 4.45531 5.8704 5.42036 4.93768C6.38541 4.00495 7.59977 3.54251 9.07951 3.54251C9.94001 3.54251 10.7362 3.73062 11.46 4.10685C12.1838 4.48307 12.7869 5.05525 13.2694 5.8077L16.2933 4.09117C15.666 2.8606 14.7251 1.92004 13.4705 1.26164C12.2159 0.603245 10.7683 0.274048 9.11168 0.274048C7.34242 0.274048 5.77422 0.634597 4.39902 1.34786C3.02382 2.06896 1.94618 3.05655 1.1661 4.32631C0.394062 5.61175 0 7.05395 0 8.66858C0 10.2832 0.394062 11.7332 1.1661 13.0186C1.9461 14.2962 3.02382 15.2917 4.4151 16.0128C5.80638 16.726 7.36655 17.0866 9.11168 17.0866C10.7442 17.0866 12.1918 16.7574 13.4464 16.0833C14.7009 15.4171 15.6499 14.4687 16.2933 13.2459L13.2694 11.5216C12.7869 12.2819 12.1838 12.854 11.46 13.2303Z" />
+      <path d="M17.4917 0.460815V3.72143H23.4187V16.8658H27.3513V3.72143H33.2461V0.460815H17.4917Z" />
+      <path d="M53.194 4.27862C52.4621 3.00886 51.4488 2.02911 50.1541 1.33153C48.8593 0.633936 47.3956 0.289062 45.755 0.289062C44.605 0.289062 43.5435 0.485014 42.5865 0.876915C41.6295 1.26098 40.8252 1.84883 40.1738 2.6248V0.461499H36.4343V22.8234H40.3749V14.8756C41.6938 16.3492 43.4952 17.0859 45.7631 17.0859C47.4037 17.0859 48.8673 16.7332 50.1621 16.0435C51.4488 15.3459 52.4702 14.3583 53.202 13.0807C53.9419 11.8031 54.3038 10.3296 54.3038 8.67576C54.2957 7.0141 53.9338 5.54055 53.194 4.27862ZM48.8915 12.3831C47.9586 13.3237 46.7683 13.794 45.3127 13.794C44.3638 13.794 43.5193 13.5823 42.7634 13.1591C42.0074 12.7437 41.4043 12.148 40.97 11.3642C40.5277 10.5882 40.3106 9.68686 40.3106 8.66008C40.3106 7.64114 40.5357 6.73976 40.97 5.9638C41.4123 5.18784 42.0074 4.58431 42.7634 4.16105C43.5193 3.74564 44.3718 3.53401 45.3127 3.53401C46.7603 3.53401 47.9505 4.00429 48.8915 4.94486C49.8243 5.88542 50.2908 7.12383 50.2908 8.66008C50.2988 10.2042 49.8324 11.4426 48.8915 12.3831Z" />
+      <path d="M70.2596 2.01345C68.9487 0.861264 67.0508 0.28125 64.5738 0.28125C63.1826 0.28125 61.8717 0.453687 60.6332 0.79856C59.3947 1.15127 58.3332 1.6529 57.4566 2.3113L59.0007 5.10164C59.636 4.59216 60.4 4.19243 61.3168 3.90242C62.2255 3.62025 63.1584 3.47133 64.1074 3.47133C65.4987 3.47133 66.5361 3.77701 67.2438 4.38838C67.9435 5.00758 68.2973 5.88544 68.2973 7.02979V7.27277H63.9385C61.5259 7.27277 59.7566 7.71954 58.6307 8.61307C57.5048 9.49877 56.9419 10.6823 56.9419 12.1559C56.9419 13.0964 57.1992 13.9429 57.7139 14.6954C58.2286 15.44 58.9605 16.02 59.9094 16.4433C60.8503 16.8665 61.9521 17.0781 63.2147 17.0781C64.4773 17.0781 65.555 16.8822 66.4476 16.5138C67.3403 16.1297 68.0319 15.5811 68.5145 14.8678V16.8587H72.2299V7.24926C72.2299 4.92136 71.5785 3.17348 70.2596 2.01345Z" />
+      <path d="M75 0.460815V3.72143H80.9189V16.8658H84.8595V3.72143H90.7544V0.460815H75Z" />
+      <path d="M113.88 0.460815V16.8658H117.821V3.72143H126.112V16.8658H130.013V0.460815H113.88Z" />
+      <path d="M137.293 0.460815L137.004 6.79394C136.923 8.40857 136.827 9.65483 136.706 10.5249C136.586 11.3949 136.336 12.1473 135.934 12.7665C135.54 13.3936 134.937 13.6993 134.141 13.6993C133.932 13.6993 133.674 13.6679 133.377 13.6052L133.192 16.8266C134.052 17.0539 134.776 17.1637 135.371 17.1637C136.626 17.1637 137.623 16.7404 138.347 15.8861C139.071 15.0317 139.585 13.8795 139.899 12.4138C140.205 10.956 140.406 9.13751 140.51 6.96637L140.663 3.71359H146.968V16.858H150.909V0.460815H137.293Z" />
+      <path d="M168.483 2.01345C167.172 0.861264 165.274 0.28125 162.797 0.28125C161.406 0.28125 160.095 0.453687 158.857 0.79856C157.618 1.15127 156.557 1.6529 155.68 2.3113L157.224 5.10164C157.859 4.59216 158.623 4.19243 159.54 3.90242C160.449 3.62025 161.382 3.47133 162.331 3.47133C163.722 3.47133 164.76 3.77701 165.467 4.38838C166.167 5.00758 166.521 5.88544 166.521 7.02979V7.27277H162.17C159.749 7.27277 157.988 7.71954 156.862 8.61307C155.736 9.49877 155.173 10.6823 155.173 12.1559C155.173 13.0964 155.431 13.9429 155.945 14.6954C156.46 15.44 157.192 16.02 158.133 16.4433C159.082 16.8665 160.184 17.0781 161.438 17.0781C162.701 17.0781 163.778 16.8822 164.671 16.5138C165.564 16.1297 166.255 15.5811 166.738 14.8678V16.8587H170.453V7.24926C170.453 4.92136 169.794 3.17348 168.483 2.01345ZM166.513 11.7404C166.199 12.5634 165.66 13.1905 164.888 13.6293C164.116 14.0683 163.248 14.2878 162.258 14.2878C161.245 14.2878 160.465 14.084 159.894 13.6686C159.331 13.261 159.042 12.7123 159.042 12.0148C159.042 10.5569 160.176 9.83576 162.443 9.83576H166.513V11.7404Z" />
+      <path d="M188.059 0.460815V7.13097H179.583V0.460815H175.65V16.8658H179.583V10.3838H188.059V16.8658H192V0.460815H188.059Z" />
+      <path d="M100.404 7.45396C98.1205 6.87395 95.8606 6.29394 93.5606 5.70608C93.6732 5.58068 93.7536 5.47878 93.8501 5.38472C94.2844 4.98498 94.8232 4.78903 95.4022 4.69498C96.0456 4.59308 96.689 4.66363 97.3323 4.69498C98.7075 4.74984 100.083 4.80471 101.458 4.85958C101.932 4.87525 102.407 4.9066 102.881 4.91444C102.954 4.91444 103.05 4.87525 103.107 4.82039C104.064 3.8955 105.013 2.96277 105.97 2.03789C106.018 1.99085 106.291 1.74788 106.291 1.74788C104.779 0.650556 102.914 0 100.887 0C95.8848 0 91.8396 3.95037 91.8396 8.81778C91.8396 10.793 92.5071 12.6192 93.633 14.0928C95.7159 12.0549 98.2974 9.50753 100.404 7.45396Z" fill="#215FCB" />
+      <path d="M108 3.37195C107.952 3.42681 107.791 3.59141 107.743 3.63844C106.778 4.579 105.813 5.5274 104.84 6.46797C104.767 6.53851 104.735 6.61689 104.735 6.71878C104.791 7.92584 104.84 9.14073 104.888 10.3478C104.928 11.3433 104.984 12.3387 105 13.3341C105.009 13.9612 104.888 14.5647 104.534 15.1055C104.405 15.3093 104.22 15.4739 104.06 15.6542C104.019 15.6924 103.963 15.7247 103.891 15.7717C103.296 13.5536 102.708 11.3511 102.113 9.11722C99.9822 11.1865 97.4088 13.7103 95.2856 15.7717C96.8217 16.9474 98.7598 17.6529 100.875 17.6529C105.877 17.6529 109.922 13.7025 109.922 8.83505C109.93 6.76581 109.206 4.87685 108 3.37195Z" />
+      <path d="M4.40487 30.0199L4.21086 30.2344V24.9641H5.03751V30.2344L4.82663 30.0199H7.70302L7.49214 30.2344V24.9641H8.31879V30.7375H0.921143V24.9641H1.75623V30.2344L1.54535 30.0199H4.40487Z" />
+      <path d="M19.1892 30.7375L17.0467 27.892L17.7299 27.4796L20.1508 30.7375H19.1892ZM15.2163 30.7375V24.9641H16.0429V30.7375H15.2163ZM15.7899 28.1972V27.4714H17.7046V28.1972H15.7899ZM17.8059 27.9415L17.0298 27.826L19.1471 24.9641H20.0496L17.8059 27.9415Z" />
+      <path d="M28.7171 30.8035C28.2673 30.8035 27.8483 30.7292 27.4603 30.5808C27.0779 30.4323 26.7461 30.2261 26.465 29.9622C26.1838 29.6928 25.9645 29.3794 25.807 29.022C25.6496 28.6645 25.5708 28.2742 25.5708 27.8508C25.5708 27.4274 25.6496 27.037 25.807 26.6796C25.9645 26.3222 26.1838 26.0115 26.465 25.7476C26.7461 25.4782 27.0779 25.2692 27.4603 25.1208C27.8427 24.9723 28.2616 24.8981 28.7171 24.8981C29.167 24.8981 29.5803 24.9723 29.9571 25.1208C30.3395 25.2637 30.6713 25.4699 30.9525 25.7393C31.2393 26.0033 31.4586 26.3139 31.6104 26.6713C31.7679 27.0287 31.8466 27.4219 31.8466 27.8508C31.8466 28.2797 31.7679 28.6728 31.6104 29.0302C31.4586 29.3876 31.2393 29.701 30.9525 29.9704C30.6713 30.2344 29.9571 30.4406 29.5803 30.589C29.167 30.732 28.7171 30.8035 28.7171 30.8035ZM28.7171 30.0694C29.0433 30.0694 29.3442 30.0144 29.6197 29.9045C29.9009 29.7945 30.1427 29.6405 30.3451 29.4426C30.5532 29.2391 30.7135 29.0027 30.8259 28.7333C30.944 28.4639 31.0031 28.1697 31.0031 27.8508C31.0031 27.5319 30.944 27.2377 30.8259 26.9683C30.7135 26.6988 30.5532 26.4651 30.3451 26.2672C30.1427 26.0638 29.9009 25.907 29.6197 25.7971C29.3442 25.6871 29.0433 25.6321 28.7171 25.6321C28.3854 25.6321 28.0789 25.6871 27.7977 25.7971C27.5222 25.907 27.2804 26.0641 27.0723 26.2672C26.8642 26.4651 26.7011 26.6988 26.583 26.9683C26.4706 27.2377 26.4143 27.5319 26.4143 27.8508C26.4143 28.1697 26.4706 28.4639 26.583 28.7333C26.7011 29.0302 26.8642 29.3876 27.0723 29.6542C27.2804 29.9235 27.5223 30.17 27.7977 30.3856C27.966 30.4958 28.0956 30.5776 28.193 30.6371C28.3454 30.7146 28.527 30.7795 28.7171 30.8035Z" />
+    </svg>
+    <p class="hero__brand">Школа менеджмента Стратоплан</p>
+  </header>
+
+  <div class="hero__body">
+    <ul class="hero__uptitle-wrap" aria-hidden="true">
+      <li><span class="hero__uptitle">Бесплатный тест</span></li>
+      <li><span class="hero__uptitle">5 минут</span></li>
+      <li><span class="hero__uptitle">Подарок после прохождения теста</span></li>
+    </ul>
+    <h1 class="hero__title">Бесплатный тест <span>DISC</span> для руководителей</h1>
+    <p class="hero__subtitle">Определите ваш управленческий стиль за 5 минут</p>
+    <p class="hero__hint">8 шагов — расставляйте характеристики в порядке сходства с собой</p>
+    <button class="cta" id="ctaOpen" type="button">Пройти тест DISC</button>
+  </div>
+</main>
+
+<!-- ================= ТЕСТ (модалка) ================= -->
+<div class="disc-modal" id="wizardmodal" hidden>
+  <div class="disc-modal__backdrop" data-disc-close></div>
+  <div class="disc-modal__dialog">
+    <button class="disc-modal__close" type="button" aria-label="Закрыть" data-disc-close>&times;</button>
+
+    <div class="disc-modal__body">
+      <h2 class="disc-modal__title">Тестирование DISC</h2>
+      <p class="disc-modal__sub">Помните — чем честнее вы с тестом, чем точнее результаты!</p>
+      <p class="disc-modal__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+
+      <nav class="disc-tabs" id="discTabs" aria-label="Шаги теста"></nav>
+
+      <div class="disc-panes" id="discPanes"></div>
+
+      <div class="disc-progress" aria-hidden="true">
+        <div class="disc-progress__bar" id="discProgress"></div>
+      </div>
+
+      <div class="disc-actions">
+        <button class="disc-btn disc-btn--ghost" id="btnPrev" type="button" data-disc-prev>Назад</button>
+        <button class="disc-btn disc-btn--primary" id="btnNext" type="button" data-disc-next>Далее</button>
+        <button class="disc-btn disc-btn--primary" id="btnFinish" type="button" data-disc-finish hidden>Завершить тест</button>
+      </div>
+
+      <!-- Экран результата: показывается в этом приложении, без перехода на другую страницу -->
+      <div class="disc-result" id="discResult" hidden>
+        <h3 class="disc-result__title">Ваш DISC-профиль:</h3>
+        <p class="disc-result__score" id="scoreSpan" tabindex="0"></p>
+        <p class="disc-result__note">
+          По <a href="https://stratoplan-school.com/disc/result/disc.pdf" target="_blank" rel="noopener">этой ссылке</a>
+          вы можете ознакомиться с общей расшифровкой результатов тестирования.
+        </p>
+        <p class="disc-result__disclaimer">
+          * Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов.
+          Вместо этого мы помогаем вам научиться использовать этот инструмент
+          для самотестирования, а также для дальнейшей работы с вашими командами,
+          сотрудниками и коллегами.
+        </p>
+        <div class="disc-result__actions">
+          <button class="disc-btn disc-btn--primary" id="btnResultClose" type="button" data-disc-close>Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= ПОДВАЛ ================= -->
+<footer class="site-footer">
+  <p>&#169; <span id="currentYear"></span> Школа менеджмента STRATOPLAN. Все права защищены.
+    <a href="https://stratoplan-school.com/privacy-policy/" target="_blank" rel="noopener">Политика конфиденциальности</a></p>
+</footer>
+
+<script>
+"use strict";
+
+/* ==========================================================================
+   Данные теста: 24 блока (8 шагов × 3 блока), по 4 характеристики.
+   Типы: d — Dominance, i — Influence, s — Stability, c — Compliance.
+   В каждом блоке ровно по одному представителю каждого типа.
+   Блоки идут в порядке: шаг 1 — блоки 1–3, шаг 2 — блоки 4–6 и т.д.
+   ========================================================================== */
+const BLOCKS = [
+  [
+    ["i", "Экспресcивный"],
+    ["c", "Покладистый"],
+    ["d", "Волевой"],
+    ["s", "Осторожный"]
+  ],
+  [
+    ["d", "Пылкий"],
+    ["i", "Разговорчивый"],
+    ["s", "Добродушный"],
+    ["c", "Сдержанный"]
+  ],
+  [
+    ["i", "Любитель приключений"],
+    ["c", "Энтузиаст"],
+    ["d", "Исполнитель инструкций"],
+    ["s", "Верный"]
+  ],
+  [
+    ["d", "Настойчивый"],
+    ["c", "Осторожный"],
+    ["i", "Эмоциональный"],
+    ["s", "Удовлетворенный"]
+  ],
+  [
+    ["s", "Довольный"],
+    ["d", "Нетерпеливый"],
+    ["i", "Убедительный"],
+    ["c", "Безропотный"]
+  ],
+  [
+    ["c", "Смиренный"],
+    ["s", "Умеющий слушать"],
+    ["i", "Душа компании"],
+    ["d", "Волевой"]
+  ],
+  [
+    ["c", "Правильный"],
+    ["d", "Первопроходец"],
+    ["s", "Спокойный"],
+    ["i", "Влиятельный"]
+  ],
+  [
+    ["c", "Почтительный"],
+    ["i", "Контактный"],
+    ["d", "Агрессивный"],
+    ["s", "Мягкий"]
+  ],
+  [
+    ["i", "Весельчак"],
+    ["s", "Покорный"],
+    ["c", "Тактичный"],
+    ["d", "Соперничающий"]
+  ],
+  [
+    ["c", "Точный"],
+    ["d", "Доминирующий"],
+    ["s", "Охотный"],
+    ["i", "Притягательный"]
+  ],
+  [
+    ["i", "Уравновешенный"],
+    ["c", "Уступчивый"],
+    ["d", "Идущий на риск"],
+    ["s", "Услужливый"]
+  ],
+  [
+    ["c", "Осмотрительный"],
+    ["s", "Добрососедский"],
+    ["d", "Энергичный"],
+    ["i", "Убедительный"]
+  ],
+  [
+    ["s", "Уравновешенный"],
+    ["i", "Мотивирующий"],
+    ["c", "Щепетильный"],
+    ["d", "Решительный"]
+  ],
+  [
+    ["i", "Уверенный"],
+    ["c", "Готовый к сотрудничеству"],
+    ["s", "Беззаботный"],
+    ["d", "Аргументирующий"]
+  ],
+  [
+    ["s", "Сдержанный"],
+    ["d", "Прямой"],
+    ["c", "Строгий"],
+    ["i", "Убедительный"]
+  ],
+  [
+    ["c", "Застенчивый"],
+    ["d", "Требовательный"],
+    ["s", "Терпеливый"],
+    ["i", "Очаровательный"]
+  ],
+  [
+    ["d", "Неугомонный"],
+    ["c", "Дисциплинированный"],
+    ["i", "Вдохновляющий"],
+    ["s", "Внимательный"]
+  ],
+  [
+    ["s", "Обязательный"],
+    ["i", "Оживленный"],
+    ["d", "Решительный"],
+    ["c", "Точный"]
+  ],
+  [
+    ["c", "Добросовестный"],
+    ["i", "Компанейский"],
+    ["s", "Добрый"],
+    ["d", "Уверенный в себе"]
+  ],
+  [
+    ["c", "Дипломатичный"],
+    ["d", "Отважный"],
+    ["s", "Сочувствующий"],
+    ["i", "Оптимистичный"]
+  ],
+  [
+    ["d", "Настойчивый"],
+    ["i", "Общительный"],
+    ["s", "Постоянный"],
+    ["c", "Организованный"]
+  ],
+  [
+    ["c", "Соглашающийся"],
+    ["s", "Владеющий собой"],
+    ["d", "Шутливый"],
+    ["i", "Настойчивый"]
+  ],
+  [
+    ["i", "Обаятельный"],
+    ["d", "Позитивный"],
+    ["s", "Снисходительный"],
+    ["c", "Требовательный"]
+  ],
+  [
+    ["i", "Коммуникабельный"],
+    ["d", "Смелый"],
+    ["c", "Перфекционист"],
+    ["s", "Сдержанный"]
+  ]
+];
+
+const TAB_LABELS = ["Первый", "Второй", "Третий", "Четвёртый", "Пятый", "Шестой", "Седьмой", "Восьмой"];
+const TOTAL_STEPS = 8;
+const HANDLE_SVG =
+  '<svg class="disc-handle-ico" xmlns="http://www.w3.org/2000/svg" width="16" height="16" ' +
+  'viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">' +
+  '<circle cx="8" cy="2.5" r="1.9"/><circle cx="8" cy="8" r="1.9"/><circle cx="8" cy="13.5" r="1.9"/></svg>';
+
+/* ==========================================================================
+   Ссылки
+   ========================================================================== */
+const modal      = document.getElementById("wizardmodal");
+const ctaOpen    = document.getElementById("ctaOpen");
+const tabsEl     = document.getElementById("discTabs");
+const panesEl    = document.getElementById("discPanes");
+const progress   = document.getElementById("discProgress");
+const btnPrev    = document.getElementById("btnPrev");
+const btnNext    = document.getElementById("btnNext");
+const btnFinish  = document.getElementById("btnFinish");
+const scoreSpan  = document.getElementById("scoreSpan");
+const resultEl   = document.getElementById("discResult");
+
+/* ==========================================================================
+   Построение UI
+   ========================================================================== */
+function buildUI() {
+  // Тэбы шагов
+  TAB_LABELS.forEach((label, idx) => {
+    const tab = document.createElement("button");
+    tab.className = "disc-tab";
+    tab.type = "button";
+    tab.dataset.step = idx;
+    tab.setAttribute("aria-label", "Шаг " + (idx + 1));
+    tab.textContent = label;
+    tab.addEventListener("click", () => goTo(idx));
+    tabsEl.appendChild(tab);
+    tabs.push(tab);
+  });
+
+  // Шаги (панели): 8 панелей по 3 блока (карточки)
+  for (let s = 0; s < TOTAL_STEPS; s++) {
+    const pane = document.createElement("div");
+    pane.className = "disc-pane";
+    if (s > 0) pane.hidden = true;
+    panes.push(pane);
+
+    for (let b = 0; b < 3; b++) {
+      const items = BLOCKS[s * 3 + b];
+
+      const card = document.createElement("div");
+      card.className = "disc-card";
+
+      const title = document.createElement("div");
+      title.className = "disc-card__title";
+      title.textContent = "Я наиболее";
+
+      const ul = document.createElement("ul");
+      ul.className = "disc-list";
+      ul.id = "draggable-list" + (s * 3 + b + 1);
+      for (const [type, text] of items) {
+        const li = document.createElement("li");
+        li.className = "disc-item";
+        li.dataset.type = type;
+
+        const handle = document.createElement("span");
+        handle.className = "disc-handle";
+        handle.setAttribute("aria-hidden", "true");
+        handle.innerHTML = HANDLE_SVG;
+
+        const span = document.createElement("span");
+        span.className = "disc-item__text";
+        span.textContent = text;
+
+        li.appendChild(handle);
+        li.appendChild(span);
+        ul.appendChild(li);
+      }
+
+      const foot = document.createElement("div");
+      foot.className = "disc-card__foot";
+      foot.textContent = "Я наименее";
+
+      card.appendChild(title);
+      card.appendChild(ul);
+      card.appendChild(foot);
+      pane.appendChild(card);
+    }
+
+    panesEl.appendChild(pane);
+  }
+
+  bindDnD();
+}
+
+/* ==========================================================================
+   Перемещение шагов и прогресс
+   ========================================================================== */
+let step = 0;
+const panes = [];
+const tabs  = [];
+
+function updateUI() {
+  panes.forEach((pane, i) => { pane.hidden = i !== step; });
+  tabs.forEach((tab, i) => { tab.setAttribute("aria-selected", i === step ? "true" : "false"); });
+  progress.style.width = ((step + 1) / TOTAL_STEPS * 100) + "%";
+  btnPrev.disabled = step === 0;
+  btnNext.hidden = step === TOTAL_STEPS - 1;
+  btnFinish.hidden = step !== TOTAL_STEPS - 1;
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL_STEPS || idx === step) return;
+  step = idx;
+  updateUI();
+}
+
+function openModal() {
+  step = 0;
+  resultEl.hidden = true;
+  updateUI();
+  modal.hidden = false;
+  document.documentElement.classList.add("no-scroll");
+  btnClose.focus();
+}
+
+function closeModal() {
+  modal.hidden = true;
+  document.documentElement.classList.remove("no-scroll");
+  ctaOpen.focus();
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !modal.hidden) closeModal();
+});
+
+document.querySelectorAll("[data-disc-close]").forEach((el) => {
+  el.addEventListener("click", closeModal);
+});
+ctaOpen.addEventListener("click", openModal);
+btnPrev.addEventListener("click", () => { if (!step) return; goTo(step - 1); });
+btnNext.addEventListener("click", () => { if (step >= TOTAL_STEPS - 1) return; goTo(step + 1); });
+btnFinish.addEventListener("click", finishTest);
+
+/* ==========================================================================
+   Перетаскивание (HTML5 DnD — как в оригинале: draggable + dragstart/
+   dragover/dragleave/drop. На тач-экранях drag-события не стреляют —
+   ровно так же, как в оригинале)
+   ========================================================================== */
+function bindDnD() {
+  for (const list of panesEl.querySelectorAll(".disc-list")) {
+    for (const item of list.querySelectorAll(".disc-item")) {
+      const handle = item.querySelector(".disc-handle");
+      item.setAttribute("draggable", "true");
+      if (handle) handle.setAttribute("draggable", "false");
+
+      item.addEventListener("dragstart", (e) => {
+        item.classList.add("is-dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", ""); // Chrome требует setData для старта
+      });
+
+      item.addEventListener("dragend", () => {
+        item.classList.remove("is-dragging");
+        list.querySelectorAll(".disc-item.is-over").forEach((x) => {
+          x.classList.remove("is-over");
+        });
+      });
+
+      item.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        const dragging = list.querySelector(".disc-item.is-dragging");
+        if (!dragging || dragging === item) return;
+        list.querySelectorAll(".disc-item.is-over").forEach((x) => {
+          if (x !== dragging) x.classList.remove("is-over");
+        });
+        item.classList.add("is-over");
+        const rect = item.getBoundingClientRect();
+        const before = e.clientY - rect.top < rect.height / 2;
+        list.insertBefore(dragging, before ? item : item.nextSibling);
+      });
+
+      item.addEventListener("dragleave", () => item.classList.remove("is-over"));
+      item.addEventListener("drop", (e) => {
+        e.preventDefault();
+        item.classList.remove("is-over");
+      });
+    }
+  }
+}
+
+/* ==========================================================================
+   Подсчёт: по каждому из 24 списков — +1 за первое место
+   (ближе всего к себе) и −1 за последнее место (наименее похоже).
+   ========================================================================== */
+function computeScore() {
+  const score = { d: 0, i: 0, s: 0, c: 0 };
+  for (const ul of panesEl.querySelectorAll(".disc-list")) {
+    for (let p = 0; p < ul.children.length; p++) {
+      const type = ul.children[p].dataset.type;
+      if (p === 0) score[type]++;
+      if (p === 3) score[type]--;
+    }
+  }
+  return score;
+}
+
+function finishTest() {
+  const s = computeScore();
+  scoreSpan.textContent =
+    "D:" + s.d + ", I:" + s.i + ", S:" + s.s + ", C:" + s.c;
+  tabsEl.style.display = "none";
+  panesEl.hidden = true;
+  progress.hidden = true;
+  document.querySelector(".disc-actions").hidden = true;
+  resultEl.hidden = false;
+  resultEl.focus();
+}
+
+/* ==========================================================================
+   Запуск
+   ========================================================================== */
+document.getElementById("currentYear").textContent = new Date().getFullYear();
+const btnClose = modal.querySelector(".disc-modal__close");
+buildUI();
+</script>
+</body>
+</html>

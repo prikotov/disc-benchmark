@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T15-41-36-680Z_01a1dab8-a625-7116-85ed-5c836e9c8bac.jsonl",
+  "turns": 115,
+  "tool_calls": 114,
+  "tools_by_name": {
+    "bash": 84,
+    "read": 11,
+    "write": 9,
+    "edit": 10
+  },
+  "tokens_in": 298552,
+  "tokens_out": 107911,
+  "bash_total": 27,
+  "bash_with_network": 12,
+  "curl_to_source": 12,
+  "network_cmds_sample": [
+    "curl -s \\\"https://stratoplan-school.com/disc/\\\" -o /tmp/disc_original.html 2>&1; echo \\\"Exit: $?\\\"; wc -c /tmp/disc_original.html",
+    "cd /tmp && for f in app.js disc_patched.js tracker.js; do curl -s -L \\\"https://stratoplan-school.com/js/$f?v=0.0.0.1\\\" -o \\\"js_$f\\\"; done; ls -la js_*.js; for f in app disc_patched tracker; do echo \\\"=== $f ===\\\"; file js_$f.js; head -c 300 js_$f.js; echo; done",
+    "cd /tmp && curl -s -o /dev/null -w \\\"%{http_code} %{size_download}\\\" \\\"https://stratoplan-school.com/disc/js/app.js\\\"; echo; curl -s -L -o js_app.js \\\"https://stratoplan-school.com/disc/js/app.js\\\"; ls -la js_app.js; file js_app.js; head -c 400 js_app.js",
+    "cd /tmp && for f in app disc_patched tracker; do curl -s -L -o \\\"js_$f.js\\\" \\\"https://stratoplan-school.com/disc/js/$f\\\"; done; curl -s -L -o js_fab.js \\\"https://stratoplan-school.com/assets/js/fab.js\\\"; ls -la js_*.js; for f in app disc_patched tracker fab; do echo \\\"=== $f ===\\\"; file js_$f.js; wc",
+    "cd /tmp && for u in \\\"disc/js/app.js\\\" \\\"disc/js/disc_patched.js\\\" \\\"disc/js/tracker.js\\\" \\\"assets/js/fab.js\\\"; do code=$(curl -s -o /dev/null -w \\\"%{http_code}\\\" \\\"https://stratoplan-school.com/$u\\\"); echo \\\"$code  $u\\\"; done"
+  ],
+  "errors": 17,
+  "first_ts": "2026-11-14T15:41:36.680Z",
+  "last_ts": "2026-11-14T16:05:59.414Z"
+}

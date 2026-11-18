@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-16T03:44:03.598353+00:00",
+  "duration_s": 19.1,
+  "exit_code": 0,
+  "prompt_chars": 45248,
+  "verdict": {
+    "data": 4,
+    "logic": 4,
+    "ux": 4,
+    "impl": 4,
+    "total": 16,
+    "notes": "Полное и точное воспроизведение: все 84 прилагательных посимвольно (включая латинскую «c» в «Экспресcивный»), типы служебные (data-type на li, пользователю не видны), порядок и группировка 8×3 сохранены. Подсчёт строго по алгоритму оригинала. Поток полный, ограничения соблюдены.",
+    "examples": "DATA: DATA содержит ровно 24 списка по 4 пары [слово, тип]; «Экспресcивный» с латинской c; типы только в разметке li.setAttribute(\"data-type\", type), в тексте узла — только слово (li.innerHTML = HANDLE_SVG; appendChild(text(word))). LOGIC: score(): if (x.pos === 0) maj.push(x.type); if (x.pos === 3) min.push(x.type); балл = count(maj,t)-count(min,t); средние позиции игнорируются; ручная проверка на раскладке из playthrough (топ d в Q1,Q2,Q3..., низ c/s) даёт D:5 I:2 S:-3 C:-4, сумма 0 — совпадает с показанным на экране. UX: стартовый hero → 8 шагов с табами («Первый»…«Восьмой»), прогресс-бар ((step+1)/STEPS), подписи «Я наиболее»/«Я наименее», «Назад» (btnPrev.disabled = step === 0), «Далее»/«Завершить тест» (btnFinish.hidden = step !== STEPS-1), экран результата с дисклеймером и «Пройти заново»; drag на pointer events, тач только за ручку (!finePointer && !e.target.closest(\".handle\")); автопрогон прошёл 24 вопроса без dead ends и console errors. IMPL: один index.html, CSS/JS инлайн, external.pass=true, нет fetch/form/XHR/sendBeacon, email-шаг и редирект отсутствуют, результат в том же приложении; код чистый, дед-кода нет; рабочие файлы агента отсутствуют/не мешают."
+  }
+}

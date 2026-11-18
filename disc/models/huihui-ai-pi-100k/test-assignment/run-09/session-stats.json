@@ -1,0 +1,26 @@
+{
+  "session_file": "2026-11-14T09-16-11-119Z_01a1d957-c7ee-7566-b14e-281adfc7f99f.jsonl",
+  "turns": 43,
+  "tool_calls": 43,
+  "tools_by_name": {
+    "bash": 31,
+    "read": 7,
+    "write": 1,
+    "edit": 4
+  },
+  "tokens_in": 31330,
+  "tokens_out": 29930,
+  "bash_total": 5,
+  "bash_with_network": 5,
+  "curl_to_source": 5,
+  "network_cmds_sample": [
+    "cd /tmp && curl -sL https://stratoplan-school.com/disc/ -o disc.html && wc -c disc.html && head -c 2000 disc.html",
+    "cd /tmp && curl -sL \\\"https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6\\\" -o disc_patched.js && wc -c disc_patched.js && head -c 3000 disc_patched.js",
+    "cd /tmp && curl -sL -o app.js \\\"https://stratoplan-school.com/disc/js/app.js?v=0.0.0.1\\\" && head -c 200 app.js; echo; curl -sL -o app1.js \\\"https://stratoplan-school.com/js/app.js?v=0.0.0.1\\\" && head -c 200 app1.js",
+    "cd /tmp && curl -sL -o disc_patched.js \\\"https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6\\\" && wc -c disc_patched.js && head -c 500 disc_patched.js",
+    "cd /tmp && curl -sL \\\"https://stratoplan-school.com/disc/result/\\\" -o result.html && wc -c result.html && grep -n \\\"score\\\\|Домин\\\\|Инфли\\\\|Стаб\\\\|Компл\\\\|result\\\" result.html | head -40"
+  ],
+  "errors": 5,
+  "first_ts": "2026-11-14T09:16:11.119Z",
+  "last_ts": "2026-11-14T09:20:50.401Z"
+}

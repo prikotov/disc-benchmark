@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Тестирование DISC</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+:root {
+  --pad: clamp(10px, 2.5vh, 28px);
+  --accent: #268ac5;
+  --accent-2: #4fb3e0;
+  --ink: #14161a;
+  --muted: #6b7280;
+  --line: #eef0f4;
+  --border: #e7e9ef;
+}
+
+html { height: 100%; }
+
+body {
+  --pad: clamp(10px, 2.5vh, 28px);
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--pad) clamp(10px, 2.5vw, 28px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(1100px 560px at 8% -12%, #e2edfb 0%, rgba(226,237,251,0) 62%),
+    radial-gradient(900px 520px at 112% 112%, #e4f3fb 0%, rgba(228,243,251,0) 58%),
+    #f4f5f8;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.is-dragging-any { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ============ wizard panel ============ */
+.wizard {
+  width: min(1080px, 100%);
+  max-height: calc(100vh - 2 * var(--pad));
+  max-height: calc(100dvh - 2 * var(--pad));
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(18, 25, 38, .14), 0 2px 6px rgba(18, 25, 38, .05);
+}
+
+.wizard__head {
+  flex: 0 0 auto;
+  padding: clamp(18px, 3vw, 30px) clamp(18px, 3vw, 34px) 14px;
+  border-bottom: 1px solid var(--line);
+}
+.wizard__title {
+  margin: 0 0 6px;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+.wizard__sub { margin: 0; color: var(--muted); font-size: 14px; }
+.wizard__lead { margin: 12px 0 0; font-size: 15px; font-weight: 600; color: #374151; }
+.wizard__hint { margin: 6px 0 0; font-size: 12.5px; color: #8a91a0; }
+
+/* tabs */
+.tabs {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px clamp(18px, 3vw, 34px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid var(--line);
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto;
+  border: 1px solid #e5e8ee;
+  background: #f7f8fa;
+  color: #5b6270;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s, box-shadow .15s;
+}
+.tab:hover { background: #eef1f6; color: #111827; }
+.tab.is-active {
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(38, 138, 197, .32);
+}
+
+/* scrollable body */
+.wizard__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 2.5vw, 26px) clamp(18px, 3vw, 34px);
+}
+
+.pane { display: none; }
+.pane.is-active { display: block; animation: pane-in .18s ease; }
+@keyframes pane-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 980px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+/* card */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fbfcfe;
+  border: 1px solid #e8ebf1;
+  border-radius: 18px;
+  padding: 14px;
+}
+.card__title, .card__foot {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #98a0af;
+}
+.card__foot { text-align: right; }
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: #fff;
+  border: 1px solid #e6e9f0;
+  border-radius: 12px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #1f2430;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  touch-action: manipulation;
+  transition: border-color .15s, box-shadow .15s, background .15s, transform .15s;
+}
+.item:hover {
+  border-color: #c9d3e3;
+  box-shadow: 0 6px 16px rgba(20, 30, 50, .08);
+  transform: translateY(-1px);
+}
+.item__num {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f2f4f8;
+  border: 1px solid #e6e9f0;
+  color: #7a8291;
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.item__text { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.item__handle {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border-radius: 6px;
+  color: #b9bec9;
+  cursor: grab;
+  touch-action: none;
+}
+.item__handle:hover { color: #7a8291; background: #f2f4f8; }
+
+.item.is-dragging {
+  z-index: 1000;
+  cursor: grabbing;
+  margin: 0 !important;
+  pointer-events: none;
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, .28);
+  transform: rotate(1.2deg) scale(1.02);
+}
+.item.is-keygrab {
+  border-color: var(--accent);
+  background: #f4faff;
+  box-shadow: 0 0 0 3px rgba(38, 138, 197, .25);
+}
+
+.item-placeholder {
+  list-style: none;
+  border: 2px dashed #a9c8e2;
+  background: #eef6fd;
+  border-radius: 12px;
+}
+.list.is-drop { }
+
+/* footer */
+.wizard__foot {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--line);
+  /* защита от сжатия flex-шринком внутри колонки */
+  background: #fff;
+  padding: 14px clamp(18px, 3vw, 34px) clamp(16px, 2vw, 24px);
+}
+.progress {
+  height: 8px;
+  background: #eef0f5;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.progress__bar {
+  height: 100%;
+  width: 12.5%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width .3s ease;
+}
+.actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.actions__right { display: flex; align-items: center; gap: 12px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, opacity .15s, transform .1s;
+}
+.btn:active { transform: translateY(1px); }
+.btn--ghost { background: transparent; border: 1px solid #d9dde6; color: #39404d; }
+.btn--ghost:hover { background: #f4f5f8; }
+.btn--ghost:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.btn--primary { background: #0d0d0d; border: 1px solid #0d0d0d; color: #fff; }
+.btn--primary:hover { background: #26262b; }
+.btn svg { flex: 0 0 auto; }
+
+/* ============ result ============ */
+.result {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 2 * var(--pad));
+  max-height: calc(100dvh - 2 * var(--pad));
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(18, 25, 38, .14), 0 2px 6px rgba(18, 25, 38, .05);
+  padding: clamp(24px, 4vw, 44px);
+  text-align: center;
+  animation: pane-in .25s ease;
+}
+.result__badge {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #e8f7ee;
+  color: #17924f;
+  display: grid;
+  place-items: center;
+}
+.result__title {
+  margin: 16px 0 4px;
+  font-size: clamp(20px, 2.6vw, 26px);
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+.result__title:focus { outline: none; }
+.result__label { margin: 0; color: var(--muted); font-size: 14px; }
+.result__score {
+  margin: 14px 0 0;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+.result__chips {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 24px 0 20px;
+}
+@media (max-width: 560px) { .result__chips { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.chip {
+  background: #fbfcfe;
+  border: 1px solid #eceef3;
+  border-radius: 14px;
+  padding: 14px 8px;
+}
+.chip__letter { display: block; font-size: 20px; font-weight: 800; }
+.chip__value { display: block; margin-top: 4px; font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.chip--d .chip__letter { color: #e5484d; }
+.chip--i .chip__letter { color: #e8a33d; }
+.chip--s .chip__letter { color: #30a46c; }
+.chip--c .chip__letter { color: #3b82f6; }
+
+.result__note {
+  margin: 0 0 22px;
+  padding: 14px 16px;
+  background: #f8f9fb;
+  border: 1px solid #eef0f4;
+  border-radius: 12px;
+  text-align: left;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.result__note span { color: #e5484d; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<section class="wizard" id="wizard" aria-labelledby="discTitle">
+  <header class="wizard__head">
+    <h1 class="wizard__title" id="discTitle">Тестирование DISC</h1>
+    <p class="wizard__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+    <p class="wizard__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+    <p class="wizard__hint">Перетаскивайте карточки мышью (на сенсорных экранах — за точечки справа).
+      Клавиатура: Enter — взять карточку, стрелки — переместить, Enter — поставить, Esc — отменить.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Шаги">
+    <button class="tab is-active" type="button" role="tab" id="tab0" aria-selected="true" aria-controls="step0" data-step-btn="0">Первый</button>
+    <button class="tab" type="button" role="tab" id="tab1" aria-selected="false" aria-controls="step1" data-step-btn="1">Второй</button>
+    <button class="tab" type="button" role="tab" id="tab2" aria-selected="false" aria-controls="step2" data-step-btn="2">Третий</button>
+    <button class="tab" type="button" role="tab" id="tab3" aria-selected="false" aria-controls="step3" data-step-btn="3">Четвертый</button>
+    <button class="tab" type="button" role="tab" id="tab4" aria-selected="false" aria-controls="step4" data-step-btn="4">Пятый</button>
+    <button class="tab" type="button" role="tab" id="tab5" aria-selected="false" aria-controls="step5" data-step-btn="5">Шестой</button>
+    <button class="tab" type="button" role="tab" id="tab6" aria-selected="false" aria-controls="step6" data-step-btn="6">Седьмой</button>
+    <button class="tab" type="button" role="tab" id="tab7" aria-selected="false" aria-controls="step7" data-step-btn="7">Восьмой</button>
+  </div>
+
+  <div class="wizard__body" id="rootwizard" data-step="0">
+      <div class="pane is-active" data-step-pane="0" id="step0" role="tabpanel" aria-labelledby="tab0">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list1" aria-label="Блок 1, шаг «Первый»">
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">1</span><span class="item__text">Экспресcивный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">2</span><span class="item__text">Покладистый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">3</span><span class="item__text">Волевой</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">4</span><span class="item__text">Осторожный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list2" aria-label="Блок 2, шаг «Первый»">
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">1</span><span class="item__text">Пылкий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">2</span><span class="item__text">Разговорчивый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Добродушный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">4</span><span class="item__text">Сдержанный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list3" aria-label="Блок 3, шаг «Первый»">
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">1</span><span class="item__text">Любитель приключений</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">2</span><span class="item__text">Энтузиаст</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">3</span><span class="item__text">Исполнитель инструкций</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">4</span><span class="item__text">Верный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="1" id="step1" role="tabpanel" aria-labelledby="tab1">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list4" aria-label="Блок 1, шаг «Второй»">
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">1</span><span class="item__text">Настойчивый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">2</span><span class="item__text">Осторожный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">3</span><span class="item__text">Эмоциональный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">4</span><span class="item__text">Удовлетворенный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list5" aria-label="Блок 2, шаг «Второй»">
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">1</span><span class="item__text">Довольный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Нетерпеливый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">3</span><span class="item__text">Убедительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">4</span><span class="item__text">Безропотный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list6" aria-label="Блок 3, шаг «Второй»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Смиренный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">2</span><span class="item__text">Умеющий слушать</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">3</span><span class="item__text">Душа компании</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">4</span><span class="item__text">Волевой</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="2" id="step2" role="tabpanel" aria-labelledby="tab2">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list7" aria-label="Блок 1, шаг «Третий»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Правильный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Первопроходец</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Спокойный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">4</span><span class="item__text">Влиятельный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list8" aria-label="Блок 2, шаг «Третий»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Почтительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">2</span><span class="item__text">Контактный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">3</span><span class="item__text">Агрессивный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">4</span><span class="item__text">Мягкий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list9" aria-label="Блок 3, шаг «Третий»">
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">1</span><span class="item__text">Весельчак</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">2</span><span class="item__text">Покорный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">3</span><span class="item__text">Тактичный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">4</span><span class="item__text">Соперничающий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="3" id="step3" role="tabpanel" aria-labelledby="tab3">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list10" aria-label="Блок 1, шаг «Четвертый»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Точный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Доминирующий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Охотный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">4</span><span class="item__text">Притягательный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list11" aria-label="Блок 2, шаг «Четвертый»">
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">1</span><span class="item__text">Уравновешенный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">2</span><span class="item__text">Уступчивый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">3</span><span class="item__text">Идущий на риск</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">4</span><span class="item__text">Услужливый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list12" aria-label="Блок 3, шаг «Четвертый»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Осмотрительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">2</span><span class="item__text">Добрососедский</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">3</span><span class="item__text">Энергичный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">4</span><span class="item__text">Убедительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="4" id="step4" role="tabpanel" aria-labelledby="tab4">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list13" aria-label="Блок 1, шаг «Пятый»">
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">1</span><span class="item__text">Уравновешенный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">2</span><span class="item__text">Мотивирующий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">3</span><span class="item__text">Щепетильный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">4</span><span class="item__text">Решительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list14" aria-label="Блок 2, шаг «Пятый»">
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">1</span><span class="item__text">Уверенный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">2</span><span class="item__text">Готовый к сотрудничеству</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Беззаботный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">4</span><span class="item__text">Аргументирующий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list15" aria-label="Блок 3, шаг «Пятый»">
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">1</span><span class="item__text">Сдержанный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Прямой</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">3</span><span class="item__text">Строгий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">4</span><span class="item__text">Убедительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="5" id="step5" role="tabpanel" aria-labelledby="tab5">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list16" aria-label="Блок 1, шаг «Шестой»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Застенчивый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Требовательный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Терпеливый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">4</span><span class="item__text">Очаровательный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list17" aria-label="Блок 2, шаг «Шестой»">
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">1</span><span class="item__text">Неугомонный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">2</span><span class="item__text">Дисциплинированный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">3</span><span class="item__text">Вдохновляющий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">4</span><span class="item__text">Внимательный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list18" aria-label="Блок 3, шаг «Шестой»">
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">1</span><span class="item__text">Обязательный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">2</span><span class="item__text">Оживленный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">3</span><span class="item__text">Решительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">4</span><span class="item__text">Точный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="6" id="step6" role="tabpanel" aria-labelledby="tab6">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list19" aria-label="Блок 1, шаг «Седьмой»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Добросовестный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">2</span><span class="item__text">Компанейский</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Добрый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">4</span><span class="item__text">Уверенный в себе</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list20" aria-label="Блок 2, шаг «Седьмой»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Дипломатичный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Отважный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Сочувствующий</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">4</span><span class="item__text">Оптимистичный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list21" aria-label="Блок 3, шаг «Седьмой»">
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">1</span><span class="item__text">Настойчивый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">2</span><span class="item__text">Общительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Постоянный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">4</span><span class="item__text">Организованный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="7" id="step7" role="tabpanel" aria-labelledby="tab7">
+        <div class="grid">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list22" aria-label="Блок 1, шаг «Восьмой»">
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">1</span><span class="item__text">Соглашающийся</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">2</span><span class="item__text">Владеющий собой</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">3</span><span class="item__text">Шутливый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">4</span><span class="item__text">Настойчивый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list23" aria-label="Блок 2, шаг «Восьмой»">
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">1</span><span class="item__text">Обаятельный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Позитивный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">3</span><span class="item__text">Снисходительный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">4</span><span class="item__text">Требовательный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" id="draggable-list24" aria-label="Блок 3, шаг «Восьмой»">
+              <li class="item" data-type="i" tabindex="0"><span class="item__num">1</span><span class="item__text">Коммуникабельный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="d" tabindex="0"><span class="item__num">2</span><span class="item__text">Смелый</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="c" tabindex="0"><span class="item__num">3</span><span class="item__text">Перфекционист</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+              <li class="item" data-type="s" tabindex="0"><span class="item__num">4</span><span class="item__text">Сдержанный</span><span class="item__handle" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="4" r="1.25"/><circle cx="10.5" cy="4" r="1.25"/><circle cx="5.5" cy="8" r="1.25"/><circle cx="10.5" cy="8" r="1.25"/><circle cx="5.5" cy="12" r="1.25"/><circle cx="10.5" cy="12" r="1.25"/></svg></span></li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <footer class="wizard__foot">
+    <div class="progress" aria-hidden="true">
+      <div class="progress__bar" id="discProgress"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn--ghost" type="button" data-disc-prev>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
+        Назад
+      </button>
+      <div class="actions__right">
+        <button class="btn btn--primary" type="button" data-disc-next>
+          Далее
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+        <button class="btn btn--primary" type="button" data-disc-finish hidden>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5"/></svg>
+          Завершить тест
+        </button>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<section class="result" id="result" aria-labelledby="resultTitle" aria-hidden="true" hidden>
+  <div class="result__badge" aria-hidden="true">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+  </div>
+  <h2 class="result__title" id="resultTitle" tabindex="-1">Ваш DISC-профиль:</h2>
+  <p class="result__label">Баллы по шкалам (верх списка даёт +1 своему типу, низ — минус единицу):</p>
+  <div class="result__score"><span id="scoreLine">D:0, I:0, S:0, C:0</span></div>
+  <div class="result__chips">
+    <div class="chip chip--d"><span class="chip__letter">D</span><span class="chip__value" data-score="d">0</span></div>
+    <div class="chip chip--i"><span class="chip__letter">I</span><span class="chip__value" data-score="i">0</span></div>
+    <div class="chip chip--s"><span class="chip__letter">S</span><span class="chip__value" data-score="s">0</span></div>
+    <div class="chip chip--c"><span class="chip__letter">C</span><span class="chip__value" data-score="c">0</span></div>
+  </div>
+  <p class="result__note"><span>*</span> Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем вам научиться использовать этот инструмент  для самотестирования, а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</p>
+  <button class="btn btn--primary" type="button" id="btnRestart">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.16"/><path d="M13.6 2.4v2.6H11"/></svg>
+    Пройти тест заново
+  </button>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------------- state ---------------- */
+  var wizard = $('#wizard');
+  var bodyEl = $('#rootwizard');
+  var resultEl = $('#result');
+  var tabs = $$('[data-step-btn]');
+  var panes = $$('[data-step-pane]');
+  var btnPrev = $('[data-disc-prev]');
+  var btnNext = $('[data-disc-next]');
+  var btnFinish = $('[data-disc-finish]');
+  var progressEl = $('#discProgress');
+  var allLists = $$('.list');
+
+  var step = 0;
+  var lastRenderedStep = -1;
+  var pendingScrollTop = false;
+
+  /* snapshot initial order (for restart) */
+  var initialHTML = allLists.map(function (ul) { return ul.innerHTML; });
+
+  /* ---------------- helpers ---------------- */
+  function mobileUI() {
+    return (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) ||
+      (window.matchMedia && window.matchMedia('(pointer: coarse)').matches &&
+       window.matchMedia('(max-width: 1024px)').matches);
+  }
+
+  function itemsOf(ul) {
+    return Array.prototype.slice.call(ul.children).filter(function (n) {
+      return n.classList && n.classList.contains('item');
+    });
+  }
+
+  function renumber(ul) {
+    itemsOf(ul).forEach(function (li, i) {
+      var num = li.querySelector('.item__num');
+      if (num) num.textContent = String(i + 1);
+    });
+  }
+  function renumberAll() { allLists.forEach(renumber); }
+
+  /* ---------------- steps ---------------- */
+  function render() {
+    tabs.forEach(function (t) {
+      var is = Number(t.getAttribute('data-step-btn')) === step;
+      t.classList.toggle('is-active', is);
+      t.setAttribute('aria-selected', is ? 'true' : 'false');
+    });
+    panes.forEach(function (p) {
+      p.classList.toggle('is-active', Number(p.getAttribute('data-step-pane')) === step);
+    });
+
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === 7;
+    btnFinish.hidden = step !== 7;
+    bodyEl.setAttribute('data-step', String(step));
+
+    if (progressEl) progressEl.style.width = ((step + 1) / 8) * 100 + '%';
+
+    if (mobileUI() && step !== lastRenderedStep) {
+      lastRenderedStep = step;
+      requestAnimationFrame(function () { centerActiveTab('smooth'); });
+    }
+    if (pendingScrollTop) {
+      pendingScrollTop = false;
+      requestAnimationFrame(function () { scrollStepTop('smooth'); });
+    }
+  }
+
+  function setStep(n) {
+    step = Math.max(0, Math.min(7, n));
+    render();
+  }
+
+  function centerActiveTab(behavior) {
+    if (!mobileUI()) return;
+    var sc = $('.tabs');
+    if (!sc || !sc.scrollWidth) return;
+    var active = tabs.filter(function (t) {
+      return Number(t.getAttribute('data-step-btn')) === step;
+    })[0];
+    if (!active) return;
+    var cRect = sc.getBoundingClientRect();
+    var tRect = active.getBoundingClientRect();
+    var target = sc.scrollLeft + (tRect.left - cRect.left) + tRect.width / 2 - sc.clientWidth / 2;
+    var max = Math.max(0, sc.scrollWidth - sc.clientWidth);
+    var clamped = Math.min(Math.max(0, target), max);
+    if (Math.abs(sc.scrollLeft - clamped) < 2) return;
+    if (sc.scrollTo) sc.scrollTo({ left: clamped, behavior: behavior });
+    else sc.scrollLeft = clamped;
+  }
+
+  function scrollStepTop(behavior) {
+    if (!bodyEl) return;
+    if (bodyEl.scrollTo) bodyEl.scrollTo({ top: 0, behavior: behavior });
+    else bodyEl.scrollTop = 0;
+  }
+
+  /* ---------------- scoring (как в оригинале: верх = +1, низ = -1) ---------------- */
+  function collectScore() {
+    var maj = [];
+    var min = [];
+    allLists.forEach(function (ul) {
+      itemsOf(ul).forEach(function (li, idx) {
+        var t = li.getAttribute('data-type');
+        if (idx === 0) maj.push(t);
+        if (idx === 3) min.push(t);
+      });
+    });
+    var count = function (arr, ch) {
+      return arr.reduce(function (a, v) { return a + (v === ch ? 1 : 0); }, 0);
+    };
+    return {
+      d: count(maj, 'd') - count(min, 'd'),
+      i: count(maj, 'i') - count(min, 'i'),
+      s: count(maj, 's') - count(min, 's'),
+      c: count(maj, 'c') - count(min, 'c')
+    };
+  }
+
+  function formatScore(sc) {
+    return 'D:' + sc.d + ', I:' + sc.i + ', S:' + sc.s + ', C:' + sc.c;
+  }
+
+  /* ---------------- result ---------------- */
+  function showResult() {
+    var sc = collectScore();
+    $('#scoreLine').textContent = formatScore(sc);
+    ['d', 'i', 's', 'c'].forEach(function (ch) {
+      var el = resultEl.querySelector('[data-score="' + ch + '"]');
+      if (el) el.textContent = String(sc[ch]);
+    });
+    wizard.hidden = true;
+    resultEl.hidden = false;
+    resultEl.setAttribute('aria-hidden', 'false');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var h = $('#resultTitle');
+    if (h) { try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); } }
+  }
+
+  function restart() {
+    allLists.forEach(function (ul, i) { ul.innerHTML = initialHTML[i]; });
+    renumberAll();
+    step = 0;
+    lastRenderedStep = -1;
+    pendingScrollTop = false;
+    resultEl.hidden = true;
+    resultEl.setAttribute('aria-hidden', 'true');
+    wizard.hidden = false;
+    render();
+    scrollStepTop('auto');
+    if (tabs[0]) { try { tabs[0].focus({ preventScroll: true }); } catch (e) { tabs[0].focus(); } }
+  }
+
+  /* ---------------- drag & drop (pointer events) ---------------- */
+  var pd = null;    // pointerdown, ещё не перетаскивание
+  var drag = null;  // активное перетаскивание
+  var rafId = null;
+
+  function onPointerDown(e) {
+    if (drag || pd) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    var li = e.target && e.target.closest ? e.target.closest('.item') : null;
+    if (!li || !wizard.contains(li)) return;
+    var onHandle = !!(e.target.closest && e.target.closest('.item__handle'));
+    var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    if (coarse && !onHandle) return; // на тач-устройствах перетаскивание только за «точечки»
+
+    try { li.setPointerCapture(e.pointerId); } catch (err) {}
+    pd = { li: li, pid: e.pointerId, x: e.clientX, y: e.clientY };
+  }
+
+  function startDrag() {
+    if (!pd) return;
+    var li = pd.li;
+    var r = li.getBoundingClientRect();
+    var ph = document.createElement('li');
+    ph.className = 'item-placeholder';
+    ph.style.height = r.height + 'px';
+    ph.setAttribute('aria-hidden', 'true');
+
+    li.parentNode.insertBefore(ph, li);
+    li.classList.add('is-dragging');
+    li.style.position = 'fixed';
+    li.style.left = r.left + 'px';
+    li.style.top = r.top + 'px';
+    li.style.width = r.width + 'px';
+    li.style.height = r.height + 'px';
+    li.style.margin = '0';
+
+    drag = {
+      li: li, ph: ph, pid: pd.pid,
+      offsetX: pd.x - r.left, offsetY: pd.y - r.top,
+      lastX: pd.x, lastY: pd.y,
+      origParent: ph.parentNode, origNext: null
+    };
+    drag.origNext = ph.nextSibling === li ? li.nextSibling : ph.nextSibling;
+    document.body.classList.add('is-dragging-any');
+    pd = null;
+    updateInsertion();
+    if (rafId == null) rafId = requestAnimationFrame(autoScrollTick);
+  }
+
+  function updateInsertion() {
+    if (!drag) return;
+    var el = document.elementFromPoint(drag.lastX, drag.lastY);
+    var list = el && el.closest ? el.closest('.list') : null;
+    allLists.forEach(function (u) { u.classList.toggle('is-drop', !!list && u === list); });
+    if (!list) return;
+
+    var kids = itemsOf(list).filter(function (n) { return n !== drag.li; });
+    var idx = kids.length;
+    for (var i = 0; i < kids.length; i++) {
+      var r = kids[i].getBoundingClientRect();
+      if (drag.lastY < r.top + r.height / 2) { idx = i; break; }
+    }
+    var ref = idx < kids.length ? kids[idx] : null;
+    var ph = drag.ph;
+    if (ref) {
+      if (!(ph.parentElement === list && ph.nextSibling === ref)) list.insertBefore(ph, ref);
+    } else {
+      if (!(ph.parentElement === list && ph.nextSibling === null)) list.appendChild(ph);
+    }
+  }
+
+  function autoScrollTick() {
+    if (!drag) { rafId = null; return; }
+    var r = bodyEl.getBoundingClientRect();
+    var x = drag.lastX, y = drag.lastY;
+    if (x >= r.left - 30 && x <= r.right + 30 && bodyEl.scrollHeight > bodyEl.clientHeight + 1) {
+      var moved = 0;
+      if (y < r.top + 56) moved = -14;
+      else if (y > r.bottom - 56) moved = 14;
+      if (moved) {
+        var before = bodyEl.scrollTop;
+        var max = bodyEl.scrollHeight - bodyEl.clientHeight;
+        bodyEl.scrollTop = Math.max(0, Math.min(max, bodyEl.scrollTop + moved));
+        if (bodyEl.scrollTop !== before) updateInsertion();
+      }
+    }
+    rafId = requestAnimationFrame(autoScrollTick);
+  }
+
+  function releasePointer(pid, li) {
+    if (pid == null || !li) return;
+    try { if (li.hasPointerCapture && li.hasPointerCapture(pid)) li.releasePointerCapture(pid); }
+    catch (err) {}
+    try { li.releasePointerCapture(pid); } catch (err) {}
+  }
+
+  function cleanupDragStyles(li) {
+    li.classList.remove('is-dragging');
+    li.style.cssText = '';
+  }
+
+  function endDrag() {
+    if (!drag) return;
+    var li = drag.li, ph = drag.ph;
+    if (ph.parentElement) ph.parentElement.insertBefore(li, ph);
+    ph.remove();
+    cleanupDragStyles(li);
+    allLists.forEach(function (u) { u.classList.remove('is-drop'); });
+    document.body.classList.remove('is-dragging-any');
+    releasePointer(drag.pid, li);
+    drag = null;
+    pd = null;
+    if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
+    renumberAll();
+    try { li.focus({ preventScroll: true }); } catch (err) { try { li.focus(); } catch (e2) {} }
+  }
+
+  function cancelDrag() {
+    if (!drag) return;
+    var li = drag.li, ph = drag.ph;
+    if (drag.origParent && drag.origParent.contains(li) === false) {
+      try { drag.origParent.insertBefore(li, drag.origNext); } catch (err) {}
+    } else if (drag.origParent) {
+      try { drag.origParent.insertBefore(li, drag.origNext); } catch (err) {}
+    }
+    ph.remove();
+    cleanupDragStyles(li);
+    allLists.forEach(function (u) { u.classList.remove('is-drop'); });
+    document.body.classList.remove('is-dragging-any');
+    releasePointer(drag.pid, li);
+    drag = null;
+    if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
+    renumberAll();
+    try { li.focus({ preventScroll: true }); } catch (err) {}
+  }
+
+  function onPointerMove(e) {
+    if (e.pointerType === 'mouse' && e.buttons === 0) {
+      // кнопка отпущена вне окна — считаем жест завершённым
+      if (drag) endDrag();
+      else if (pd) { releasePointer(pd.pid, pd.li); pd = null; }
+      return;
+    }
+    if (drag) {
+      if (e.pointerId !== drag.pid) return;
+      drag.lastX = e.clientX;
+      drag.lastY = e.clientY;
+      drag.li.style.left = (e.clientX - drag.offsetX) + 'px';
+      drag.li.style.top = (e.clientY - drag.offsetY) + 'px';
+      updateInsertion();
+      if (e.cancelable) e.preventDefault();
+      return;
+    }
+    if (pd && e.pointerId === pd.pid) {
+      if (Math.abs(e.clientX - pd.x) + Math.abs(e.clientY - pd.y) > 5) startDrag();
+    }
+  }
+
+  function onPointerUp(e) {
+    if (pd && e.pointerId === pd.pid) {
+      releasePointer(pd.pid, pd.li);
+      pd = null;
+    }
+    if (drag && e.pointerId === drag.pid) endDrag();
+  }
+
+  function onPointerCancel(e) {
+    if (pd && e.pointerId === pd.pid) { releasePointer(pd.pid, pd.li); pd = null; }
+    if (drag && e.pointerId === drag.pid) endDrag();
+  }
+
+  /* ---------------- keyboard reorder ---------------- */
+  var kb = null; // {li, list, next}
+
+  function kbStart(li) {
+    kb = { li: li, list: li.parentNode, next: li.nextSibling };
+    li.classList.add('is-keygrab');
+    li.setAttribute('aria-grabbed', 'true');
+    li.focus();
+  }
+  function kbDrop() {
+    if (!kb) return;
+    kb.li.classList.remove('is-keygrab');
+    kb.li.removeAttribute('aria-grabbed');
+    kb = null;
+    renumberAll();
+  }
+  function kbCancel() {
+    if (!kb) return;
+    var li = kb.li;
+    try { kb.list.insertBefore(li, kb.next); } catch (err) {}
+    kbDrop();
+    renumberAll();
+    li.focus();
+  }
+  function kbMoveVertical(dir) {
+    if (!kb) return;
+    var li = kb.li, ul = li.parentNode;
+    var items = itemsOf(ul);
+    var i = items.indexOf(li);
+    var j = i + dir;
+    if (j < 0 || j >= items.length) return;
+    if (dir < 0) ul.insertBefore(li, items[j]);
+    else ul.insertBefore(items[j], li);
+    renumber(ul);
+    li.focus();
+  }
+  function kbMoveHorizontal(dir) {
+    if (!kb) return;
+    var li = kb.li, ul = li.parentNode;
+    var idx = allLists.indexOf(ul);
+    var target = allLists[idx + dir];
+    if (!target) return;
+    var pos = itemsOf(ul).indexOf(li);
+    var items = itemsOf(target);
+    var ref = pos < items.length ? items[pos] : null;
+    if (ref) target.insertBefore(li, ref);
+    else target.appendChild(li);
+    renumber(ul);
+    renumber(target);
+    li.focus();
+  }
+
+  /* ---------------- wiring ---------------- */
+  window.addEventListener('pointermove', onPointerMove, { passive: false });
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerCancel);
+  wizard.addEventListener('pointerdown', onPointerDown);
+
+  wizard.addEventListener('keydown', function (e) {
+    var li = e.target && e.target.closest ? e.target.closest('.item') : null;
+    if (!li) return;
+    var key = e.key;
+    var isActivate = key === ' ' || key === 'Enter' || key === 'Spacebar';
+
+    if (!kb) {
+      if (isActivate) { e.preventDefault(); kbStart(li); }
+      return;
+    }
+    if (li !== kb.li) return;
+    if (key === 'Escape') { e.preventDefault(); kbCancel(); }
+    else if (isActivate) { e.preventDefault(); kbDrop(); li.focus(); }
+    else if (key === 'ArrowUp') { e.preventDefault(); kbMoveVertical(-1); }
+    else if (key === 'ArrowDown') { e.preventDefault(); kbMoveVertical(1); }
+    else if (key === 'ArrowLeft') { e.preventDefault(); kbMoveHorizontal(-1); }
+    else if (key === 'ArrowRight') { e.preventDefault(); kbMoveHorizontal(1); }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (drag) { cancelDrag(); return; }
+    if (pd) { releasePointer(pd.pid, pd.li); pd = null; }
+    if (kb) kbCancel();
+  });
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () {
+      setStep(Number(t.getAttribute('data-step-btn')));
+    });
+    t.addEventListener('keydown', function (e) {
+      var d = 0;
+      if (e.key === 'ArrowRight') d = 1;
+      else if (e.key === 'ArrowLeft') d = -1;
+      else return;
+      e.preventDefault();
+      var n = (i + d + tabs.length) % tabs.length;
+      setStep(Number(tabs[n].getAttribute('data-step-btn')));
+      tabs[n].focus();
+    });
+  });
+
+  btnPrev.addEventListener('click', function () { setStep(step - 1); });
+  btnNext.addEventListener('click', function () { pendingScrollTop = true; setStep(step + 1); });
+  btnFinish.addEventListener('click', function () { showResult(); });
+  $('#btnRestart').addEventListener('click', restart);
+
+  /* init */
+  renumberAll();
+  render();
+})();
+</script>
+</body>
+</html>

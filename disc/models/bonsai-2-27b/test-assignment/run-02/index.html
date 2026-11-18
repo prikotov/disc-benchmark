@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DISC тест — Стратоплан</title>
+<style>
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #000; }
+body { min-height: 100vh; background: #fff; }
+button { font-family: inherit; }
+input { font-family: inherit; }
+html.no-scroll, body.no-scroll { overflow: hidden; }
+
+.disc-modal__close::before,
+.disc-modal__close::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 38px;
+  height: 2px;
+  background: #7A7A7A;
+  transform-origin: center;
+}
+
+/* 09. Disc Section Start */
+.disc-modal{position:fixed;inset:0;z-index:100001;display:none}
+.disc-modal.is-open{display:block}
+.disc-modal__overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+.disc-modal__dialog{position:relative;width:min(1240px,calc(100% - 64px));margin:56px auto;background:#fff;border-radius:22px;box-shadow:0 40px 120px rgba(0,0,0,.28);overflow:hidden}
+.disc-modal__close{position:absolute;top:24px;right:24px;width:48px;height:48px;border:0;background:transparent;font-size:0;cursor:pointer;opacity:.55}
+.disc-modal__close::before,.disc-modal__close::after{content:"";position:absolute;left:50%;top:50%;width:38px;height:2px;background:#7A7A7A;transform-origin:center}
+.disc-modal__close::before{transform:translate(-50%,-50%) rotate(45deg)}
+.disc-modal__close::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.disc-modal__head{padding:48px 56px 18px;text-align:center}
+.disc-modal__title{
+    color: var(--Black, #0F0F0F);
+    text-align: center;
+    font-family: var(--font-accent);
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 62.5px; /* 208.333% */
+}
+.disc-modal__sub{
+    /* margin-top:14px; */
+    color: #272727;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal; /* 347.222% */
+}
+.disc-modal__lead{
+    margin-top:22px;
+    color: var(--Green, #409C54);
+    text-align: center;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal; /* 284.091% */
+}
+
+/* NEW */
+.disc-modal__tabs{padding:0 56px 8px;display:flex;gap:8px; justify-content: center;}
+.disc-tab{border:0;background:#EAF2FA;color:#2C2C2C;border-radius:10px;padding:14px 18px;font-size:22px;line-height:1;cursor:pointer}
+.disc-tab.is-active{background:#1F5BD6;color:#fff}
+.disc-modal__body{padding:16px 56px 52px;background:#ffffff}
+.disc-pane{display:none}
+.disc-pane.is-active{display:block}
+.disc-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:18px}
+.disc-card{border:1px solid rgba(0,0,0,.18);border-radius:10px;overflow:hidden;background:#fff}
+.disc-card__title{padding:16px 18px;font-size:26px;font-weight:800;color:#1C1C1C}
+.disc-card__foot{padding:16px 18px;font-size:24px;font-weight:800;color:#1C1C1C;}
+.disc-list{list-style:none; margin: 0px 20px;;padding:0;border:1px solid rgba(0,0,0,.12)}
+.disc-item{position:relative;padding:18px 48px 18px 18px;font-size:20px;color:#2C2C2C;border-top:1px solid rgba(0,0,0,.12);cursor:grab;user-select:none;background:#fff}
+
+/* drag-handle ("точечки") */
+.disc-handle{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;touch-action:none;opacity:.75}
+.disc-handle:hover{opacity:1}
+.disc-handle svg{display:block;width:16px;height:16px}
+.disc-item.is-dragging .disc-handle{cursor:grabbing}
+.disc-item:first-child{border-top:0}
+.disc-item.is-dragging{opacity:.55}
+.disc-item.is-over{outline:2px dashed rgba(31,91,214,.45);outline-offset:-6px}
+.disc-list.is-reordering{touch-action:none}
+.disc-progress{margin:26px 56px 0;height:18px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden}
+.disc-progress__bar{height:100%;width:0;border-radius:999px;background:#6FE28A;transition:width .2s ease}
+.disc-actions{margin:0 56px 0;display:flex;justify-content:space-between;align-items:center}
+.disc-btn{border:1px solid rgba(0,0,0,.22);border-radius:999px;padding:16px 42px;font-size:24px;cursor:pointer;background:#fff;color:#1C1C1C}
+.disc-btn--primary{border-color:transparent;background:#3A944A;color:#fff}
+.disc-btn:disabled{opacity:.45;cursor:not-allowed}
+html.no-scroll,body.no-scroll{overflow:hidden}
+@media (max-width: 1100px){
+  .disc-modal__dialog{width:calc(100% - 24px);margin:12px auto}
+  .disc-modal__head{padding:28px 18px 12px}
+  .disc-modal__body{padding:12px 18px 24px}
+  .disc-modal__tabs{padding:0 18px 6px}
+  .disc-grid3{grid-template-columns:1fr;gap:14px}
+  .disc-progress{margin:16px 18px 0}
+  .disc-actions{margin:18px 18px 0}
+  .disc-modal__title{font-size:34px}
+  .disc-modal__lead{font-size:20px}
+  .disc-tab{font-size:18px;padding:12px 14px}
+  .disc-item{font-size:18px}
+}
+
+.disc-progress{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.disc-actions{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+
+.disc-modal__dialog{
+  max-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.disc-modal__body{
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+.disc-modal__body{
+  padding-bottom: 32px;
+}
+
+
+.disc-progress,
+.disc-actions{
+  position: sticky;
+  background: #fff;
+  z-index: 2;
+}
+
+.disc-actions{ bottom: 0; padding-bottom: 10px; }
+.disc-progress{ bottom: 86px; } 
+
+@media (max-width: 1100px){
+  .disc-modal__dialog{
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .disc-modal__close{
+    top: 16px;
+    right: 16px;
+  }
+}
+
+
+.disc-actions{
+  gap: 12px;
+}
+
+.disc-btn{
+  max-width: 100%;
+}
+
+@media (max-width: 520px){
+  .disc-actions{
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .disc-btn{
+    width: 100%;
+  }
+  .disc-progress{ bottom: 140px; }
+}
+
+/* NEW */
+.disc-modal__dialog{
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+}
+
+
+.disc-modal__body{
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  padding-bottom: 220px;
+}
+
+
+.disc-progress,
+.disc-actions{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+
+.disc-progress,
+.disc-actions{
+  position: sticky;
+  background: #fff;
+  z-index: 5;
+}
+
+.disc-actions{
+  bottom: 0;
+  padding-top: 14px;
+  padding-bottom: 16px;
+}
+
+
+.disc-progress{
+  bottom: 110px; 
+}
+
+
+@media (max-width: 1100px){
+  .disc-modal__dialog{
+    width: calc(100% - 24px);
+    margin: 12px auto;
+    border-radius: 22px;
+    max-height: calc(100vh - 24px);
+  }
+
+  .disc-modal__head{
+    padding: 28px 18px 12px;
+  }
+
+  .disc-modal__body{
+    padding: 12px 18px 0;
+    padding-bottom: 220px; 
+  }
+
+  .disc-modal__tabs{
+    padding: 0 18px 8px;
+  }
+
+
+  .disc-modal__tabs{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+  }
+  .disc-modal__tabs::-webkit-scrollbar{ height: 0; }
+
+
+  .disc-grid3{
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+
+  .disc-btn{
+    font-size: 20px;
+    padding: 14px 24px;
+  }
+}
+
+
+@media (max-width: 520px){
+  .disc-actions{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .disc-btn{
+    width: 100%;
+  }
+
+  .disc-progress{
+    bottom: 170px; 
+  }
+}
+
+@media (max-width: 1100px){
+
+  .disc-modal__dialog{
+    width: calc(100% - 24px);
+    margin: 12px auto;
+    border-radius: 22px;
+
+    height: calc(100vh - 24px);
+    max-height: calc(100vh - 24px);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .disc-modal__body{
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+
+    padding-bottom: 66px !important;
+  }
+
+  /* NEW */
+  .disc-bottom {
+    padding: 0 !important;
+  }
+
+  .disc-progress,
+  .disc-actions{
+    position: static !important;
+    bottom: auto !important;
+    z-index: auto !important;
+    background: transparent !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .disc-progress{
+    margin: 14px 18px 0 !important;
+    background: rgba(0,0,0,.08) !important;
+  }
+
+  .disc-actions{
+    margin: 16px 18px 18px !important;
+    background: #fff !important;
+    padding: 0 !important;
+
+    flex: 0 0 auto;
+  }
+
+
+  .disc-btn{ max-width: 100%; }
+
+  @media (max-width: 520px){
+    .disc-actions{
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .disc-btn{ width: 100%; }
+  }
+
+
+  .disc-modal__tabs{
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+
+    padding: 0 18px 10px !important;
+    margin: 0 !important;
+
+
+    scroll-padding-left: 18px;
+  }
+
+  .disc-modal__tabs::-webkit-scrollbar{ height: 0; }
+
+  .disc-tab{
+    flex: 0 0 auto; 
+    white-space: nowrap;
+    touch-action: pan-x; /* тач-скролл по X */
+  }
+
+
+  .disc-modal__body{ touch-action: pan-y; }
+}
+.disc-modal__tabs { -webkit-overflow-scrolling: touch; }
+@media (max-width: 1100px){
+  .disc-modal__tabs{
+
+    justify-content: flex-start !important;
+
+
+    width: 100%;
+    max-width: 100%;
+
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity; 
+  }
+
+  .disc-tab{
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+}
+@media (max-width: 1100px){
+  .disc-modal__tabs{
+    justify-content: flex-start !important;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0 !important;
+
+
+    padding-bottom: 16px !important;
+
+    display: flex;
+    flex-wrap: nowrap !important;
+    gap: 10px;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+
+
+    scroll-padding-left: 18px;
+    scroll-padding-right: 18px;
+  }
+
+  .disc-modal__tabs::before,
+  .disc-modal__tabs::after{
+    content: "";
+    flex: 0 0 18px;
+  }
+
+  .disc-tab{
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+}
+
+@media (min-width: 1101px){
+  .disc-modal__body{
+    padding-bottom: 32px !important;
+  }
+}
+
+/* 09. Disc Section End */
+.result{
+    background: var(--BG-color-2, #F5F5F7);
+    padding-bottom: 100px;
+}
+
+.thx__header-wrap{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0px;
+}
+
+.result__content{
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.result__main{
+    display: flex;
+    justify-content: space-between;
+    padding: 60px;
+    border-radius: 24px;
+    gap: 45px;
+    background: var(--white-100, #FFF);
+}
+
+.result__main-left-col{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.result__text-wrap{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.result__title{
+    color: var(--Accent-color-1, #215FCB);
+    font-family: var(--font-accent);
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 44px; /* 146.667% */
+    letter-spacing: -1px;
+    text-transform: uppercase;
+}
+
+.result__subtitle{
+    color: var(--Black, #0F0F0F);
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 42px; /* 150% */
+    letter-spacing: -1px;
+}
+
+.result__score-wrap{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.result__score-title{
+    color: var(--Accent-color-3, #044788);
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 58px; /* 207.143% */
+    text-transform: uppercase;
+}
+
+.result__score-content{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.result__score{
+    display: flex;
+    padding: 14px 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-radius: 8px;
+    border: 2px solid var(--Greenish, #80E596);
+    background: rgba(128, 229, 150, 0.20);
+}
+
+.result__score span{
+    color: var(--black-100, #000);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 33px; /* 165% */
+}
+
+.result__score-subtitle{
+    color: rgba(15, 15, 15, 0.70);
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 133.333% */
+}
+
+.result__score-subtitle span{
+color: #EA0808;
+}
+
+.result__link-wrap{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.result__link-title{
+    color: var(--Accent-color-3, #044788);
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.copyfield{
+  --cf-border: #cfe0ff;
+  --cf-blue: #2563eb;
+  --cf-bg: #ffffff;
+
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+
+  width: 100%;
+
+  background: var(--cf-bg);
+  border: 1px solid #E9E9E9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.copyfield__icon{
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid var(--cf-border);
+  color: #93a6c7;
+}
+
+.copyfield__icon svg{
+  width: 22px;
+  height: 22px;
+}
+
+.copyfield__input{
+  width: 100%;
+  height: 64px;
+  padding: 0 18px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+
+  font: 600 18px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #1f2937;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copyfield__btn{
+  height: 64px;
+  padding: 0 22px;
+  border: 0;
+  border-left: 1px solid var(--cf-border);
+  background: var(--cf-blue);
+  color: #fff;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  font: 700 18px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.copyfield__btn:active{ transform: translateY(1px); }
+
+.copyfield__btnIcon svg{
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.copyfield__btn:focus-visible{
+  outline: 3px solid rgba(37,99,235,.35);
+  outline-offset: -3px;
+}
+
+/* mobile */
+@media (max-width: 520px){
+  .copyfield{ grid-template-columns: 52px 1fr auto; }
+  .copyfield__input{ font-size: 16px; padding: 0 12px; }
+  .copyfield__btn{ padding: 0 14px; }
+  .copyfield__btnText{ display: none; }
+}
+
+.result__main-right-col{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+    max-width: 625px;
+}
+
+.result__main-right-col, .result__main-left-col{
+  flex: 1 0 0;
+}
+
+.result__score--subtitle{
+  color: var(--Black, #0F0F0F);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 34px; /* 141.667% */
+  letter-spacing: -1px;
+}
+
+.result__score--subtitle a{
+  color: var(--Accent-color-1, #215FCB);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 34px;
+  letter-spacing: -1px;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+.result__main-right-col-title{
+    color: rgba(15, 15, 15, 0.80);
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 35px; /* 125% */
+    letter-spacing: -1px;
+}
+
+.vcover{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #0b0b0b;
+  cursor: pointer;
+}
+
+.vcover__poster{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vcover__play{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.vcover__playRing{
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+}
+
+.vcover__playTri{
+  position: absolute;
+  width: 0;
+  height: 0;
+  margin-left: 8px;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  border-left: 28px solid #2563eb;
+}
+
+.vcover:focus-visible{
+  outline: 3px solid rgba(37,99,235,.45);
+  outline-offset: 4px;
+}
+
+@media (max-width: 520px){
+  .vcover__playRing{ width: 84px; height: 84px; }
+  .vcover__playTri{
+    margin-left: 6px;
+    border-top-width: 14px;
+    border-bottom-width: 14px;
+    border-left-width: 22px;
+  }
+}
+
+
+.result__promo{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    align-self: stretch;
+}
+
+.result__promo-left{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 40px;
+    border-radius: 20px;
+    background: var(--Accent-color-2, #6865D4);
+    width: 927px;
+}
+
+.result__promo-right{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+    padding: 35px 40px;
+    border-radius: 20px;
+    background: var(--Accent-color-1, #215FCB);
+}
+
+.result__promo-uptitle{
+    color: var(--white-100, #FFF);
+    font-family: var(--font-accent);
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 38px; /* 135.714% */
+}
+
+.result__promo-title{
+    color: var(--white-100, #FFF);
+    font-family: var(--font-accent);
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 38px; /* 146.154% */
+}
+
+.result__promo-title span{
+  color: #F8FFD7;
+  font-family: var(--font-accent);
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 38px;
+}
+
+.result__promo-name{
+    color: var(--white-100, #FFF);
+    font-family: var(--font-accent);
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 120%; /* 36px */
+}
+
+.result__promo-tg{
+    color: var(--white-100, #FFF);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 120% */
+}
+
+.result__promo-left, .result__promo-right{
+    position: relative;
+    overflow: hidden;
+}
+
+.result__promo-gift{
+    width: 328px;
+    aspect-ratio: 1/1;
+    background: url(../img/gift.svg) rgba(211, 211, 211, 0) 50% / cover no-repeat;
+
+    position: absolute;
+    bottom: -50px;
+    right: 0px;
+}
+
+.result__promo-tg-ico{
+    width: 228px;
+    aspect-ratio: 1/1;
+    background: url(../img/promo/tg.svg) rgba(211, 211, 211, 0) 50% / cover no-repeat;
+
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+}
+/* 07. THX Section End */
+
+/* 08. Pop-Up Section Start */
+.disc-modal{
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: none;
+}
+
+.disc-modal.is-open{ display: block; }
+
+.disc-modal__overlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(13,13,13,.65);
+}
+
+.disc-modal__dialog{
+  position: relative;
+  width: min(980px, calc(100% - 32px));
+  max-height: min(90vh, 820px);
+  margin: 5vh auto;
+  border-radius: 16px;
+  background: #fff;
+  overflow: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,.25);
+}
+
+.disc-modal__body{
+  padding: 24px;
+}
+
+.disc-modal__title{
+  /* margin: 0 0 16px; */
+  font-size: 20px;
+  line-height: 1.2;
+  color: #0D0D0D;
+}
+
+.disc-modal__close{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(13,13,13,.06);
+  color: #0D0D0D;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.disc-modal__close:hover{
+  background: rgba(13,13,13,.1);
+}
+
+/* NEW */
+.disc-bottom {
+  padding: 0 56px;
+}
+
+/* lock scroll */
+html.no-scroll, body.no-scroll{
+  overflow: hidden;
+}
+
+/* mobile */
+@media (max-width: 640px){
+  .disc-modal__dialog{
+    width: calc(100% - 16px);
+    margin: 8px auto;
+    max-height: calc(100vh - 16px);
+    border-radius: 14px;
+  }
+
+  .disc-modal__body{
+    padding: 16px;
+  }
+}
+
+.disc-modal{position:fixed;inset:0;z-index:100001;display:none}
+.disc-modal.is-open{display:block}
+.disc-modal__overlay{position:absolute;inset:0;background:rgba(0,0,0,.55)}
+.disc-modal__dialog{position:relative;width:min(1240px,calc(100% - 64px));margin:56px auto;background:#fff;border-radius:22px;box-shadow:0 40px 120px rgba(0,0,0,.28);overflow:hidden}
+.disc-modal__close{position:absolute;top:24px;right:24px;width:48px;height:48px;border:0;background:transparent;font-size:0;cursor:pointer;opacity:.55}
+.disc-modal__close::before,.disc-modal__close::after{content:"";position:absolute;left:50%;top:50%;width:38px;height:2px;background:#7A7A7A;transform-origin:center}
+.disc-modal__close::before{transform:translate(-50%,-50%) rotate(45deg)}
+.disc-modal__close::after{transform:translate(-50%,-50%) rotate(-45deg)}
+.disc-modal__head{padding:48px 56px 18px;text-align:center}
+.disc-modal__title{
+    color: var(--Black, #0F0F0F);
+    text-align: center;
+    font-family: var(--font-accent);
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 62.5px; /* 208.333% */
+}
+.disc-modal__sub{
+    /* margin-top:14px; */
+    color: #272727;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal; /* 347.222% */
+}
+.disc-modal__lead{
+    margin-top:22px;
+    color: var(--Green, #409C54);
+    text-align: center;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal; /* 284.091% */
+}
+
+/* NEW */
+.disc-modal__tabs{padding:0 56px 8px;display:flex;gap:8px; justify-content: center;}
+.disc-tab{border:0;background:#EAF2FA;color:#2C2C2C;border-radius:10px;padding:14px 18px;font-size:22px;line-height:1;cursor:pointer}
+.disc-tab.is-active{background:#1F5BD6;color:#fff}
+.disc-modal__body{padding:16px 56px 52px;background:#ffffff}
+.disc-pane{display:none}
+.disc-pane.is-active{display:block}
+.disc-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:18px}
+.disc-card{border:1px solid rgba(0,0,0,.18);border-radius:10px;overflow:hidden;background:#fff}
+.disc-card__title{padding:16px 18px;font-size:26px;font-weight:800;color:#1C1C1C}
+.disc-card__foot{padding:16px 18px;font-size:24px;font-weight:800;color:#1C1C1C;}
+.disc-list{list-style:none; margin: 0px 20px;;padding:0;border:1px solid rgba(0,0,0,.12)}
+.disc-item{position:relative;padding:18px 48px 18px 18px;font-size:20px;color:#2C2C2C;border-top:1px solid rgba(0,0,0,.12);cursor:grab;user-select:none;background:#fff}
+
+/* drag-handle ("точечки") */
+.disc-handle{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;touch-action:none;opacity:.75}
+.disc-handle:hover{opacity:1}
+.disc-handle svg{display:block;width:16px;height:16px}
+.disc-item.is-dragging .disc-handle{cursor:grabbing}
+.disc-item:first-child{border-top:0}
+.disc-item.is-dragging{opacity:.55}
+.disc-item.is-over{outline:2px dashed rgba(31,91,214,.45);outline-offset:-6px}
+.disc-list.is-reordering{touch-action:none}
+.disc-progress{margin:26px 56px 0;height:18px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden}
+.disc-progress__bar{height:100%;width:0;border-radius:999px;background:#6FE28A;transition:width .2s ease}
+.disc-actions{margin:0 56px 0;display:flex;justify-content:space-between;align-items:center}
+.disc-btn{border:1px solid rgba(0,0,0,.22);border-radius:999px;padding:16px 42px;font-size:24px;cursor:pointer;background:#fff;color:#1C1C1C}
+.disc-btn--primary{border-color:transparent;background:#3A944A;color:#fff}
+.disc-btn:disabled{opacity:.45;cursor:not-allowed}
+html.no-scroll,body.no-scroll{overflow:hidden}
+@media (max-width: 1100px){
+  .disc-modal__dialog{width:calc(100% - 24px);margin:12px auto}
+  .disc-modal__head{padding:28px 18px 12px}
+  .disc-modal__body{padding:12px 18px 24px}
+  .disc-modal__tabs{padding:0 18px 6px}
+  .disc-grid3{grid-template-columns:1fr;gap:14px}
+  .disc-progress{margin:16px 18px 0}
+  .disc-actions{margin:18px 18px 0}
+  .disc-modal__title{font-size:34px}
+  .disc-modal__lead{font-size:20px}
+  .disc-tab{font-size:18px;padding:12px 14px}
+  .disc-item{font-size:18px}
+}
+
+.disc-progress{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.disc-actions{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+
+.disc-modal__dialog{
+  max-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.disc-modal__body{
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+.disc-modal__body{
+  padding-bottom: 32px;
+}
+
+
+.disc-progress,
+.disc-actions{
+  position: sticky;
+  background: #fff;
+  z-index: 2;
+}
+
+.disc-actions{ bottom: 0; padding-bottom: 10px; }
+.disc-progress{ bottom: 86px; } 
+
+@media (max-width: 1100px){
+  .disc-modal__dialog{
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .disc-modal__close{
+    top: 16px;
+    right: 16px;
+  }
+}
+
+
+.disc-actions{
+  gap: 12px;
+}
+
+.disc-btn{
+  max-width: 100%;
+}
+
+@media (max-width: 520px){
+  .disc-actions{
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .disc-btn{
+    width: 100%;
+  }
+  .disc-progress{ bottom: 140px; }
+}
+
+/* NEW */
+.disc-modal__dialog{
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+}
+
+
+.disc-modal__body{
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+
+  padding-bottom: 220px;
+}
+
+
+.disc-progress,
+.disc-actions{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+
+.disc-progress,
+.disc-actions{
+  position: sticky;
+  background: #fff;
+  z-index: 5;
+}
+
+.disc-actions{
+  bottom: 0;
+  padding-top: 14px;
+  padding-bottom: 16px;
+}
+
+
+.disc-progress{
+  bottom: 110px; 
+}
+
+
+@media (max-width: 1100px){
+  .disc-modal__dialog{
+    width: calc(100% - 24px);
+    margin: 12px auto;
+    border-radius: 22px;
+    max-height: calc(100vh - 24px);
+  }
+
+  .disc-modal__head{
+    padding: 28px 18px 12px;
+  }
+
+  .disc-modal__body{
+    padding: 12px 18px 0;
+    padding-bottom: 220px; 
+  }
+
+  .disc-modal__tabs{
+    padding: 0 18px 8px;
+  }
+
+
+  .disc-modal__tabs{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+  }
+  .disc-modal__tabs::-webkit-scrollbar{ height: 0; }
+
+
+  .disc-grid3{
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+
+  .disc-btn{
+    font-size: 20px;
+    padding: 14px 24px;
+  }
+}
+
+
+@media (max-width: 520px){
+  .disc-actions{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .disc-btn{
+    width: 100%;
+  }
+
+  .disc-progress{
+    bottom: 170px; 
+  }
+}
+
+@media (max-width: 1100px){
+
+  .disc-modal__dialog{
+    width: calc(100% - 24px);
+    margin: 12px auto;
+    border-radius: 22px;
+
+    height: calc(100vh - 24px);
+    max-height: calc(100vh - 24px);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .disc-modal__body{
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+
+    padding-bottom: 66px !important;
+  }
+
+  /* NEW */
+  .disc-bottom {
+    padding: 0 !important;
+  }
+
+  .disc-progress,
+  .disc-actions{
+    position: static !important;
+    bottom: auto !important;
+    z-index: auto !important;
+    background: transparent !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .disc-progress{
+    margin: 14px 18px 0 !important;
+    background: rgba(0,0,0,.08) !important;
+  }
+
+  .disc-actions{
+    margin: 16px 18px 18px !important;
+    background: #fff !important;
+    padding: 0 !important;
+
+    flex: 0 0 auto;
+  }
+
+
+  .disc-btn{ max-width: 100%; }
+
+  @media (max-width: 520px){
+    .disc-actions{
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .disc-btn{ width: 100%; }
+  }
+
+
+  .disc-modal__tabs{
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+
+    padding: 0 18px 10px !important;
+    margin: 0 !important;
+
+
+    scroll-padding-left: 18px;
+  }
+
+  .disc-modal__tabs::-webkit-scrollbar{ height: 0; }
+
+  .disc-tab{
+    flex: 0 0 auto; 
+    white-space: nowrap;
+    touch-action: pan-x; /* тач-скролл по X */
+  }
+
+
+  .disc-modal__body{ touch-action: pan-y; }
+}
+.disc-modal__tabs { -webkit-overflow-scrolling: touch; }
+@media (max-width: 1100px){
+  .disc-modal__tabs{
+
+    justify-content: flex-start !important;
+
+
+    width: 100%;
+    max-width: 100%;
+
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity; 
+  }
+
+  .disc-tab{
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+}
+@media (max-width: 1100px){
+  .disc-modal__tabs{
+    justify-content: flex-start !important;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 0 !important;
+
+
+    padding-bottom: 16px !important;
+
+    display: flex;
+    flex-wrap: nowrap !important;
+    gap: 10px;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+
+
+    scroll-padding-left: 18px;
+    scroll-padding-right: 18px;
+  }
+
+  .disc-modal__tabs::before,
+  .disc-modal__tabs::after{
+    content: "";
+    flex: 0 0 18px;
+  }
+
+  .disc-tab{
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+}
+
+@media (min-width: 1101px){
+  .disc-modal__body{
+    padding-bottom: 32px !important;
+  }
+}
+
+/* 09. Disc Section End */
+
+
+/* 10. FAQ Section Start */
+
+.disc-modal__close {
+  background: transparent;
+  color: transparent;
+  border: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 100%;
+  cursor: pointer;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+
+.disc-modal__close:hover {
+  opacity: 1;
+}
+
+.disc-modal__close::before,
+.disc-modal__close::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24px;
+  height: 2px;
+  background: #000;
+  transform-origin: center;
+}
+
+.disc-modal__close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.disc-modal__close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.disc-modal__close:hover::before,
+.disc-modal__close:hover::after {
+  background: #333;
+}
+
+.disc-result {
+  padding: 30px 0;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.disc-result__score-label {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px;
+}
+
+.disc-result__score {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #f0f7f0;
+  border: 1px solid #80E596;
+  border-radius: 8px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+}
+
+.disc-result__subtitle {
+  color: #666;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.disc-result__copy {
+  text-align: left;
+  margin: 0 0 20px;
+}
+
+.disc-result__copy-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #044788;
+  margin: 0 0 8px;
+}
+
+.disc-result__back {
+  margin: 0 auto;
+  display: inline-block;
+}
+
+.disc-trigger-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #1F5BD6 0%, #2A7DE8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(31, 91, 214, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.disc-trigger-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(31, 91, 214, 0.5);
+}
+
+.disc-trigger-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 520px) {
+  .disc-trigger-btn {
+    top: 12px;
+    right: 12px;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="disc-modal" id="wizardmodal" aria-hidden="true">
+  <div class="disc-modal__overlay" data-disc-close></div>
+
+  <div class="disc-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+    <button class="disc-modal__close" type="button" data-disc-close aria-label="Закрыть" aria-hidden="true"></button>
+
+    <div class="disc-modal__head">
+      <h2 class="disc-modal__title" id="discTitle">Тестирование DISC</h2>
+      <div class="disc-modal__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="disc-modal__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+
+    <div class="disc-modal__tabs" role="tablist" aria-label="Шаги">
+      <button class="disc-tab is-active" type="button" role="tab" aria-selected="true" data-step-btn="0">Первый</button><button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="1">Второй</button><button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="2">Третий</button><button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="3">Четвертый</button><button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="4">Пятый</button><button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="5">Шестой</button><button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="6">Седьмой</button><button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="7">Восьмой</button>
+    </div>
+
+    <div class="disc-modal__body" id="rootwizard" data-step="0">
+      <div class="disc-pane is-active" data-step-pane="0" id="tab1" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list1"><li class="disc-item" data-type="i">Экспресcивный</li><li class="disc-item" data-type="c">Покладистый</li><li class="disc-item" data-type="d">Волевой</li><li class="disc-item" data-type="s">Осторожный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list2"><li class="disc-item" data-type="d">Пылкий</li><li class="disc-item" data-type="i">Разговорчивый</li><li class="disc-item" data-type="s">Добродушный</li><li class="disc-item" data-type="c">Сдержанный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list3"><li class="disc-item" data-type="i">Любитель приключений</li><li class="disc-item" data-type="c">Энтузиаст</li><li class="disc-item" data-type="d">Исполнитель инструкций</li><li class="disc-item" data-type="s">Верный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div><div class="disc-pane" data-step-pane="1" id="tab2" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list4"><li class="disc-item" data-type="d">Настойчивый</li><li class="disc-item" data-type="c">Осторожный</li><li class="disc-item" data-type="i">Эмоциональный</li><li class="disc-item" data-type="s">Удовлетворенный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list5"><li class="disc-item" data-type="s">Довольный</li><li class="disc-item" data-type="d">Нетерпеливый</li><li class="disc-item" data-type="i">Убедительный</li><li class="disc-item" data-type="c">Безропотный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list6"><li class="disc-item" data-type="c">Смиренный</li><li class="disc-item" data-type="s">Умеющий слушать</li><li class="disc-item" data-type="i">Душа компании</li><li class="disc-item" data-type="d">Волевой</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div><div class="disc-pane" data-step-pane="2" id="tab3" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list7"><li class="disc-item" data-type="c">Правильный</li><li class="disc-item" data-type="d">Первопроходец</li><li class="disc-item" data-type="s">Спокойный</li><li class="disc-item" data-type="i">Влиятельный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list8"><li class="disc-item" data-type="c">Почтительный</li><li class="disc-item" data-type="i">Контактный</li><li class="disc-item" data-type="d">Агрессивный</li><li class="disc-item" data-type="s">Мягкий</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list9"><li class="disc-item" data-type="i">Весельчак</li><li class="disc-item" data-type="s">Покорный</li><li class="disc-item" data-type="c">Тактичный</li><li class="disc-item" data-type="d">Соперничающий</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div><div class="disc-pane" data-step-pane="3" id="tab4" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list10"><li class="disc-item" data-type="c">Точный</li><li class="disc-item" data-type="d">Доминирующий</li><li class="disc-item" data-type="s">Охотный</li><li class="disc-item" data-type="i">Притягательный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list11"><li class="disc-item" data-type="i">Уравновешенный</li><li class="disc-item" data-type="c">Уступчивый</li><li class="disc-item" data-type="d">Идущий на риск</li><li class="disc-item" data-type="s">Услужливый</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list12"><li class="disc-item" data-type="c">Осмотрительный</li><li class="disc-item" data-type="s">Добрососедский</li><li class="disc-item" data-type="d">Энергичный</li><li class="disc-item" data-type="i">Убедительный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div><div class="disc-pane" data-step-pane="4" id="tab5" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list13"><li class="disc-item" data-type="s">Уравновешенный</li><li class="disc-item" data-type="i">Мотивирующий</li><li class="disc-item" data-type="c">Щепетильный</li><li class="disc-item" data-type="d">Решительный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list14"><li class="disc-item" data-type="i">Уверенный</li><li class="disc-item" data-type="c">Готовый к сотрудничеству</li><li class="disc-item" data-type="s">Беззаботный</li><li class="disc-item" data-type="d">Аргументирующий</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list15"><li class="disc-item" data-type="s">Сдержанный</li><li class="disc-item" data-type="d">Прямой</li><li class="disc-item" data-type="c">Строгий</li><li class="disc-item" data-type="i">Убедительный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div><div class="disc-pane" data-step-pane="5" id="tab6" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list16"><li class="disc-item" data-type="c">Застенчивый</li><li class="disc-item" data-type="d">Требовательный</li><li class="disc-item" data-type="s">Терпеливый</li><li class="disc-item" data-type="i">Очаровательный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list17"><li class="disc-item" data-type="d">Неугомонный</li><li class="disc-item" data-type="c">Дисциплинированный</li><li class="disc-item" data-type="i">Вдохновляющий</li><li class="disc-item" data-type="s">Внимательный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list18"><li class="disc-item" data-type="s">Обязательный</li><li class="disc-item" data-type="i">Оживленный</li><li class="disc-item" data-type="d">Решительный</li><li class="disc-item" data-type="c">Точный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div><div class="disc-pane" data-step-pane="6" id="tab7" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list19"><li class="disc-item" data-type="c">Добросовестный</li><li class="disc-item" data-type="i">Компанейский</li><li class="disc-item" data-type="s">Добрый</li><li class="disc-item" data-type="d">Уверенный в себе</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list20"><li class="disc-item" data-type="c">Дипломатичный</li><li class="disc-item" data-type="d">Отважный</li><li class="disc-item" data-type="s">Сочувствующий</li><li class="disc-item" data-type="i">Оптимистичный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list21"><li class="disc-item" data-type="d">Настойчивый</li><li class="disc-item" data-type="i">Общительный</li><li class="disc-item" data-type="s">Постоянный</li><li class="disc-item" data-type="c">Организованный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div><div class="disc-pane" data-step-pane="7" id="tab8" role="tabpanel">
+        <div class="disc-grid3">
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list22"><li class="disc-item" data-type="c">Соглашающийся</li><li class="disc-item" data-type="s">Владеющий собой</li><li class="disc-item" data-type="d">Шутливый</li><li class="disc-item" data-type="i">Настойчивый</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list23"><li class="disc-item" data-type="i">Обаятельный</li><li class="disc-item" data-type="d">Позитивный</li><li class="disc-item" data-type="s">Снисходительный</li><li class="disc-item" data-type="c">Требовательный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        
+            <div class="disc-card">
+              <div class="disc-card__title">Я наиболее</div>
+              <ul class="disc-list" id="draggable-list24"><li class="disc-item" data-type="i">Коммуникабельный</li><li class="disc-item" data-type="d">Смелый</li><li class="disc-item" data-type="c">Перфекционист</li><li class="disc-item" data-type="s">Сдержанный</li></ul>
+              <div class="disc-card__foot">Я наименее</div>
+            </div>
+        </div>
+      </div>
+      <div class="disc-progress" aria-hidden="true">
+        <div class="disc-progress__bar" id="discProgress"></div>
+      </div>
+      <div class="disc-actions">
+        <button class="disc-btn disc-btn--ghost" type="button" data-disc-prev>Назад</button>
+        <button class="disc-btn disc-btn--primary" type="button" data-disc-next>Далее</button>
+        <button class="disc-btn disc-btn--primary" type="button" data-disc-finish hidden>Завершить тест</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Result Modal (inlined) -->
+<div class="disc-modal" id="resultmodal" aria-hidden="true">
+  <div class="disc-modal__overlay" data-disc-close></div>
+  <div class="disc-modal__dialog" role="dialog" aria-modal="true">
+    <button class="disc-modal__close" type="button" data-disc-close aria-label="Закрыть" aria-hidden="true"></button>
+    <div class="disc-modal__head">
+      <h2 class="disc-modal__title" id="resultTitle">Ваш DISC-профиль</h2>
+    </div>
+    <div class="disc-modal__body" id="resultbody">
+      <div class="disc-result">
+        <p class="disc-result__score-label">Ваш DISC-профиль:</p>
+        <div class="disc-result__score" id="discScore">
+          <span id="discScoreText">D:0, I:0, S:0, C:0</span>
+        </div>
+        <p class="disc-result__subtitle">
+          По данной ссылке вы можете ознакомиться с общей расшифровкой результатов тестирования.
+        </p>
+        <div class="disc-result__copy">
+          <p class="disc-result__copy-label">Поделиться результатами теста:</p>
+          <div class="copyfield">
+            <div class="copyfield__icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 14v-6a2 2 0 0 1 2-2h4"/>
+                <polyline points="13 3 13 8 18 8"/>
+              </svg>
+            </div>
+            <input class="copyfield__input" id="discLink" type="text" readonly>
+            <button class="copyfield__btn" type="button" data-copy="#discLink">
+              <span class="copyfield__btnIcon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 14v-6a2 2 0 0 1 2-2h4"/>
+                  <polyline points="13 3 13 8 18 8"/>
+                </svg>
+              </span>
+              <span class="copyfield__btnText">Скопировать</span>
+            </button>
+          </div>
+        </div>
+        <button class="disc-btn disc-btn--primary disc-result__back" type="button">Вернуться к тесту</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Trigger button (visible on page) -->
+<button class="disc-trigger-btn" data-modal-open="wizardmodal" data-disc-open>
+  Пройти DISC тест
+</button>
+
+
+<script>
+
+(() => {
+  // ===== helpers =====
+  const qs = (s, r = document) => r.querySelector(s);
+  const qsa = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  const syncScrollLock = () => {
+    const anyOpen = !!document.querySelector(".disc-modal.is-open");
+    document.documentElement.classList.toggle("no-scroll", anyOpen);
+    document.body.classList.toggle("no-scroll", anyOpen);
+  };
+
+  const openModal = (el) => {
+    if (!el) return;
+    el.classList.add("is-open");
+    el.setAttribute("aria-hidden", "false");
+    syncScrollLock();
+  };
+
+  const closeModal = (el) => {
+    if (!el) return;
+    el.classList.remove("is-open");
+    el.setAttribute("aria-hidden", "true");
+    syncScrollLock();
+  };
+
+  // ===== DOM =====
+  const wizard = qs("#wizardmodal");
+  const resultModal = qs("#resultmodal");
+  if (!wizard) return;
+
+  const btnOpenWizard = qs('[data-modal-open="wizardmodal"], [data-disc-open]');
+  const btnCloseWizard = qsa("[data-disc-close]", wizard);
+  const resultCloseButtons = qsa("[data-disc-close]", resultModal);
+
+  const tabs = qsa("[data-step-btn]", wizard);
+  const panes = qsa("[data-step-pane]", wizard);
+
+  const btnPrev = qs("[data-disc-prev]", wizard);
+  const btnNext = qs("[data-disc-next]", wizard);
+  const btnFinish = qs("[data-disc-finish]", wizard);
+
+  const progressEl = qs("#discProgress", wizard);
+
+  // ===== state =====
+  let step = 0;
+  let lastFocus = null;
+
+  // ===== wizard nav =====
+  const setStep = (n) => {
+    step = Math.max(0, Math.min(7, n));
+    render();
+  };
+
+  const render = () => {
+    tabs.forEach((t) => {
+      const is = Number(t.dataset.stepBtn) === step;
+      t.classList.toggle("is-active", is);
+      t.setAttribute("aria-selected", is ? "true" : "false");
+    });
+    panes.forEach((p) => p.classList.toggle("is-active", Number(p.dataset.stepPane) === step));
+
+    if (btnPrev) btnPrev.disabled = step === 0;
+    if (btnNext) btnNext.hidden = step === 7;
+    if (btnFinish) btnFinish.hidden = step !== 7;
+
+    if (progressEl) {
+      const pct = ((step + 1) / 8) * 100;
+      progressEl.style.width = pct + "%";
+    }
+  };
+
+  const openWizard = () => {
+    lastFocus = document.activeElement;
+    openModal(wizard);
+    qs(".disc-modal__close", wizard)?.focus({ preventScroll: true });
+    render();
+  };
+
+  const closeWizard = () => {
+    closeModal(wizard);
+    if (lastFocus && typeof lastFocus.focus === "function") {
+      lastFocus.focus({ preventScroll: true });
+    }
+    lastFocus = null;
+  };
+
+  const openResult = () => {
+    openModal(resultModal);
+  };
+
+  const closeResult = () => {
+    closeModal(resultModal);
+  };
+
+  // ===== mobile UX =====
+  const tabsScroller = qs(".disc-modal__tabs", wizard);
+  const wizardBodyScroller = qs(".disc-modal__body", wizard) || wizard;
+
+  const isMobileUI = () =>
+    (window.matchMedia && window.matchMedia("(max-width: 767px)").matches) ||
+    (window.matchMedia && window.matchMedia("(pointer: coarse)").matches && window.matchMedia("(max-width: 1024px)").matches);
+
+  const centerActiveTab = (behavior = "smooth") => {
+    if (!isMobileUI()) return;
+    if (!tabsScroller || !tabsScroller.scrollWidth) return;
+
+    const activeTab = tabs.find((t) => Number(t.dataset.stepBtn) === step);
+    if (!activeTab) return;
+
+    const container = tabsScroller;
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = activeTab.getBoundingClientRect();
+
+    const tabCenterX = (tabRect.left - containerRect.left) + tabRect.width / 2;
+    const targetLeft = container.scrollLeft + tabCenterX - container.clientWidth / 2;
+
+    const maxLeft = Math.max(0, container.scrollWidth - container.clientWidth);
+    const clamped = Math.min(Math.max(0, targetLeft), maxLeft);
+
+    if (Math.abs(container.scrollLeft - clamped) < 2) return;
+
+    container.scrollTo({ left: clamped, behavior });
+  };
+
+  const scrollStepTop = (behavior = "smooth") => {
+    if (!isMobileUI()) return;
+    if (!wizardBodyScroller) return;
+    wizardBodyScroller.scrollTo({ top: 0, behavior });
+  };
+
+  let pendingScrollTop = false;
+  let lastRenderedStep = -1;
+
+  // ===== drag & drop =====
+  const HANDLE_SVG = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M5 4C5 3.86 5 3.791 5.008 3.733C5.03345 3.54971 5.11803 3.37973 5.24888 3.24888C5.37973 3.11803 5.54971 3.03345 5.733 3.008C5.79 3 5.86 3 6 3C6.14 3 6.209 3 6.267 3.008C6.45029 3.03345 6.62027 3.11803 6.75112 3.24888C6.88197 3.37973 6.96655 3.54971 6.992 3.733C7 3.79 7 3.86 7 4C7 4.14 7 4.209 6.992 4.267C6.96655 4.45029 6.88197 4.62027 6.75112 4.75112C6.62027 4.88197 6.45029 4.96655 6.267 4.992C6.21 5 6.14 5 6 5C5.86 5 5.791 5 5.733 4.992C5.54971 4.96655 5.37973 4.88197 5.24888 4.75112C5.11803 4.62027 5.03345 4.45029 5.008 4.267C5 4.21 5 4.14 5 4ZM5 8C5 7.86 5 7.791 5.008 7.733C5.03345 7.54971 5.11803 7.37973 5.24888 7.24888C5.37973 7.11803 5.54971 7.03345 5.733 7.008C5.79 7 5.86 7 6 7C6.14 7 6.209 7 6.267 7.008C6.45029 7.03345 6.62027 7.11803 6.75112 7.24888C6.88197 7.37973 6.96655 7.54971 6.992 7.733C7 7.79 7 7.86 7 8C7 8.14 7 8.209 6.992 8.267C6.96655 8.45029 6.88197 8.62027 6.75112 8.75112C6.62027 8.88197 6.45029 8.96655 6.267 8.992C6.21 9 6.14 9 6 9C5.86 9 5.791 9 5.733 8.992C5.54971 8.96655 5.37973 8.88197 5.24888 8.75112C5.11803 8.62027 5.03345 8.45029 5.008 8.267C5 8.21 5 8.14 5 8ZM5 12C5 11.861 5 11.791 5.008 11.733C5.0336 11.55 5.11812 11.3804 5.24876 11.2498C5.37939 11.1191 5.54904 11.0346 5.732 11.009C5.791 11.001 5.86 11.001 5.999 11.001C6.138 11.001 6.209 11.001 6.266 11.009C6.44896 11.0346 6.6186 11.1191 6.7492 11.2498C6.8799 11.3804 6.9644 11.55 6.99 11.733C6.998 11.791 6.998 11.861 6.998 12C6.998 12.139 6.998 12.209 6.99 12.267C6.9644 12.45 6.8799 12.6196 6.7492 12.7502C6.6186 12.8809 6.449 12.9654 6.266 12.991C6.208 12.999 6.138 12.999 5.999 12.999C5.86 12.999 5.79 12.999 5.732 12.991C5.549 12.9654 5.3794 12.8809 5.2488 12.7502C5.1181 12.6196 5.0336 12.45 5.008 12.267C5 12.209 5 12.139 5 12ZM9 4C9 3.86 9 3.791 9.008 3.733C9.03345 3.54971 9.11803 3.37973 9.24888 3.24888C9.37973 3.11803 9.54971 3.03345 9.733 3.008C9.79 3 9.86 3 10 3C10.14 3 10.209 3 10.267 3.008C10.4503 3.03345 10.6203 3.11803 10.7511 3.24888C10.882 3.37973 10.9665 3.54971 10.992 3.733C11 3.79 11 3.86 11 4C11 4.14 11 4.209 10.992 4.267C10.9665 4.45029 10.882 4.62027 10.7511 4.75112C10.6203 4.88197 10.4503 4.96655 10.267 4.992C10.21 5 10.14 5 10 5C9.86 5 9.791 5 9.733 4.992C9.54971 4.96655 9.37973 4.88197 9.24888 4.75112C9.11803 4.62027 9.03345 4.45029 9.008 4.267C9 4.21 9 4.14 9 4ZM9 8C9 7.86 9 7.791 9.008 7.733C9.03345 7.54971 9.11803 7.37973 9.24888 7.24888C9.37973 7.11803 9.54971 7.03345 9.733 7.008C9.79 7 9.86 7 10 7C10.14 7 10.209 7 10.267 7.008C10.4503 7.03345 10.6203 7.11803 10.7511 7.24888C10.882 7.37973 10.9665 7.54971 10.992 7.733C11 7.79 11 7.86 11 8C11 8.14 11 8.209 10.992 8.267C10.9665 8.45029 10.882 8.62027 10.7511 8.75112C10.6203 8.88197 10.4503 8.96655 10.267 8.992C10.21 9 10.14 9 10 9C9.86 9 9.791 9 9.733 8.992C9.54971 8.96655 9.37973 8.88197 9.24888 8.75112C9.11803 8.62027 9.03345 8.45029 9.008 8.267C9 8.21 9 8.14 9 8ZM9 12C9 11.861 9 11.791 9.008 11.733C9.0336 11.55 9.11812 11.3804 9.24876 11.2498C9.37939 11.1191 9.54904 11.0346 9.732 11.009C9.791 11.001 9.86 11.001 9.999 11.001C10.139 11.001 10.209 11.001 10.266 11.009C10.449 11.0346 10.6186 11.1191 10.7492 11.2498C10.8799 11.3804 10.9644 11.55 10.99 11.733C10.998 11.791 10.998 11.861 10.998 12C10.998 12.139 10.998 12.209 10.99 12.267C10.9644 12.45 10.8799 12.6196 10.7492 12.7502C10.6186 12.8809 10.449 12.9654 10.266 12.991C10.208 12.999 10.138 12.999 9.999 12.999C9.86 12.999 9.79 12.999 9.732 12.991C9.549 12.9654 9.3794 12.8809 9.2488 12.7502C9.1181 12.6196 9.0336 12.45 9.008 12.267C9 12.209 9 12.139 9 12Z" fill="#B3B3B3"/>
+    </svg>
+  `.trim();
+
+  const ensureHandles = (ul) => {
+    qsa("li", ul).forEach((li) => {
+      if (qs(".disc-handle", li)) return;
+      const h = document.createElement("span");
+      h.className = "disc-handle";
+      h.setAttribute("aria-hidden", "true");
+      h.innerHTML = HANDLE_SVG;
+      li.appendChild(h);
+    });
+  };
+
+  const makeSortable = (ul) => {
+    const items = () => qsa("li", ul);
+    ensureHandles(ul);
+    let currentDrag = null;
+
+    items().forEach((li) => {
+      li.setAttribute("draggable", "true");
+      const handle = qs(".disc-handle", li);
+      if (handle) handle.setAttribute("draggable", "false");
+
+      li.addEventListener("dragstart", (e) => {
+        currentDrag = li;
+        li.classList.add("is-dragging");
+        ul.classList.add("is-reordering");
+        e.dataTransfer.effectAllowed = "move";
+      });
+
+      li.addEventListener("dragend", () => {
+        currentDrag = null;
+        li.classList.remove("is-dragging");
+        ul.classList.remove("is-reordering");
+        items().forEach((x) => x.classList.remove("is-over"));
+      });
+
+      li.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        if (!currentDrag || currentDrag === li) return;
+
+        li.classList.add("is-over");
+        const rect = li.getBoundingClientRect();
+        const before = e.clientY - rect.top < rect.height / 2;
+        ul.insertBefore(currentDrag, before ? li : li.nextSibling);
+      });
+
+      li.addEventListener("dragleave", () => li.classList.remove("is-over"));
+      li.addEventListener("drop", (e) => {
+        e.preventDefault();
+        li.classList.remove("is-over");
+      });
+    });
+
+    // Touch fallback
+    let touchDrag = null;
+
+    ul.addEventListener("touchstart", (e) => {
+      const li = e.target.closest(".disc-item");
+      if (!li) return;
+      touchDrag = li;
+      li.classList.add("is-dragging");
+      ul.classList.add("is-reordering");
+      e.preventDefault();
+    }, { passive: false });
+
+    ul.addEventListener("touchmove", (e) => {
+      if (!touchDrag) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      const itemsArr = qsa("li", ul);
+      let bestItem = null;
+      let bestDist = Infinity;
+      for (const item of itemsArr) {
+        if (item === touchDrag) continue;
+        const rect = item.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const dist = Math.abs(t.clientY - center);
+        if (dist < bestDist) {
+          bestItem = item;
+          bestDist = dist;
+        }
+      }
+      if (bestItem && bestDist > 3) {
+        const before = t.clientY < bestItem.getBoundingClientRect().top + bestItem.getBoundingClientRect().height / 2;
+        ul.insertBefore(touchDrag, before ? bestItem : bestItem.nextSibling);
+      }
+    }, { passive: false });
+
+    ul.addEventListener("touchend", () => {
+      if (touchDrag) {
+        touchDrag.classList.remove("is-dragging");
+        ul.classList.remove("is-reordering");
+        items().forEach((x) => x.classList.remove("is-over"));
+        touchDrag = null;
+      }
+    });
+  };
+
+  // ===== score =====
+  const collectPayload = () => {
+    const payload = [];
+    const lists = qsa(".disc-list", wizard);
+    lists.forEach((ul, listIndex) => {
+      const lis = qsa("li", ul);
+      lis.forEach((li, idx) => {
+        payload.push({
+          list: listIndex,
+          pos: idx,
+          type: li.getAttribute("data-type"),
+        });
+      });
+    });
+    return payload;
+  };
+
+  const score = (payload) => {
+    const maj = [];
+    const min = [];
+    payload.forEach((x) => {
+      if (x.pos === 0) maj.push(x.type);
+      if (x.pos === 3) min.push(x.type);
+    });
+    const count = (arr, ch) => arr.reduce((a, v) => a + (v === ch ? 1 : 0), 0);
+    return {
+      d: count(maj, "d") - count(min, "d"),
+      i: count(maj, "i") - count(min, "i"),
+      s: count(maj, "s") - count(min, "s"),
+      c: count(maj, "c") - count(min, "c"),
+    };
+  };
+
+  const showResult = (res) => {
+    const scoreText = qs("#discScoreText");
+    if (scoreText) {
+      const fmt = (v) => (v >= 0 ? "+" : "") + v;
+      scoreText.textContent =
+        `D:${fmt(res.d)}, I:${fmt(res.i)}, S:${fmt(res.s)}, C:${fmt(res.c)}`;
+    }
+    const linkInput = qs("#discLink");
+    if (linkInput) {
+      linkInput.value =
+        `#disc-result?D=${res.d}&I=${res.i}&S=${res.s}&C=${res.c}`;
+    }
+    openResult();
+  };
+
+  // ===== copy button =====
+  document.querySelectorAll("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const input = btn.querySelector(".copyfield__input");
+      if (!input || !input.value) return;
+      try {
+        await navigator.clipboard.writeText(input.value);
+      } catch (e) {
+        input.select();
+        document.execCommand("copy");
+      }
+      btn.classList.add("is-copied");
+      const txt = btn.querySelector(".copyfield__btnText");
+      if (txt) txt.textContent = "Скопировано!";
+      setTimeout(() => {
+        btn.classList.remove("is-copied");
+        if (txt) txt.textContent = "Скопировать";
+      }, 2000);
+    });
+  });
+
+  // ===== wiring =====
+  btnOpenWizard?.addEventListener("click", (e) => {
+    e.preventDefault();
+    openWizard();
+  });
+
+  btnCloseWizard.forEach((x) =>
+    x.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeWizard();
+    })
+  );
+
+  resultCloseButtons.forEach((x) =>
+    x.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeResult();
+    })
+  );
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (resultModal && resultModal.classList.contains("is-open")) {
+      closeResult();
+      return;
+    }
+    if (wizard.classList.contains("is-open")) {
+      closeWizard();
+    }
+  });
+
+  tabs.forEach((t) => t.addEventListener("click", () => setStep(Number(t.dataset.stepBtn))));
+  btnPrev?.addEventListener("click", () => setStep(step - 1));
+  btnNext?.addEventListener("click", () => {
+    if (isMobileUI()) {
+      requestAnimationFrame(() => scrollStepTop("smooth"));
+    }
+    setStep(step + 1);
+  });
+
+  btnFinish?.addEventListener("click", () => {
+    const payload = collectPayload();
+    const res = score(payload);
+    showResult(res);
+    closeWizard();
+  });
+
+  const btnBack = qs(".disc-result__back");
+  btnBack?.addEventListener("click", () => {
+    closeResult();
+    openWizard();
+    render();
+  });
+
+  const lists = qsa(".disc-list", wizard);
+  lists.forEach(makeSortable);
+  render();
+  syncScrollLock();
+})();
+
+</script>
+</body>
+</html>

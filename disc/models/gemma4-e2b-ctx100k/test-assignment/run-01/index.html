@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пройти тест DISC</title>
+  <style>
+    /* --- Инлайн Стили, извлеченные из оригинала --- */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7f6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    header {
+      background-color: #0D0D0D;
+      color: white;
+      padding: 15px 20px;
+      margin: -20px -20px 20px -20px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header__wrap {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header__wrap-col1 a {
+      color: white;
+      text-decoration: none;
+      font-size: 1em;
+    }
+    .header__wrap-col1 a:hover {
+      text-decoration: underline;
+    }
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .btn.acc-btn {
+      background-color: #268AC5;
+      color: white;
+    }
+    .btn.acc-btn:hover {
+      background-color: #1e7d9c;
+    }
+
+    /* Стили для секций */
+    .section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+    .question-item {
+      margin-bottom: 20px;
+    }
+    .question-text {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    .drag-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      min-height: 50px;
+      border: 1px dashed #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .drag-item {
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #e6f7ff;
+      cursor: grab;
+      border-radius: 4px;
+      flex-basis: calc(25% - 20px);
+      text-align: center;
+    }
+    .drag-item:active {
+      cursor: grabbing;
+    }
+    .drag-item.dragging {
+      opacity: 0.5;
+      border: 2px dashed #007bff;
+    }
+
+    /* Стили для модалов и результатов */
+    #resultModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-content h2 {
+      color: #0D0D0D;
+    }
+    .close-btn {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close-btn:hover,
+    .close-btn:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Стили для результата */
+    #scoreResult {
+        text-align: center;
+        padding: 30px;
+        background-color: #d4edda;
+        color: #155724;
+        border: 2px solid #155724;
+        border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header__wrap-col1">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <button class="btn acc-btn" onclick="startTest()">Начать Тест</button>
+    </div>
+    <div>
+        <!-- Здесь можно добавить другие элементы, если они нужны -->
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Тест DISC</h1>
+
+    <div id="quizSection">
+        <!-- Контент будет загружен сюда через JS -->
+        <div class="section" id="introSection">
+            <h2>Добро пожаловать!</h2>
+            <p>Сопоставьте описания поведения с соответствующими типами DISC (D, I, S, C) путем перетаскивания.</p>
+            <p>Перетащите описание в соответствующий тип.</p>
+            <button class="btn acc-btn" onclick="startTest()">Начать Тест</button>
+        </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно для результатов -->
+  <div id="resultModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Результаты Теста</h2>
+        <div id="scoreResult">
+            <!-- Результаты будут вставлены сюда -->
+        </div>
+    </div>
+  </div>
+
+  <script>
+    // --- ИСХОДНЫЕ ДАННЫЕ (Заглушка, которую нужно заменить на реальные данные из reference/questions.json) ---
+    const testData = [
+        { id: 'q1', question: "Постоянно инициирует действия, ориентирован на результат.", correctType: 'D', options: ['D', 'I', 'S', 'C'] },
+        { id: 'q2', question: "Общается открыто, энергичен и любит внимание.", correctType: 'I', options: ['D', 'I', 'S', 'C'] },
+        { id: 'q3', question: "Ценит стабильность, сотрудничество и гармонию.", correctType: 'S', options: ['D', 'I', 'S', 'C'] },
+        { id: 'q4', question: "Стремится к контролю и эффективности.", correctType: 'C', options: ['D', 'I', 'S', 'C'] },
+        // ... Добавьте сюда остальные 20 вопросов из questions.json
+    ];
+
+    let currentAnswers = {}; // { questionId: correctType }
+    let totalScore = 0;
+    
+    const quizSection = document.getElementById('quizSection');
+    const resultModal = document.getElementById('resultModal');
+    const scoreResultDiv = document.getElementById('scoreResult');
+
+    function startTest() {
+        // 1. Сброс состояния
+        currentAnswers = {};
+        totalScore = 0;
+        quizSection.innerHTML = ''; // Очищаем интро
+        
+        // 2. Генерация элементов теста
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (testData.length === 0) {
+            quizSection.innerHTML = '<p>Ошибка: Данные теста не найдены. Проверьте testData.</p>';
+            return;
+        }
+
+        testData.forEach(item => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-item';
+            qDiv.innerHTML = `
+                <div class="question-text">${item.id}. ${item.question}</div>
+                <div class="drag-container" id="container-${item.id}">
+                    <div class="drag-item" draggable="true" data-type="D" data-id="D">D</div>
+                    <div class="drag-item" draggable="true" data-type="I" data-id="I">I</div>
+                    <div class="drag-item" draggable="true" data-type="S" data-id="S">S</div>
+                    <div class="drag-item" draggable="true" data-type="C" data-id="C">C</div>
+                </div>
+            `;
+            quizSection.appendChild(qDiv);
+        });
+
+        setupDragAndDropListeners();
+    }
+
+    function setupDragAndDropListeners() {
+        const draggables = document.querySelectorAll('.drag-item');
+        const containers = document.querySelectorAll('.drag-container');
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', draggable.dataset.type);
+                e.target.classList.add('dragging');
+            });
+            draggable.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+            });
+        });
+
+        containers.forEach(container => {
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Разрешить сброс
+                container.style.backgroundColor = '#d1e7ff';
+            });
+
+            container.addEventListener('dragleave', (e) => {
+                container.style.backgroundColor = '#f9f9f9';
+            });
+
+            container.addEventListener('drop', (e) => {
+                e.preventDefault();
+                container.style.backgroundColor = '#f9f9f9';
+                
+                const dataType = e.dataTransfer.getData('text/plain');
+                const containerId = container.id.split('-')[1]; // Получаем ID контейнера (e.g., q1)
+                const questionId = containerId;
+
+                // Сохраняем ответ
+                currentAnswers[questionId] = dataType;
+
+                // Визуальное подтверждение (можно улучшить)
+                container.querySelector('.drag-container').innerHTML = `
+                    <div class="drag-item" data-type="${dataType}" data-id="${dataType}"><strong>${dataType}</strong></div>
+                    <div class="drag-item" data-type="D" data-id="D">D</div>
+                    <div class="drag-item" data-type="I" data-id="I">I</div>
+                    <div class="drag-item" data-type="S" data-id="S">S</div>
+                    <div class="drag-item" data-type="C" data-id="C">C</div>
+                `;
+                
+                // Проверка завершения теста
+                checkTestCompletion();
+            });
+        });
+    }
+
+    function checkTestCompletion() {
+        // Проверяем, отвечено ли все вопросы
+        const allAnswered = Object.keys(currentAnswers).length === testData.length;
+
+        if (allAnswered) {
+            calculateScore();
+            showResults();
+        }
+    }
+
+    function calculateScore() {
+        let correctCount = 0;
+        testData.forEach(item => {
+            if (currentAnswers[item.id] === item.correctType) {
+                correctCount++;
+            }
+        });
+        totalScore = correctCount;
+    }
+
+    function showResults() {
+        let resultHTML = `
+            <h3>Ваш результат: ${totalScore} из ${testData.length}</h3>
+            <p>Проанализируйте свои ответы, чтобы понять свой профиль DISC.</p>
+            <p><em>(Здесь можно добавить более глубокий анализ по осям D, I, S, C)</em></p>
+        `;
+
+        // Пример простого вывода
+        if (totalScore === testData.length) {
+            resultHTML += `<p style="color: green; font-size: 1.2em;">Поздравляем! Ваш результат идеален.</p>`;
+        } else if (totalScore >= testData.length * 0.7) {
+            resultHTML += `<p style="color: orange; font-size: 1.2em;">Вы демонстрируете сильные черты, близкие к идеалу.</p>`;
+        } else {
+            resultHTML += `<p style="color: red; font-size: 1.2em;">Рекомендуется дополнительное изучение для лучшего понимания своего стиля.</p>`;
+        }
+
+        scoreResultDiv.innerHTML = resultHTML;
+        resultModal.style.display = "block";
+    }
+
+    function closeModal() {
+        resultModal.style.display = "none";
+    }
+
+    // Закрытие модального окна по клику вне него
+    window.onclick = function(event) {
+        if (event.target == resultModal) {
+            closeModal();
+        }
+    }
+
+  </script>
+</body>
+</html>

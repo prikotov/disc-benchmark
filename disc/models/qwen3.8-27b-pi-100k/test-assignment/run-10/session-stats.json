@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-15T03-44-29-106Z_01a1dd4e-75b1-7257-910f-e9f25e51bebb.jsonl",
+  "turns": 91,
+  "tool_calls": 94,
+  "tools_by_name": {
+    "bash": 65,
+    "read": 14,
+    "write": 2,
+    "edit": 13
+  },
+  "tokens_in": 196091,
+  "tokens_out": 91291,
+  "bash_total": 11,
+  "bash_with_network": 5,
+  "curl_to_source": 4,
+  "network_cmds_sample": [
+    "mkdir -p /tmp/disc-src && cd /tmp/disc-src && curl -sL --max-time 60 'https://stratoplan-school.com/disc/' -o page.html -w '%{http_code} %{size_download}\\ ' && head -c 2000 page.html",
+    "cd /tmp/disc-src && curl -sL --max-time 60 'https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6' -o disc_patched.js -w '%{http_code} %{size_download}\\ ' && wc -l disc_patched.js",
+    "cd /tmp/disc-src && curl -sL --max-time 60 'https://stratoplan-school.com/disc/js/disc_patched.js?v=0.0.0.6' -o disc_patched.js -w 'disc_patched.js: %{http_code} %{size_download}\\ ' && curl -sL --max-time 60 'https://stratoplan-school.com/disc/js/app.js?v=0.0.0.1' -o app.js -w 'app.js: %{http_code} ",
+    "cd /tmp/disc-src && curl -sL --max-time 60 'https://stratoplan-school.com/disc/result/' -o result-page.html -w '%{http_code} %{size_download}\\ ' && grep -n -i 'disc\\\\|score\\\\|result\\\\|token\\\\|decrypt' result-page.html | grep -v 'stratoplan\\\\|path d=' | head -40"
+  ],
+  "errors": 7,
+  "first_ts": "2026-11-15T03:44:29.106Z",
+  "last_ts": "2026-11-15T04:05:37.557Z"
+}

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тестирование DISC — копия теста</title>
+<style>
+  :root{
+    --bg:#f3f5fa;
+    --card:#ffffff;
+    --ink:#1c2333;
+    --muted:#6b7487;
+    --line:#e2e6f0;
+    --brand:#3b5bdb;
+    --brand-soft:#eef1fe;
+    --ok:#2f9e63;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(900px 420px at 85% -10%, #e8edff 0%, rgba(232,237,255,0) 60%),
+      radial-gradient(700px 380px at -10% 0%, #eaf6ef 0%, rgba(234,246,239,0) 55%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{max-width:920px;margin:0 auto;padding:36px 20px 72px}
+
+  /* ---------- head ---------- */
+  .head{margin-bottom:22px}
+  .head h1{margin:0 0 8px;font-size:30px;line-height:1.2;letter-spacing:-.02em}
+  .head__sub{margin:0 0 6px;color:var(--muted);font-size:15px}
+  .head__lead{margin:0;font-size:16px;font-weight:600}
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;
+    scrollbar-width:thin;
+  }
+  .tab{
+    flex:0 0 auto;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    border-radius:999px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer;
+    transition:background .15s,border-color .15s,color .15s;
+  }
+  .tab:hover{border-color:#c9d2ea}
+  .tab.is-active{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .tab:disabled{cursor:default;opacity:.55}
+
+  /* ---------- panes / cards ---------- */
+  .pane{display:none}
+  .pane.is-active{display:block;animation:fade .22s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 14px 12px;box-shadow:0 1px 2px rgba(16,24,40,.05);
+  }
+  .card__label{
+    font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .card__label--top{margin-bottom:10px}
+  .card__label--bottom{margin-top:10px}
+
+  .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;min-height:0}
+  .item{
+    display:flex;align-items:center;gap:10px;
+    background:#f8f9fd;border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;font-size:15px;line-height:1.3;
+    cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  .item:hover{border-color:#c9d2ea}
+  .item:active{cursor:grabbing}
+  .item .txt{flex:1}
+  .item.is-dragging{opacity:.35;border-style:dashed}
+  .item.is-ghost{
+    position:fixed;z-index:999;pointer-events:none;margin:0;
+    background:#fff;box-shadow:0 14px 30px rgba(16,24,40,.2);
+    transform:rotate(1.2deg);
+  }
+  .handle{display:grid;place-items:center;width:16px;flex:0 0 auto;cursor:grab}
+
+  /* ---------- progress / actions ---------- */
+  .progress{height:6px;background:#e6eaf4;border-radius:999px;overflow:hidden;margin:20px 0 16px}
+  .progress__bar{
+    height:100%;width:12.5%;border-radius:999px;
+    background:linear-gradient(90deg,var(--brand),#748ffc);
+    transition:width .25s ease;
+  }
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .btn{
+    font:inherit;font-size:15px;border-radius:10px;padding:11px 20px;cursor:pointer;
+    border:1px solid transparent;transition:background .15s,border-color .15s,opacity .15s;
+  }
+  .btn--primary{background:var(--brand);color:#fff}
+  .btn--primary:hover{background:#2f4cc4}
+  .btn--ghost{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn--ghost:hover{border-color:#c9d2ea}
+  .btn--ghost:disabled{opacity:.45;cursor:default}
+  .actions .sp{flex:1}
+
+  /* ---------- result ---------- */
+  .result{
+    background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:44px 24px;box-shadow:0 1px 2px rgba(16,24,40,.05);
+    text-align:center;animation:fade .25s ease;
+  }
+  .result__icon{display:grid;place-items:center;margin:0 auto 14px}
+  .result h2{margin:0 0 6px;font-size:26px;letter-spacing:-.01em}
+  .result__sub{margin:0 0 22px;color:var(--muted);font-size:15px}
+  .result__title{
+    margin:0 auto;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);width:max-content;max-width:100%;
+    border:1px solid var(--line);background:var(--brand-soft);
+    padding:6px 14px;border-radius:999px;
+  }
+  .result__score{
+    margin:16px 0 20px;font-size:40px;font-weight:800;letter-spacing:.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  .result__score b{font-weight:800}
+  .result__score .neg{color:#c0392b}
+  .result__score .pos{color:var(--ok)}
+  .result__note{
+    margin:0 auto 26px;max-width:560px;color:var(--muted);font-size:14px;line-height:1.55;
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="head">
+    <h1>Тестирование DISC</h1>
+    <p class="head__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</p>
+    <p class="head__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+  </header>
+
+  <!-- ================= wizard ================= -->
+  <section id="wizard" aria-label="Тест DISC">
+    <div class="tabs" role="tablist" aria-label="Шаги">
+      <button class="tab is-active" type="button" role="tab" aria-selected="true" data-step-btn="0">Первый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step-btn="1">Второй</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step-btn="2">Третий</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step-btn="3">Четвертый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step-btn="4">Пятый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step-btn="5">Шестой</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step-btn="6">Седьмой</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" data-step-btn="7">Восьмой</button>
+    </div>
+
+    <div id="rootwizard" data-step="0">
+      <div class="pane is-active" data-step-pane="0" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="i" draggable="false"><span class="txt">Экспресcивный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Покладистый</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Волевой</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Осторожный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="d" draggable="false"><span class="txt">Пылкий</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Разговорчивый</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Добродушный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Сдержанный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="i" draggable="false"><span class="txt">Любитель приключений</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Энтузиаст</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Исполнитель инструкций</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Верный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="1" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="d" draggable="false"><span class="txt">Настойчивый</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Осторожный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Эмоциональный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Удовлетворенный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="s" draggable="false"><span class="txt">Довольный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Нетерпеливый</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Убедительный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Безропотный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Смиренный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Умеющий слушать</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Душа компании</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Волевой</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="2" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Правильный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Первопроходец</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Спокойный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Влиятельный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Почтительный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Контактный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Агрессивный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Мягкий</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="i" draggable="false"><span class="txt">Весельчак</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Покорный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Тактичный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Соперничающий</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="3" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Точный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Доминирующий</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Охотный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Притягательный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="i" draggable="false"><span class="txt">Уравновешенный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Уступчивый</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Идущий на риск</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Услужливый</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Осмотрительный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Добрососедский</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Энергичный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Убедительный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="4" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="s" draggable="false"><span class="txt">Уравновешенный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Мотивирующий</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Щепетильный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Решительный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="i" draggable="false"><span class="txt">Уверенный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Готовый к сотрудничеству</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Беззаботный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Аргументирующий</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="s" draggable="false"><span class="txt">Сдержанный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Прямой</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Строгий</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Убедительный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="5" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Застенчивый</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Требовательный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Терпеливый</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Очаровательный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="d" draggable="false"><span class="txt">Неугомонный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Дисциплинированный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Вдохновляющий</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Внимательный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="s" draggable="false"><span class="txt">Обязательный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Оживленный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Решительный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Точный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="6" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Добросовестный</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Компанейский</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Добрый</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Уверенный в себе</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Дипломатичный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Отважный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Сочувствующий</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Оптимистичный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="d" draggable="false"><span class="txt">Настойчивый</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Общительный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Постоянный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Организованный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane" data-step-pane="7" role="tabpanel">
+        <div class="grid">
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="c" draggable="false"><span class="txt">Соглашающийся</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Владеющий собой</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Шутливый</span></li>
+              <li class="item" data-type="i" draggable="false"><span class="txt">Настойчивый</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="i" draggable="false"><span class="txt">Обаятельный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Позитивный</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Снисходительный</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Требовательный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__label card__label--top">Я наиболее</div>
+            <ul class="list">
+              <li class="item" data-type="i" draggable="false"><span class="txt">Коммуникабельный</span></li>
+              <li class="item" data-type="d" draggable="false"><span class="txt">Смелый</span></li>
+              <li class="item" data-type="c" draggable="false"><span class="txt">Перфекционист</span></li>
+              <li class="item" data-type="s" draggable="false"><span class="txt">Сдержанный</span></li>
+            </ul>
+            <div class="card__label card__label--bottom">Я наименее</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress" aria-hidden="true">
+        <div class="progress__bar" id="discProgress"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn--ghost" type="button" id="btnPrev" data-disc-prev>Назад</button>
+        <span class="sp"></span>
+        <button class="btn btn--primary" type="button" id="btnNext" data-disc-next>Далее</button>
+        <button class="btn btn--primary" type="button" id="btnFinish" data-disc-finish hidden>Завершить тест</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= result ================= -->
+  <section class="result" id="resultScreen" hidden aria-live="polite">
+    <div class="result__icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <circle cx="28" cy="28" r="27" fill="#eef7f0"/>
+        <path d="M17 29.5l7.5 7.5L40 21.5" stroke="#2f9e63" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>Тест завершён</h2>
+    <p class="result__sub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+    <p class="result__title">Ваш DISC-профиль:</p>
+    <div class="result__score" id="scoreLine">D:0, I:0, S:0, C:0</div>
+    <p class="result__note">
+      В каждом списке первое по списку прилагательное даёт +1 балл своему типу (D, I, S или C),
+      а последнее — −1. Итоговый счёт — сумма по всем 24 спискам.
+    </p>
+    <button class="btn btn--primary" type="button" id="btnRestart">
+      Пройти ещё раз
+    </button>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  // =========================
+  // DOM anchors
+  // =========================
+  const wizard = document.getElementById('wizard');
+  const result = document.getElementById('resultScreen');
+  const tabs = Array.from(document.querySelectorAll('[data-step-btn]'));
+  const panes = Array.from(document.querySelectorAll('[data-step-pane]'));
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const btnFinish = document.getElementById('btnFinish');
+  const btnRestart = document.getElementById('btnRestart');
+  const progressEl = document.getElementById('discProgress');
+  const scoreLine = document.getElementById('scoreLine');
+
+  const lists = Array.from(document.querySelectorAll('#wizard .list'));
+
+  // =========================
+  // drag-ручка (то же, что в оригинале)
+  // =========================
+  const HANDLE_SVG = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M5 4C5 3.86 5 3.791 5.008 3.733C5.03345 3.54971 5.11803 3.37973 5.24888 3.24888C5.37973 3.11803 5.54971 3.03345 5.733 3.008C5.79 3 5.86 3 6 3C6.14 3 6.209 3 6.267 3.008C6.45029 3.03345 6.62027 3.11803 6.75112 3.24888C6.88197 3.37973 6.96655 3.54971 6.992 3.733C7 3.79 7 3.86 7 4C7 4.14 7 4.209 6.992 4.267C6.96655 4.45029 6.88197 4.62027 6.75112 4.75112C6.62027 4.88197 6.45029 4.96655 6.267 4.992C6.21 5 6.14 5 6 5C5.86 5 5.791 5 5.733 4.992C5.54971 4.96655 5.37973 4.88197 5.24888 4.75112C5.11803 4.62027 5.03345 4.45029 5.008 4.267C5 4.21 5 4.14 5 4ZM5 8C5 7.86 5 7.791 5.008 7.733C5.03345 7.54971 5.11803 7.37973 5.24888 7.24888C5.37973 7.11803 5.54971 7.03345 5.733 7.008C5.79 7 5.86 7 6 7C6.14 7 6.209 7 6.267 7.008C6.45029 7.03345 6.62027 7.11803 6.75112 7.24888C6.88197 7.37973 6.96655 7.54971 6.992 7.733C7 7.79 7 7.86 7 8C7 8.14 7 8.209 6.992 8.267C6.96655 8.45029 6.88197 8.62027 6.75112 8.75112C6.62027 8.88197 6.45029 8.96655 6.267 8.992C6.21 9 6.14 9 6 9C5.86 9 5.791 9 5.733 8.992C5.54971 8.96655 5.37973 8.88197 5.24888 8.75112C5.11803 8.62027 5.03345 8.45029 5.008 8.267C5 8.21 5 8.14 5 8ZM5 12C5 11.861 5 11.791 5.008 11.733C5.0336 11.55 5.11812 11.3804 5.24876 11.2498C5.37939 11.1191 5.54904 11.0346 5.732 11.009C5.791 11.001 5.86 11.001 5.999 11.001C6.138 11.001 6.209 11.001 6.266 11.009C6.44896 11.0346 6.61861 11.1191 6.74924 11.2498C6.87988 11.3804 6.9644 11.55 6.99 11.733C6.998 11.791 6.998 11.861 6.998 12C6.998 12.139 6.998 12.209 6.99 12.267C6.9644 12.45 6.87988 12.6196 6.74924 12.7502C6.61861 12.8809 6.44896 12.9654 6.266 12.991C6.208 12.999 6.138 12.999 5.999 12.999C5.86 12.999 5.79 12.999 5.732 12.991C5.54904 12.9654 5.37939 12.8809 5.24876 12.7502C5.11812 12.6196 5.0336 12.45 5.008 12.267C5 12.209 5 12.139 5 12ZM9 4C9 3.86 9 3.791 9.008 3.733C9.03345 3.54971 9.11803 3.37973 9.24888 3.24888C9.37973 3.11803 9.54971 3.03345 9.733 3.008C9.79 3 9.86 3 10 3C10.14 3 10.209 3 10.267 3.008C10.4503 3.03345 10.6203 3.11803 10.7511 3.24888C10.882 3.37973 10.9665 3.54971 10.992 3.733C11 3.79 11 3.86 11 4C11 4.14 11 4.209 10.992 4.267C10.9665 4.45029 10.882 4.62027 10.7511 4.75112C10.6203 4.88197 10.4503 4.96655 10.267 4.992C10.21 5 10.14 5 10 5C9.86 5 9.791 5 9.733 4.992C9.54971 4.96655 9.37973 4.88197 9.24888 4.75112C9.11803 4.62027 9.03345 4.45029 9.008 4.267C9 4.21 9 4.14 9 4ZM9 8C9 7.86 9 7.791 9.008 7.733C9.03345 7.54971 9.11803 7.37973 9.24888 7.24888C9.37973 7.11803 9.54971 7.03345 9.733 7.008C9.79 7 9.86 7 10 7C10.14 7 10.209 7 10.267 7.008C10.4503 3.03345 10.6203 7.11803 10.7511 7.24888C10.882 7.37973 10.9665 7.54971 10.992 7.733C11 7.79 11 7.86 11 8C11 8.14 11 8.209 10.992 8.267C10.9665 8.45029 10.882 8.62027 10.7511 8.75112C10.6203 8.88197 10.4503 8.96655 10.267 8.992C10.21 9 10.14 9 10 9C9.86 9 9.791 9 9.733 8.992C9.54971 8.96655 9.37973 8.88197 9.24888 8.75112C9.11803 8.62027 9.03345 8.45029 9.008 8.267C9 8.21 9 8.14 9 8ZM9 12C9 11.861 9 11.791 9.008 11.733C9.0336 11.55 9.11812 11.3804 9.24876 11.2498C9.37939 11.1191 9.54904 11.0346 9.732 11.009C9.791 11.001 9.86 11.001 9.999 11.001C10.139 11.001 10.209 11.001 10.266 11.009C10.449 11.0346 10.6186 11.1191 10.7492 11.2498C10.8799 11.3804 10.9644 11.55 10.99 11.733C10.998 11.791 10.998 11.861 10.998 12C10.998 12.139 10.998 12.209 10.99 12.267C10.9644 12.45 10.8799 12.6196 10.7492 12.7502C10.6186 12.8809 10.449 12.9654 10.266 12.991C10.208 12.999 10.138 12.999 9.999 12.999C9.86 12.999 9.79 12.999 9.732 12.991C9.54904 12.9654 9.37939 12.8809 9.24876 12.7502C9.11812 12.6196 9.0336 12.45 9.008 12.267C9 12.209 9 12.139 9 12Z" fill="#B3B3B3"/>
+    </svg>
+  `.trim();
+
+  lists.forEach((ul) => {
+    ul.querySelectorAll('li').forEach((li) => {
+      if (li.querySelector('.handle')) return;
+      const h = document.createElement('span');
+      h.className = 'handle';
+      h.setAttribute('aria-hidden', 'true');
+      h.innerHTML = HANDLE_SVG;
+      li.insertBefore(h, li.firstChild);
+    });
+  });
+
+  // начальный порядок списков (для «Пройти ещё раз»)
+  const initialOrder = new Map();
+  lists.forEach((ul) => initialOrder.set(ul, Array.from(ul.children)));
+
+  // =========================
+  // перетаскивание (pointer events, desktop + touch)
+  // =========================
+  const dragByHandle = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+  let activeDrag = null;
+
+  function positionGhost(pt, d) {
+    d.ghost.style.left = (pt.clientX - d.offsetX) + 'px';
+    d.ghost.style.top = (pt.clientY - d.offsetY) + 'px';
+  }
+
+  function reorder(d, pt) {
+    const ul = d.list;
+    const items = Array.from(ul.children).filter((x) => x !== d.item);
+    let target = null;
+    for (const it of items) {
+      const r = it.getBoundingClientRect();
+      if (pt.clientY < r.top + r.height / 2) { target = it; break; }
+    }
+    if (target) ul.insertBefore(d.item, target);
+    else ul.appendChild(d.item);
+  }
+
+  function onPointerMove(e) {
+    if (!activeDrag) return;
+    positionGhost(e, activeDrag);
+    reorder(activeDrag, e);
+  }
+
+  function onPointerEnd() {
+    if (!activeDrag) return;
+    const d = activeDrag;
+    activeDrag = null;
+    d.ghost.remove();
+    d.item.classList.remove('is-dragging');
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerEnd);
+    window.removeEventListener('pointercancel', onPointerEnd);
+  }
+
+  document.addEventListener('pointerdown', (e) => {
+    const li = e.target && e.target.closest ? e.target.closest('li.item') : null;
+    if (!li || e.button !== 0) return;
+    if (activeDrag) return;
+    if (dragByHandle && !e.target.closest('.handle')) return; // touch: только за ручку
+
+    const ul = li.parentElement;
+    if (!ul || !ul.classList.contains('list')) return;
+
+    e.preventDefault();
+
+    const rect = li.getBoundingClientRect();
+    const ghost = li.cloneNode(true);
+    ghost.classList.add('is-ghost');
+    ghost.classList.remove('is-dragging');
+    ghost.style.width = rect.width + 'px';
+    document.body.appendChild(ghost);
+
+    li.classList.add('is-dragging');
+
+    activeDrag = {
+      item: li,
+      list: ul,
+      ghost,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top,
+    };
+    positionGhost(e, activeDrag);
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerEnd);
+    window.addEventListener('pointercancel', onPointerEnd);
+  });
+
+  // =========================
+  // шаги
+  // =========================
+  let step = 0;
+
+  const setStep = (n) => {
+    step = Math.max(0, Math.min(7, n));
+    render();
+  };
+
+  const render = () => {
+    tabs.forEach((t) => {
+      const is = Number(t.dataset.stepBtn) === step;
+      t.classList.toggle('is-active', is);
+      t.setAttribute('aria-selected', is ? 'true' : 'false');
+    });
+
+    panes.forEach((p) => p.classList.toggle('is-active', Number(p.dataset.stepPane) === step));
+
+    if (btnPrev) btnPrev.disabled = step === 0;
+    if (btnNext) btnNext.hidden = step === 7;
+    if (btnFinish) btnFinish.hidden = step !== 7;
+
+    if (progressEl) {
+      const pct = ((step + 1) / 8) * 100;
+      progressEl.style.width = pct + '%';
+    }
+
+    // прокрутка к началу шага при навигации
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  tabs.forEach((t) => t.addEventListener('click', () => setStep(Number(t.dataset.stepBtn))));
+  if (btnPrev) btnPrev.addEventListener('click', () => setStep(step - 1));
+  if (btnNext) btnNext.addEventListener('click', () => setStep(step + 1));
+
+  // =========================
+  // collect + score (как в оригинале)
+  // =========================
+  const collectPayload = () => {
+    const payload = [];
+    lists.forEach((ul, listIndex) => {
+      Array.from(ul.children).forEach((li, pos) => {
+        payload.push({ list: listIndex, pos, type: li.getAttribute('data-type') });
+      });
+    });
+    return payload;
+  };
+
+  const scoreOf = (payload) => {
+    const maj = [];
+    const min = [];
+
+    payload.forEach((x) => {
+      if (x.pos === 0) maj.push(x.type);
+      if (x.pos === 3) min.push(x.type);
+    });
+
+    const count = (arr, ch) => arr.reduce((a, v) => a + (v === ch ? 1 : 0), 0);
+
+    return {
+      d: count(maj, 'd') - count(min, 'd'),
+      i: count(maj, 'i') - count(min, 'i'),
+      s: count(maj, 's') - count(min, 's'),
+      c: count(maj, 'c') - count(min, 'c'),
+    };
+  };
+
+  // =========================
+  // завершение: показать баллы в том же приложении
+  // =========================
+  const finishTest = () => {
+    const res = scoreOf(collectPayload());
+    const cell = (k, v) => `<b class="${v >= 0 ? 'pos' : 'neg'}">${k}:${v}</b>`;
+    scoreLine.innerHTML =
+      cell('D', res.d) + ', ' + cell('I', res.i) + ', ' + cell('S', res.s) + ', ' + cell('C', res.c);
+    wizard.hidden = true;
+    result.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  if (btnFinish) btnFinish.addEventListener('click', finishTest);
+
+  // =========================
+  // заново
+  // =========================
+  if (btnRestart) btnRestart.addEventListener('click', () => {
+    initialOrder.forEach((order, ul) => {
+      order.forEach((li) => ul.appendChild(li));
+    });
+    result.hidden = true;
+    wizard.hidden = false;
+    setStep(0);
+  });
+
+  // init
+  render();
+})();
+</script>
+</body>
+</html>

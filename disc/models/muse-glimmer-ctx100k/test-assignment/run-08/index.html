@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тест DISC — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;color:#111}
+header{padding:24px;text-align:center;background:#0a0a0a;color:#fff}
+header h1{font-size:22px}
+main{max-width:960px;margin:40px auto;padding:0 16px}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+h2{font-size:20px;margin-bottom:8px}
+.sub{color:#555;font-size:14px;margin-bottom:20px}
+.tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:20px}
+.tab{flex:0 0 auto;padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#fafafa;cursor:pointer;font-size:13px}
+.tab.is-active{background:#111;color:#fff;border-color:#111}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.list-card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fafafa}
+.list-title{font-size:13px;margin-bottom:8px;color:#333}
+.list-foot{font-size:12px;color:#777;margin-top:8px;text-align:center}
+ul.disc-list{list-style:none;display:flex;flex-direction:column;gap:8px;min-height:160px}
+ul.disc-list li{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 12px;cursor:grab;user-select:none}
+ul.disc-list li.dragging{opacity:.5}
+ul.disc-list li.over{border-color:#111}
+.progress{height:6px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:24px 0}
+.progress>div{height:100%;background:#111;width:12.5%}
+.actions{display:flex;justify-content:space-between;margin-top:20px}
+button{background:#111;color:#fff;border:none;padding:10px 18px;border-radius:10px;cursor:pointer}
+button[disabled]{opacity:.4;cursor:not-allowed}
+button.ghost{background:#fff;color:#111;border:1px solid #ddd}
+.result{margin-top:30px}
+.bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.bar{background:#fafafa;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+.bar h4{font-size:14px;margin-bottom:6px}
+.bar .val{font-size:24px;font-weight:700}
+.bar .line{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;margin-top:6px}
+.bar .line>div{height:100%;background:#111}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>Бесплатный тест DISC для руководителей</h1></header>
+<main>
+<div class="card">
+<h2>Тестирование DISC</h2>
+<div class="sub">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+<div class="tabs" id="tabs"></div>
+<div class="progress"><div id="progress"></div></div>
+<div id="panes"></div>
+<div class="actions">
+<button class="ghost" id="prev">Назад</button>
+<button id="next">Далее</button>
+<button id="finish" class="hidden">Завершить тест</button>
+</div>
+<div class="result hidden" id="result"></div>
+</div>
+</main>
+<script>
+const stepsData = [
+  [ // step0
+    ["Экспресcивный","i"],["Покладистый","c"],["Волевой","d"],["Осторожный","s"],
+    ["Пылкий","d"],["Разговорчивый","i"],["Добродушный","s"],["Сдержанный","c"],
+    ["Любитель приключений","i"],["Энтузиаст","c"],["Исполнитель инструкций","d"],["Верный","s"]
+  ],
+  [ ["Настойчивый","d"],["Осторожный","c"],["Эмоциональный","i"],["Удовлетворенный","s"],
+    ["Довольный","s"],["Нетерпеливый","d"],["Убедительный","i"],["Безропотный","c"],
+    ["Смиренный","c"],["Умеющий слушать","s"],["Душа компании","i"],["Волевой","d"]
+  ],
+  [ ["Правильный","c"],["Первопроходец","d"],["Спокойный","s"],["Влиятельный","i"],
+    ["Почтительный","c"],["Контактный","i"],["Агрессивний","d"],["Мягкий","s"],
+    ["Весельчак","i"],["Покорный","s"],["Тактичный","c"],["Соперничающий","d"]
+  ],
+  [ ["Точный","c"],["Доминирующий","d"],["Охотный","s"],["Притягательный","i"],
+    ["Уравновешенный","i"],["Уступчивый","c"],["Идущий на риск","d"],["Услужливый","s"],
+    ["Осмотрительный","c"],["Добрососедский","s"],["Энергичный","d"],["Убедительный","i"]
+  ],
+  [ ["Уравновешенный","s"],["Мотивирующий","i"],["Щепетильный","c"],["Решительный","d"],
+    ["Уверенный","i"],["Готовый к сотрудничеству","c"],["Беззаботный","s"],["Аргументирующий","d"],
+    ["Сдержанный","s"],["Прямой","d"],["Строгий","c"],["Убедительный","i"]
+  ],
+  [ ["Застенчивый","c"],["Требовательный","d"],["Терпеливый","s"],["Очаровательный","i"],
+    ["Неугомонный","d"],["Дисциплинированный","c"],["Вдохновляющий","i"],["Внимательный","s"],
+    ["Обязательный","s"],["Оживленный","i"],["Решительный","d"],["Точный","c"]
+  ],
+  [ ["Добросовестный","c"],["Компанейский","i"],["Добрый","s"],["Уверенный в себе","d"],
+    ["Дипломатичный","c"],["Отважный","d"],["Сочувствующий","s"],["Оптимистичный","i"],
+    ["Настойчивый","d"],["Общительный","i"],["Постоянный","s"],["Организованный","c"]
+  ],
+  [ ["Соглашающийся","c"],["Владеющий собой","s"],["Шутливый","d"],["Настойчивый","i"],
+    ["Обаятельный","i"],["Позитивный","d"],["Снисходительный","s"],["Требовательный","c"],
+    ["Коммуникабельный","i"],["Смелый","d"],["Перфекционист","c"],["Сдержанный","s"]
+  ]
+];
+
+const tabsEl = document.getElementById('tabs');
+const panesEl = document.getElementById('panes');
+const progressEl = document.getElementById('progress');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const finishBtn = document.getElementById('finish');
+const resultEl = document.getElementById('result');
+
+let step = 0;
+const total = stepsData.length;
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  for(let i=0;i<total;i++){
+    const b=document.createElement('button');
+    b.className='tab'+(i===step?' is-active':'');
+    b.textContent=`Шаг ${i+1}`;
+    b.onclick=()=>{step=i;update();};
+    tabsEl.appendChild(b);
+  }
+}
+function renderPane(){
+  panesEl.innerHTML='';
+  const container=document.createElement('div');
+  container.className='grid';
+  const groups=stepsData[step];
+  for(let g=0;g<groups.length;g+=4){
+    const card=document.createElement('div');
+    card.className='list-card';
+    const ul=document.createElement('ul');
+    ul.className='disc-list';
+    ul.dataset.list=g/4;
+    card.innerHTML=`<div class="list-title">Я наиболее</div>`;
+    card.appendChild(ul);
+    const foot=document.createElement('div');
+    foot.className='list-foot';foot.textContent='Я наименее';
+    card.appendChild(foot);
+    container.appendChild(card);
+    const items=groups.slice(g,g+4);
+    items.forEach((it,idx)=>{
+      const li=document.createElement('li');
+      li.textContent=it[0];
+      li.dataset.type=it[1];
+      li.draggable=true;
+      ul.appendChild(li);
+    });
+  }
+  panesEl.appendChild(container);
+  initDrag();
+}
+function update(){
+  renderTabs();
+  renderPane();
+  progressEl.style.width=((step+1)/total*100)+'%';
+  prevBtn.disabled=step===0;
+  nextBtn.hidden=step===total-1;
+  finishBtn.classList.toggle('hidden',step!==total-1);
+}
+function initDrag(){
+  document.querySelectorAll('.disc-list').forEach(ul=>{
+    ul.querySelectorAll('li').forEach(li=>{
+      li.onDragStart=e=>{li.classList.add('dragging');e.dataTransfer.effectAllowed='move';};
+      li.onDragEnd=()=>li.classList.remove('dragging');
+      li.onDragOver=e=>{e.preventDefault();};
+      li.onDragEnter=()=>li.classList.add('over');
+      li.onDragLeave=()=>li.classList.remove('over');
+      li.onDrop=e=>{e.preventDefault();li.classList.remove('over'); const dragging=document.querySelector('.dragging'); if(dragging&&dragging!==li){ul.insertBefore(dragging,li.nextSibling);}};
+    });
+  });
+}
+prevBtn.onclick=()=>{if(step>0){step--;update();}};
+nextBtn.onclick=()=>{if(step<total-1){step++;update();}};
+finishBtn.onclick=()=>{
+  const lists=document.querySelectorAll('.disc-list');
+  const payload=[];
+  lists.forEach((ul,i)=>{
+    Array.from(ul.children).forEach((li,pos)=>{
+      payload.push({list:i,pos,type:li.dataset.type});
+    });
+  });
+  const maj=[],min=[];
+  payload.forEach(x=>{if(x.pos===0)maj.push(x.type);if(x.pos===3)min.push(x.type);});
+  const count=(arr,ch)=>arr.filter(v=>v===ch).length;
+  const scores={d:0,i:0,s:0,c:0};
+  ['d','i','s','c'].forEach(k=>{scores[k]=count(maj,k)-count(min,k);});
+  const sum=Object.values(scores).reduce((a,b)=>a+Math.abs(b),0)||1;
+  const names={d:'Доминирование',i:'Влияние',s:'Стабильность',c:'Соблюдение'};
+  const colors={d:'#e11d48',i:'#f59e0b',s:'#10b981',c:'#3b82f6'};
+  const maxScore=Math.max(...Object.values(scores));
+  const topKeys=Object.entries(scores).filter(([k,v])=>v===maxScore).map(([k])=>k);
+  resultEl.classList.remove('hidden');
+  resultEl.innerHTML=`<h3>Ваш результат</h3><div class="bars"></div>`;
+  const bars=resultEl.querySelector('.bars');
+  Object.entries(scores).forEach(([k,v])=>{
+    const pct=Math.round(Math.max(0,v)/Math.max(1,maxScore)*100);
+    const b=document.createElement('div');
+    b.className='bar';
+    b.innerHTML=`<h4>${names[k]}</h4><div class="val">${v>=0?'+':''}${v}</div><div class="line"><div style="width:${pct}%"></div></div>`;
+    bars.appendChild(b);
+  });
+  const topText=topKeys.map(k=>names[k]).join(' / ');
+  const p=document.createElement('p');
+  p.style.marginTop='16px';
+  p.textContent=`Наиболее выражены: ${topText}`;
+  resultEl.appendChild(p);
+  window.scrollTo({top:resultEl.offsetTop-80,behavior:'smooth'});
+};
+update();
+</script>
+</body>
+</html>

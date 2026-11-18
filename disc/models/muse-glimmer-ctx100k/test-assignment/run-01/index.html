@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тест DISC — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:#f5f7fb;color:#111;line-height:1.4}
+header{padding:20px;text-align:center;background:#fff;border-bottom:1px solid #e5e7eb}
+header h1{font-size:22px}
+main{max-width:960px;margin:24px auto;padding:0 16px}
+.muted{color:#666;font-size:14px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:10}
+.modal.open{display:flex}
+.dialog{background:#fff;border-radius:16px;max-width:900px;width:95%;max-height:90vh;overflow:auto;padding:24px;position:relative}
+.close{position:absolute;top:12px;right:12px;border:none;background:transparent;font-size:24px;cursor:pointer}
+.head{margin-bottom:16px}
+.head h2{font-size:20px}
+.tabs{display:flex;gap:8px;overflow:auto;margin:12px 0 16px}
+.tab{flex:0 0 auto;padding:6px 12px;border-radius:999px;border:1px solid #ddd;background:#f9fafb;cursor:pointer;font-size:13px}
+.tab.is-active{background:#111;color:#fff;border-color:#111}
+.body{margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}
+.card .title{font-weight:600;font-size:13px;margin-bottom:8px;color:#333}
+.list{list-style:none;min-height:120px}
+.list li{background:#f3f4f6;margin:6px 0;padding:8px 10px;border-radius:8px;cursor:grab;user-select:none;border:1px solid #e5e7eb}
+.list li.dragging{opacity:.5}
+.foot{font-size:12px;color:#666;margin-top:8px;text-align:center}
+.actions{display:flex;gap:12px;justify-content:space-between;margin-top:16px}
+.btn{padding:10px 16px;border:none;border-radius:10px;background:#111;color:#fff;cursor:pointer}
+.btn.ghost{background:#fff;color:#111;border:1px solid #ddd}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.progress{height:6px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:12px}
+.progress>div{height:100%;background:#111;width:12.5%}
+.result{display:none;padding:24px;text-align:center}
+.result h3{margin-bottom:12px}
+.scores{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.score{border:1px solid #e5e7eb;border-radius:12px;padding:16px 20px;min-width:120px}
+.score .v{font-size:32px;font-weight:700}
+.kicker{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<header>
+<h1>Тест DISC — копия</h1>
+<p class="muted">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+<button id="open" class="btn">Пройти тест DISC</button>
+</header>
+
+<div id="modal" class="modal" role="dialog" aria-modal="true">
+<div class="dialog">
+<button class="close" id="close">×</button>
+<div class="head">
+<h2>Тестирование DISC</h2>
+<div class="muted">Помните — чем честнее вы с тестом, тем точнее результаты!</div>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="body" id="body"></div>
+<div class="progress"><div id="prog"></div></div>
+<div class="actions">
+<button class="btn ghost" id="prev">Назад</button>
+<button class="btn" id="next">Далее</button>
+<button class="btn" id="finish" style="display:none">Завершить тест</button>
+</div>
+<div class="result" id="result"></div>
+</div>
+</div>
+
+<script>
+const stepsData = [
+  // step 0
+  [
+    [["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+    [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],
+    [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]
+  ],
+  // step1
+  [
+    [["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],
+    [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+    [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]
+  ],
+  // step2
+  [
+    [["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+    [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+    [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]
+  ],
+  // step3
+  [
+    [["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+    [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+    [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]
+  ],
+  // step4
+  [
+    [["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+    [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+    [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]
+  ],
+  // step5
+  [
+    [["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+    [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+    [["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]
+  ],
+  // step6
+  [
+    [["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+    [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+    [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]
+  ],
+  // step7
+  [
+    [["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+    [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+    [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]
+  ]
+];
+
+const typeNames = {d:"Dominance", i:"Influence", s:"Steadiness", c:"Compliance"};
+const typeRu = {d:"Доминирование", i:"Влияние", s:"Стабильность", c:"Соответствие"};
+
+const modal = document.getElementById('modal');
+const openBtn = document.getElementById('open');
+const closeBtn = document.getElementById('close');
+const tabsEl = document.getElementById('tabs');
+const bodyEl = document.getElementById('body');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const finishBtn = document.getElementById('finish');
+const prog = document.getElementById('prog');
+const resultEl = document.getElementById('result');
+
+let step = 0;
+
+function open(){modal.classList.add('open');render()}
+function close(){modal.classList.remove('open');}
+
+openBtn.onclick=open;
+closeBtn.onclick=close;
+modal.onclick=e=>{if(e.target===modal)close()};
+
+function renderTabs(){
+  tabsEl.innerHTML='';
+  for(let i=0;i<stepsData.length;i++){
+    const b=document.createElement('button');
+    b.className='tab'+(i===step?' is-active':'');
+    b.textContent=['Первый','Второй','Третий','Четвертый','Пятый','Шестой','Седьмой','Восьмой'][i];
+    b.onclick=()=>{step=i;render();};
+    tabsEl.appendChild(b);
+  }
+}
+function renderBody(){
+  bodyEl.innerHTML='';
+  const grid=document.createElement('div');
+  grid.className='grid';
+  const stepLists=stepsData[step];
+  stepLists.forEach((list,liIdx)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`<div class="title">Я наиболее</div><ul class="list" data-list="${step}-${liIdx}"></ul><div class="foot">Я наименее</div>`;
+    const ul=card.querySelector('ul');
+    list.forEach(([t,txt])=>{
+      const li=document.createElement('li');
+      li.draggable=true;
+      li.dataset.type=t;
+      li.textContent=txt;
+      ul.appendChild(li);
+    });
+    grid.appendChild(card);
+  });
+  bodyEl.appendChild(grid);
+  makeSortable();
+  prog.style.width=((step+1)/stepsData.length*100)+'%';
+  prevBtn.disabled=step===0;
+  nextBtn.style.display=step===stepsData.length-1?'none':'inline-block';
+  finishBtn.style.display=step===stepsData.length-1?'inline-block':'none';
+  resultEl.style.display='none';
+}
+function makeSortable(){
+  document.querySelectorAll('.list').forEach(ul=>{
+    ul.querySelectorAll('li').forEach(li=>{
+      li.ondragstart=e=>{li.classList.add('dragging');e.dataTransfer.effectAllowed='move'};
+      li.ondragend=()=>li.classList.remove('dragging');
+    });
+    ul.ondragover=e=>{e.preventDefault();const dragging=document.querySelector('.dragging'); if(!dragging||dragging.parentNode===ul){const after=getDragAfterElement(ul,e.clientY); ul.insertBefore(dragging,after||null);}};
+  });
+}
+function getDragAfterElement(container,y){
+  const els=[...container.querySelectorAll('li:not(.dragging)')];
+  return els.reduce((closest,child)=>{
+    const box=child.getBoundingClientRect();
+    const offset=y-box.top-box.height/2;
+    if(offset<0&&offset>closest.offset) return {offset,element:child};
+    return closest;
+  },{offset:Number.NEGATIVE_INFINITY}).element;
+}
+function render(){
+  renderTabs();
+  renderBody();
+}
+prevBtn.onclick=()=>{step=Math.max(0,step-1);render()};
+nextBtn.onclick=()=>{step=Math.min(stepsData.length-1,step+1);render()};
+finishBtn.onclick=()=>{
+  const payload=[];
+  document.querySelectorAll('.list').forEach(ul=>{
+    [...ul.children].forEach((li,idx)=>payload.push({type:li.dataset.type,pos:idx}));
+  });
+  const maj=[],min=[];
+  payload.forEach(p=>{if(p.pos===0)maj.push(p.type);if(p.pos===3)min.push(p.type);});
+  const score={d:0,i:0,s:0,c:0};
+  ['d','i','s','c'].forEach(t=>{score[t]=maj.filter(x=>x===t).length - min.filter(x=>x===t).length;});
+  const total=Object.values(score).reduce((a,b)=>a+Math.abs(b),0)||1;
+  const norm={}; Object.entries(score).forEach(([k,v])=>norm[k]=Math.round(v/total*100));
+  let html=`<h3>Ваш профиль DISC</h3><div class="scores">`;
+  ['d','i','s','c'].forEach(k=>{
+    html+=`<div class="score"><div class="kicker">${typeRu[k]}</div><div class="v">${norm[k]}</div><div class="muted">${typeNames[k]}</div></div>`;
+  });
+  html+=`</div><p class="muted" style="margin-top:12px">Баллы рассчитаны по оригинальному принципу: +1 за первое место, -1 за последнее.</p>`;
+  resultEl.innerHTML=html;
+  resultEl.style.display='block';
+  bodyEl.style.display='none';
+  document.querySelector('.progress').style.display='none';
+  document.querySelector('.actions').style.display='none';
+};
+</script>
+</body>
+</html>

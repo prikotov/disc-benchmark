@@ -1,0 +1,25 @@
+{
+  "session_file": "2026-11-15T07-08-41-057Z_01a1de09-68e1-77a0-9ad2-bc9d2f996fae.jsonl",
+  "turns": 53,
+  "tool_calls": 52,
+  "tools_by_name": {
+    "bash": 43,
+    "read": 4,
+    "write": 2,
+    "edit": 3
+  },
+  "tokens_in": 55028,
+  "tokens_out": 31135,
+  "bash_total": 6,
+  "bash_with_network": 4,
+  "curl_to_source": 4,
+  "network_cmds_sample": [
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/disc/' -o disc.html && wc -c disc.html && head -c 2000 disc.html",
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/js/disc_patched.js?v=0.0.0.6' -o disc.js && wc -c disc.js && curl -sL 'https://stratoplan-school.com/css/main_patched.css?v=0.0.1.1' -o main.css && curl -sL 'https://stratoplan-school.com/css/root.css?v=0.0.0.1' -o root.css && wc -c main.css root.cs",
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/disc/js/disc_patched.js' -o disc.js && wc -c disc.js && head -c 500 disc.js; curl -sL 'https://stratoplan-school.com/disc/css/main_patched.css' -o main.css && wc -c main.css; curl -sL 'https://stratoplan-school.com/disc/css/root.css' -o root.css && ",
+    "cd /tmp && curl -sL 'https://stratoplan-school.com/disc/result/' -o result.html && wc -c result.html && grep -n 'disc' result.html | grep -in 'js\\\\|score\\\\|д\\\\|D\\\\|I\\\\|S\\\\|C' | head -30"
+  ],
+  "errors": 11,
+  "first_ts": "2026-11-15T07:08:41.057Z",
+  "last_ts": "2026-11-15T07:17:44.068Z"
+}

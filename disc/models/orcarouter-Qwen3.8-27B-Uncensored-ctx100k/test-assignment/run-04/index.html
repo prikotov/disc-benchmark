@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — копировать себя</title>
+<style>
+  :root{
+    --bg:#f4f6fa;
+    --card:#ffffff;
+    --ink:#1c2333;
+    --muted:#68728a;
+    --line:#e3e7ef;
+    --accent:#3157d2;
+    --accent-ink:#ffffff;
+    --accent-soft:#eaeefe;
+    --danger:#d84c4c;
+    --radius:14px;
+    --shadow:0 10px 30px rgba(28,35,51,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:28px 20px 60px}
+
+  /* ---------- header ---------- */
+  .site-head{
+    display:flex;align-items:center;gap:14px;
+    padding:18px 22px;margin-bottom:22px;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .logo{
+    width:44px;height:44px;flex:0 0 auto;border-radius:12px;
+    background:linear-gradient(135deg,#3157d2,#5b83ff);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .site-head h1{font-size:20px;margin:0}
+  .site-head p{margin:2px 0 0;color:var(--muted);font-size:14px}
+
+  /* ---------- progress ---------- */
+  .progress{
+    height:8px;background:#e6eaf2;border-radius:99px;overflow:hidden;margin:0 2px 18px;
+  }
+  .progress i{
+    display:block;height:100%;width:12.5%;
+    background:linear-gradient(90deg,#3157d2,#5b83ff);
+    border-radius:99px;transition:width .25s ease;
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;
+    scrollbar-width:thin;
+  }
+  .tab{
+    flex:0 0 auto;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);font-size:14px;font-weight:600;
+    padding:9px 16px;border-radius:99px;cursor:pointer;
+    transition:.15s;
+  }
+  .tab:hover{border-color:#c6cddd}
+  .tab.is-active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .tab.is-done{color:var(--accent)}
+
+  /* ---------- panes / cards ---------- */
+  .pane{display:none}
+  .pane.is-active{display:block;animation:fade .22s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .lead{color:var(--muted);font-size:14px;margin:4px 2px 16px}
+  .lead b{color:var(--ink)}
+
+  .grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  }
+  @media (max-width:820px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px;box-shadow:var(--shadow);
+  }
+  .card__title,.card__foot{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:700;color:var(--muted);
+    padding:2px 6px;
+  }
+  .card__foot{justify-content:flex-end;margin-top:8px}
+  .card__title svg,.card__foot svg{color:var(--accent);flex:0 0 auto}
+  .card__foot svg{color:#a64545}
+
+  /* ---------- list items ---------- */
+  .list{list-style:none;margin:8px 0 0;padding:0;position:relative}
+  .list.is-reordering{user-select:none;-webkit-user-select:none}
+  .item{
+    display:flex;align-items:center;gap:10px;
+    background:#f7f9fd;border:1px solid var(--line);border-radius:10px;
+    padding:10px 10px 10px 8px;margin:0 0 8px;
+    cursor:grab;touch-action:none;
+    transition:border-color .15s, background .15s;
+  }
+  .item:last-child{margin-bottom:0}
+  .item:hover{border-color:#c1cae0;background:#f2f5fc}
+  .item.is-dragging{
+    position:relative;z-index:5;
+    background:#fff;border-color:var(--accent);
+    box-shadow:0 10px 24px rgba(28,35,51,.18);
+    opacity:.96;cursor:grabbing;
+    will-change:transform;
+  }
+  .rank{
+    flex:0 0 auto;width:24px;height:24px;border-radius:8px;
+    background:var(--accent-soft);color:var(--accent);
+    font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .item:first-child .rank{background:var(--accent);color:#fff}
+  .item:last-child .rank{background:#f2d6d6;color:#a64545}
+  .item .text{flex:1;font-size:15px;font-weight:500}
+  .handle{
+    flex:0 0 auto;display:flex;color:#b6bdcc;cursor:grab;
+  }
+  .is-reordering .handle{color:#8f99b3}
+
+  /* ---------- footer nav ---------- */
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-top:22px;flex-wrap:wrap;
+  }
+  .step-info{color:var(--muted);font-size:14px;font-weight:600}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    border-radius:10px;border:1px solid transparent;
+    padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer;
+    transition:.15s;
+  }
+  .btn svg{flex:0 0 auto}
+  .btn--primary{background:var(--accent);color:#fff}
+  .btn--primary:hover{background:#2748b4}
+  .btn--ghost{background:var(--card);border-color:var(--line);color:var(--ink)}
+  .btn--ghost:hover{border-color:#c6cddd}
+  .btn--done{background:#15803d;color:#fff}
+  .btn--done:hover{background:#146c36}
+  .btn:disabled{opacity:.45;cursor:default}
+
+  /* ---------- result ---------- */
+  .result{display:none}
+  .result.is-active{display:block;animation:fade .25s ease}
+  .result__card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);padding:26px;
+  }
+  .result__head{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+  .result__badge{
+    width:46px;height:46px;flex:0 0 auto;border-radius:12px;
+    background:#eef7ee;color:#15803d;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .result__head h2{margin:0 0 4px;font-size:22px}
+  .result__head p{margin:0;color:var(--muted);font-size:14px}
+  .scores{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 18px;
+  }
+  @media (max-width:640px){.scores{grid-template-columns:repeat(2,1fr)}}
+  .score{
+    border:1px solid var(--line);border-radius:12px;padding:14px;
+    background:#fafbfd;
+  }
+  .score.is-top{border-color:var(--accent);background:var(--accent-soft)}
+  .score .key{font-size:13px;font-weight:700;color:var(--muted);display:flex;gap:8px;align-items:center}
+  .score .key b{font-size:15px;color:var(--ink)}
+  .score .val{font-size:30px;font-weight:800;margin-top:4px}
+  .score .bar{height:6px;border-radius:99px;background:#e6eaf2;margin-top:10px;overflow:hidden}
+  .score .bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+  .score.is-top .bar i{background:var(--accent)}
+  .legend{font-size:13px;color:var(--muted);margin:0 0 18px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+
+  .foot-note{margin-top:26px;color:#9aa3b8;font-size:12.5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site-head">
+    <div class="logo" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M4 14.5 9 9l4 4 7-7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 5.5h4V10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Тестирование DISC</h1>
+      <p>Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+    </div>
+  </header>
+
+  <!-- ============ WIZARD ============ -->
+  <section id="wizard" aria-label="Тест DISC">
+    <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+    <div class="tabs" role="tablist" aria-label="Шаги" id="tabs"></div>
+
+    <div class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего. Перетаскивайте карточки.</div>
+
+    <div id="panes"></div>
+
+    <div class="nav">
+      <button class="btn btn--ghost" id="btnPrev" type="button">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Назад
+      </button>
+      <div class="step-info" id="stepInfo"></div>
+      <button class="btn btn--primary" id="btnNext" type="button">
+        Далее
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6 3 5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn btn--done" id="btnFinish" type="button" hidden>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m3 8.5 3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Завершить тест
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="result" id="result" aria-live="polite">
+    <div class="result__card">
+      <div class="result__head">
+        <div class="result__badge" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h2>Ваш результат</h2>
+          <p>Баллы по шкалам DISC: положительный балл — черта выражена выше, отрицательный — ниже.</p>
+        </div>
+      </div>
+
+      <div class="scores" id="scores"></div>
+
+      <p class="legend" id="legend"></p>
+
+      <div class="actions">
+        <button class="btn btn--primary" id="btnRestart" type="button">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v2.6h-2.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Пройти заново
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot-note">Копия теста DISC школы менеджмента Stratoplan. Данные никуда не отправляются.</p>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ================= данные теста (как в оригинале) =================
+  const STEPS = [
+    [
+      [["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+      [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушний"],["c","Сдержанный"]],
+      [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]
+    ],
+    [
+      [["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],
+      [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+      [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]
+    ],
+    [
+      [["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+      [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+      [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]
+    ],
+    [
+      [["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+      [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+      [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]
+    ],
+    [
+      [["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+      [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+      [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]
+    ],
+    [
+      [["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+      [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+      [["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]
+    ],
+    [
+      [["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+      [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+      [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]
+    ],
+    [
+      [["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+      [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+      [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]
+    ]
+  ];
+  // исходный порядок всех списков — для сброса
+  const INITIAL = STEPS.map(step => step.map(list => list.map(it => it.slice())));
+
+  const TAB_LABELS = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+  const N = STEPS.length;
+
+  const TYPE_LABEL = { d:"Драйв / dominance", i:"Влияние / influence", s:"Стабильность / steadiness", c:"Контроль / compliance" };
+
+  // ================= DOM =================
+  const $ = (s,r=document)=>r.querySelector(s);
+  const tabsEl = $("#tabs");
+  const panesEl = $("#panes");
+  const btnPrev = $("#btnPrev");
+  const btnNext = $("#btnNext");
+  const btnFinish = $("#btnFinish");
+  const btnRestart = $("#btnRestart");
+  const progressBar = $("#progressBar");
+  const stepInfo = $("#stepInfo");
+  const wizardEl = $("#wizard");
+  const resultEl = $("#result");
+
+  const ICON_MORE = "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"2.6\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"8\" cy=\"8\" r=\"1.3\" fill=\"currentColor\"/><circle cx=\"8\" cy=\"13.4\" r=\"1.3\" fill=\"currentColor\"/></svg>";
+  const ICON_LESS = "<svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" aria-hidden=\"true\"><path d=\"M3 8h10\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>";
+  const HANDLE_SVG = "<svg width=\"14\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" aria-hidden=\"true\">" +
+    [ [5,4],[9,4],[5,8],[9,8],[5,12],[9,12] ]
+    .map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.5" fill="currentColor"/>`).join("") + "</svg>";
+
+  // ================= построение UI =================
+  STEPS.forEach((step, s) => {
+    // tab
+    const b = document.createElement("button");
+    b.className = "tab";
+    b.type = "button";
+    b.role = "tab";
+    b.dataset.step = s;
+    b.textContent = TAB_LABELS[s];
+    tabsEl.appendChild(b);
+
+    // pane
+    const pane = document.createElement("div");
+    pane.className = "pane";
+    pane.dataset.stepPane = s;
+    pane.setAttribute("role","tabpanel");
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    step.forEach((list) => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      let html = `<div class="card__title">Я наиболее ${ICON_MORE}</div><ul class="list" role="list">`;
+      list.forEach(([type,text]) => {
+        html += `<li class="item" data-type="${type}" draggable="false">
+          <span class="rank">1</span>
+          <span class="text">${text}</span>
+          <span class="handle" aria-hidden="true">${HANDLE_SVG}</span>
+        </li>`;
+      });
+      html += `</ul><div class="card__foot">Я наименее ${ICON_LESS}</div>`;
+      card.innerHTML = html;
+      grid.appendChild(card);
+    });
+
+    pane.appendChild(grid);
+    panesEl.appendChild(pane);
+  });
+
+  const tabs = [...tabsEl.children];
+  const panes = [...panesEl.children];
+  const lists = [...document.querySelectorAll(".list")];
+
+  // ================= состояние =================
+  let step = 0;
+  let finished = false;
+  let visited = new Set([0]);
+
+  function updateRanks(ul){
+    [...ul.children].forEach((li, i) => {
+      li.querySelector(".rank").textContent = i + 1;
+    });
+  }
+  lists.forEach(updateRanks);
+
+  function setStep(n){
+    step = Math.max(0, Math.min(N - 1, n));
+    visited.add(step);
+
+    tabs.forEach((t,i)=>{
+      t.classList.toggle("is-active", i===step);
+      t.classList.toggle("is-done", i!==step && visited.has(i));
+      t.setAttribute("aria-selected", i===step ? "true" : "false");
+    });
+    panes.forEach((p,i)=>p.classList.toggle("is-active", i===step));
+
+    progressBar.style.width = ((step+1)/N*100) + "%";
+    stepInfo.textContent = `Шаг ${step+1} из ${N}`;
+
+    btnPrev.disabled = step === 0;
+    const last = step === N-1;
+    btnNext.hidden = last;
+    btnFinish.hidden = !last;
+
+    if (window.matchMedia && matchMedia("(max-width:820px)").matches){
+      const active = tabs[step];
+      if (active){
+        const c = tabsEl;
+        const left = active.offsetLeft - (c.clientWidth - active.offsetWidth)/2;
+        c.scrollTo({left, behavior:"smooth"});
+      }
+    }
+  }
+
+  // ================= drag & drop (pointer events, mouse + touch) =================
+  const THRESHOLD = 5;
+
+  function bindList(ul){
+    let drag = null;
+
+    ul.addEventListener("pointerdown", (e) => {
+      if (finished) return;
+      const li = e.target.closest(".item");
+      if (!li || li.parentElement !== ul) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+
+      const rect = li.getBoundingClientRect();
+      drag = {
+        li, ul, rect,
+        startY: e.clientY,
+        grabOffset: e.clientY - rect.top,   // смещение курсора от верха элемента
+        startTop: rect.top,
+        moved: false
+      };
+      li.setPointerCapture(e.pointerId);
+    });
+
+    ul.addEventListener("pointermove", (e) => {
+      if (!drag) return;
+      const dy = e.clientY - drag.startY;
+      if (!drag.moved && Math.abs(dy) < THRESHOLD) return;
+      if (!drag.moved){
+        drag.moved = true;
+        drag.li.classList.add("is-dragging");
+        ul.classList.add("is-reordering");
+      }
+
+      // определяем целевую позицию: первый сосед, чей midpoint выше указателя
+      const others = [...ul.children].filter(x => x !== drag.li);
+      const y = e.clientY + 0;
+      let anchor = null;
+      for (const sib of others){
+        const r = sib.getBoundingClientRect();
+        if (y < r.top + r.height/2){ anchor = sib; break; }
+      }
+      if (anchor){
+        if (drag.li.compareDocumentPosition(anchor) & Node.DOCUMENT_POSITION_PRECEDING){
+          ul.insertBefore(drag.li, anchor);
+        }
+      } else {
+        if (ul.lastElementChild !== drag.li) ul.appendChild(drag.li);
+      }
+
+      // удерживаем визуальное положение элемента под курсором
+      const visualTop = drag.startTop + dy;
+      const curTop = drag.li.getBoundingClientRect().top;
+      drag.li.style.transform = `translateY(${visualTop - curTop}px)`;
+    });
+
+    const end = (e) => {
+      if (!drag) return;
+      const { li, ul: u } = drag;
+      drag = null;
+      li.classList.remove("is-dragging");
+      li.style.transform = "";
+      u.classList.remove("is-reordering");
+      updateRanks(u);
+    };
+
+    ul.addEventListener("pointerup", end);
+    ul.addEventListener("pointercancel", end);
+    ul.addEventListener("dragstart", (e)=>{ if (drag && drag.moved) e.preventDefault(); });
+  }
+
+  lists.forEach(bindList);
+
+  // ================= оценка (как в оригинале) =================
+  function collectPayload(){
+    const payload = [];
+    lists.forEach((ul, listIndex) => {
+      [...ul.children].forEach((li, pos) => {
+        payload.push({ list:listIndex, pos, type: li.getAttribute("data-type") });
+      });
+    });
+    return payload;
+  }
+
+  function score(payload){
+    const maj = [], min = [];
+    payload.forEach(x => {
+      if (x.pos === 0) maj.push(x.type);
+      if (x.pos === 3) min.push(x.type);
+    });
+    const count = (arr, ch) => arr.reduce((a,v)=>a+(v===ch?1:0), 0);
+    return {
+      d: count(maj,"d") - count(min,"d"),
+      i: count(maj,"i") - count(min,"i"),
+      s: count(maj,"s") - count(min,"s"),
+      c: count(maj,"c") - count(min,"c")
+    };
+  }
+
+  // ================= результат =================
+  function showResult(){
+    const res = score(collectPayload());
+    finished = true;
+
+    const max = Math.max(res.d, res.i, res.s, res.c);
+    const absMax = Math.max(Math.abs(res.d), Math.abs(res.i), Math.abs(res.s), Math.abs(res.c), 1);
+
+    const box = $("#scores");
+    box.innerHTML = "";
+    ["d","i","s","c"].forEach(k => {
+      const v = res[k];
+      const el = document.createElement("div");
+      el.className = "score" + (v === max ? " is-top" : "");
+      el.innerHTML =
+        `<div class="key"><b>${k.toUpperCase()}</b> ${TYPE_LABEL[k]}</div>
+         <div class="val">${v > 0 ? "+" + v : v}</div>
+         <div class="bar"><i style="width:${Math.round(Math.abs(v)/absMax*100)}%"></i></div>`;
+      box.appendChild(el);
+    });
+
+    const top = ["d","i","s","c"].filter(k=>res[k]===max);
+    $("#legend").textContent =
+      `Оценка: D: ${res.d}, I: ${res.i}, S: ${res.s}, C: ${res.c}. ` +
+      (max > 0 ? `Наиболее выраженная шкала(ы): ${top.map(k=>k.toUpperCase()).join(" и ")}.` : "Доминирующих шкал нет — профиль сбалансирован.");
+
+    wizardEl.style.display = "none";
+    resultEl.classList.add("is-active");
+    resultEl.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  function restart(){
+    finished = false;
+    visited = new Set([0]);
+
+    // восстанавливаем исходный порядок
+    let li = 0;
+    lists.forEach((ul, li_i) => {
+      const s = Math.floor(li_i / 3);
+      const initial = INITIAL[s][li_i % 3];
+      ul.innerHTML = "";
+      initial.forEach(([type,text]) => {
+        const l = document.createElement("li");
+        l.className = "item";
+        l.dataset.type = type;
+        l.setAttribute("draggable","false");
+        l.innerHTML = `<span class="rank">1</span><span class="text">${text}</span><span class="handle" aria-hidden="true">${HANDLE_SVG}</span>`;
+        ul.appendChild(l);
+      });
+      updateRanks(ul);
+    });
+
+    resultEl.classList.remove("is-active");
+    wizardEl.style.display = "";
+    panesEl.scrollTop = 0;
+    setStep(0);
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  // ================= навигация =================
+  tabs.forEach(t => t.addEventListener("click", ()=> setStep(Number(t.dataset.step))));
+  btnPrev.addEventListener("click", ()=> setStep(step-1));
+  btnNext.addEventListener("click", ()=> setStep(step+1));
+  btnFinish.addEventListener("click", showResult);
+  btnRestart.addEventListener("click", restart);
+
+  setStep(0);
+})();
+</script>
+</body>
+</html>

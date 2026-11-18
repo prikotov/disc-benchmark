@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест DISC для руководителей — ранжирование и профиль</title>
+<style>
+  :root {
+    --blue: #1F5BD6;
+    --blue-soft: #EAF2FA;
+    --green: #3A944A;
+    --green-soft: #6FE28A;
+    --ink: #1C1C1C;
+    --text: #2C2C2C;
+    --muted: #7A7A7A;
+    --line: rgba(0, 0, 0, .14);
+    --bg: #F3F5F8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.4;
+  }
+  .app { max-width: 1240px; margin: 0 auto; padding: 32px 20px 56px; }
+  .brand { font-size: 14px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+  .screen { display: none; background: #fff; border-radius: 22px; box-shadow: 0 20px 60px rgba(0, 0, 0, .10); overflow: hidden; }
+  .screen.is-active { display: block; }
+  h1, h2 { color: var(--ink); margin: 0; }
+
+  /* intro */
+  .intro { padding: 56px 56px 60px; text-align: center; }
+  .intro h1 { font-size: 40px; line-height: 1.15; font-weight: 800; }
+  .intro p { max-width: 760px; margin: 18px auto 0; font-size: 19px; }
+  .intro .lead { color: var(--blue); font-weight: 600; }
+  .btn {
+    display: inline-block; border: 0; border-radius: 999px; padding: 16px 42px;
+    font: inherit; font-size: 20px; font-weight: 700; cursor: pointer;
+    background: var(--green); color: #fff;
+  }
+  .btn:hover { filter: brightness(1.05); }
+  .btn:focus-visible, .disc-tab:focus-visible, .disc-item:focus-visible { outline: 3px solid rgba(31, 91, 214, .5); outline-offset: 2px; }
+  .intro .btn { margin-top: 36px; }
+
+  /* test */
+  .test-head { padding: 40px 56px 16px; text-align: center; }
+  .test-head h2 { font-size: 34px; font-weight: 800; }
+  .test-head .sub { margin-top: 10px; font-size: 18px; color: var(--muted); }
+  .test-head .lead { margin-top: 6px; font-size: 19px; color: var(--ink); font-weight: 600; }
+  .tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; padding: 12px 56px 8px; }
+  .disc-tab {
+    border: 0; background: var(--blue-soft); color: var(--text); border-radius: 10px;
+    padding: 12px 16px; font: inherit; font-size: 16px; cursor: pointer;
+  }
+  .disc-tab.is-active { background: var(--blue); color: #fff; }
+  .test-body { padding: 14px 56px 30px; }
+  .pane { display: none; }
+  .pane.is-active { display: block; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+  .card__title { padding: 14px 18px; font-size: 22px; font-weight: 800; color: var(--ink); }
+  .card__foot { padding: 14px 18px; font-size: 20px; font-weight: 800; color: var(--ink); border-top: 1px solid var(--line); }
+  .card__foot::before { content: "↓ "; color: var(--muted); }
+  .card__title::after { content: ""; }
+  .disc-list { list-style: none; margin: 0 16px 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .disc-item {
+    position: relative; padding: 14px 46px 14px 16px; font-size: 18px; color: var(--text);
+    border-top: 1px solid var(--line); background: #fff; cursor: grab; user-select: none;
+    -webkit-user-select: none; touch-action: none;
+  }
+  .disc-item:first-child { border-top: 0; }
+  .disc-item:hover { background: #FAFBFD; }
+  .disc-item .pos { color: var(--muted); font-size: 13px; margin-right: 8px; }
+  .disc-handle {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+    cursor: grab; touch-action: none; opacity: .6;
+  }
+  .disc-handle svg { display: block; width: 16px; height: 16px; }
+  .disc-item:hover .disc-handle { opacity: 1; }
+  .disc-item.is-ghost-src { opacity: .35; }
+  .disc-placeholder { height: 0; margin: 0; border: 0; border-top: 2px dashed var(--blue); }
+  .drag-ghost {
+    position: fixed; z-index: 1000; pointer-events: none; margin: 0;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .22); border-radius: 8px; background: #fff;
+    list-style: none; border: 1px solid var(--line);
+  }
+  .drag-ghost .disc-item { cursor: grabbing; }
+  .progress { margin: 22px 56px 0; height: 16px; border-radius: 999px; background: rgba(0, 0, 0, .08); overflow: hidden; }
+  .progress__bar { height: 100%; width: 0; border-radius: 999px; background: var(--green-soft); transition: width .2s ease; }
+  .actions { margin: 22px 56px 40px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .btn--ghost { background: #fff; color: var(--ink); border: 1px solid rgba(0, 0, 0, .22); }
+  .btn--ghost:disabled { opacity: .45; cursor: not-allowed; }
+  .btn--primary { background: var(--green); }
+  [hidden] { display: none !important; }
+
+  /* result */
+  .result { padding: 56px; text-align: center; }
+  .result__title { font-size: 26px; font-weight: 700; color: var(--muted); }
+  .result__score { margin-top: 10px; font-size: 44px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .scale { max-width: 680px; margin: 36px auto 0; text-align: left; }
+  .scale__row { display: grid; grid-template-columns: 44px 1fr 56px; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .scale__letter { font-size: 28px; font-weight: 800; color: var(--blue); }
+  .scale__name { font-size: 15px; color: var(--muted); margin-top: 2px; font-weight: 400; }
+  .scale__track { position: relative; height: 18px; background: var(--blue-soft); border-radius: 999px; }
+  .scale__track::after { content: ""; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: rgba(0, 0, 0, .35); }
+  .scale__fill { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: var(--blue); }
+  .scale__val { font-size: 22px; font-weight: 800; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+  .result__note { max-width: 760px; margin: 34px auto 0; font-size: 15px; color: var(--muted); }
+  .result .btn { margin-top: 30px; }
+
+  @media (max-width: 1024px) {
+    .test-head, .tabs, .test-body, .progress, .actions { padding-left: 24px; padding-right: 24px; }
+    .progress, .actions { margin-left: 24px; margin-right: 24px; }
+    .grid3 { grid-template-columns: 1fr; gap: 16px; }
+  }
+  @media (max-width: 767px) {
+    .app { padding: 12px 10px 32px; }
+    .screen { border-radius: 16px; }
+    .intro { padding: 36px 20px; }
+    .intro h1 { font-size: 28px; }
+    .intro p { font-size: 17px; }
+    .test-head { padding: 24px 18px 10px; }
+    .test-head h2 { font-size: 26px; }
+    .test-head .lead { font-size: 16px; }
+    .tabs { padding: 8px 12px 4px; gap: 6px; }
+    .disc-tab { font-size: 14px; padding: 10px 12px; }
+    .test-body { padding: 8px 14px 18px; }
+    .card__title { font-size: 19px; }
+    .card__foot { font-size: 17px; }
+    .disc-item { font-size: 17px; }
+    .progress, .actions { margin-left: 18px; margin-right: 18px; }
+    .actions { margin-bottom: 26px; }
+    .btn { padding: 13px 24px; font-size: 17px; }
+    .result { padding: 36px 20px; }
+    .result__score { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand">DISC · поведенческий профиль</div>
+
+  <!-- ЭКРАН 1: вступление -->
+  <section class="screen is-active" id="screenIntro" aria-labelledby="introTitle">
+    <div class="intro">
+      <h1 id="introTitle">Бесплатный тест DISC <br>для руководителей</h1>
+      <p>Тест помогает понять паттерны поведения в разных ситуациях: как мы принимаем решения, общаемся, реагируем на задачи и дедлайны.</p>
+      <p class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего.</p>
+      <p>Помните — чем честнее вы с тестом, тем точнее результаты! Тест состоит из 8 шагов по 3 карточки; в каждой карточке 4 варианта.</p>
+      <button class="btn" type="button" id="btnStart">Пройти тест</button>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 2: тест -->
+  <section class="screen" id="screenTest" aria-labelledby="discTitle">
+    <div class="test-head">
+      <h2 id="discTitle">Тестирование DISC</h2>
+      <div class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</div>
+      <div class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Шаги" id="tabs"></div>
+    <div class="test-body" id="panes"></div>
+    <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+    <div class="actions">
+      <button class="btn btn--ghost" type="button" id="btnPrev">Назад</button>
+      <button class="btn btn--primary" type="button" id="btnNext">Далее</button>
+      <button class="btn btn--primary" type="button" id="btnFinish" hidden>Завершить тест</button>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 3: результат -->
+  <section class="screen" id="screenResult" aria-labelledby="resultTitle">
+    <div class="result">
+      <div class="result__title" id="resultTitle">Ваш DISC-профиль:</div>
+      <div class="result__score" id="resultScore">D:0, I:0, S:0, C:0</div>
+      <div class="scale" id="scale"></div>
+      <p class="result__note">* Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем вам научиться использовать этот инструмент для самотестирования, а также для дальнейшей работы с вашими командами, сотрудниками и коллегами.</p>
+      <button class="btn" type="button" id="btnRestart">Пройти тест заново</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // Данные теста: 8 шагов × 3 карточки × 4 варианта [тип d/i/s/c, текст]
+  // Порядок вариантов — как в оригинале (позиция 0 — «наиболее», позиция 3 — «наименее»).
+  const STEPS = [[[["i", "Экспресcивный"], ["c", "Покладистый"], ["d", "Волевой"], ["s", "Осторожный"]], [["d", "Пылкий"], ["i", "Разговорчивый"], ["s", "Добродушный"], ["c", "Сдержанный"]], [["i", "Любитель приключений"], ["c", "Энтузиаст"], ["d", "Исполнитель инструкций"], ["s", "Верный"]]], [[["d", "Настойчивый"], ["c", "Осторожный"], ["i", "Эмоциональный"], ["s", "Удовлетворенный"]], [["s", "Довольный"], ["d", "Нетерпеливый"], ["i", "Убедительный"], ["c", "Безропотный"]], [["c", "Смиренный"], ["s", "Умеющий слушать"], ["i", "Душа компании"], ["d", "Волевой"]]], [[["c", "Правильный"], ["d", "Первопроходец"], ["s", "Спокойный"], ["i", "Влиятельный"]], [["c", "Почтительный"], ["i", "Контактный"], ["d", "Агрессивный"], ["s", "Мягкий"]], [["i", "Весельчак"], ["s", "Покорный"], ["c", "Тактичный"], ["d", "Соперничающий"]]], [[["c", "Точный"], ["d", "Доминирующий"], ["s", "Охотный"], ["i", "Притягательный"]], [["i", "Уравновешенный"], ["c", "Уступчивый"], ["d", "Идущий на риск"], ["s", "Услужливый"]], [["c", "Осмотрительный"], ["s", "Добрососедский"], ["d", "Энергичный"], ["i", "Убедительный"]]], [[["s", "Уравновешенный"], ["i", "Мотивирующий"], ["c", "Щепетильный"], ["d", "Решительный"]], [["i", "Уверенный"], ["c", "Готовый к сотрудничеству"], ["s", "Беззаботный"], ["d", "Аргументирующий"]], [["s", "Сдержанный"], ["d", "Прямой"], ["c", "Строгий"], ["i", "Убедительный"]]], [[["c", "Застенчивый"], ["d", "Требовательный"], ["s", "Терпеливый"], ["i", "Очаровательный"]], [["d", "Неугомонный"], ["c", "Дисциплинированный"], ["i", "Вдохновляющий"], ["s", "Внимательный"]], [["s", "Обязательный"], ["i", "Оживленный"], ["d", "Решительный"], ["c", "Точный"]]], [[["c", "Добросовестный"], ["i", "Компанейский"], ["s", "Добрый"], ["d", "Уверенный в себе"]], [["c", "Дипломатичный"], ["d", "Отважный"], ["s", "Сочувствующий"], ["i", "Оптимистичный"]], [["d", "Настойчивый"], ["i", "Общительный"], ["s", "Постоянный"], ["c", "Организованный"]]], [[["c", "Соглашающийся"], ["s", "Владеющий собой"], ["d", "Шутливый"], ["i", "Настойчивый"]], [["i", "Обаятельный"], ["d", "Позитивный"], ["s", "Снисходительный"], ["c", "Требовательный"]], [["i", "Коммуникабельный"], ["d", "Смелый"], ["c", "Перфекционист"], ["s", "Сдержанный"]]]];
+
+  const TYPES = [
+    { k: "d", name: "Доминирование" },
+    { k: "i", name: "Влияние" },
+    { k: "s", name: "Стабильность" },
+    { k: "c", name: "Добросовестность" },
+  ];
+  const MAX_ABS = 24; // шкала для графика: максимум по 24 карточкам
+
+  const HANDLE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+    [3, 8, 13].map(y => [5, 10].map(x => `<circle cx="${x}" cy="${y}" r="1.4" fill="#8A8A8A"/>`).join("")).join("") + "</svg>";
+
+  const $ = (id) => document.getElementById(id);
+  const screens = { intro: $("screenIntro"), test: $("screenTest"), result: $("screenResult") };
+  const tabsEl = $("tabs");
+  const panesEl = $("panes");
+  const btnPrev = $("btnPrev"), btnNext = $("btnNext"), btnFinish = $("btnFinish");
+  const progressBar = $("progressBar");
+
+  let step = 0;
+  const lists = [];
+
+  const showScreen = (name) => {
+    Object.keys(screens).forEach((k) => screens[k].classList.toggle("is-active", k === name));
+    window.scrollTo({ top: 0 });
+  };
+
+  // ---------- построение DOM ----------
+  const buildTest = () => {
+    STEPS.forEach((cards, si) => {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "disc-tab";
+      tab.setAttribute("role", "tab");
+      tab.dataset.step = String(si);
+      tab.textContent = `${si + 1}`;
+      tab.setAttribute("aria-label", `Шаг ${si + 1}`);
+      tab.addEventListener("click", () => setStep(si));
+      tabsEl.appendChild(tab);
+
+      const pane = document.createElement("div");
+      pane.className = "pane";
+      pane.setAttribute("role", "tabpanel");
+      const grid = document.createElement("div");
+      grid.className = "grid3";
+      cards.forEach((items) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const t = document.createElement("div");
+        t.className = "card__title";
+        t.textContent = "Я наиболее";
+        const ul = document.createElement("ul");
+        ul.className = "disc-list";
+        items.forEach(([type, text]) => {
+          const li = document.createElement("li");
+          li.className = "disc-item";
+          li.dataset.type = type;
+          li.tabIndex = 0;
+          li.setAttribute("role", "listitem");
+          li.textContent = text;
+          const h = document.createElement("span");
+          h.className = "disc-handle";
+          h.innerHTML = HANDLE_SVG;
+          li.appendChild(h);
+          ul.appendChild(li);
+        });
+        const f = document.createElement("div");
+        f.className = "card__foot";
+        f.textContent = "Я наименее";
+        card.append(t, ul, f);
+        grid.appendChild(card);
+        lists.push(ul);
+        enableReorder(ul);
+      });
+      pane.appendChild(grid);
+      panesEl.appendChild(pane);
+    });
+  };
+
+  // ---------- сортировка перетаскиванием (Pointer Events, без внешних библиотек) ----------
+  const enableReorder = (ul) => {
+    ul.addEventListener("pointerdown", (e) => {
+      const li = e.target.closest(".disc-item");
+      if (!li || !ul.contains(li)) return;
+      // мышь — тащим за весь элемент; касание/перо — только за «точечки»
+      if (e.pointerType !== "mouse" && !e.target.closest(".disc-handle")) return;
+      if (e.button !== undefined && e.button !== 0) return;
+      e.preventDefault();
+      startDrag(ul, li, e);
+    });
+
+    // клавиатура: стрелки вверх/вниз двигают элемент
+    ul.addEventListener("keydown", (e) => {
+      const li = e.target.closest(".disc-item");
+      if (!li) return;
+      if (e.key === "ArrowUp" && li.previousElementSibling) {
+        e.preventDefault();
+        ul.insertBefore(li, li.previousElementSibling);
+        li.focus();
+      } else if (e.key === "ArrowDown" && li.nextElementSibling) {
+        e.preventDefault();
+        ul.insertBefore(li.nextElementSibling, li);
+        li.focus();
+      }
+    });
+  };
+
+  let drag = null;
+
+  const startDrag = (ul, li, e) => {
+    const rect = li.getBoundingClientRect();
+    const placeholder = document.createElement("li");
+    placeholder.className = "disc-placeholder";
+    placeholder.style.height = rect.height + "px";
+    placeholder.style.border = "0";
+    placeholder.style.borderTop = "2px dashed var(--blue)";
+    placeholder.style.margin = "0";
+    placeholder.style.listStyle = "none";
+
+    const ghost = document.createElement("ul");
+    ghost.className = "drag-ghost";
+    const clone = li.cloneNode(true);
+    clone.classList.remove("is-ghost-src");
+    clone.style.border = "0";
+    clone.style.width = rect.width + "px";
+    ghost.style.width = rect.width + "px";
+    ghost.style.left = rect.left + "px";
+    ghost.appendChild(clone);
+    document.body.appendChild(ghost);
+
+    li.classList.add("is-ghost-src");
+    ul.insertBefore(placeholder, li);
+    ul.removeChild(li);
+
+    drag = {
+      ul, li, placeholder, ghost,
+      offsetY: e.clientY - rect.top,
+      pointerId: e.pointerId,
+    };
+    moveGhost(e.clientY);
+    window.addEventListener("pointermove", onDragMove, { passive: false });
+    window.addEventListener("pointerup", onDragEnd);
+    window.addEventListener("pointercancel", onDragEnd);
+    document.body.style.userSelect = "none";
+  };
+
+  const moveGhost = (y) => {
+    drag.ghost.style.top = (y - drag.offsetY) + "px";
+  };
+
+  const onDragMove = (e) => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    e.preventDefault();
+    moveGhost(e.clientY);
+
+    const { ul, placeholder } = drag;
+    const siblings = Array.from(ul.querySelectorAll(".disc-item"));
+    let target = null;
+    for (const s of siblings) {
+      const r = s.getBoundingClientRect();
+      if (e.clientY < r.top + r.height / 2) { target = s; break; }
+    }
+    if (target) {
+      if (placeholder.nextElementSibling !== target) ul.insertBefore(placeholder, target);
+    } else if (ul.lastElementChild !== placeholder) {
+      ul.appendChild(placeholder);
+    }
+  };
+
+  const onDragEnd = (e) => {
+    if (!drag || (e.pointerId !== undefined && e.pointerId !== drag.pointerId)) return;
+    const { ul, li, placeholder, ghost } = drag;
+    ul.insertBefore(li, placeholder);
+    ul.removeChild(placeholder);
+    li.classList.remove("is-ghost-src");
+    ghost.remove();
+    window.removeEventListener("pointermove", onDragMove);
+    window.removeEventListener("pointerup", onDragEnd);
+    window.removeEventListener("pointercancel", onDragEnd);
+    document.body.style.userSelect = "";
+    drag = null;
+  };
+
+  // ---------- навигация по шагам ----------
+  const render = () => {
+    tabsEl.querySelectorAll(".disc-tab").forEach((t) => {
+      const on = Number(t.dataset.step) === step;
+      t.classList.toggle("is-active", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    panesEl.querySelectorAll(".pane").forEach((p, i) => p.classList.toggle("is-active", i === step));
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === STEPS.length - 1;
+    btnFinish.hidden = step !== STEPS.length - 1;
+    progressBar.style.width = ((step + 1) / STEPS.length) * 100 + "%";
+  };
+
+  const setStep = (n) => {
+    step = Math.max(0, Math.min(STEPS.length - 1, n));
+    render();
+    window.scrollTo({ top: 0 });
+  };
+
+  // ---------- подсчёт ----------
+  // Как в оригинале: +1 за тип на позиции 0 («наиболее»), −1 за тип на позиции 3 («наименее»).
+  const score = () => {
+    const res = { d: 0, i: 0, s: 0, c: 0 };
+    lists.forEach((ul) => {
+      const items = ul.querySelectorAll(".disc-item");
+      items.forEach((li, pos) => {
+        const t = li.dataset.type;
+        if (pos === 0) res[t] += 1;
+        if (pos === 3) res[t] -= 1;
+      });
+    });
+    return res;
+  };
+
+  const showResult = () => {
+    const res = score();
+    $("resultScore").textContent = `D:${res.d}, I:${res.i}, S:${res.s}, C:${res.c}`;
+    const scale = $("scale");
+    scale.innerHTML = "";
+    TYPES.forEach(({ k, name }) => {
+      const v = res[k];
+      const row = document.createElement("div");
+      row.className = "scale__row";
+      const letter = document.createElement("div");
+      letter.innerHTML = `<div class="scale__letter">${k.toUpperCase()}</div><div class="scale__name">${name}</div>`;
+      const track = document.createElement("div");
+      track.className = "scale__track";
+      const fill = document.createElement("div");
+      fill.className = "scale__fill";
+      const pct = Math.min(50, (Math.abs(v) / MAX_ABS) * 50);
+      fill.style.width = pct + "%";
+      fill.style.left = v >= 0 ? "50%" : (50 - pct) + "%";
+      fill.style.background = v < 0 ? "#B0B7C3" : "var(--blue)";
+      track.appendChild(fill);
+      const val = document.createElement("div");
+      val.className = "scale__val";
+      val.textContent = (v > 0 ? "+" : "") + v;
+      row.append(letter, track, val);
+      scale.appendChild(row);
+    });
+    showScreen("result");
+  };
+
+  // ---------- кнопки ----------
+  $("btnStart").addEventListener("click", () => {
+    showScreen("test");
+    setStep(0);
+  });
+  btnPrev.addEventListener("click", () => setStep(step - 1));
+  btnNext.addEventListener("click", () => setStep(step + 1));
+  btnFinish.addEventListener("click", showResult);
+  $("btnRestart").addEventListener("click", () => {
+    // сброс: пересобираем все списки в исходном порядке
+    panesEl.innerHTML = "";
+    tabsEl.innerHTML = "";
+    lists.length = 0;
+    buildTest();
+    step = 0;
+    showScreen("intro");
+  });
+
+  buildTest();
+  render();
+})();
+</script>
+</body>
+</html>

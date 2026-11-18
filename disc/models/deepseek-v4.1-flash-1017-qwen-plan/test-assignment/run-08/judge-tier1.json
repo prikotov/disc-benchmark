@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-16T08:10:43.427540+00:00",
+  "duration_s": 29.0,
+  "exit_code": 0,
+  "prompt_chars": 127730,
+  "verdict": {
+    "data": 4,
+    "logic": 4,
+    "ux": 4,
+    "impl": 4,
+    "total": 16,
+    "notes": "Все 24 вопроса перенесены посимвольно (включая «Экспресcивный» с латинской c), типы 96/96 совпадают, порядок и группировка 8×3 сохранены; типы не видны пользователю. Подсчёт строго по алгоритму: computeScore берёт items[0] (+1) и items[3] (−1), средние игнорируются; автопрогон D:5,I:2,S:-3,C:-4, сумма 0. Полный поток: интро → 8 шагов → результат, «Я наиболее»/«Я наименее», Назад disabled на шаге 1, табы, прогресс-бар, дисклеймер, drag&drop на Pointer Events (мышь за весь item, тач за ручку touch-action:none), клавиатура ↑↓. Один файл, инлайн CSS/JS, внешних запросов нет (external.pass=true), email/токен/редирект убраны, код чистый с a11y (aria-live, sr-only).",
+    "examples": "data: <li class=\"item\" data-type=\"i\">Экспресcивный</li> — латинская «c» сохранена; чекер: adjectives 84/84, types correct 96/96. logic: score[items[0].dataset.type] += 1; score[items[ITEMS_PER_LIST - 1].dataset.type] -= 1; — ровно мажор/минор; контроль: раскладка playthrough даёт displayed D:5,I:2,S:-3,C:-4, displayed_match=true. ux: btnPrev.disabled = step === 0; доскролл tabsEl, sticky actions на мобиле, @media (pointer:coarse) увеличивает ручку; console_errors: []. impl: один <script> инлайн, ноль URL в external.urls, MAX_SCORE=24, стрелки Home/End, prefers-reduced-motion; лишние ×2 data-type в mismatches — это служебные шкалы на карточках результата (D/I/S/C), не типы вопросов, не видны как данные."
+  }
+}

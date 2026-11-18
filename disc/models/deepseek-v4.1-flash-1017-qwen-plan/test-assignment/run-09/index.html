@@ -1,0 +1,2607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Тест DISC — типы поведения</title>
+  <style>
+    :root{
+      --bg:#08171d;
+      --bg-2:#0e2930;
+      --ink:#10252c;
+      --muted:#65767d;
+      --line:#e4eaed;
+      --paper:#ffffff;
+      --paper-2:#f6f9fa;
+      --gold:#e9b85a;
+      --gold-2:#f5d48b;
+      --teal:#3a8f86;
+      --d:#df604c;
+      --i:#dda93e;
+      --s:#3d8d82;
+      --c:#4d70a8;
+      --shadow:0 24px 70px rgba(2, 18, 25, .28);
+      --radius:26px;
+      --font:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+
+    *, *::before, *::after{ box-sizing:border-box; }
+    html{ -webkit-text-size-adjust:100%; }
+    html.no-scroll, body.no-scroll{ overflow:hidden; }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:var(--font);
+      color:#eaf3f4;
+      background:
+        radial-gradient(900px 520px at 82% 8%, rgba(233,184,90,.16), transparent 62%),
+        radial-gradient(780px 600px at 8% 92%, rgba(58,143,134,.20), transparent 64%),
+        linear-gradient(145deg, #07151b 0%, #0b2027 52%, #102f36 100%);
+      -webkit-font-smoothing:antialiased;
+    }
+    button{ font:inherit; }
+    button, a{ -webkit-tap-highlight-color:transparent; }
+    [hidden]{ display:none !important; }
+
+    .sr-only{
+      position:absolute !important;
+      width:1px; height:1px;
+      padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0 0 0 0);
+      white-space:nowrap; border:0;
+    }
+
+    .site{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+    .topbar{
+      width:100%;
+      max-width:1180px;
+      margin:0 auto;
+      padding:28px 28px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .brand__mark{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:48px;
+      height:48px;
+      border-radius:15px;
+      color:#102028;
+      font-weight:900;
+      font-size:14px;
+      letter-spacing:.06em;
+      background:linear-gradient(135deg, var(--gold-2), var(--gold));
+      box-shadow:0 8px 22px rgba(233,184,90,.24);
+    }
+    .brand__text{
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(234,243,244,.66);
+    }
+
+    .btn{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:54px;
+      padding:15px 26px;
+      border-radius:16px;
+      border:1px solid transparent;
+      background:linear-gradient(135deg, var(--gold-2), var(--gold));
+      color:#14262b;
+      font-weight:800;
+      font-size:16px;
+      line-height:1.15;
+      cursor:pointer;
+      text-decoration:none;
+      box-shadow:0 14px 32px rgba(233,184,90,.21);
+      transition:transform .16s ease, box-shadow .16s ease, filter .16s ease, background .16s ease;
+    }
+    .btn:hover{ transform:translateY(-1px); box-shadow:0 18px 38px rgba(233,184,90,.30); filter:saturate(1.04); }
+    .btn:active{ transform:translateY(0); }
+    .btn:focus-visible{ outline:3px solid rgba(245,212,139,.56); outline-offset:3px; }
+    .btn--small{
+      min-height:44px;
+      padding:10px 18px;
+      border-radius:13px;
+      font-size:14px;
+      box-shadow:none;
+    }
+    .btn--ghost{
+      color:var(--ink);
+      background:transparent;
+      border-color:var(--line);
+      box-shadow:none;
+    }
+    .btn--ghost:hover{
+      background:var(--paper-2);
+      box-shadow:none;
+    }
+    .btn--dark{
+      color:#eaf3f4;
+      background:rgba(255,255,255,.07);
+      border-color:rgba(255,255,255,.14);
+      box-shadow:none;
+    }
+    .btn__arrow{
+      width:18px;
+      height:18px;
+      flex:none;
+    }
+
+    .hero{
+      flex:1;
+      width:100%;
+      max-width:1180px;
+      margin:0 auto;
+      padding:54px 28px 46px;
+      display:grid;
+      grid-template-columns:minmax(0, 1.16fr) minmax(320px, .84fr);
+      align-items:center;
+      gap:54px;
+    }
+    .hero__content{
+      min-width:0;
+      animation:rise .55s ease both;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      margin-bottom:20px;
+      color:var(--gold-2);
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+    }
+    .eyebrow::before{
+      content:"";
+      width:24px;
+      height:2px;
+      border-radius:99px;
+      background:linear-gradient(90deg, var(--gold), transparent);
+    }
+    .hero h1{
+      margin:0;
+      max-width:780px;
+      font-size:clamp(40px, 6vw, 76px);
+      line-height:1.02;
+      letter-spacing:-.045em;
+      font-weight:900;
+    }
+    .hero h1 span{
+      display:block;
+      margin-top:9px;
+      color:var(--gold-2);
+      font-weight:300;
+      letter-spacing:-.04em;
+    }
+    .hero__lead{
+      max-width:640px;
+      margin:26px 0 0;
+      color:rgba(234,243,244,.72);
+      font-size:18px;
+      line-height:1.62;
+    }
+    .hero__actions{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:34px;
+    }
+    .hero__meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      margin-top:20px;
+      color:rgba(234,243,244,.52);
+      font-size:13px;
+    }
+    .hero__meta span{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .hero__meta span + span::before{
+      content:"·";
+      margin-right:2px;
+      color:rgba(234,243,244,.28);
+    }
+
+    .dimensions{
+      display:grid;
+      gap:14px;
+      animation:rise .65s .08s ease both;
+    }
+    .dimension{
+      position:relative;
+      display:grid;
+      grid-template-columns:52px 1fr;
+      gap:16px;
+      align-items:center;
+      padding:18px;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.10);
+      background:linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.035));
+      backdrop-filter:blur(6px);
+      -webkit-backdrop-filter:blur(6px);
+      overflow:hidden;
+    }
+    .dimension::after{
+      content:"";
+      position:absolute;
+      inset:0 auto 0 0;
+      width:3px;
+      background:var(--dim);
+      opacity:.85;
+    }
+    .dimension__icon{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:52px;
+      height:52px;
+      border-radius:16px;
+      color:var(--dim);
+      background:rgba(255,255,255,.055);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .dimension__icon svg{ width:24px; height:24px; display:block; }
+    .dimension__name{
+      display:flex;
+      align-items:baseline;
+      gap:8px;
+      color:#f4fbfc;
+      font-weight:800;
+      font-size:16px;
+      line-height:1.2;
+    }
+    .dimension__name b{
+      color:var(--dim);
+      font-size:12px;
+      letter-spacing:.12em;
+    }
+    .dimension__desc{
+      margin-top:5px;
+      color:rgba(234,243,244,.55);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .foot{
+      width:100%;
+      max-width:1180px;
+      margin:0 auto;
+      padding:18px 28px 28px;
+      color:rgba(234,243,244,.38);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    @keyframes rise{
+      from{ opacity:0; transform:translateY(16px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    /* =========================
+       DISC modal / wizard
+       ========================= */
+    .disc-modal{
+      position:fixed;
+      inset:0;
+      z-index:1000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+    }
+    .disc-modal.is-open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .disc-modal__overlay{
+      position:absolute;
+      inset:0;
+      background:rgba(2, 14, 19, .70);
+      backdrop-filter:blur(4px);
+      -webkit-backdrop-filter:blur(4px);
+    }
+    .disc-modal__dialog{
+      position:relative;
+      z-index:1;
+      width:min(1120px, 100%);
+      max-height:calc(100vh - 48px);
+      display:flex;
+      flex-direction:column;
+      color:var(--ink);
+      background:var(--paper);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      transform:translateY(14px) scale(.985);
+      transition:transform .22s ease;
+    }
+    .disc-modal.is-open .disc-modal__dialog{
+      transform:translateY(0) scale(1);
+    }
+    .disc-modal__close{
+      position:absolute;
+      top:16px;
+      right:16px;
+      z-index:4;
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(16,37,44,.12);
+      border-radius:50%;
+      background:rgba(255,255,255,.92);
+      color:#52656c;
+      font-size:26px;
+      line-height:1;
+      cursor:pointer;
+      transition:background .16s ease, color .16s ease, transform .16s ease;
+    }
+    .disc-modal__close:hover{ background:#eef4f5; color:var(--ink); transform:rotate(90deg); }
+    .disc-modal__close:focus-visible{ outline:3px solid rgba(58,143,134,.30); outline-offset:2px; }
+
+    .wizard-view{
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      flex:1;
+    }
+    .disc-modal__head{
+      flex:none;
+      padding:28px 72px 0 32px;
+    }
+    .disc-modal__title{
+      margin:0;
+      color:var(--ink);
+      font-size:clamp(24px, 3vw, 34px);
+      line-height:1.1;
+      letter-spacing:-.03em;
+      font-weight:900;
+    }
+    .disc-modal__sub{
+      margin-top:9px;
+      color:#4b626a;
+      font-size:14px;
+      line-height:1.5;
+    }
+    .disc-modal__lead{
+      margin-top:16px;
+      padding:12px 15px;
+      border-radius:12px;
+      color:#38535c;
+      background:var(--paper-2);
+      border:1px solid var(--line);
+      font-size:14px;
+      line-height:1.45;
+    }
+
+    .disc-modal__tabs{
+      flex:none;
+      display:flex;
+      gap:8px;
+      margin-top:18px;
+      padding:0 32px 14px;
+      overflow-x:auto;
+      scrollbar-width:thin;
+      scrollbar-color:#c9d5d9 transparent;
+      border-bottom:1px solid var(--line);
+      scroll-behavior:smooth;
+    }
+    .disc-modal__tabs::-webkit-scrollbar{ height:5px; }
+    .disc-modal__tabs::-webkit-scrollbar-thumb{ background:#c9d5d9; border-radius:99px; }
+    .disc-tab{
+      flex:none;
+      min-height:38px;
+      padding:9px 14px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+      color:#60757d;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+      transition:background .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .disc-tab:hover{ border-color:#c4d3d7; color:var(--ink); }
+    .disc-tab.is-active{
+      color:#fff;
+      background:var(--ink);
+      border-color:var(--ink);
+    }
+    .disc-tab:focus-visible{ outline:3px solid rgba(58,143,134,.28); outline-offset:2px; }
+    .disc-tab.is-done:not(.is-active){
+      color:#2d6f69;
+      background:#eff7f5;
+      border-color:#cfe4df;
+    }
+
+    .disc-modal__body{
+      min-height:0;
+      flex:1;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      padding:22px 32px 20px;
+      scrollbar-width:thin;
+      scrollbar-color:#c9d5d9 transparent;
+    }
+    .disc-modal__body::-webkit-scrollbar{ width:8px; }
+    .disc-modal__body::-webkit-scrollbar-thumb{ background:#c9d5d9; border-radius:99px; }
+
+    .disc-pane{ display:none; }
+    .disc-pane.is-active{ display:block; animation:paneIn .22s ease both; }
+    @keyframes paneIn{
+      from{ opacity:0; transform:translateY(5px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    .disc-grid3{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:16px;
+      align-items:start;
+    }
+    .disc-card{
+      position:relative;
+      padding:15px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(180deg, #fbfdfd, #f5f9fa);
+      box-shadow:0 4px 14px rgba(16,37,44,.035);
+    }
+    .disc-card__title{
+      margin:0 2px 11px;
+      color:#2d494f;
+      font-size:12px;
+      line-height:1.2;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .disc-card__foot{
+      margin:11px 2px 0;
+      color:#8a9aa0;
+      font-size:12px;
+      line-height:1.2;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      text-align:right;
+    }
+
+    .disc-list{
+      list-style:none;
+      margin:0;
+      padding:0;
+      display:grid;
+      gap:7px;
+      counter-reset:discRank;
+    }
+    .disc-item{
+      counter-increment:discRank;
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap:9px;
+      min-height:46px;
+      padding:9px 9px 9px 8px;
+      border:1px solid #dfe8eb;
+      border-radius:12px;
+      background:#fff;
+      color:#18343b;
+      font-size:14px;
+      line-height:1.25;
+      font-weight:600;
+      cursor:grab;
+      user-select:none;
+      -webkit-user-select:none;
+      box-shadow:0 1px 2px rgba(16,37,44,.035);
+      transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, transform .15s ease, opacity .15s ease;
+    }
+    .disc-item::before{
+      content:counter(discRank);
+      flex:none;
+      width:22px;
+      height:22px;
+      display:grid;
+      place-items:center;
+      border-radius:7px;
+      color:#5e747c;
+      background:#eef4f5;
+      font-size:11px;
+      line-height:1;
+      font-weight:800;
+    }
+    .disc-item:hover{
+      border-color:#c6d7dc;
+      box-shadow:0 4px 12px rgba(16,37,44,.07);
+    }
+    .disc-item:focus-within{
+      border-color:#8fbcb7;
+      box-shadow:0 0 0 3px rgba(58,143,134,.13);
+    }
+    .disc-item__text{
+      flex:1;
+      min-width:0;
+      overflow-wrap:anywhere;
+    }
+    .disc-item.is-dragging{
+      z-index:2;
+      opacity:.58;
+      background:#f8fcfc;
+      border-color:#87b9b4;
+      box-shadow:0 10px 24px rgba(16,37,44,.14);
+      transform:scale(1.01);
+    }
+    .disc-item.is-over{
+      border-color:#87b9b4;
+      background:#f2fbfa;
+    }
+    .disc-list.is-reordering{ cursor:grabbing; }
+    .disc-list.is-reordering .disc-item{ cursor:grabbing; }
+
+    .disc-handle{
+      flex:none;
+      width:30px;
+      height:30px;
+      display:grid;
+      place-items:center;
+      padding:0;
+      border:0;
+      border-radius:8px;
+      color:#98a8ad;
+      background:transparent;
+      cursor:grab;
+      touch-action:none;
+      transition:background .15s ease, color .15s ease;
+    }
+    .disc-handle:hover{ background:#eef4f5; color:#557077; }
+    .disc-handle:focus-visible{ outline:2px solid rgba(58,143,134,.48); outline-offset:1px; }
+    .disc-handle svg{ width:16px; height:16px; display:block; pointer-events:none; }
+    .disc-item.is-dragging .disc-handle{ cursor:grabbing; }
+
+    .drag-hint{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      margin:16px 0 0;
+      color:#8a9ba1;
+      font-size:12px;
+      line-height:1.4;
+      text-align:center;
+    }
+    .drag-hint svg{ width:15px; height:15px; flex:none; opacity:.7; }
+
+    .disc-modal__footer{
+      flex:none;
+      padding:14px 32px 24px;
+      border-top:1px solid var(--line);
+      background:rgba(255,255,255,.96);
+    }
+    .disc-progress{
+      height:5px;
+      margin-bottom:16px;
+      border-radius:99px;
+      background:#e9eff1;
+      overflow:hidden;
+    }
+    .disc-progress__bar{
+      width:12.5%;
+      height:100%;
+      border-radius:99px;
+      background:linear-gradient(90deg, var(--teal), #73b6ab);
+      transition:width .22s ease;
+    }
+    .disc-actions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .disc-actions__spacer{ flex:1; }
+    .disc-actions .btn{ min-width:132px; }
+    .disc-actions .btn[disabled]{
+      opacity:.38;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+    .disc-actions .btn--next{
+      color:#fff;
+      background:var(--ink);
+      box-shadow:0 10px 22px rgba(16,37,44,.16);
+    }
+    .disc-actions .btn--next:hover{ background:#173841; box-shadow:0 14px 26px rgba(16,37,44,.20); }
+    .disc-actions .btn--finish{
+      color:#14262b;
+      background:linear-gradient(135deg, var(--gold-2), var(--gold));
+    }
+
+    /* =========================
+       Result
+       ========================= */
+    .result-view{
+      min-height:0;
+      flex:1;
+      overflow-y:auto;
+      padding:34px 32px 30px;
+      scrollbar-width:thin;
+      scrollbar-color:#c9d5d9 transparent;
+      animation:paneIn .26s ease both;
+    }
+    .result-view::-webkit-scrollbar{ width:8px; }
+    .result-view::-webkit-scrollbar-thumb{ background:#c9d5d9; border-radius:99px; }
+    .result-view__inner{ max-width:880px; margin:0 auto; }
+    .result-view h2{
+      margin:0;
+      color:var(--ink);
+      font-size:clamp(28px, 4vw, 42px);
+      line-height:1.08;
+      letter-spacing:-.04em;
+      font-weight:900;
+    }
+    .result-view h2:focus{ outline:none; }
+    .result-view__lead{
+      margin:12px 0 0;
+      color:#5d7077;
+      font-size:15px;
+      line-height:1.55;
+    }
+    .result__score{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      margin-top:20px;
+      padding:11px 16px;
+      border-radius:12px;
+      color:#1c3b42;
+      background:#eef6f5;
+      border:1px solid #cfe4df;
+      font-size:16px;
+      line-height:1.2;
+      font-weight:800;
+      letter-spacing:.015em;
+    }
+    .result__score::before{
+      content:"";
+      width:8px;
+      height:8px;
+      flex:none;
+      border-radius:50%;
+      background:var(--teal);
+      box-shadow:0 0 0 4px rgba(58,143,134,.13);
+    }
+    .result-grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:12px;
+      margin-top:22px;
+    }
+    .result-dim{
+      position:relative;
+      padding:15px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:linear-gradient(180deg, #fbfdfd, #f5f9fa);
+      overflow:hidden;
+    }
+    .result-dim::before{
+      content:"";
+      position:absolute;
+      inset:0 auto 0 0;
+      width:3px;
+      background:var(--dim);
+    }
+    .result-dim__top{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:#4c656c;
+      font-size:12px;
+      line-height:1.25;
+      font-weight:800;
+    }
+    .result-dim__badge{
+      display:grid;
+      place-items:center;
+      width:25px;
+      height:25px;
+      flex:none;
+      border-radius:8px;
+      color:#fff;
+      background:var(--dim);
+      font-size:12px;
+      line-height:1;
+      font-weight:900;
+    }
+    .result-dim__value{
+      margin-top:12px;
+      color:var(--dim);
+      font-size:38px;
+      line-height:1;
+      letter-spacing:-.05em;
+      font-weight:900;
+      font-variant-numeric:tabular-nums;
+    }
+    .result-meter{
+      position:relative;
+      height:7px;
+      margin-top:12px;
+      border-radius:99px;
+      background:#e6edef;
+      overflow:hidden;
+    }
+    .result-meter__zero{
+      position:absolute;
+      top:-2px;
+      bottom:-2px;
+      left:50%;
+      width:1px;
+      background:rgba(16,37,44,.22);
+      z-index:1;
+    }
+    .result-meter__fill{
+      position:absolute;
+      top:0;
+      bottom:0;
+      left:50%;
+      width:0;
+      border-radius:99px;
+      background:var(--dim);
+      transition:left .45s ease, width .45s ease;
+    }
+    .result-meter__fill.is-negative{ background:#8a9aa0; }
+    .result-dim__hint{
+      margin-top:10px;
+      color:#819197;
+      font-size:11px;
+      line-height:1.35;
+    }
+    .result-note{
+      margin:20px 0 0;
+      padding:13px 15px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--paper-2);
+      color:#6b7e85;
+      font-size:12px;
+      line-height:1.55;
+    }
+    .result-note b{ color:#425b63; }
+    .result-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:11px;
+      margin-top:22px;
+    }
+
+    /* =========================
+       Responsive
+       ========================= */
+    @media (max-width: 920px){
+      .hero{
+        grid-template-columns:1fr;
+        gap:38px;
+        padding-top:34px;
+      }
+      .dimensions{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+      .result-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 767px){
+      .topbar{ padding:18px 18px 6px; }
+      .brand__mark{ width:42px; height:42px; border-radius:13px; }
+      .brand__text{ display:none; }
+      .btn--small{ min-height:40px; padding:8px 14px; font-size:13px; }
+      .hero{ padding:30px 18px 28px; }
+      .hero h1{ font-size:clamp(38px, 12vw, 56px); }
+      .hero__lead{ margin-top:20px; font-size:16px; }
+      .hero__actions{ margin-top:26px; }
+      .hero__actions .btn{ width:100%; }
+      .dimensions{ grid-template-columns:1fr; gap:10px; }
+      .dimension{ padding:14px; grid-template-columns:46px 1fr; }
+      .dimension__icon{ width:46px; height:46px; border-radius:14px; }
+      .foot{ padding:14px 18px 22px; }
+
+      .disc-modal{ padding:0; }
+      .disc-modal__dialog{
+        width:100%;
+        height:100vh;
+        height:100dvh;
+        max-height:100vh;
+        max-height:100dvh;
+        border-radius:0;
+      }
+      .disc-modal__close{ top:12px; right:12px; }
+      .disc-modal__head{ padding:20px 62px 0 18px; }
+      .disc-modal__title{ font-size:25px; }
+      .disc-modal__sub{ font-size:13px; }
+      .disc-modal__lead{ padding:10px 12px; font-size:13px; }
+      .disc-modal__tabs{ padding:0 18px 12px; margin-top:14px; }
+      .disc-tab{ min-height:36px; padding:8px 12px; font-size:12px; }
+      .disc-modal__body{ padding:16px 18px 16px; }
+      .disc-grid3{ grid-template-columns:1fr; gap:12px; }
+      .disc-card{ padding:12px; }
+      .disc-modal__footer{ padding:11px 18px max(16px, env(safe-area-inset-bottom)); }
+      .disc-actions .btn{ min-width:0; flex:1; min-height:48px; padding:12px 14px; }
+      .result-view{ padding:26px 18px 24px; }
+      .result-grid{ grid-template-columns:1fr 1fr; gap:10px; }
+      .result-dim{ padding:13px; }
+      .result-dim__value{ font-size:32px; }
+      .result-actions .btn{ flex:1; min-width:140px; }
+    }
+
+    @media (max-width: 420px){
+      .result-grid{ grid-template-columns:1fr; }
+      .hero__meta{ display:grid; gap:6px; }
+      .hero__meta span + span::before{ display:none; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *, *::before, *::after{
+        animation-duration:.001ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.001ms !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+    <header class="topbar">
+      <div class="brand" aria-label="Тест DISC">
+        <span class="brand__mark">DISC</span>
+        <span class="brand__text">Тест поведения</span>
+      </div>
+      <button class="btn btn--small" type="button" data-disc-open>Пройти тест</button>
+    </header>
+
+    <main class="hero">
+      <div class="hero__content">
+        <div class="eyebrow">Бесплатный тест · 5 минут</div>
+        <h1>Тест DISC <span>для руководителей</span></h1>
+        <p class="hero__lead">
+          Разберитесь, какие стратегии поведения вы используете в работе с людьми.
+          Расставьте качества по степени сходства с вами — и узнайте свой профиль
+          по четырём шкалам DISC.
+        </p>
+        <div class="hero__actions">
+          <button class="btn" type="button" data-disc-open>
+            Пройти тест DISC
+            <svg class="btn__arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="hero__meta" aria-label="Параметры теста">
+          <span>8 шагов</span>
+          <span>24 блока</span>
+          <span>24 вопроса</span>
+          <span>без регистрации</span>
+        </div>
+      </div>
+
+      <div class="dimensions" aria-label="Четыре шкалы DISC">
+        <div class="dimension" style="--dim:var(--d)">
+          <div class="dimension__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M13 2 4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="dimension__name"><b>D</b> Доминирование</div>
+            <div class="dimension__desc">Результат, решительность, конкуренция</div>
+          </div>
+        </div>
+        <div class="dimension" style="--dim:var(--i)">
+          <div class="dimension__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M20 11.5a7.5 7.5 0 0 1-11 6.7L4 20l1.4-4.4A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="dimension__name"><b>I</b> Влияние</div>
+            <div class="dimension__desc">Коммуникация, убеждение, энергия</div>
+          </div>
+        </div>
+        <div class="dimension" style="--dim:var(--s)">
+          <div class="dimension__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 21s-7-4.4-7-10.2A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7 2.8C19 16.6 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="dimension__name"><b>S</b> Стабильность</div>
+            <div class="dimension__desc">Надёжность, терпение, поддержка</div>
+          </div>
+        </div>
+        <div class="dimension" style="--dim:var(--c)">
+          <div class="dimension__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="4" y="3.5" width="16" height="17" rx="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m8 12 2.3 2.3L16 8.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="dimension__name"><b>C</b> Соответствие</div>
+            <div class="dimension__desc">Точность, правила, качество</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="foot">
+      DISC описывает поведенческие предпочтения, а не интеллект или профессиональные навыки.
+      Результаты теста носят ознакомительный характер.
+    </footer>
+  </div>
+
+  <!-- DISC MODAL -->
+  <div class="disc-modal" id="wizardmodal" aria-hidden="true" inert>
+    <div class="disc-modal__overlay" data-disc-close></div>
+
+    <div class="disc-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="discTitle">
+      <button class="disc-modal__close" type="button" data-disc-close aria-label="Закрыть">×</button>
+
+      <div class="wizard-view" id="wizardView">
+        <div class="disc-modal__head">
+          <h2 class="disc-modal__title" id="discTitle">Тестирование DISC</h2>
+          <div class="disc-modal__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</div>
+          <div class="disc-modal__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+        </div>
+
+        <div class="disc-modal__tabs" role="tablist" aria-label="Шаги">
+          <button class="disc-tab is-active" type="button" role="tab" aria-selected="true" data-step-btn="0">Первый</button>
+          <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="1">Второй</button>
+          <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="2">Третий</button>
+          <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="3">Четвертый</button>
+          <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="4">Пятый</button>
+          <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="5">Шестой</button>
+          <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="6">Седьмой</button>
+          <button class="disc-tab" type="button" role="tab" aria-selected="false" data-step-btn="7">Восьмой</button>
+        </div>
+
+        <div class="disc-modal__body" id="rootwizard" data-step="0">
+          <div class="disc-panes">
+        <div class="disc-pane is-active" data-step-pane="0" id="tab1" role="tabpanel">
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list1">
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Экспресcивный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Экспресcивный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Покладистый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Покладистый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Волевой</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Волевой" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Осторожный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Осторожный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list2">
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Пылкий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Пылкий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Разговорчивый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Разговорчивый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Добродушный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Добродушный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Сдержанный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Сдержанный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list3">
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Любитель приключений</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Любитель приключений" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Энтузиаст</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Энтузиаст" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Исполнитель инструкций</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Исполнитель инструкций" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Верный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Верный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+        <div class="disc-pane" data-step-pane="1" id="tab2" role="tabpanel" hidden>
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list4">
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Настойчивый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Настойчивый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Осторожный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Осторожный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Эмоциональный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Эмоциональный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Удовлетворенный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Удовлетворенный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list5">
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Довольный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Довольный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Нетерпеливый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Нетерпеливый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Убедительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Убедительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Безропотный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Безропотный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list6">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Смиренный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Смиренный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Умеющий слушать</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Умеющий слушать" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Душа компании</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Душа компании" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Волевой</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Волевой" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+        <div class="disc-pane" data-step-pane="2" id="tab3" role="tabpanel" hidden>
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list7">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Правильный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Правильный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Первопроходец</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Первопроходец" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Спокойный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Спокойный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Влиятельный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Влиятельный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list8">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Почтительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Почтительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Контактный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Контактный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Агрессивный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Агрессивный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Мягкий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Мягкий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list9">
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Весельчак</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Весельчак" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Покорный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Покорный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Тактичный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Тактичный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Соперничающий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Соперничающий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+        <div class="disc-pane" data-step-pane="3" id="tab4" role="tabpanel" hidden>
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list10">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Точный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Точный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Доминирующий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Доминирующий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Охотный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Охотный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Притягательный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Притягательный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list11">
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Уравновешенный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Уравновешенный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Уступчивый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Уступчивый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Идущий на риск</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Идущий на риск" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Услужливый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Услужливый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list12">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Осмотрительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Осмотрительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Добрососедский</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Добрососедский" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Энергичный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Энергичный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Убедительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Убедительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+        <div class="disc-pane" data-step-pane="4" id="tab5" role="tabpanel" hidden>
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list13">
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Уравновешенный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Уравновешенный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Мотивирующий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Мотивирующий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Щепетильный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Щепетильный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Решительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Решительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list14">
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Уверенный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Уверенный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Готовый к сотрудничеству</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Готовый к сотрудничеству" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Беззаботный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Беззаботный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Аргументирующий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Аргументирующий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list15">
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Сдержанный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Сдержанный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Прямой</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Прямой" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Строгий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Строгий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Убедительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Убедительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+        <div class="disc-pane" data-step-pane="5" id="tab6" role="tabpanel" hidden>
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list16">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Застенчивый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Застенчивый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Требовательный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Требовательный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Терпеливый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Терпеливый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Очаровательный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Очаровательный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list17">
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Неугомонный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Неугомонный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Дисциплинированный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Дисциплинированный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Вдохновляющий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Вдохновляющий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Внимательный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Внимательный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list18">
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Обязательный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Обязательный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Оживленный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Оживленный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Решительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Решительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Точный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Точный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+        <div class="disc-pane" data-step-pane="6" id="tab7" role="tabpanel" hidden>
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list19">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Добросовестный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Добросовестный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Компанейский</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Компанейский" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Добрый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Добрый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Уверенный в себе</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Уверенный в себе" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list20">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Дипломатичный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Дипломатичный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Отважный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Отважный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Сочувствующий</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Сочувствующий" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Оптимистичный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Оптимистичный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list21">
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Настойчивый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Настойчивый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Общительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Общительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Постоянный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Постоянный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Организованный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Организованный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+        <div class="disc-pane" data-step-pane="7" id="tab8" role="tabpanel" hidden>
+          <div class="disc-grid3">
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list22">
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Соглашающийся</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Соглашающийся" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Владеющий собой</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Владеющий собой" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Шутливый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Шутливый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Настойчивый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Настойчивый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list23">
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Обаятельный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Обаятельный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Позитивный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Позитивный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Снисходительный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Снисходительный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Требовательный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Требовательный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          <div class="disc-card">
+            <div class="disc-card__title">Я наиболее</div>
+            <ul class="disc-list" id="draggable-list24">
+                <li class="disc-item" data-type="i">
+                  <span class="disc-item__text">Коммуникабельный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Коммуникабельный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="d">
+                  <span class="disc-item__text">Смелый</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Смелый" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="c">
+                  <span class="disc-item__text">Перфекционист</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Перфекционист" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+                <li class="disc-item" data-type="s">
+                  <span class="disc-item__text">Сдержанный</span>
+                  <button class="disc-handle" type="button" aria-label="Переместить вариант Сдержанный" title="Перетащите или используйте стрелки ↑ и ↓">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <circle cx="5" cy="3.5" r="1.35"/><circle cx="11" cy="3.5" r="1.35"/>
+                  <circle cx="5" cy="8" r="1.35"/><circle cx="11" cy="8" r="1.35"/>
+                  <circle cx="5" cy="12.5" r="1.35"/><circle cx="11" cy="12.5" r="1.35"/>
+                </svg>
+              </button>
+                </li>
+            </ul>
+            <div class="disc-card__foot">Я наименее</div>
+          </div>
+          </div>
+        </div>
+          </div>
+          <p class="drag-hint">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M8 7h8M8 12h8M8 17h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Перетаскивайте варианты мышью или за ручку. С клавиатуры — стрелки ↑ и ↓ на ручке.
+          </p>
+          <p class="sr-only" id="dragStatus" aria-live="polite"></p>
+        </div>
+
+        <div class="disc-modal__footer">
+          <div class="disc-progress" aria-hidden="true">
+            <div class="disc-progress__bar" id="discProgress"></div>
+          </div>
+          <div class="disc-actions">
+            <button class="btn btn--ghost" type="button" data-disc-prev>Назад</button>
+            <div class="disc-actions__spacer"></div>
+            <button class="btn btn--next" type="button" data-disc-next>Далее</button>
+            <button class="btn btn--finish" type="button" data-disc-finish hidden>Завершить тест</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-view" id="resultView" hidden>
+        <div class="result-view__inner">
+          <div class="eyebrow" style="color:#2f7d76">Результат</div>
+          <h2 id="resultTitle" tabindex="-1">Ваш DISC-профиль</h2>
+          <p class="result-view__lead">Готово! Вот сколько баллов вы набрали по каждой шкале.</p>
+
+          <div class="result__score"><span id="scoreText">D:0, I:0, S:0, C:0</span></div>
+
+          <div class="result-grid">
+            <div class="result-dim" style="--dim:var(--d)">
+              <div class="result-dim__top"><span class="result-dim__badge">D</span><span>Доминирование</span></div>
+              <div class="result-dim__value" data-score="d">0</div>
+              <div class="result-meter"><span class="result-meter__zero"></span><span class="result-meter__fill" data-meter="d"></span></div>
+              <div class="result-dim__hint">Ориентация на результат и влияние на ситуацию</div>
+            </div>
+            <div class="result-dim" style="--dim:var(--i)">
+              <div class="result-dim__top"><span class="result-dim__badge">I</span><span>Влияние</span></div>
+              <div class="result-dim__value" data-score="i">0</div>
+              <div class="result-meter"><span class="result-meter__zero"></span><span class="result-meter__fill" data-meter="i"></span></div>
+              <div class="result-dim__hint">Коммуникация, вовлечение и эмоциональная выразительность</div>
+            </div>
+            <div class="result-dim" style="--dim:var(--s)">
+              <div class="result-dim__top"><span class="result-dim__badge">S</span><span>Стабильность</span></div>
+              <div class="result-dim__value" data-score="s">0</div>
+              <div class="result-meter"><span class="result-meter__zero"></span><span class="result-meter__fill" data-meter="s"></span></div>
+              <div class="result-dim__hint">Терпение, надёжность и поддержка других</div>
+            </div>
+            <div class="result-dim" style="--dim:var(--c)">
+              <div class="result-dim__top"><span class="result-dim__badge">C</span><span>Соответствие</span></div>
+              <div class="result-dim__value" data-score="c">0</div>
+              <div class="result-meter"><span class="result-meter__zero"></span><span class="result-meter__fill" data-meter="c"></span></div>
+              <div class="result-dim__hint">Точность, правила и внимание к качеству</div>
+            </div>
+          </div>
+
+          <p class="result-note">
+            <b>Как читать баллы.</b> В каждом из 24 блоков верхний вариант считался «наиболее похожим»,
+            а нижний — «наименее похожим». Для каждой шкалы из числа верхних выборов вычиталось
+            число нижних. Диапазон значений — от −24 до +24.
+          </p>
+
+          <div class="result-actions">
+            <button class="btn btn--next" type="button" data-disc-restart>Пройти ещё раз</button>
+            <button class="btn btn--ghost" type="button" data-disc-close>Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const qs = (selector, root = document) => root.querySelector(selector);
+      const qsa = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+      const modal = qs("#wizardmodal");
+      if (!modal) return;
+
+      const wizardView = qs("#wizardView", modal);
+      const resultView = qs("#resultView", modal);
+      const resultTitle = qs("#resultTitle", modal);
+      const closeBtn = qs(".disc-modal__close", modal);
+
+      const tabs = qsa("[data-step-btn]", modal);
+      const panes = qsa("[data-step-pane]", modal);
+      const lists = qsa(".disc-list", modal);
+
+      const prevBtn = qs("[data-disc-prev]", modal);
+      const nextBtn = qs("[data-disc-next]", modal);
+      const finishBtn = qs("[data-disc-finish]", modal);
+      const restartBtn = qs("[data-disc-restart]", modal);
+
+      const progressEl = qs("#discProgress", modal);
+      const rootwizard = qs("#rootwizard", modal);
+      const bodyScroller = qs(".disc-modal__body", modal);
+      const tabsScroller = qs(".disc-modal__tabs", modal);
+      const dragStatus = qs("#dragStatus", modal);
+
+      const STEP_COUNT = 8;
+
+      let step = 0;
+      let lastFocus = null;
+      let finished = false;
+      let drag = null;
+
+      // Исходный порядок нужен для кнопки «Пройти ещё раз».
+      const initialOrders = lists.map((ul) => Array.from(ul.children));
+
+      const isMobileUI = () =>
+        (window.matchMedia && window.matchMedia("(max-width: 767px)").matches) ||
+        (window.matchMedia &&
+          window.matchMedia("(pointer: coarse)").matches &&
+          window.matchMedia("(max-width: 1024px)").matches);
+
+      const setScrollLock = (locked) => {
+        document.documentElement.classList.toggle("no-scroll", locked);
+        document.body.classList.toggle("no-scroll", locked);
+      };
+
+      const setStep = (nextStep) => {
+        step = Math.max(0, Math.min(STEP_COUNT - 1, Number(nextStep) || 0));
+        render();
+        if (isMobileUI()) {
+          requestAnimationFrame(() => {
+            centerActiveTab();
+            if (bodyScroller) bodyScroller.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        } else if (bodyScroller) {
+          bodyScroller.scrollTo({ top: 0, behavior: "auto" });
+        }
+      };
+
+      const render = () => {
+        tabs.forEach((tab) => {
+          const tabStep = Number(tab.dataset.stepBtn);
+          const active = tabStep === step;
+          tab.classList.toggle("is-active", active);
+          tab.classList.toggle("is-done", tabStep < step);
+          tab.setAttribute("aria-selected", active ? "true" : "false");
+          tab.tabIndex = active ? 0 : -1;
+        });
+
+        panes.forEach((pane) => {
+          const active = Number(pane.dataset.stepPane) === step;
+          pane.classList.toggle("is-active", active);
+          pane.hidden = !active;
+        });
+
+        if (rootwizard) rootwizard.dataset.step = String(step);
+        if (prevBtn) prevBtn.disabled = step === 0;
+        if (nextBtn) nextBtn.hidden = step === STEP_COUNT - 1;
+        if (finishBtn) finishBtn.hidden = step !== STEP_COUNT - 1;
+
+        if (progressEl) progressEl.style.width = `${((step + 1) / STEP_COUNT) * 100}%`;
+      };
+
+      const centerActiveTab = () => {
+        if (!tabsScroller) return;
+        const activeTab = tabs.find((tab) => Number(tab.dataset.stepBtn) === step);
+        if (!activeTab) return;
+
+        const containerRect = tabsScroller.getBoundingClientRect();
+        const tabRect = activeTab.getBoundingClientRect();
+        const tabCenterX = tabRect.left - containerRect.left + tabRect.width / 2;
+        const targetLeft = tabsScroller.scrollLeft + tabCenterX - tabsScroller.clientWidth / 2;
+        const maxLeft = Math.max(0, tabsScroller.scrollWidth - tabsScroller.clientWidth);
+        const clamped = Math.min(Math.max(0, targetLeft), maxLeft);
+
+        if (Math.abs(tabsScroller.scrollLeft - clamped) < 2) return;
+        tabsScroller.scrollTo({ left: clamped, behavior: "smooth" });
+      };
+
+      const showWizard = () => {
+        finished = false;
+        if (wizardView) wizardView.hidden = false;
+        if (resultView) resultView.hidden = true;
+      };
+
+      const openModal = () => {
+        lastFocus = document.activeElement;
+        showWizard();
+        setStep(step);
+        modal.removeAttribute("inert");
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        setScrollLock(true);
+        requestAnimationFrame(() => {
+          closeBtn?.focus({ preventScroll: true });
+          centerActiveTab();
+        });
+      };
+
+      const closeModal = () => {
+        if (drag) finishDrag({ pointerId: drag.pointerId });
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        modal.setAttribute("inert", "");
+        setScrollLock(false);
+        if (lastFocus && typeof lastFocus.focus === "function") {
+          lastFocus.focus({ preventScroll: true });
+        }
+      };
+
+      const resetOrder = () => {
+        lists.forEach((ul, index) => {
+          const items = initialOrders[index];
+          if (items) ul.append(...items);
+        });
+        step = 0;
+        finished = false;
+        render();
+      };
+
+      const collectPayload = () => {
+        const payload = [];
+        lists.forEach((ul, listIndex) => {
+          Array.from(ul.children).forEach((li, pos) => {
+            payload.push({
+              list: listIndex,
+              pos,
+              type: li.getAttribute("data-type"),
+            });
+          });
+        });
+        return payload;
+      };
+
+      // Логика оригинала: верхний элемент списка — «наиболее», нижний — «наименее».
+      const score = (payload) => {
+        const major = [];
+        const minor = [];
+
+        payload.forEach((item) => {
+          if (item.pos === 0) major.push(item.type);
+          if (item.pos === 3) minor.push(item.type);
+        });
+
+        const count = (arr, type) => arr.reduce((sum, value) => sum + (value === type ? 1 : 0), 0);
+
+        return {
+          d: count(major, "d") - count(minor, "d"),
+          i: count(major, "i") - count(minor, "i"),
+          s: count(major, "s") - count(minor, "s"),
+          c: count(major, "c") - count(minor, "c"),
+        };
+      };
+
+      const showResult = (scores) => {
+        finished = true;
+        if (wizardView) wizardView.hidden = true;
+        if (resultView) resultView.hidden = false;
+
+        const scoreText = qs("#scoreText", modal);
+        if (scoreText) {
+          scoreText.textContent = `D:${scores.d}, I:${scores.i}, S:${scores.s}, C:${scores.c}`;
+        }
+
+        qsa("[data-score]", modal).forEach((el) => {
+          const key = el.getAttribute("data-score");
+          const value = Number(scores[key] || 0);
+          el.textContent = value > 0 ? `+${value}` : String(value);
+        });
+
+        qsa("[data-meter]", modal).forEach((el) => {
+          const key = el.getAttribute("data-meter");
+          const value = Number(scores[key] || 0);
+          const width = (Math.min(Math.abs(value), 24) / 24) * 50;
+          el.style.left = `${value >= 0 ? 50 : 50 - width}%`;
+          el.style.width = `${width}%`;
+          el.classList.toggle("is-negative", value < 0);
+        });
+
+        if (resultView) resultView.scrollTop = 0;
+        requestAnimationFrame(() => resultTitle?.focus({ preventScroll: true }));
+      };
+
+      // =========================
+      // drag & drop (pointer events)
+      // =========================
+      const announce = (message) => {
+        if (!dragStatus) return;
+        dragStatus.textContent = "";
+        window.setTimeout(() => {
+          dragStatus.textContent = message;
+        }, 20);
+      };
+
+      const moveDraggedItem = (clientY) => {
+        if (!drag) return;
+        const { li, ul } = drag;
+        const siblings = Array.from(ul.children);
+        let before = null;
+
+        for (const item of siblings) {
+          if (item === li) continue;
+          const rect = item.getBoundingClientRect();
+          if (clientY < rect.top + rect.height / 2) {
+            before = item;
+            break;
+          }
+        }
+
+        if (before) {
+          if (li.nextElementSibling !== before) ul.insertBefore(li, before);
+        } else if (ul.lastElementChild !== li) {
+          ul.appendChild(li);
+        }
+      };
+
+      const onPointerMove = (event) => {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+
+        if (!drag.active) {
+          const dx = Math.abs(event.clientX - drag.startX);
+          const dy = Math.abs(event.clientY - drag.startY);
+          if (dx < 5 && dy < 5) return;
+          drag.active = true;
+          drag.li.classList.add("is-dragging");
+          drag.ul.classList.add("is-reordering");
+        }
+
+        if (event.cancelable) event.preventDefault();
+        moveDraggedItem(event.clientY);
+      };
+
+      const finishDrag = (event) => {
+        if (!drag || (event && event.pointerId !== drag.pointerId)) return;
+
+        const li = drag.li;
+        const ul = drag.ul;
+        const wasActive = drag.active;
+        const listIndex = lists.indexOf(ul);
+        const position = Array.from(ul.children).indexOf(li) + 1;
+
+        li.classList.remove("is-dragging", "is-over");
+        ul.classList.remove("is-reordering");
+        qsa(".disc-item", ul).forEach((item) => item.classList.remove("is-over"));
+
+        document.removeEventListener("pointermove", onPointerMove);
+        document.removeEventListener("pointerup", finishDrag);
+        document.removeEventListener("pointercancel", finishDrag);
+
+        drag = null;
+
+        if (wasActive) {
+          announce(`Блок ${listIndex + 1}: вариант перемещён на позицию ${position} из 4`);
+        }
+      };
+
+      lists.forEach((ul) => {
+        ul.addEventListener("pointerdown", (event) => {
+          if (event.button !== undefined && event.button !== 0) return;
+
+          const li = event.target.closest(".disc-item");
+          if (!li || li.parentElement !== ul) return;
+
+          const isHandle = !!event.target.closest(".disc-handle");
+          // На сенсорных экранах тянем только за ручку, чтобы не мешать прокрутке.
+          if (event.pointerType === "touch" && !isHandle) return;
+
+          drag = {
+            li,
+            ul,
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            active: false,
+          };
+
+          // Слушаем документ, а не сам элемент: при перестановке DOM-узла
+          // захват указателя на нём может потеряться.
+          document.addEventListener("pointermove", onPointerMove, { passive: false });
+          document.addEventListener("pointerup", finishDrag);
+          document.addEventListener("pointercancel", finishDrag);
+        });
+      });
+
+      // Клавиатурное упорядочивание: ручка + стрелки.
+      qsa(".disc-handle", modal).forEach((handle) => {
+        handle.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+
+          const li = handle.closest(".disc-item");
+          const ul = li?.parentElement;
+          if (!li || !ul) return;
+
+          event.preventDefault();
+
+          if (event.key === "ArrowUp" && li.previousElementSibling) {
+            ul.insertBefore(li, li.previousElementSibling);
+          } else if (event.key === "ArrowDown" && li.nextElementSibling) {
+            ul.insertBefore(li, li.nextElementSibling.nextElementSibling);
+          }
+
+          handle.focus({ preventScroll: true });
+
+          const listIndex = lists.indexOf(ul);
+          const position = Array.from(ul.children).indexOf(li) + 1;
+          announce(`Блок ${listIndex + 1}: вариант перемещён на позицию ${position} из 4`);
+        });
+      });
+
+      // =========================
+      // wiring
+      // =========================
+      qsa("[data-disc-open]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (finished) resetOrder();
+          openModal();
+        });
+      });
+
+      qsa("[data-disc-close]", modal).forEach((el) => {
+        el.addEventListener("click", (event) => {
+          event.preventDefault();
+          closeModal();
+        });
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.classList.contains("is-open")) {
+          closeModal();
+        }
+      });
+
+      // Стрелки на табах — как в обычном tablist.
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => setStep(Number(tab.dataset.stepBtn)));
+        tab.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+          event.preventDefault();
+          const dir = event.key === "ArrowRight" ? 1 : -1;
+          const next = (index + dir + tabs.length) % tabs.length;
+          tabs[next].focus();
+          setStep(next);
+        });
+      });
+
+      prevBtn?.addEventListener("click", () => setStep(step - 1));
+      nextBtn?.addEventListener("click", () => setStep(step + 1));
+
+      finishBtn?.addEventListener("click", () => {
+        const scores = score(collectPayload());
+        showResult(scores);
+      });
+
+      restartBtn?.addEventListener("click", () => {
+        resetOrder();
+        if (resultView) resultView.hidden = true;
+        if (wizardView) wizardView.hidden = false;
+        showWizard();
+        setStep(0);
+        requestAnimationFrame(() => {
+          const firstTab = tabs[0];
+          firstTab?.focus({ preventScroll: true });
+          centerActiveTab();
+        });
+      });
+
+      // init
+      render();
+      setScrollLock(false);
+    })();
+  </script>
+</body>
+</html>

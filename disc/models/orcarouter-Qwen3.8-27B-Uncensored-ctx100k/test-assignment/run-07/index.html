@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — определение стилей поведения</title>
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --ink:#1c2333;
+    --muted:#6b7280;
+    --line:#e3e7ef;
+    --accent:#ffb400;
+    --accent-ink:#241a00;
+    --d:#dc4b4b; --i:#f59e0b; --s:#2f9e6e; --c:#3b6fd4;
+    --radius:16px;
+    --shadow:0 8px 24px rgba(20,26,44,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  [hidden]{display:none !important}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 20px 64px}
+
+  /* ---------- header ---------- */
+  header.app-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 6px}
+  .logo{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border-radius:12px;
+    background:linear-gradient(135deg,#ffb400,#ff8a00);
+    box-shadow:var(--shadow);flex:none;
+  }
+  .logo svg{width:24px;height:24px}
+  .head-title h1{font-size:20px;margin:0;font-weight:700;letter-spacing:-.01em}
+  .head-title p{margin:2px 0 0;font-size:13.5px;color:var(--muted)}
+
+  /* ---------- wizard shell ---------- */
+  .wizard{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .wizard__lead{
+    display:flex;align-items:center;gap:10px;
+    padding:16px 22px;border-bottom:1px solid var(--line);
+    font-size:15px;font-weight:600;
+    background:linear-gradient(90deg,#fff8ea,transparent);
+  }
+  .wizard__lead svg{width:20px;height:20px;flex:none;color:var(--accent)}
+
+  .tabs{
+    display:flex;gap:6px;padding:10px 14px;overflow-x:auto;
+    border-bottom:1px solid var(--line);
+    scrollbar-width:thin;
+  }
+  .tab{
+    appearance:none;border:1px solid transparent;background:#eef1f7;color:#5a6275;
+    font:600 13px/1 inherit;font-family:inherit;
+    padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;
+    display:inline-flex;align-items:center;gap:7px;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .tab .num{
+    width:18px;height:18px;border-radius:50%;background:#d6dbe6;color:#495170;
+    display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  }
+  .tab:hover{background:#e4e8f2}
+  .tab.is-active{background:#fff4d6;border-color:#ffd36b;color:#7a4d00}
+  .tab.is-active .num{background:var(--accent);color:var(--accent-ink)}
+  .tab.is-done .num{background:#cde6d8;color:#1d6b43}
+  .tab:focus-visible{outline:3px solid #ffd36b;outline-offset:2px}
+
+  .body{padding:22px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media (max-width:860px){.grid3{grid-template-columns:1fr}}
+
+  .card{border:1px solid var(--line);border-radius:14px;background:#fafbfe;padding:14px}
+  .card__title,.card__foot{
+    display:flex;align-items:center;gap:8px;
+    font-size:12.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);
+  }
+  .card__foot{justify-content:flex-end}
+  .card__title svg,.card__foot svg{width:15px;height:15px;flex:none}
+  .card__title{color:#1d6b43}
+  .card__foot{color:#9c3b3b}
+
+  .list{list-style:none;margin:10px 0;padding:2px}
+  .item{
+    position:relative;
+    display:flex;align-items:center;gap:10px;
+    background:#fff;border:1px solid var(--line);border-radius:11px;
+    padding:11px 12px;margin:8px 0;font-size:14.5px;font-weight:500;
+    cursor:grab;user-select:none;-webkit-user-select:none;
+    touch-action:none;
+    transition:box-shadow .15s,border-color .15s,opacity .15s,transform .12s ease;
+  }
+  .item:hover{border-color:#cfd6e4;box-shadow:0 3px 10px rgba(20,26,44,.07)}
+  .item .rank{
+    width:22px;height:22px;flex:none;border-radius:50%;
+    background:#eceff5;color:#5a6275;font-size:12px;font-weight:700;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .item .txt{flex:1}
+  .item .handle{
+    flex:none;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;
+    cursor:grab;border-radius:4px;color:#b3b3b3;
+  }
+  .item .handle svg{width:16px;height:16px;display:block}
+  .item.is-dragging{
+    z-index:50;cursor:grabbing;border-color:var(--accent);
+    box-shadow:0 14px 30px rgba(20,26,44,.22);
+    opacity:.95;background:#fffdf5;
+    transition:none;
+  }
+  .item.is-dragging .rank{background:var(--accent);color:var(--accent-ink)}
+  .list.is-reordering{position:relative}
+
+  /* ---------- progress + actions ---------- */
+  .progress{height:8px;background:#eceff5;border-radius:99px;margin:0 22px;overflow:hidden}
+  .progress__bar{height:100%;width:12.5%;background:linear-gradient(90deg,#ffb400,#ff8a00);border-radius:99px;transition:width .3s ease}
+  .actions{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px}
+  .step-meta{font-size:13px;color:var(--muted)}
+  .step-meta b{color:var(--ink)}
+  .actions__right{display:flex;gap:10px}
+
+  .btn{
+    appearance:none;border:1px solid transparent;border-radius:11px;
+    font:600 14px/1 inherit;font-family:inherit;
+    padding:12px 20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+    transition:filter .15s,background .15s,border-color .15s;
+  }
+  .btn svg{width:16px;height:16px}
+  .btn--ghost{background:#fff;border-color:var(--line);color:#3c445c}
+  .btn--ghost:hover{background:#f2f4fa}
+  .btn--primary{background:var(--accent);color:var(--accent-ink)}
+  .btn--primary:hover{filter:brightness(1.05)}
+  .btn--primary.finish{background:#2f9e6e;color:#fff}
+  .btn--primary.finish:hover{filter:brightness(1.08)}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn:disabled:hover{filter:none}
+  .btn:disabled.btn--ghost{background:#fff}
+  .btn:focus-visible{outline:3px solid #ffd36b;outline-offset:2px}
+
+  /* ---------- result ---------- */
+  .result{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 30px 34px;margin-top:16px}
+  .result__badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#fff4d6;border:1px solid #ffd36b;color:#7a4d00;
+    font-size:12.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+    padding:7px 13px;border-radius:999px;margin-bottom:14px;
+  }
+  .result__badge svg{width:14px;height:14px}
+  .result h2{margin:0 0 6px;font-size:26px;letter-spacing:-.01em}
+  .result__sub{margin:0 0 24px;color:#454e66;font-size:14.5px;max-width:70ch;line-height:1.55}
+  .bars{display:grid;gap:14px;margin-bottom:28px}
+  .bar{
+    display:grid;grid-template-columns:44px 1fr 60px;align-items:center;gap:14px;
+    border:1px solid var(--line);border-radius:13px;padding:12px 14px;background:#fafbfe;
+  }
+  .bar__letter{
+    width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:17px;color:#fff;
+  }
+  .bar__track{height:12px;background:#eceff5;border-radius:99px;overflow:hidden}
+  .bar__fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+  .bar__score{text-align:right;font-weight:700;font-size:15px;color:var(--ink)}
+  .result__foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .result__note{font-size:12.5px;color:var(--muted);max-width:46ch}
+
+  footer.app-foot{margin-top:22px;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  footer.app-foot svg{width:14px;height:14px;opacity:.7}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header class="app-head">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="#3a2a00" stroke-width="2"/>
+        <path d="M12 3a9 9 0 0 1 9 9h-9z" fill="#3a2a00"/>
+        <path d="M12 3v18M3 12h18" stroke="#3a2a00" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <div class="head-title">
+      <h1>Тест DISC</h1>
+      <p>Определите свой доминирующий стиль поведения — 8 шагов, около 5 минут</p>
+    </div>
+  </header>
+
+  <!-- ================= ТЕСТ ================= -->
+  <section class="wizard" id="wizard" aria-label="Тест DISC">
+    <div class="wizard__lead">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h10"/>
+      </svg>
+      Разместите блоки в порядке от наиболее похожего на вас до наименее похожего
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Шаги теста" id="tabs"></div>
+
+    <div class="body" id="panes"></div>
+
+    <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+
+    <div class="actions">
+      <span class="step-meta" id="stepMeta">Шаг <b>1</b> из 8</span>
+      <div class="actions__right">
+        <button class="btn btn--ghost" type="button" id="btnPrev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          Назад
+        </button>
+        <button class="btn btn--primary" type="button" id="btnNext">
+          Далее
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn btn--primary finish" type="button" id="btnFinish" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+          Завершить тест
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= РЕЗУЛЬТАТ ================= -->
+  <section class="result" id="result" hidden aria-label="Результат теста">
+    <span class="result__badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+      Тест завершён
+    </span>
+    <h2 id="resultTitle"></h2>
+    <p class="result__sub" id="resultSub"></p>
+    <div class="bars" id="resultBars"></div>
+    <div class="result__foot">
+      <button class="btn btn--ghost" type="button" id="btnRetry">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        Пройти заново
+      </button>
+      <span class="result__note">Баллы рассчитываются локально: +1 за каждое «наиболее похожее» слово и −1 за каждое «наименее похожее».</span>
+    </div>
+  </section>
+
+  <footer class="app-foot">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    Данные не отправляются никуда — тест работает полностью локально.
+  </footer>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  // ================= ДАННЫЕ ТЕСТА (как в оригинале) =================
+  // 8 шагов × 3 списка × 4 варианта; type — d/i/s/c (сохранён исходный порядок вариантов)
+  const STEPS = [
+    [
+      [ ["i","Экспресcивный"], ["c","Покладистый"], ["d","Волевой"], ["s","Осторожный"] ],
+      [ ["d","Пылкий"], ["i","Разговорчивый"], ["s","Добродушный"], ["c","Сдержанный"] ],
+      [ ["i","Любитель приключений"], ["c","Энтузиаст"], ["d","Исполнитель инструкций"], ["s","Верный"] ]
+    ],
+    [
+      [ ["d","Настойчивый"], ["c","Осторожный"], ["i","Эмоциональный"], ["s","Удовлетворенный"] ],
+      [ ["s","Довольный"], ["d","Нетерпеливый"], ["i","Убедительный"], ["c","Безропотный"] ],
+      [ ["c","Смиренный"], ["s","Умеющий слушать"], ["i","Душа компании"], ["d","Волевой"] ]
+    ],
+    [
+      [ ["c","Правильный"], ["d","Первопроходец"], ["s","Спокойный"], ["i","Влиятельный"] ],
+      [ ["c","Почтительный"], ["i","Контактный"], ["d","Агрессивный"], ["s","Мягкий"] ],
+      [ ["i","Весельчак"], ["s","Покорный"], ["c","Тактичный"], ["d","Соперничающий"] ]
+    ],
+    [
+      [ ["c","Точный"], ["d","Доминирующий"], ["s","Охотный"], ["i","Притягательный"] ],
+      [ ["i","Уравновешенный"], ["c","Уступчивый"], ["d","Идущий на риск"], ["s","Услужливый"] ],
+      [ ["c","Осмотрительный"], ["s","Добрососедский"], ["d","Энергичный"], ["i","Убедительный"] ]
+    ],
+    [
+      [ ["s","Уравновешенный"], ["i","Мотивирующий"], ["c","Щепетильный"], ["d","Решительный"] ],
+      [ ["i","Уверенный"], ["c","Готовый к сотрудничеству"], ["s","Беззаботный"], ["d","Аргументирующий"] ],
+      [ ["s","Сдержанный"], ["d","Прямой"], ["c","Строгий"], ["i","Убедительный"] ]
+    ],
+    [
+      [ ["c","Застенчивый"], ["d","Требовательный"], ["s","Терпеливый"], ["i","Очаровательный"] ],
+      [ ["d","Неугомонный"], ["c","Дисциплинированный"], ["i","Вдохновляющий"], ["s","Внимательный"] ],
+      [ ["s","Обязательный"], ["i","Оживленный"], ["d","Решительный"], ["c","Точный"] ]
+    ],
+    [
+      [ ["c","Добросовестный"], ["i","Компанейский"], ["s","Добрый"], ["d","Уверенный в себе"] ],
+      [ ["c","Дипломатичный"], ["d","Отважный"], ["s","Сочувствующий"], ["i","Оптимистичный"] ],
+      [ ["d","Настойчивый"], ["i","Общительный"], ["s","Постоянный"], ["c","Организованный"] ]
+    ],
+    [
+      [ ["c","Соглашающийся"], ["s","Владеющий собой"], ["d","Шутливый"], ["i","Настойчивый"] ],
+      [ ["i","Обаятельный"], ["d","Позитивный"], ["s","Снисходительный"], ["c","Требовательный"] ],
+      [ ["i","Коммуникабельный"], ["d","Смелый"], ["c","Перфекционист"], ["s","Сдержанный"] ]
+    ]
+  ];
+
+  const LETTERS = {
+    d: { letter:"D", word:"Доминирующий", hex:"#dc4b4b",
+         desc:"Решительность, прямолинейность и воля к победе. Ориентация на результат, задачи и скорость решений. Самоуверенность, инициативность, готовность рисковать. В команде — драйвер дел и притязания, в конфликтах — готовность к давлению." },
+    i: { letter:"I", word:"Влияющий", hex:"#f59e0b",
+         desc:"Энергия, энтузиазм и общительность. Ориентация на людей, впечатления и позитив. Убедительность, оптимизм, спонтанность. В команде — вдохновитель и душа компании, в конфликтах — эмоциональность." },
+    s: { letter:"S", word:"Стабильный", hex:"#2f9e6e",
+         desc:"Терпение, надёжность и поддержка. Ориентация на спокойствие, порядок в отношениях и предсказуемость. Умение слушать, лояльность, отсутствие резких движений. В команде — стабилизатор процессов, в конфликтах — избегание острых углов." },
+    c: { letter:"C", word:"Точный", hex:"#3b6fd4",
+         desc:"Внимательность к деталям, точность и контроль. Ориентация на качество, правила и обоснованность. Аналитичность, осмотрительность, самостоятельность суждений. В команде — выверенность решений, в конфликтах — осторожность и аргументы." }
+  };
+  const SEQ = ["d", "i", "s", "c"];
+
+  // ================= DOM =================
+  const $ = (s, r) => (r || document).querySelector(s);
+  const tabsEl  = $("#tabs");
+  const panesEl = $("#panes");
+  const barEl   = $("#progressBar");
+  const metaEl  = $("#stepMeta");
+  const btnPrev = $("#btnPrev");
+  const btnNext = $("#btnNext");
+  const btnFin  = $("#btnFinish");
+  const wizardEl= $("#wizard");
+  const resultEl= $("#result");
+
+  const ICON_UP   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  const ICON_DN   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>';
+  const HANDLE_SVG= '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="6" cy="4" r="1.4"/><circle cx="10" cy="4" r="1.4"/><circle cx="6" cy="8" r="1.4"/><circle cx="10" cy="8" r="1.4"/><circle cx="6" cy="12" r="1.4"/><circle cx="10" cy="12" r="1.4"/></svg>';
+
+  // ================= РЕНДЕР =================
+  const makeEl = (tag, cls) => {
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    return el;
+  };
+
+  STEPS.forEach((lists, stepIdx) => {
+    // вкладка
+    const tab = makeEl("button", "tab");
+    tab.type = "button"; tab.role = "tab";
+    tab.dataset.step = String(stepIdx);
+    const num = makeEl("span", "num");
+    num.textContent = String(stepIdx + 1);
+    tab.appendChild(num);
+    tabsEl.appendChild(tab);
+
+    // панель шага
+    const pane = makeEl("div", "pane");
+    const grid = makeEl("div", "grid3");
+    lists.forEach(items => {
+      const card = makeEl("div", "card");
+
+      const title = makeEl("div", "card__title");
+      title.innerHTML = ICON_UP;
+      const titleTxt = document.createElement("span");
+      titleTxt.textContent = " Я наиболее";
+      title.appendChild(titleTxt);
+
+      const ul = makeEl("ul", "list");
+      ul.setAttribute("role", "list");
+      items.forEach(([t, label]) => {
+        const li = makeEl("li", "item");
+        li.setAttribute("data-type", t);
+        li.setAttribute("role", "listitem");
+        const rank = makeEl("span", "rank"); rank.textContent = "1";
+        const txt = makeEl("span", "txt");  txt.textContent = label;
+        const handle = makeEl("span", "handle");
+        handle.innerHTML = HANDLE_SVG;
+        li.append(rank, txt, handle);
+        ul.appendChild(li);
+      });
+
+      const foot = makeEl("div", "card__foot");
+      const footTxt = document.createElement("span");
+      footTxt.textContent = " Я наименее";
+      foot.appendChild(footTxt);
+      foot.insertAdjacentHTML("beforeend", ICON_DN);
+
+      card.append(title, ul, foot);
+      grid.appendChild(card);
+    });
+    pane.appendChild(grid);
+    panesEl.appendChild(pane);
+  });
+
+  const refreshRanks = scope => {
+    scope.querySelectorAll(".list").forEach(ul => {
+      ul.querySelectorAll(".item").forEach((li, i) => {
+        li.querySelector(".rank").textContent = String(i + 1);
+      });
+    });
+  };
+  refreshRanks(panesEl);
+
+  // ================= ШАГИ =================
+  const TOTAL = STEPS.length;
+  const tabs  = Array.from(tabsEl.children);
+  const panes = Array.from(panesEl.children);
+  let step = 0;
+
+  const setStep = n => {
+    step = Math.max(0, Math.min(TOTAL - 1, n));
+    tabs.forEach((t, i) => {
+      t.classList.toggle("is-active", i === step);
+      t.classList.toggle("is-done", i < step);
+      t.setAttribute("aria-selected", i === step ? "true" : "false");
+    });
+    panes.forEach((p, i) => p.toggleAttribute("hidden", i !== step));
+    barEl.style.width = ((step + 1) / TOTAL * 100) + "%";
+    metaEl.innerHTML = "Шаг <b>" + (step + 1) + "</b> из " + TOTAL;
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === TOTAL - 1;
+    btnFin.hidden = step !== TOTAL - 1;
+    panesEl.scrollTop = 0;
+  };
+
+  tabs.forEach(t => t.addEventListener("click", () => setStep(Number(t.dataset.step))));
+  btnPrev.addEventListener("click", () => setStep(step - 1));
+  btnNext.addEventListener("click", () => setStep(step + 1));
+
+  // ================= DRAG-АНД-ДРОП (без внешних библиотек; мышь + тач) =================
+  // Desktop: перетаскивание за весь элемент. Тач/коурсор: только за «точечки» (handle) — как в оригинале.
+  const byHandleOnly = (() => {
+    try { return window.matchMedia && matchMedia("(pointer: coarse)").matches; }
+    catch (_) { return false; }
+  })();
+
+  let drag = null;
+
+  const getAnchor = (ul, pointerY) => {
+    const items = Array.from(ul.querySelectorAll(".item")).filter(li => li !== drag.li);
+    for (const li of items) {
+      const r = li.getBoundingClientRect();
+      const offset = pointerY - (r.top + r.height / 2);
+      if (offset < 0) return li;
+    }
+    return null; // после всех
+  };
+
+  const onPointerDown = e => {
+    const li = e.target.closest(".item");
+    if (!li) return;
+    if (byHandleOnly && !e.target.closest(".handle")) return;
+    e.preventDefault();
+    const ul = li.parentElement;
+    const rect = li.getBoundingClientRect();
+    drag = {
+      li, ul,
+      startX: e.clientX, startY: e.clientY,
+      tx: 0, ty: 0,
+      grabbedX: e.clientX - rect.left,
+      grabbedY: e.clientY - rect.top,
+      baseX: rect.left, baseY: rect.top,
+      moved: false
+    };
+    document.addEventListener("pointermove", onPointerMove, { passive: false });
+    document.addEventListener("pointerup", onPointerUp, { once: true });
+    document.addEventListener("pointercancel", cancelDrag, { once: true });
+  };
+
+  const onPointerMove = e => {
+    if (!drag) return;
+    e.preventDefault();
+    const { li, ul } = drag;
+    if (!drag.moved) {
+      drag.moved = true;
+      li.classList.add("is-dragging");
+      ul.classList.add("is-reordering");
+    }
+    // позиция относительно исходной точки захвата (элемент остаётся в потоке как заготовка)
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+    li.style.transform = "translate(" + dx + "px," + dy + "px)";
+
+    const anchor = getAnchor(ul, e.clientY);
+    const siblings = Array.from(ul.querySelectorAll(".item")).filter(el => el !== li);
+    // FLIP: снимаем позиции до пересчёта
+    const before = new Map(siblings.map(el => [el, el.getBoundingClientRect().top]));
+    if (anchor) ul.insertBefore(li, anchor); else ul.appendChild(li);
+    // FLIP: анимируем сдвиг соседей
+    siblings.forEach(el => {
+      const dTop = before.get(el) - el.getBoundingClientRect().top;
+      if (!dTop) return;
+      el.style.transition = "none";
+      el.style.transform = "translateY(" + dTop + "px)";
+      requestAnimationFrame(() => {
+        el.style.transition = "";
+        el.style.transform = "";
+      });
+    });
+  };
+
+  const cleanupDrag = () => {
+    if (!drag) return;
+    drag.li.classList.remove("is-dragging");
+    drag.ul.classList.remove("is-reordering");
+    drag.li.style.transform = "";
+    refreshRanks(drag.ul.closest(".pane") || panesEl);
+    drag = null;
+    document.removeEventListener("pointermove", onPointerMove);
+  };
+  const onPointerUp = () => cleanupDrag();
+  const cancelDrag  = () => cleanupDrag();
+
+  panesEl.addEventListener("pointerdown", onPointerDown);
+
+  // ================= РЕЗУЛЬТАТ =================
+  const collectScores = () => {
+    const maj = [], min = [];
+    panes.forEach(pane => {
+      pane.querySelectorAll(".list").forEach(ul => {
+        const lis = ul.querySelectorAll(".item");
+        if (lis.length) {
+          maj.push(lis[0].dataset.type);
+          min.push(lis[lis.length - 1].dataset.type);
+        }
+      });
+    });
+    const cnt = (arr, ch) => arr.reduce((n, v) => n + (v === ch ? 1 : 0), 0);
+    return {
+      d: cnt(maj, "d") - cnt(min, "d"),
+      i: cnt(maj, "i") - cnt(min, "i"),
+      s: cnt(maj, "s") - cnt(min, "s"),
+      c: cnt(maj, "c") - cnt(min, "c")
+    };
+  };
+
+  const showResult = () => {
+    const sc = collectScores();
+    const top = SEQ.reduce((a, b) => (sc[b] > sc[a] ? b : a));
+    const T = LETTERS[top];
+
+    $("#resultTitle").textContent = "Ваш доминирующий стиль: «" + T.word + "» (D/I/S/C: " + T.letter + ")";
+    $("#resultSub").textContent = T.desc;
+
+    const bars = $("#resultBars");
+    bars.innerHTML = "";
+    const maxAbs = Math.max(1, SEQ.map(k => Math.abs(sc[k])).reduce((a, b) => Math.max(a, b), 1));
+    SEQ.forEach(k => {
+      const L = LETTERS[k];
+      const v = sc[k];
+      const pct = (Math.abs(v) / maxAbs) * 100;
+      const row = makeEl("div", "bar");
+      const letter = makeEl("div", "bar__letter");
+      letter.style.background = L.hex;
+      letter.textContent = L.letter;
+      const track = makeEl("div", "bar__track");
+      const fill = makeEl("div", "bar__fill");
+      fill.style.background = L.hex;
+      fill.style.width = "0%";
+      track.appendChild(fill);
+      const score = makeEl("div", "bar__score");
+      score.textContent = (v > 0 ? "+" + v : String(v)) + " б.";
+      row.append(letter, track, score);
+      bars.appendChild(row);
+      requestAnimationFrame(() => {
+        fill.style.width = (v === 0 ? 0 : Math.max(pct, 10)) + "%";
+      });
+    });
+
+    wizardEl.hidden = true;
+    resultEl.hidden = false;
+    resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  btnFin.addEventListener("click", showResult);
+
+  btnRetry.addEventListener("click", () => {
+    resultEl.hidden = true;
+    wizardEl.hidden = false;
+    // возврат к исходному порядку вариантов
+    STEPS.forEach((lists, i) => {
+      const uls = panes[i].querySelectorAll(".list");
+      uls.forEach((ul, j) => {
+        lists[j].forEach(([t, label]) => {
+          const li = Array.from(ul.querySelectorAll(".item"))
+            .find(x => x.dataset.type === t && x.querySelector(".txt").textContent === label);
+          if (li) ul.appendChild(li);
+        });
+      });
+    });
+    refreshRanks(panesEl);
+    setStep(0);
+    wizardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  setStep(0);
+})();
+</script>
+</body>
+</html>

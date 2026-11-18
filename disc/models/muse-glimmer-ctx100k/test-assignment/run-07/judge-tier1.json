@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-18T04:14:09.950652+00:00",
+  "duration_s": 33.3,
+  "exit_code": 0,
+  "prompt_chars": 39048,
+  "verdict": {
+    "data": 4,
+    "logic": 2,
+    "ux": 1,
+    "impl": 2,
+    "total": 9,
+    "notes": "Все 84 прилагательных и порядок вопросов перенесены точно (check.json: adjectives_found 84/84), типы спрятаны в dataset и не видны пользователю, известный косяк с латинской «c» сохранён как в эталоне. Логика подсчёта по позициям верна по знакам и индексам (позиция 1 — плюс, позиция 4 — минус, средние игнорируются), но масштаб ±2 вместо ±1: баллы в 2 раза больше эталонных (при контрольной раскладке будет D=10, I=4, S=-6, C=-8 вместо D=5, I=2, S=-3, C=-4), относительный ранжир сохранён. Критический дефект UX: обработчик dragover висит на document, и e.currentTarget.closest('ul') бросает TypeError на каждом dragover (48 ошибок в playthrough.json) — перетаскивание мышью фактически не работает в рантайме, драйверу понадобился DOM-fallback на всех 24 вопросах. Тач-версии drag&drop нет вовсе. Дисклеймер на экране результата отсутствует. Реализация: один файл, офлайн, без внешних запросов, email/редирект/токен убраны, но ключевой собственный drag&drop сломан из-за неверного currentTarget.",
+    "examples": "data: stepsData точно повторяет эталон, например шаг 0: {t:'Экспресcивный',k:'i'},{t:'Покладистый',k:'c'},{t:'Волевой',k:'d'},{t:'Осторожный',k:'s'}; типы только в li.dataset.type='it.k', в UI не выводятся. logic: 'items.forEach((li,idx)=>{... if(idx===0) scores[t]+=2; if(idx===3) scores[t]-=2;})' — позиции/знаки верны, но +2/-2 вместо +1/-1. ux: 'document.addEventListener(\"dragover\",e=>{... e.currentTarget.closest(\"ul\")...})' — currentTarget у слушателя на document не элемент, отсюда 'TypeError: e.currentTarget.closest is not a function' на каждый dragover (см. console_errors в playthrough.json); нет блока дисклеймера в #result. impl: нет ни одного внешнего URL (check.json external.pass=true), result показывается в том же приложении без email-шага; однако собственная реализация DnD неработоспособна, а item.draggable рассчитана только на HTML5 drag API без тача."
+  }
+}

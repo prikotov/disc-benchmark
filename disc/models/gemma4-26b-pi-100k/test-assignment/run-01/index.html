@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Копия теста DISC</title>
+    <style>
+        :root {
+            --primary: #268AC5;
+            --primary-dark: #1e6b99;
+            --bg: #f4f7f9;
+            --text: #333;
+            --card-bg: #ffffff;
+            --accent: #eef5f9;
+            --border: #d1dbe4;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .disc-modal {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .disc-modal__head {
+            padding: 30px;
+            background: var(--accent);
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .disc-modal__title {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .disc-modal__sub {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .disc-modal__lead {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .disc-modal__tabs {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            padding: 15px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .disc-tab {
+            padding: 5px 12px;
+            border: 1px solid var(--border);
+            background: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .disc-tab.is-active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .disc-modal__body {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        .disc-pane {
+            display: none;
+        }
+
+        .disc-pane.is-active {
+            display: block;
+        }
+
+        .disc-grid3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .disc-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .disc-card__title {
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            background: var(--accent);
+            font-size: 14px;
+        }
+
+        .disc-card__foot {
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid var(--border);
+        }
+
+        .disc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            min-height: 200px;
+        }
+
+        .disc-item {
+            padding: 12px;
+            margin: 8px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: grab;
+            font-size: 14px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .disc-item:active {
+            cursor: grabbing;
+        }
+
+        .disc-item.dragging {
+            opacity: 0.5;
+        }
+
+        .disc-actions {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border);
+        }
+
+        .disc-btn {
+            padding: 10px 25px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .disc-btn--primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .disc-btn--primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .disc-btn--ghost {
+            background: none;
+            color: #666;
+        }
+
+        .disc-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .disc-progress {
+            height: 6px;
+            background: var(--border);
+            width: 100%;
+        }
+
+        .disc-progress__bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Results Styles */
+        .results {
+            text-align: center;
+        }
+
+        .results h2 {
+            color: var(--primary);
+        }
+
+        .score-chart {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .score-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-label {
+            width: 30px;
+            font-weight: bold;
+        }
+
+        .score-bar-bg {
+            flex-grow: 1;
+            background: var(--border);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .score-val {
+            width: 40px;
+            text-align: right;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .disc-grid3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="disc-modal" id="discModal">
+        <div class="disc-progress">
+            <div class="disc-progress__bar" id="progressBar"></div>
+        </div>
+        <div class="disc-modal__head">
+            <h2 class="disc-modal__title">Тестирование DISC</h2>
+            <div class="disc-modal__sub">Помните - чем честнее вы с тестом, тем точнее результаты!</div>
+            <div class="disc-modal__lead" id="instructionText">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+        </div>
+
+        <div class="disc-modal__tabs" id="tabContainer">
+            <!-- Tabs will be generated -->
+        </div>
+
+        <div class="disc-modal__body" id="rootwizard">
+            <!-- Content will be generated -->
+        </div>
+
+        <div class="disc-actions">
+            <button class="disc-btn disc-btn--ghost" id="prevBtn">Назад</button>
+            <button class="disc-btn disc-btn--primary" id="nextBtn">Далее</button>
+            <button class="disc-btn disc-btn--primary hidden" id="finishBtn">Завершить тест</button>
+        </div>
+    </div>
+
+    <div id="resultContainer" class="disc-modal hidden">
+        <div class="disc-modal__head">
+            <h2 class="disc-modal__title">Ваш результат</h2>
+            <div class="disc-modal__sub">Ваш поведенческий профиль</div>
+        </div>
+        <div class="disc-modal__body">
+            <div id="scoreDisplay" class="results">
+                <!-- Scores will be injected here -->
+            </div>
+        </div>
+        <div class="disc-actions">
+            <button class="disc-btn disc-btn--primary" onclick="location.reload()">Пройти еще раз</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        [
+            {text: "Экспресcивный", type: "i"}, {text: "Покладистый", type: "c"}, {text: "Волевой", type: "d"}, {text: "Осторожный", type: "s"}
+        ],
+        [
+            {text: "Пылкий", type: "d"}, {text: "Разговорчивый", type: "i"}, {text: "Добродушный", type: "s"}, {text: "Сдержанный", type: "c"}
+        ],
+        [
+            {text: "Любитель приключений", type: "i"}, {text: "Энтузиаст", type: "c"}, {text: "Исполнитель инструкций", type: "d"}, {text: "Верный", type: "s"}
+        ],
+        [
+            {text: "Настойчивый", type: "d"}, {text: "Осторожный", type: "c"}, {text: "Эмоциональный", type: "i"}, {text: "Удовлетворенный", type: "s"}
+        ],
+        [
+            {text: "Довольный", type: "s"}, {text: "Нетерпеливый", type: "d"}, {text: "Убедительный", type: "i"}, {text: "Безропотный", type: "c"}
+        ],
+        [
+            {text: "Смиренный", type: "c"}, {text: "Умеющий слушать", type: "s"}, {text: "Душа компании", type: "i"}, {text: "Волевой", type: "d"}
+        ],
+        [
+            {text: "Правильный", type: "c"}, {text: "Первопроходец", type: "d"}, {text: "Спокойный", type: "s"}, {text: "Влиятельный", type: "i"}
+        ],
+        [
+            {text: "Почтительный", type: "c"}, {text: "Контактный", type: "i"}, {text: "Агрессивный", type: "d"}, {text: "Мягкий", type: "s"}
+        ],
+        [
+            {text: "Весельчак", type: "i"}, {text: "Покорный", type: "s"}, {text: "Тактичный", type: "c"}, {text: "Соперничающий", type: "d"}
+        ],
+        [
+            {text: "Точный", type: "c"}, {text: "Доминирующий", type: "d"}, {text: "Охотный", type: "s"}, {text: "Притягательный", type: "i"}
+        ],
+        [
+            {text: "Уравновешенный", type: "i"}, {text: "Уступчивый", type: "c"}, {text: "Идущий на риск", type: "d"}, {text: "Услужливый", type: "s"}
+        ],
+        [
+            {text: "Осмотрительный", type: "c"}, {text: "Добрососедский", type: "s"}, {text: "Энергичный", type: "d"}, {text: "Убедительный", type: "i"}
+        ],
+        [
+            {text: "Уравновешенный", type: "s"}, {text: "Мотивирующий", type: "i"}, {text: "Щепетильный", type: "c"}, {text: "Решительный", type: "d"}
+        ],
+        [
+            {text: "Уверенный", type: "i"}, {text: "Готовый к сотрудничеству", type: "c"}, {text: "Беззаботный", type: "s"}, {text: "Аргументирующий", type: "d"}
+        ],
+        [
+            {text: "Сдержанный", type: "s"}, {text: "Прямой", type: "d"}, {text: "Строгий", type: "c"}, {text: "Убедительный", type: "i"}
+        ],
+        [
+            {text: "Застенчивый", type: "c"}, {text: "Требовательный", type: "d"}, {text: "Терпеливый", type: "s"}, {text: "Очаровательный", type: "i"}
+        ],
+        [
+            {text: "Неугомонный", type: "d"}, {text: "Дисциплинированный", type: "c"}, {text: "Вдохновляющий", type: "i"}, {text: "Внимательный", type: "s"}
+        ],
+        [
+            {text: "Обязательный", type: "s"}, {text: "Оживленный", type: "i"}, {text: "Решительный", type: "d"}, {text: "Точный", type: "c"}
+        ],
+        [
+            {text: "Добросовестный", type: "c"}, {text: "Компанейский", type: "i"}, {text: "Добрый", type: "s"}, {text: "Уверенный в себе", type: "d"}
+        ],
+        [
+            {text: "Дипломатичный", type: "c"}, {text: "Отважный", type: "d"}, {text: "Сочувствующий", type: "s"}, {text: "Оптимистичный", type: "i"}
+        ],
+        [
+            {text: "Настойчивый", type: "d"}, {text: "Общительный", type: "i"}, {text: "Постоянный", type: "s"}, {text: "Организованный", type: "c"}
+        ],
+        [
+            {text: "Соглашающийся", type: "c"}, {text: "Владеющий собой", type: "s"}, {text: "Шутливый", type: "d"}, {text: "Настойчивый", type: "i"}
+        ],
+        [
+            {text: "Обаятельный", type: "i"}, {text: "Позитивный", type: "d"}, {text: "Снисходительный", type: "s"}, {text: "Требовательный", type: "c"}
+        ],
+        [
+            {text: "Коммуникабельный", type: "i"}, {text: "Смелый", type: "d"}, {text: "Перфекционист", type: "c"}, {text: "Сдержанный", type: "s"}
+        ]
+    ];
+
+    let currentStep = 0;
+    const totalSteps = questions.length;
+    const scores = { d: 0, i: 0, s: 0, c: 0 };
+
+    // State for each step: an array of types in ordered position [0, 1, 2, 3]
+    // where index 0 is "most like me" and index 3 is "least like me"
+    // We assign weights: most like = 3, least like = 0? 
+    // Actually, in DISC, usually each item is chosen for both 'most' and 'least'.
+    // But here, the interface has 3 cards per step (or 1 per step in some versions).
+    // Looking at the original HTML:
+    // Each step has 3 cards. Each card has 4 items.
+    // Each card has "Я наиболее" and "Я наименее".
+    // This means for each card, we pick an order for the 4 items.
+    // Wait, the HTML says:
+    // <ul class="disc-list" id="draggable-list1">
+    //   <li class="disc-item" data-type="i">Экспресcивный</li>...
+    // </ul>
+    // And it's draggable.
+    // So for each card, we must have 4 items in order.
+    // The calculation:
+    // In each card, the item at top is "most like", bottom is "least like".
+    // Let's say position 0 (top) = +3, position 1 = +2, position 2 = +1, position 3 (bottom) = 0.
+    // BUT, the original might use a different scoring. 
+    // Typically, DISC is: 
+    // For each set of 4, you pick one as MOST and one as LEAST.
+    // Here, users are DRAGGING to order them.
+    // So for EACH card, the order tells us the preference.
+    // Let's use: pos 0: +3, pos 1: +2, pos 2: +1, pos 3: +0.
+    // There are 3 cards per step.
+    // That's 3 * 4 = 12 points per step.
+    
+    const stepData = questions.map(() => {
+        // Each step (tab) has 3 cards. 
+        // Each card has 4 items.
+        // We need to store the ordering for all 3 cards in this step.
+        // A simple way: an array of 3 arrays, each containing 4 types.
+        // We'll initialize with the original order.
+        return [
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null]
+        ];
+    });
+
+    // Correcting initialization based on the HTML provided
+    // The HTML shows steps 0, 1, 2... (8 steps total in the tabs, but we have 24 questions?)
+    // Wait, the HTML has "disc-tab" for 8 steps.
+    // But questions array has 24 items. 
+    // 24 questions / 3 cards per step = 8 steps. Perfect.
+
+    function init() {
+        const tabContainer = document.getElementById('tabContainer');
+        const rootwizard = document.getElementById('rootwizard');
+
+        for (let i = 0; i < totalSteps / 3; i++) { // totalSteps/3 is the number of 'tabs/steps'
+            // Create Tab
+            const tab = document.createElement('button');
+            tab.className = `disc-tab ${i === 0 ? 'is-active' : ''}`;
+            tab.textContent = `Шаг ${i + 1}`;
+            tab.dataset.step = i;
+            tab.onclick = () => goToStep(i);
+            tabContainer.appendChild(tab);
+
+            // Create Pane
+            const pane = document.createElement('div');
+            pane.className = `disc-pane ${i === 0 ? 'is-active' : ''}`;
+            pane.id = `pane-${i}`;
+            
+            const grid = document.createElement('div');
+            grid.className = 'disc-grid3';
+            
+            // Each step has 3 cards
+            for (let j = 0; j < 3; j++) {
+                const cardIdx = i * 3 + j;
+                const card = document.createElement('div');
+                card.className = 'disc-card';
+                
+                const title = document.createElement('div');
+                title.className = 'disc-card__title';
+                title.textContent = 'Я наиболее';
+                card.appendChild(title);
+
+                const list = document.createElement('ul');
+                list.className = 'disc-list';
+                list.dataset.cardIdx = cardIdx;
+                list.dataset.listIdx = j;
+
+                const currentQuestion = questions[cardIdx];
+                currentQuestion.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'disc-item';
+                    li.textContent = item.text;
+                    li.dataset.type = item.type;
+                    li.draggable = true;
+                    
+                    // Drag Events
+                    li.addEventListener('dragstart', handleDragStart);
+                    li.addEventListener('dragover', handleDragOver);
+                    li.addEventListener('drop', handleDrop);
+                    li.addEventListener('dragend', handleDragEnd);
+                    
+                    list.appendChild(li);
+                });
+                card.appendChild(list);
+
+                const foot = document.createElement('div');
+                foot.className = 'disc-card__foot';
+                foot.textContent = 'Я наименее';
+                card.appendChild(foot);
+
+                grid.appendChild(card);
+            }
+            pane.appendChild(grid);
+            rootwizard.appendChild(pane);
+            
+            // Initialize stepData with initial order
+            // Actually, we should populate stepData after DOM is ready or during creation
+        }
+
+        // Populate stepData with initial types
+        for (let i = 0; i < totalSteps / 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cardIdx = i * 3 + j;
+                const cardItems = questions[cardIdx];
+                stepData[i][j] = cardItems.map(item => item.type);
+            }
+        }
+
+        updateUI();
+    }
+
+    let draggedItem = null;
+
+    function handleDragStart(e) {
+        draggedItem = this;
+        this.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        if (this === draggedItem) return;
+
+        const list = this.parentNode;
+        const allItems = Array.from(list.querySelectorAll('.disc-item'));
+        const fromIdx = allItems.indexOf(draggedItem);
+        const toIdx = allItems.indexOf(this);
+
+        if (fromIdx < toIdx) {
+            this.after(draggedItem);
+        } else {
+            this.before(draggedItem);
+        }
+
+        updateStepDataFromDOM();
+    }
+
+    function handleDragEnd() {
+        this.classList.remove('dragging');
+    }
+
+    function updateStepDataFromDOM() {
+        const panes = document.querySelectorAll('.disc-pane');
+        panes.forEach((pane, stepIdx) => {
+            const cards = pane.querySelectorAll('.disc-card');
+            cards.forEach((card, cardLocalIdx) => {
+                const list = card.querySelector('.disc-list');
+                const items = Array.from(list.querySelectorAll('.disc-item'));
+                stepData[stepIdx][cardLocalIdx] = items.map(it => it.dataset.type);
+            });
+        });
+    }
+
+    function goToStep(step) {
+        currentStep = step;
+        updateUI();
+    }
+
+    function updateUI() {
+        // Update Tabs
+        const tabs = document.querySelectorAll('.disc-tab');
+        tabs.forEach((tab, idx) => {
+            tab.classList.toggle('is-active', idx === currentStep);
+        });
+
+        // Update Panes
+        const panes = document.querySelectorAll('.disc-pane');
+        panes.forEach((pane, idx) => {
+            pane.classList.toggle('is-active', idx === currentStep);
+        });
+
+        // Update Progress
+        const progress = ((currentStep + 1) / (totalSteps / 3)) * 100;
+        document.getElementById('progressBar').style.width = `${progress}%`;
+
+        // Buttons
+        document.getElementById('prevBtn').disabled = (currentStep === 0);
+        
+        if (currentStep === (totalSteps / 3) - 1) {
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('finishBtn').classList.remove('hidden');
+        } else {
+            document.getElementById('nextBtn').classList.remove('hidden');
+            document.getElementById('finishBtn').classList.add('hidden');
+        }
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        if (currentStep > 0) goToStep(currentStep - 1);
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (currentStep < (totalSteps / 3) - 1) goToStep(currentStep + 1);
+    });
+
+    document.getElementById('finishBtn').addEventListener('click', () => {
+        calculateResults();
+    });
+
+    function calculateResults() {
+        // Reset scores
+        const finalScores = { d: 0, i: 0, s: 0, c: 0 };
+
+        // For each step/pane
+        for (let i = 0; i < totalSteps / 3; i++) {
+            // For each card in step
+            for (let j = 0; j < 3; j++) {
+                const cardOrder = stepData[i][j];
+                // pos 0: +3, pos 1: +2, pos 2: +1, pos 3: 0
+                cardOrder.forEach((type, pos) => {
+                    const weight = 3 - pos;
+                    if (type) {
+                        finalScores[type] += weight;
+                    }
+                });
+            }
+        }
+
+        // Since we have 24 questions, total weights can be quite high.
+        // Let's normalize them to percentage or a scale.
+        // Total weight per card = 3+2+1+0 = 6. Total cards = 24. Total max score = 144.
+        const maxPossible = 144;
+        const normalized = {
+            D: Math.round((finalScores.d / maxPossible) * 100),
+            I: Math.round((finalScores.i / maxPossible) * 100),
+            S: Math.round((finalScores.s / maxPossible) * 100),
+            C: Math.round((finalScores.c / maxPossible) * 100)
+        };
+
+        showResults(normalized);
+    }
+
+    function showResults(normalized) {
+        document.getElementById('discModal').classList.add('hidden');
+        const resultContainer = document.getElementById('resultContainer');
+        resultContainer.classList.remove('hidden');
+
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        scoreDisplay.innerHTML = '<h2>Ваш профиль</h2>';
+
+        const chart = document.createElement('div');
+        chart.className = 'score-chart';
+
+        const labels = { D: 'Dominance (D)', I: 'Influence (I)', S: 'Stability (S)', C: 'Compliance (C)' };
+        const colors = { D: '#ff4d4d', I: '#ffaf40', S: '#33d9b2', C: '#34ace0' };
+
+        for (const [key, val] of Object.entries(normalized)) {
+            const row = document.createElement('div');
+            row.className = 'score-row';
+
+            const label = document.createElement('div');
+            label.className = 'score-label';
+            label.textContent = labels[key];
+
+            const barBg = document.createElement('div');
+            barBg.className = 'score-bar-bg';
+
+            const barFill = document.createElement('div');
+            barFill.className = 'score-bar-fill';
+            barFill.style.width = `${val}%`;
+            barFill.style.backgroundColor = colors[key];
+
+            const valDisplay = document.createElement('div');
+            valDisplay.className = 'score-val';
+            valDisplay.textContent = `${val}%`;
+
+            barBg.appendChild(barFill);
+            row.appendChild(label);
+            row.appendChild(barBg);
+            row.appendChild(valDisplay);
+            chart.appendChild(row);
+        }
+
+        scoreDisplay.appendChild(chart);
+    }
+
+    // Start the app
+    window.onload = init;
+</script>
+
+</body>
+</html>

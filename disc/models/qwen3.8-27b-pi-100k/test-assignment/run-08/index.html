@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Тестирование DISC — копия теста</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --ink: #1c2434;
+      --muted: #6b7488;
+      --line: #dde3ee;
+      --accent: #2f5fd0;
+      --accent-ink: #ffffff;
+      --accent-soft: #e8eefc;
+      --ok: #1f9d61;
+      --warn: #c2410c;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(28, 36, 52, .10);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(1200px 500px at 80% -10%, #e3ebfb 0%, rgba(227,235,251,0) 60%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    html.no-scroll, body.no-scroll { overflow: hidden; }
+
+    .page { max-width: 1080px; margin: 0 auto; padding: 28px 16px 64px; }
+
+    /* ---------- intro ---------- */
+    .intro {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+    .intro__badge {
+      flex: 0 0 auto;
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      background: var(--accent-soft);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .intro__body { flex: 1 1 320px; min-width: 260px; }
+    .intro h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: .2px; }
+    .intro p { margin: 0 0 6px; color: var(--muted); font-size: 15px; }
+    .intro .lead { color: var(--ink); font-weight: 600; font-size: 15px; }
+
+    /* ---------- buttons ---------- */
+    .btn {
+      appearance: none; border: 1px solid transparent; cursor: pointer;
+      font: inherit; font-weight: 600;
+      padding: 11px 22px; border-radius: 11px;
+      transition: background .15s ease, color .15s ease, border-color .15s ease, transform .05s ease;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn--primary { background: var(--accent); color: var(--accent-ink); }
+    .btn--primary:hover { background: #2a56bf; }
+    .btn--ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+    .btn--ghost:hover { background: #f6f8fd; }
+    .btn[disabled] { opacity: .45; cursor: default; }
+    .btn:focus-visible, .tab[tabindex]:focus-visible, li:focus-visible {
+      outline: 2px solid var(--accent); outline-offset: 2px;
+    }
+
+    /* ---------- tabs ---------- */
+    .tabs {
+      display: flex; gap: 6px; margin: 22px 0 14px;
+      overflow-x: auto; padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+    .tab {
+      flex: 0 0 auto;
+      appearance: none; border: 1px solid var(--line); background: #fff;
+      color: var(--muted); font: inherit; font-size: 14px; font-weight: 600;
+      padding: 8px 16px; border-radius: 999px; cursor: pointer;
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .tab:hover { color: var(--ink); border-color: #c6cfe2; }
+    .tab.is-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ---------- grid / cards ---------- */
+    .pane[hidden] { display: none; }
+    .grid3 {
+      display: grid; gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (max-width: 900px) { .grid3 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 14px rgba(28,36,52,.06);
+      padding: 18px 16px 14px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .card__title { font-size: 14px; font-weight: 700; color: var(--ok); }
+    .card__foot { font-size: 13px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+
+    /* ---------- lists ---------- */
+    ul.plist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .item {
+      display: flex; align-items: center; gap: 10px;
+      background: #fbfcff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 15px;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: grab;
+      touch-action: none;
+    }
+    .item.is-dragging { opacity: .92; border-color: var(--accent); background: var(--accent-soft); box-shadow: var(--shadow); }
+    .item.is-over { border-top: 2px solid var(--accent); }
+    .handle {
+      flex: 0 0 auto;
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      color: #b3b3b3;
+      cursor: grab;
+      background: none; border: none; padding: 0;
+    }
+    .item__text { flex: 1 1 auto; }
+    .item__rank {
+      flex: 0 0 auto;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #eef2fa;
+      color: var(--muted);
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ---------- progress / actions ---------- */
+    .progress {
+      height: 8px; border-radius: 999px; background: #e6ebf5;
+      overflow: hidden; margin: 18px 0 14px;
+    }
+    .progress__bar {
+      height: 100%; width: 12.5%;
+      background: linear-gradient(90deg, #4f7ce2, var(--accent));
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+    .actions { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .actions .btn--primary { margin-left: auto; }
+
+    /* ---------- result ---------- */
+    .result {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 26px;
+      margin-top: 8px;
+    }
+    .result h2 { margin: 0 0 6px; font-size: 22px; }
+    .result p.sub { margin: 0 0 20px; color: var(--muted); }
+    .scores { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+    @media (max-width: 700px) { .scores { grid-template-columns: 1fr; } }
+    .score {
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 16px;
+      background: #fbfcff;
+    }
+    .score__head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .score__letter {
+      font-size: 22px; font-weight: 800; letter-spacing: 1px;
+      color: var(--accent);
+    }
+    .score__name { font-weight: 600; font-size: 15px; }
+    .score__value { margin-left: auto; font-size: 24px; font-weight: 800; }
+    .score__bar { height: 8px; border-radius: 999px; background: #e6ebf5; overflow: hidden; }
+    .score__bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+    .result .actions { margin-top: 22px; }
+
+    .note { margin-top: 18px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Intro -->
+    <section class="intro" id="intro" hidden>
+      <div class="intro__badge" aria-hidden="true">
+        <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+          <rect x="3" y="12" width="6" height="18" rx="2" fill="#c9d6f4"/>
+          <rect x="12" y="6" width="6" height="24" rx="2" fill="#8fabe6"/>
+          <rect x="21" y="9" width="6" height="21" rx="2" fill="#4f7ce2"/>
+          <rect x="28" y="15" width="2" height="15" rx="1" fill="#e8eefc"/>
+        </svg>
+      </div>
+      <div class="intro__body">
+        <h1>Тестирование DISC</h1>
+        <p class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+        <p>Помните — чем честнее вы с тестом, тем точнее результаты! 7 шагов по 3 карточки, в конце — ваши баллы D / I / S / C.</p>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnStart">Начать тест</button>
+    </section>
+
+    <!-- Test -->
+    <section id="test" aria-label="Тест DISC">
+      <div class="tabs" role="tablist" aria-label="Шаги" id="tabs"></div>
+
+      <div id="panes"></div>
+
+      <div class="result" id="result" hidden>
+        <h2>Ваш результат</h2>
+        <p class="sub">Баллы по шкале DISC: сколько раз вы ставили характеристику самой похожей (позиция 1) минус сколько раз самой непохожей (позиция 4).</p>
+        <div class="scores" id="scores"></div>
+        <div class="actions">
+          <button class="btn btn--ghost" type="button" id="btnReset">Пройти заново</button>
+        </div>
+        <p class="note">Результаты остаются на этом устройстве и никуда не отправляются.</p>
+      </div>
+
+      <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+
+      <div class="actions" id="actions">
+        <button class="btn btn--ghost" type="button" id="btnPrev">Назад</button>
+        <button class="btn btn--primary" type="button" id="btnNext">Далее</button>
+        <button class="btn btn--primary" type="button" id="btnFinish" hidden>Завершить тест</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ================= данные (24 карты, порядок и подписи как в оригинале) ================= */
+    var DATA = [
+      [[["i","Экспресcивный"],["c","Покладистый"],["d","Волевой"],["s","Осторожный"]],
+       [["d","Пылкий"],["i","Разговорчивый"],["s","Добродушный"],["c","Сдержанный"]],
+       [["i","Любитель приключений"],["c","Энтузиаст"],["d","Исполнитель инструкций"],["s","Верный"]]],
+      [[["d","Настойчивый"],["c","Осторожный"],["i","Эмоциональный"],["s","Удовлетворенный"]],
+       [["s","Довольный"],["d","Нетерпеливый"],["i","Убедительный"],["c","Безропотный"]],
+       [["c","Смиренный"],["s","Умеющий слушать"],["i","Душа компании"],["d","Волевой"]]],
+      [[["c","Правильный"],["d","Первопроходец"],["s","Спокойный"],["i","Влиятельный"]],
+       [["c","Почтительный"],["i","Контактный"],["d","Агрессивный"],["s","Мягкий"]],
+       [["i","Весельчак"],["s","Покорный"],["c","Тактичный"],["d","Соперничающий"]]],
+      [[["c","Точный"],["d","Доминирующий"],["s","Охотный"],["i","Притягательный"]],
+       [["i","Уравновешенный"],["c","Уступчивый"],["d","Идущий на риск"],["s","Услужливый"]],
+       [["c","Осмотрительный"],["s","Добрососедский"],["d","Энергичный"],["i","Убедительный"]]],
+      [[["s","Уравновешенный"],["i","Мотивирующий"],["c","Щепетильный"],["d","Решительный"]],
+       [["i","Уверенный"],["c","Готовый к сотрудничеству"],["s","Беззаботный"],["d","Аргументирующий"]],
+       [["s","Сдержанный"],["d","Прямой"],["c","Строгий"],["i","Убедительный"]]],
+      [[["c","Застенчивый"],["d","Требовательный"],["s","Терпеливый"],["i","Очаровательный"]],
+       [["d","Неугомонный"],["c","Дисциплинированный"],["i","Вдохновляющий"],["s","Внимательный"]],
+       [["s","Обязательный"],["i","Оживленный"],["d","Решительный"],["c","Точный"]]],
+      [[["c","Добросовестный"],["i","Компанейский"],["s","Добрый"],["d","Уверенный в себе"]],
+       [["c","Дипломатичный"],["d","Отважный"],["s","Сочувствующий"],["i","Оптимистичный"]],
+       [["d","Настойчивый"],["i","Общительный"],["s","Постоянный"],["c","Организованный"]]],
+      [[["c","Соглашающийся"],["s","Владеющий собой"],["d","Шутливый"],["i","Настойчивый"]],
+       [["i","Обаятельный"],["d","Позитивный"],["s","Снисходительный"],["c","Требовательный"]],
+       [["i","Коммуникабельный"],["d","Смелый"],["c","Перфекционист"],["s","Сдержанный"]]]
+    ];
+    var STEP_NAMES = ["Первый","Второй","Третий","Четвертый","Пятый","Шестой","Седьмой","Восьмой"];
+    var DISC_NAMES = { d: "Доминирование", i: "Способность влиять", s: "Стабильность", c: "Соблюдение правил" };
+
+    /* ================= DOM ================= */
+    var intro = document.getElementById("intro");
+    var test = document.getElementById("test");
+    var tabsEl = document.getElementById("tabs");
+    var panesEl = document.getElementById("panes");
+    var resultEl = document.getElementById("result");
+    var scoresEl = document.getElementById("scores");
+    var progressBar = document.getElementById("progressBar");
+    var actionsEl = document.getElementById("actions");
+    var btnPrev = document.getElementById("btnPrev");
+    var btnNext = document.getElementById("btnNext");
+    var btnFinish = document.getElementById("btnFinish");
+    var btnStart = document.getElementById("btnStart");
+    var btnReset = document.getElementById("btnReset");
+
+    var step = 0;
+    var TOTAL = 8;
+    var started = false;
+
+    /* ---------- build UI ---------- */
+    function build() {
+      STEP_NAMES.forEach(function (name, i) {
+        var b = document.createElement("button");
+        b.className = "tab";
+        b.type = "button";
+        b.setAttribute("role", "tab");
+        b.dataset.stepBtn = String(i);
+        b.textContent = name;
+        b.addEventListener("click", function () { setStep(i); });
+        tabsEl.appendChild(b);
+
+        var pane = document.createElement("div");
+        pane.className = "pane";
+        pane.dataset.stepPane = String(i);
+        pane.setAttribute("role", "tabpanel");
+
+        var grid = document.createElement("div");
+        grid.className = "grid3";
+        DATA[i].forEach(function (cardItems) {
+          var card = document.createElement("div");
+          card.className = "card";
+
+          var title = document.createElement("div");
+          title.className = "card__title";
+          title.textContent = "Я наиболее";
+
+          var ul = document.createElement("ul");
+          ul.className = "plist";
+          cardItems.forEach(function (it) {
+            var li = document.createElement("li");
+            li.className = "item";
+            li.dataset.type = it[0];
+            li.setAttribute("draggable", "true");
+            li.setAttribute("tabindex", "0");
+
+            var h = document.createElement("span");
+            h.className = "handle";
+            h.setAttribute("aria-hidden", "true");
+            h.innerHTML =
+              '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">' +
+              '<circle cx="6" cy="4" r="1.54" fill="currentColor"/>' +
+              '<circle cx="10" cy="4" r="1.54" fill="currentColor"/>' +
+              '<circle cx="6" cy="8" r="1.54" fill="currentColor"/>' +
+              '<circle cx="10" cy="8" r="1.54" fill="currentColor"/>' +
+              '<circle cx="6" cy="12" r="1.54" fill="currentColor"/>' +
+              '<circle cx="10" cy="12" r="1.54" fill="currentColor"/>' +
+              '</svg>';
+
+            var t = document.createElement("span");
+            t.className = "item__text";
+            t.textContent = it[1];
+
+            var rank = document.createElement("span");
+            rank.className = "item__rank";
+            rank.textContent = "1";
+
+            li.appendChild(h);
+            li.appendChild(t);
+            li.appendChild(rank);
+            ul.appendChild(li);
+          });
+
+          var foot = document.createElement("div");
+          foot.className = "card__foot";
+          foot.textContent = "Я наименее";
+
+          card.appendChild(title);
+          card.appendChild(ul);
+          card.appendChild(foot);
+          grid.appendChild(card);
+        });
+
+        pane.appendChild(grid);
+        panesEl.appendChild(pane);
+      });
+    }
+
+    /* ---------- ranks ---------- */
+    function updateRanks() {
+      panesEl.querySelectorAll("ul.plist").forEach(function (ul) {
+        Array.prototype.forEach.call(ul.children, function (li, i) {
+          li.querySelector(".item__rank").textContent = String(i + 1);
+        });
+      });
+    }
+
+    /* ---------- steps ---------- */
+    function setStep(n) {
+      step = Math.max(0, Math.min(TOTAL - 1, n));
+      render();
+    }
+
+    function render() {
+      var tabs = tabsEl.querySelectorAll(".tab");
+      var panes = panesEl.querySelectorAll(".pane");
+      Array.prototype.forEach.call(tabs, function (t) {
+        var is = Number(t.dataset.stepBtn) === step;
+        t.classList.toggle("is-active", is);
+        t.setAttribute("aria-selected", is ? "true" : "false");
+      });
+      Array.prototype.forEach.call(panes, function (p) {
+        p.hidden = Number(p.dataset.stepPane) !== step;
+      });
+      btnPrev.disabled = step === 0;
+      btnNext.hidden = step === TOTAL - 1 || showResult;
+      btnFinish.hidden = step !== TOTAL - 1 || showResult;
+      progressBar.style.width = (((step + 1) / TOTAL) * 100) + "%";
+      updateRanks();
+      // центрируем активный таб на узких экранах
+      var active = tabsEl.querySelector(".tab.is-active");
+      if (active) active.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    }
+
+    var showResult = false;
+
+    /* ---------- drag & drop (HTML5, без внешних библиотек) ---------- */
+    function initDnD() {
+      panesEl.querySelectorAll("ul.plist").forEach(function (ul) {
+        Array.prototype.forEach.call(ul.children, function (li) {
+          li.addEventListener("dragstart", function (e) {
+            li.classList.add("is-dragging");
+            try { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", ""); } catch (_) {}
+          });
+          li.addEventListener("dragend", function () {
+            li.classList.remove("is-dragging");
+            ul.querySelectorAll(".is-over").forEach(function (x) { x.classList.remove("is-over"); });
+            updateRanks();
+          });
+          li.addEventListener("dragover", function (e) {
+            e.preventDefault();
+            var dragging = ul.querySelector(".is-dragging");
+            if (!dragging || dragging === li) return;
+            var rect = li.getBoundingClientRect();
+            var before = (e.clientY - rect.top) < rect.height / 2;
+            ul.insertBefore(dragging, before ? li : li.nextSibling);
+            updateRanks();
+          });
+          li.addEventListener("dragleave", function () { li.classList.remove("is-over"); });
+          li.addEventListener("drop", function (e) { e.preventDefault(); li.classList.remove("is-over"); });
+        });
+
+        /* клавиатурное перестановление: ↑/↓ (или Alt+↑/↓) */
+        Array.prototype.forEach.call(ul.children, function (li) {
+          li.addEventListener("keydown", function (e) {
+            var prev = li.previousElementSibling;
+            var next = li.nextElementSibling;
+            if ((e.key === "ArrowUp" || e.key === "ArrowDown") && e.altKey) e.preventDefault();
+            else if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+            e.preventDefault();
+            if (e.key === "ArrowUp" && prev) ul.insertBefore(li, prev);
+            else if (e.key === "ArrowDown" && next) ul.insertBefore(next, li);
+            updateRanks();
+            li.focus();
+          });
+        });
+      });
+    }
+
+    /* ---------- score ---------- */
+    function collect() {
+      var rows = [];
+      panesEl.querySelectorAll("ul.plist").forEach(function (ul, listIdx) {
+        Array.prototype.forEach.call(ul.children, function (li, pos) {
+          rows.push({ list: listIdx, pos: pos, type: li.getAttribute("data-type") });
+        });
+      });
+      return rows;
+    }
+
+    function score(rows) {
+      var maj = [], min = [];
+      rows.forEach(function (x) {
+        if (x.pos === 0) maj.push(x.type);
+        if (x.pos === 3) min.push(x.type);
+      });
+      var count = function (arr, ch) { return arr.reduce(function (a, v) { return a + (v === ch ? 1 : 0); }, 0); };
+      return {
+        d: count(maj, "d") - count(min, "d"),
+        i: count(maj, "i") - count(min, "i"),
+        s: count(maj, "s") - count(min, "s"),
+        c: count(maj, "c") - count(min, "c")
+      };
+    }
+
+    function renderResult(res) {
+      scoresEl.innerHTML = "";
+      ["d", "i", "s", "c"].forEach(function (k) {
+        var v = res[k];
+        var div = document.createElement("div");
+        div.className = "score";
+        var pct = Math.max(0, Math.min(100, ((v + 8) / 16) * 100));
+        div.innerHTML =
+          '<div class="score__head">' +
+            '<span class="score__letter">' + k.toUpperCase() + '</span>' +
+            '<span class="score__name">' + DISC_NAMES[k] + '</span>' +
+            '<span class="score__value">' + v + '</span>' +
+          '</div>' +
+          '<div class="score__bar" aria-hidden="true"><i style="width:' + pct + '%"></i></div>';
+        scoresEl.appendChild(div);
+      });
+      resultEl.hidden = false;
+      resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function restart() {
+      showResult = false;
+      resultEl.hidden = true;
+      /* вернуть списки к исходному порядку */
+      var listIdx = 0;
+      panesEl.querySelectorAll("ul.plist").forEach(function (ul) {
+        var order = DATA[Math.floor(listIdx / 3)][listIdx % 3];
+        var byText = {};
+        order.forEach(function (o, i) { byText[o[1]] = i; });
+        var items = Array.prototype.slice.call(ul.children).sort(function (a, b) {
+          return byText[a.querySelector(".item__text").textContent]
+               - byText[b.querySelector(".item__text").textContent];
+        });
+        items.forEach(function (li) { ul.appendChild(li); });
+        listIdx++;
+      });
+      setStep(0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* ---------- wiring ---------- */
+    build();
+    initDnD();
+
+    btnStart.addEventListener("click", function () {
+      started = true;
+      intro.hidden = true;
+      test.style.display = "";
+      setStep(0);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    btnPrev.addEventListener("click", function () { setStep(step - 1); });
+    btnNext.addEventListener("click", function () { setStep(step + 1); });
+    btnFinish.addEventListener("click", function () {
+      var rows = collect();
+      var res = score(rows);
+      showResult = true;
+      renderResult(res);
+      updateRanks();
+      render();
+    });
+    btnReset.addEventListener("click", restart);
+
+    /* старт: показываем интро, затем тест */
+    intro.hidden = false;
+    test.style.display = "block";
+    setStep(0);
+    if (typeof window.scrollTo === "function") window.scrollTo(0, 0);
+  })();
+  </script>
+</body>
+</html>

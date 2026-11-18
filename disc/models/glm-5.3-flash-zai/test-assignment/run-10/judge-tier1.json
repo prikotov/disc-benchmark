@@ -1,0 +1,18 @@
+{
+  "judge_model": "glm-5.3-flash",
+  "thinking": "low",
+  "tier": 1,
+  "finished_at": "2026-11-17T00:22:18.187761+00:00",
+  "duration_s": 17.6,
+  "exit_code": 0,
+  "prompt_chars": 72859,
+  "verdict": {
+    "data": 4,
+    "logic": 4,
+    "ux": 4,
+    "impl": 4,
+    "total": 16,
+    "notes": "Полное и точное воспроизведение DISC-теста: все 24 вопроса в исходном порядке с посимвольными прилагательными (включая «Экспресcивный» с латинской c), 96/96 типов корректны и скрыты в data-type. Подсчёт строго по оригинальному алгоритму (позиция 1 = +1, позиция 4 = −1, балл = разность), автопрогон сходится с эталоном D:5 I:2 S:-3 C:-4, сумма инвариантно 0. Поток полный: старт → 8 шагов → результат, табы, прогресс-бар, «Назад» заблокирован на шаге 1, drag&drop на pointer events (мышь за весь элемент, тач за ручку), дисклеймер и «Пройти ещё раз» есть. Один файл, без сети и библиотек, офлайн; email-шаг и токены отсутствуют, маркетинг адаптирован в лендинг, restart корректно восстанавливает исходный порядок списков.",
+    "examples": "data: <li class=\"disc-item\" data-type=\"i\">Экспресcивный</li> — латинская «c» сохранена; check.json: adjectives 84/84, types 96/96. logic: score() — «if (x.pos === 0) maj.push(x.type); if (x.pos === 3) min.push(x.type); return {d: count(maj,'d') − count(min,'d'), …}»; ручная проверка раскладки из final_orders даёт ровно D=5, I=2, S=−3, C=−4, сумма 0. ux: playthrough — 8 кликов «Далее», «Завершить тест» отработал, dead_ends 0, overflow нет; «btnPrev.disabled = step === 0»; touch: «dragByHandleOnly() && !e.target.closest('.disc-handle') → return», handle с touch-action:none. impl: внешних URL/fetch/form нет (check.external pass), SortableJS заменён собственной pointer-реализацией с ghost и автоскроллом; restart восстанавливает initialOrder через appendChild; лишних следов email/token нет."
+  }
+}

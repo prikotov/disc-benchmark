@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — копия</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;color:#111;line-height:1.4}
+header{background:#0d47a1;color:#fff;padding:16px;text-align:center;font-weight:600}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+h1{font-size:22px;margin-bottom:8px}
+.subtitle{color:#555;margin-bottom:20px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tab{padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer;font-size:14px}
+.tab.is-active{background:#0d47a1;color:#fff;border-color:#0d47a1}
+.step{display:none}
+.step.is-active{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h3{font-size:14px;margin-bottom:8px;color:#334155}
+.list{list-style:none}
+.list li{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin:6px 0;cursor:grab;display:flex;align-items:center;gap:8px}
+.list li.dragging{opacity:.5}
+.list li.over{border-color:#0d47a1;background:#e0f2fe}
+.handle{cursor:grab;color:#94a3b8}
+.foot{margin-top:8px;font-size:12px;color:#64748b;text-align:center}
+.controls{display:flex;justify-content:space-between;margin-top:24px}
+button{padding:10px 18px;border:none;border-radius:8px;background:#0d47a1;color:#fff;cursor:pointer;font-weight:600}
+button:disabled{opacity:.5;cursor:not-allowed}
+.result{display:none;margin-top:24px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}
+.result.show{display:block}
+.bars{display:grid;gap:10px}
+.bar{display:flex;align-items:center;gap:10px}
+.bar span{width:120px}
+.bar .val{flex:1;height:22px;background:#e2e8f0;border-radius:6px;overflow:hidden}
+.bar .val div{height:100%;background:#0d47a1}
+.summary{margin-top:16px;font-size:18px;font-weight:600}
+</style>
+</head>
+<body>
+<header>Тест DISC</header>
+<div class="container">
+<h1>Пройдите тест DISC</h1>
+<div class="subtitle">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</div>
+<div class="tabs" id="tabs"></div>
+<div id="steps"></div>
+<div class="controls">
+<button id="prevBtn" disabled>Назад</button>
+<button id="nextBtn">Далее</button>
+</div>
+<div class="result" id="result">
+<h2>Ваш результат</h2>
+<div class="bars" id="bars"></div>
+<div class="summary" id="summary"></div>
+</div>
+</div>
+<script>
+const stepsData=[
+[
+[{t:'i',txt:'Экспресcивный'},{t:'c',txt:'Покладистый'},{t:'d',txt:'Волевой'},{t:'s',txt:'Осторожный'}],
+[{t:'d',txt:'Пылкий'},{t:'i',txt:'Разговорчивый'},{t:'s',txt:'Добродушный'},{t:'c',txt:'Сдержанный'}],
+[{t:'i',txt:'Любитель приключений'},{t:'c',txt:'Энтузиаст'},{t:'d',txt:'Исполнитель инструкций'},{t:'s',txt:'Верный'}]
+],
+[
+[{t:'d',txt:'Настойчивый'},{t:'c',txt:'Осторожный'},{t:'i',txt:'Эмоциональный'},{t:'s',txt:'Удовлетворенный'}],
+[{t:'s',txt:'Довольный'},{t:'d',txt:'Нетерпеливый'},{t:'i',txt:'Убедительный'},{t:'c',txt:'Безропотный'}],
+[{t:'c',txt:'Смиренный'},{t:'s',txt:'Умеющий слушать'},{t:'i',txt:'Душа компании'},{t:'d',txt:'Волевой'}]
+],
+[
+[{t:'c',txt:'Правильный'},{t:'d',txt:'Первопроходец'},{t:'s',txt:'Спокойный'},{t:'i',txt:'Влиятельный'}],
+[{t:'c',txt:'Почтительный'},{t:'i',txt:'Контактный'},{t:'d',txt:'Агрессивный'},{t:'s',txt:'Мягкий'}],
+[{t:'i',txt:'Весельчак'},{t:'s',txt:'Покорный'},{t:'c',txt:'Тактичный'},{t:'d',txt:'Соперничающий'}]
+],
+[
+[{t:'c',txt:'Точный'},{t:'d',txt:'Доминирующий'},{t:'s',txt:'Охотный'},{t:'i',txt:'Притягательный'}],
+[{t:'i',txt:'Уравновешенный'},{t:'c',txt:'Уступчивый'},{t:'d',txt:'Идущий на риск'},{t:'s',txt:'Услужливый'}],
+[{t:'c',txt:'Осмотрительный'},{t:'s',txt:'Добрососедский'},{t:'d',txt:'Энергичный'},{t:'i',txt:'Убедительный'}]
+],
+[
+[{t:'s',txt:'Уравновешенный'},{t:'i',txt:'Мотивирующий'},{t:'c',txt:'Щепетильный'},{t:'d',txt:'Решительный'}],
+[{t:'i',txt:'Уверенный'},{t:'c',txt:'Готовый к сотрудничеству'},{t:'s',txt:'Беззаботный'},{t:'d',txt:'Аргументирующий'}],
+[{t:'s',txt:'Сдержанный'},{t:'d',txt:'Прямой'},{t:'c',txt:'Строгий'},{t:'i',txt:'Убедительный'}]
+],
+[
+[{t:'c',txt:'Застенчивый'},{t:'d',txt:'Требовательный'},{t:'s',txt:'Терпеливый'},{t:'i',txt:'Очаровательный'}],
+[{t:'d',txt:'Неугомонный'},{t:'c',txt:'Дисциплинированный'},{t:'i',txt:'Вдохновляющий'},{t:'s',txt:'Внимательный'}],
+[{t:'s',txt:'Обязательный'},{t:'i',txt:'Оживленный'},{t:'d',txt:'Решительный'},{t:'c',txt:'Точный'}]
+],
+[
+[{t:'c',txt:'Добросовестный'},{t:'i',txt:'Компанейский'},{t:'s',txt:'Добрый'},{t:'d',txt:'Уверенный в себе'}],
+[{t:'c',txt:'Дипломатичный'},{t:'d',txt:'Отважный'},{t:'s',txt:'Сочувствующий'},{t:'i',txt:'Оптимистичный'}],
+[{t:'d',txt:'Настойчивый'},{t:'i',txt:'Общительный'},{t:'s',txt:'Постоянный'},{t:'c',txt:'Организованный'}]
+],
+[
+[{t:'c',txt:'Соглашающийся'},{t:'s',txt:'Владеющий собой'},{t:'d',txt:'Шутливый'},{t:'i',txt:'Настойчивый'}],
+[{t:'i',txt:'Обаятельный'},{t:'d',txt:'Позитивный'},{t:'s',txt:'Снисходительный'},{t:'c',txt:'Требовательный'}],
+[{t:'i',txt:'Коммуникабельный'},{t:'d',txt:'Смелый'},{t:'c',txt:'Перфекционист'},{t:'s',txt:'Сдержанный'}]
+]
+];
+
+const typeNames={d:'Доминирование D',i:'Влияние i',s:'Стабильность S',c:'Добросовестность C'};
+let step=0;
+const tabsEl=document.getElementById('tabs');
+const stepsEl=document.getElementById('steps');
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+const resultEl=document.getElementById('result');
+const barsEl=document.getElementById('bars');
+const summaryEl=document.getElementById('summary');
+
+stepsData.forEach((_,i)=>{
+ const b=document.createElement('button');
+ b.className='tab'+(i===0?' is-active':'');
+ b.textContent='Шаг '+(i+1);
+ b.dataset.idx=i;
+ tabsEl.appendChild(b);
+});
+
+function render(){
+ tabsEl.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('is-active',i===step));
+ prevBtn.disabled=step===0;
+ nextBtn.textContent=step===stepsData.length-1?'Завершить':'Далее';
+ document.querySelectorAll('.step').forEach((s,i)=>s.classList.toggle('is-active',i===step));
+}
+
+function buildSteps(){
+ stepsEl.innerHTML='';
+ stepsData.forEach((lists,si)=>{
+   const wrap=document.createElement('div');
+   wrap.className='step'+(si===0?' is-active':'');
+   wrap.dataset.idx=si;
+   const grid=document.createElement('div');
+   grid.className='grid';
+   lists.forEach(list=>{
+     const card=document.createElement('div');
+     card.className='card';
+     const h=document.createElement('h3');h.textContent='Я наиболее → Я наименее';
+     const ul=document.createElement('ul');ul.className='list';
+     list.forEach(item=>{
+       const li=document.createElement('li');
+       li.draggable=true;
+       li.dataset.type=item.t;
+       li.innerHTML=`<span class="handle">⋮⋮</span>${item.txt}`;
+       ul.appendChild(li);
+       li.addEventListener('dragstart',()=>li.classList.add('dragging'));
+       li.addEventListener('dragend',()=>li.classList.remove('dragging'));
+       li.addEventListener('dragover',e=>{e.preventDefault();li.classList.add('over')});
+       li.addEventListener('dragleave',()=>li.classList.remove('over'));
+       li.addEventListener('drop',e=>{
+         e.preventDefault();
+         const dragging=document.querySelector('.dragging');
+         if(dragging && dragging!==li){
+           const rect=li.getBoundingClientRect();
+           const before=e.clientY<rect.top+rect.height/2;
+           ul.insertBefore(dragging, before?li:li.nextSibling);
+         }
+         li.classList.remove('over');
+       });
+     });
+     const foot=document.createElement('div');foot.className='foot';foot.textContent='Я наименее';
+     card.append(h,ul,foot);
+     grid.appendChild(card);
+   });
+   wrap.appendChild(grid);
+   stepsEl.appendChild(wrap);
+ });
+ render();
+}
+buildSteps();
+
+tabsEl.addEventListener('click',e=>{
+ if(e.target.classList.contains('tab')){
+   step=+e.target.dataset.idx;
+   render();
+ }
+});
+prevBtn.onclick=()=>{if(step>0){step--;render();}};
+nextBtn.onclick=()=>{
+ if(step<stepsData.length-1){step++;render();return;}
+ // finish
+ const scores={d:0,i:0,s:0,c:0};
+ document.querySelectorAll('.step').forEach(stepDiv=>{
+   stepDiv.querySelectorAll('.list').forEach(ul=>{
+     [...ul.children].forEach((li,idx)=>{
+       const t=li.dataset.type;
+       if(idx===0) scores[t]+=1;
+       if(idx===3) scores[t]-=1;
+     });
+   });
+ });
+ const maxScore=Math.max(...Object.values(scores));
+ const winners=Object.entries(scores).filter(([k,v])=>v===maxScore).map(([k])=>k);
+ const names={d:'Доминирование D',i:'Влияние i',s:'Стабильность S',c:'Добросовестность C'};
+ const topName=winners.map(k=>names[k]).join(' / ');
+ const maxAbs=Math.max(1,...Object.values(scores).map(Math.abs));
+ barsEl.innerHTML='';
+ for(const k of ['d','i','s','c']){
+   const v=scores[k];
+   const pct=Math.min(100,Math.abs(v)/maxAbs*100);
+   const bar=document.createElement('div');bar.className='bar';
+   bar.innerHTML=`<span>${names[k]}</span><div class="val"><div style="width:${pct}%"></div></div><span>${v}</span>`;
+   barsEl.appendChild(bar);
+ }
+ summaryEl.textContent='Ваш ведущий стиль: '+topName;
+ resultEl.classList.add('show');
+ window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+};
+</script>
+</body>
+</html>

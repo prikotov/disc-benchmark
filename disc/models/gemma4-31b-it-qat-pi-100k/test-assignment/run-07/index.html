@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Тест Личности</title>
+    <style>
+        :root {
+            --primary: #268AC5;
+            --bg: #f8f9fa;
+            --text: #333;
+            --card-bg: #ffffff;
+            --border: #ddd;
+            --accent: #eef6ff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var-bg; /* Error: should be var(--bg) */
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #app {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            box-sizinges: border-box;
+            box-sizing: border-box;
+        }
+        .step-container {
+            display: none;
+        }
+        .step-container.active {
+            display: block;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .card-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .disc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .disc-item {
+            background: var(--accent);
+            border: 1px solid var(--border);
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+        }
+        .disc-item:active {
+            cursor: grabbing;
+            transform: scale(1.02);
+        }
+        .disc-item.dragging {
+            opacity: 0.5;
+            background: #d0e6ff;
+        }
+        .card-footer {
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .results {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .results h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .score-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: var(--accent);
+            border: 1px solid var(--primary);
+        }
+        .score-val {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .score-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .type-descr {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="test-ui">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="steps"></div>
+            <div class="controls">
+                <button class="btn btn-ghost" id="prevBtn" disabled>Назад</button>
+                <button class="btn btn-primary" id="nextBtn">Далее</button>
+            </div>
+        </div>
+        <div id="results-ui" class="results" style="display: none;">
+            <h2>Ваши результаты DISC</h2>
+            <p>Ниже представлены ваши баллы по четырем основным типам поведения.</p>
+            <div class="score-grid" id="scoreGrid"></div>
+            <div class="type-descr">
+                <p><strong>D (Доминирование):</strong> Решительность, инициативность, ориентация на результат.</p>
+                <p><strong>I (Влияние):</strong> Общительность, оптимизм, умение вдохновлять.</p>
+                <p><strong>S (Стабильность):</strong> Надежность, терпение, умение слушать.</p>
+                <p><strong>C (Соответствие):</strong> Точность, внимательность к деталям, системность.</p>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 30px;" onclick="location.reload()">Пройти заново</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+  {
+    "id": "draggable-list1",
+    "options": [
+      { "text": "Экспресcивный", "type": "i" },
+      { "text": "Покладистый", "type": "c" },
+      { "text": "Волевой", "type": "d" },
+      { "text": "Осторожный", "type": "s" }
+    ]
+  },
+  {
+    "id": "draggable-list2",
+    "options": [
+      { "text": "Пылкий", "type": "d" },
+      { "text": "Разговорчивый", "type": "i" },
+      { "text": "Добродушный", "type": "s" },
+      { "text": "Сдержанный", "type": "c" }
+    ]
+  },
+  {
+    "id": "draggable-list3",
+    "options": [
+      { "text": "Любитель приключений", "type": "i" },
+      { "text": "Энтузиаст", "type": "c" },
+      { "text": "Исполнитель инструкций", "type": "d" },
+      { "text": "Верный", "type": "s" }
+    ]
+  },
+  {
+    "id": "draggable-list4",
+    "options": [
+      { "text": "Настойчивый", "type": "d" },
+      { "text": "Осторожный", "type": "c" },
+      { "text": "Эмоциональный", "type": "i" },
+      { "text": "Удовлетворенный", "type": "s" }
+    ]
+  },
+  {
+    "id": "draggable-list5",
+    "options": [
+      { "text": "Довольный", "type": "s" },
+      { "text": "Нетерпеливый", "type": "d" },
+      { "text": "Убедительный", "type": "i" },
+      { "text": "Безропотный", "type": "c" }
+    ]
+  },
+  {
+    "id": "draggable-list6",
+    "options": [
+      { "text": "Смиренный", "type": "c" },
+      { "text": "Умеющий слушать", "type": "s" },
+      { "text": "Душа компании", "type": "i" },
+      { "text": "Волевой", "type": "d" }
+    ]
+  },
+  {
+    "id": "draggable-list7",
+    "options": [
+      { "text": "Правильный", "type": "c" },
+      { "text": "Первопроходец", "type": "d" },
+      { "text": "Спокойный", "type": "s" },
+      { "text": "Влиятельный", "type": "i" }
+    ]
+  },
+  {
+    "id": "draggable-list8",
+    "options": [
+      { "text": "Почтительный", "type": "c" },
+      { "text": "Контактный", "type": "i" },
+      { "text": "Агрессивный", "type": "d" },
+      { "text": "Мягкий", "type": "s" }
+    ]
+  },
+  {
+    "id": "draggable-list9",
+    "options": [
+      { "text": "Весельчак", "type": "i" },
+      { "text": "Покорный", "type": "s" },
+      { "text": "Тактичный", "type": "c" },
+      { "text": "Соперничающий", "type": "d" }
+    ]
+  },
+  {
+    "id": "draggable-list10",
+    "options": [
+      { "text": "Точный", "type": "c" },
+      { "text": "Доминирующий", "type": "d" },
+      { "text": "Охотный", "type": "s" },
+      { "text": "Притягательный", "type": "i" }
+    ]
+  },
+  {
+    "id": "draggable-list11",
+    "options": [
+      { "text": "Уравновешенный", "type": "i" },
+      { "text": "Уступчивый", "type": "c" },
+      { "text": "Идущий на риск", "type": "d" },
+      { "text": "Услужливый", "type": "s" }
+    ]
+  },
+  {
+    "id": "draggable-list12",
+    "options": [
+      { "text": "Осмотрительный", "type": "c" },
+      { "text": "Добрососедский", "type": "s" },
+      { "text": "Энергичный", "type": "d" },
+      { "text": "Убедительный", "type": "i" }
+    ]
+  },
+  {
+    "id": "draggable-list13",
+    "options": [
+      { "text": "Уравновешенный", "type": "s" },
+      { "text": "Мотивирующий", "type": "i" },
+      { "text": "Щепетильный", "type": "c" },
+      { "text": "Решительный", "type": "d" }
+    ]
+  },
+  {
+    "id": "draggable-list14",
+    "options": [
+      { "text": "Уверенный", "type": "i" },
+      { "text": "Готовый к сотрудничеству", "type": "c" },
+      { "text": "Беззаботный", "type": "s" },
+      { "text": "Аргументирующий", "type": "d" }
+    ]
+  },
+  {
+    "id": "draggable-list15",
+    "options": [
+      { "text": "Сдержанный", "type": "s" },
+      { "text": "Прямой", "type": "d" },
+      { "text": "Строгий", "type": "c" },
+      { "text": "Убедительный", "type": "i" }
+    ]
+  },
+  {
+    "id": "draggable-list16",
+    "options": [
+      { "text": "Застенчивый", "type": "c" },
+      { "text": "Требовательный", "type": "d" },
+      { "text": "Терпеливый", "type": "s" },
+      { "text": "Очаровательный", "type": "i" }
+    ]
+  },
+  {
+    "id": "draggable-list17",
+    "options": [
+      { "text": "Неугомонный", "type": "d" },
+      { "text": "Дисциплинированный", "type": "c" },
+      { "text": "Вдохновляющий", "type": "i" },
+      { "text": "Внимательный", "type": "s" }
+    ]
+  },
+  {
+    "id": "draggable-list18",
+    "options": [
+      { "text": "Обязательный", "type": "s" },
+      { "text": "Оживленный", "type": "i" },
+      { "text": "Решительный", "type": "d" },
+      { "text": "Точный", "type": "c" }
+    ]
+  },
+  {
+    "id": "draggable-list19",
+    "options": [
+      { "text": "Добросовестный", "type": "c" },
+      { "text": "Компанейский", "type": "i" },
+      { "text": "Добрый", "type": "s" },
+      { "text": "Уверенный в себе", "type": "d" }
+    ]
+  },
+  {
+    "id": "draggable-list20",
+    "options": [
+      { "text": "Дипломатичный", "type": "c" },
+      { "text": "Отважный", "type": "d" },
+      { "text": "Сочувствующий", "type": "s" },
+      { "text": "Оптимистичный", "type": "i" }
+    ]
+  },
+  {
+    "id": "draggable-list21",
+    "options": [
+      { "text": "Настойчивый", "type": "d" },
+      { "text": "Общительный", "type": "i" },
+      { "text": "Постоянный", "type": "s" },
+      { "text": "Организованный", "type": "c" }
+    ]
+  },
+  {
+    "id": "draggable-list22",
+    "options": [
+      { "text": "Соглашающийся", "type": "c" },
+      { "text": "Владеющий собой", "type": "s" },
+      { "text": "Шутливый", "type": "d" },
+      { "text": "Настойчивый", "type": "i" }
+    ]
+  },
+  {
+    "id": "draggable-list23",
+    "options": [
+      { "text": "Обаятельный", "type": "i" },
+      { "text": "Позитивный", "type": "d" },
+      { "text": "Снисходительный", "type": "s" },
+      { "text": "Требовательный", "type": "c" }
+    ]
+  },
+  {
+    "id": "draggable-list24",
+    "options": [
+      { "text": "Коммуникабельный", "type": "i" },
+      { "text": "Смелый", "type": "d" },
+      { "text": "Перфекционист", "type": "c" },
+      { "text": "Сдержанный", "type": "s" }
+    ]
+  }
+];
+
+        let currentStep = 0;
+        const itemsPerStep = 3;
+        const totalSteps = Math.ceil(questions.length / itemsPerStep);
+
+        function initApp() {
+            const stepsDiv = document.getElementById('steps');
+            for (let i = 0; i < totalSteps; i++) {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = `step-container ${i === 0 ? 'active' : ''}`;
+                stepDiv.id = `step-${i}`;
+
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+
+                for (let j = 0; j < itemsPerStep; j++) {
+                    const qIdx = i * itemsPerStep + j;
+                    if (qIdx >= questions.length) break;
+
+                    const q = questions[qIdx];
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-title">Я наиболее</div>
+                        <ul class="disc-list" id="${q.id}">
+                            ${q.options.map((opt, idx) => `<li class="disc-item" draggable="true" data-type="${opt.type}">${opt.text}</li>`).join('')}
+                        </ul>
+                        <div class="card-footer">Я наименее</div>
+                    `;
+                    grid.appendChild(card);
+                }
+                stepDiv.appendChild(grid);
+                stepsDiv.appendChild(stepDiv);
+            }
+            setupDragAndDrop();
+            updateUI();
+        }
+
+        function setupDragAndDrop() {
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('disc-item')) {
+                    e.target.classList.add('dragging');
+                }
+            });
+
+            document.addEventListener('dragend', (e) => {
+                if (e.target.classList.contains('disc-item')) {
+                    e.target.classList.remove('dragging');
+                }
+            });
+
+            document.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const container = e.target.closest('.disc-list');
+                if (!container) return;
+
+                const draggable = document.querySelector('.dragging');
+                if (!draggable) return;
+
+                const items = [...container.querySelectorAll('.disc-item')];
+                const nextItem = items.find(item => {
+                    const rect = item.getBoundingClientRect();
+                    return e.clientY < rect.top + rect.height / 2;
+                });
+
+                if (nextItem) {
+                    container.insertBefore(draggable, nextItem);
+                } else {
+                    container.appendChild(draggable);
+                }
+            });
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.step-container').forEach((step, idx) => {
+                step.classList.toggle('active', idx === currentStep);
+            });
+
+            document.getElementById('prevBtn').disabled = currentStep === 0;
+            document.getElementById('nextBtn').innerText = currentStep === totalSteps - 1 ? 'Завершить тест' : 'Далее';
+
+            const progress = ((currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                updateUI();
+            } else {
+                calculateResults();
+            }
+        });
+
+        function calculateResults() {
+            const scores = { d: 0, i: 0, s: 0, c: 0 };
+            const least = { d: 0, i: 0, s: 0, c: 0 };
+
+            document.querySelectorAll('.disc-list').forEach(list => {
+                const items = [...list.querySelectorAll('.disc-item')];
+                const mostType = items[0].getAttribute('data-type');
+                const leastType = items[items.length - 1].getAttribute('data-type');
+
+                scores[mostType]++;
+                least[leastType]++;
+            });
+
+            const finalScores = {
+                D: scores.d - least.d,
+                I: scores.i - least.i,
+                S: scores.s - least.s,
+                C: scores.c - least.c
+            };
+
+            displayResults(finalScores);
+        }
+
+        function displayResults(scores) {
+            document.getElementById('test-ui').style.display = 'none';
+            document.getElementById('results-ui').style.display = 'block';
+
+            const grid = document.getElementById('scoreGrid');
+            grid.innerHTML = '';
+
+            const labels = { D: 'Доминирование', I: 'Влияние', S: 'Стабильность', C: 'Соответствие' };
+
+            for (const [type, val] of Object.entries(scores)) {
+                const card = document.createElement('div');
+                card.className = 'score-card';
+                card.innerHTML = `
+                    <span class="score-val">${val}</span>
+                    <span class="score-label">${type} — ${labels[type]}</span>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        initApp();
+    </script>
+</body>
+</html>

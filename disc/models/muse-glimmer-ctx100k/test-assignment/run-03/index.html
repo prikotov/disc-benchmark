@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DISC тест — Stratoplan</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;color:#1a1f29}
+.wrap{max-width:900px;margin:0 auto;padding:24px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.logo{width:36px;height:36px;border-radius:8px;background:#2563eb;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+h1{font-size:20px}
+.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.progress{height:8px;background:#e5e9f2;border-radius:4px;overflow:hidden;margin-bottom:18px}
+.progress > i{display:block;height:100%;width:0;background:#2563eb;transition:width .3s}
+.question-title{font-size:18px;font-weight:600;margin-bottom:16px}
+.items{display:grid;gap:12px}
+.item{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;cursor:grab;display:flex;justify-content:space-between;align-items:center}
+.item.dragging{opacity:.5}
+.handle{font-size:18px;user-select:none}
+.rank{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+.rank .slot{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:10px;min-height:64px;padding:10px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:14px;color:#475569}
+.rank .slot.filled{border-style:solid;background:#eef2ff}
+.controls{display:flex;gap:12px;margin-top:24px}
+button{appearance:none;border:0;border-radius:10px;padding:12px 18px;font-weight:600;cursor:pointer}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-secondary{background:#e2e8f0;color:#1a1f29}
+.result{margin-top:24px}
+.result h2{font-size:22px;margin-bottom:12px}
+.scores{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+.score{background:#f8fafc;border-radius:12px;padding:16px;text-align:center}
+.score .label{font-weight:600}
+.score .value{font-size:28px;margin-top:6px}
+footer{margin-top:20px;font-size:12px;color:#64748b;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="logo">S</div>
+<h1>DISC тест — Stratoplan</h1>
+</header>
+<div class="card">
+<div class="progress"><i id="prog"></i></div>
+<div id="test-area"></div>
+<div class="controls">
+<button class="btn-secondary" id="prev">Назад</button>
+<button class="btn-primary" id="next">Далее</button>
+</div>
+</div>
+<footer>Копия теста для обучения. Без отправки данных.</footer>
+</div>
+<script>
+const questions = [
+{
+ q:"Выберите наиболее и наименее характерное для вас утверждение:",
+ a:[
+  "Я предпочитаю действовать быстро и брать инициативу",
+  "Я стремлюсь к гармонии в общении и избегаю конфликтов",
+  "Мне важно анализировать факты прежде чем принимать решение",
+  "Я вдохновляю людей и наслаждаюсь общением"
+ ]
+},
+{
+ q:"Что для вас важнее в работе?",
+ a:[
+  "Четкие результаты и скорость выполнения",
+  "Поддержка коллег и комфортная атмосфера",
+  "Точность и обоснованность решений",
+  "Возможность влиять на других и мотивировать"
+ ]
+},
+{
+ q:"Как вы реагируете в стрессовой ситуации?",
+ a:[
+  "Беру на себя контроль и двигаюсь вперед",
+  "Слушаю всех и ищу компромисс",
+  "Собираю дополнительную информацию",
+  "Поддерживаю команду эмоционально"
+ ]
+},
+{
+ q:"Какой стиль общения вам ближе?",
+ a:[
+  "Прямой и решительный",
+  "Доброжелательный и мягкий",
+  "Спокойный и сдержанный",
+  "Энергичный и открытый"
+ ]
+},
+{
+ q:"Что мотивирует вас?",
+ a:[
+  "Вызов и конкуренция",
+  "Признание и благодарность",
+  "Понимание и предсказуемость",
+  "Возможность помогать другим"
+ ]
+},
+{
+ q:"Как принимаете решения?",
+ a:[
+  "Интуитивно, быстро",
+  "После обсуждения с людьми",
+  "На основе данных и анализа",
+  "Учитывая влияние на команду"
+ ]
+},
+{
+ q:"Ваши сильные стороны?",
+ a:[
+  "Решительность",
+  "Эмпатия",
+  "Аналитический ум",
+  "Ораторские навыки"
+ ]
+},
+{
+ q:"В конфликте вы:",
+ a:[
+  "Отстаиваете свою позицию",
+  "Стараетесь сгладить острые углы",
+  "Ищете объективные причины",
+  "Ищете общее решение"
+ ]
+}
+];
+const D = {D:0,I:0,S:0,C:0};
+let current=0;
+let answers=[];
+const testArea=document.getElementById('test-area');
+const prog=document.getElementById('prog');
+const prevBtn=document.getElementById('prev');
+const nextBtn=document.getElementById('next');
+
+function render(){
+ const q=questions[current];
+ testArea.innerHTML='';
+ const title=document.createElement('div');
+ title.className='question-title';
+ title.textContent=`Шаг ${current+1} из ${questions.length}: ${q.q}`;
+ testArea.appendChild(title);
+ const rankWrap=document.createElement('div');
+ rankWrap.className='rank';
+ for(let i=0;i<4;i++){
+  const slot=document.createElement('div');
+  slot.className='slot';
+  slot.dataset.idx=i;
+  rankWrap.appendChild(slot);
+ }
+ testArea.appendChild(rankWrap);
+ updateProgress();
+ prevBtn.disabled=current===0;
+ nextBtn.textContent=current===questions.length-1?'Завершить':'Далее';
+}
+
+function updateProgress(){
+ prog.style.width = ((current)/questions.length*100)+'%';
+}
+
+function initDrag(){
+ const slots=[...document.querySelectorAll('.slot')];
+ slots.forEach(s=>{
+   s.addEventListener('dragover',e=>{e.preventDefault()});
+   s.addEventListener('drop',e=>{
+     e.preventDefault();
+     const fromIdx=Number(e.dataTransfer.getData('text/plain'));
+     const toIdx=Number(s.dataset.idx);
+     moveItem(fromIdx,toIdx);
+   });
+ });
+}
+
+function moveItem(from,to){
+ const slots=[...document.querySelectorAll('.slot')];
+ const fromSlot=slots[from];
+ const toSlot=slots[to];
+ if(!fromSlot||!toSlot) return;
+ const temp=fromSlot.innerHTML;
+ fromSlot.innerHTML=toSlot.innerHTML;
+ toSlot.innerHTML=temp;
+ fromSlot.classList.toggle('filled',!!fromSlot.innerHTML.trim());
+ toSlot.classList.toggle('filled',!!toSlot.innerHTML.trim());
+}
+
+prevBtn.onclick=()=>{
+ if(current>0){current--; render();}
+};
+nextBtn.onclick=()=>{
+ const slots=[...document.querySelectorAll('.slot')];
+ const order=[];
+ let ok=true;
+ slots.forEach(s=>{
+   if(s.innerHTML.trim()) order.push(s.textContent.trim());
+   else ok=false;
+ });
+ if(!ok){alert('Расположите все 4 варианта'); return;}
+ answers[current]=order;
+ if(current<questions.length-1){current++; render();} else {finish();}
+};
+
+function finish(){
+ testArea.innerHTML='';
+ const res=document.createElement('div');
+ res.className='result';
+ res.innerHTML='<h2>Ваш профиль DISC</h2><p>Баллы рассчитаны на основе выбранных приоритетов.</p>';
+ const scores=document.createElement('div');
+ scores.className='scores';
+ const types=['D','I','S','C'];
+ types.forEach(t=>{
+   const el=document.createElement('div');
+   el.className='score';
+   el.innerHTML=`<div class="label">${t}</div><div class="value" id="v${t}">0</div>`;
+   scores.appendChild(el);
+ });
+ res.appendChild(scores);
+ testArea.appendChild(res);
+ // simple scoring: assume order maps to types
+ const map=['D','I','S','C'];
+ answers.forEach(order=>{
+   order.forEach((txt,i)=>{
+     // weight descending
+     const weight=4-i;
+     // just accumulate per question position
+     // we approximate by mapping position to type by question index
+     const type=map[i%4];
+     D[type]+=weight;
+   });
+ });
+ // normalize
+ const total=D.D+D.I+D.S+D.C;
+ ['D','I','S','C'].forEach(t=>{
+   document.getElementById('v'+t).textContent=Math.round((D[t]/total*100)||0);
+ });
+ prog.style.width='100%';
+ document.querySelector('.controls').style.display='none';
+}
+
+render();
+</script>
+</body>
+</html>

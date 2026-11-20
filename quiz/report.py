@@ -483,10 +483,14 @@ argmax по вариантам — см. оговорку выше.</li>
     # Язык: ru vs en — главный вопрос исследования
     parts.append("<h2>Язык: ru vs en (влияние языка на точность и устойчивость)</h2>"
                  "<div class='muted'>лучший уровень модели на каждом языке; "
-                 "Δ = en% − ru% (в п.п.; множества вопросов разные: 24/23)</div>"
-                 "<table><tr><th>модель</th><th>ru: лучший балл</th><th>%</th>"
-                 "<th>en: лучший балл</th><th>%</th><th class='num'>Δ п.п.</th>"
-                 "<th>стабильность ru</th><th>стабильность en</th></tr>")
+                 "Δ = en% − ru% (в п.п.; множества вопросов разные: 24/23). "
+                 "По умолчанию — по Δ, лучшие сверху; клик по заголовку — сортировка "
+                 "по столбцу, повторный клик — в обратную сторону</div>"
+                 "<table class='sortable' id='langtab'><thead><tr>"
+                 "<th>модель</th><th class='num'>ru: лучший балл</th><th class='num'>ru %</th>"
+                 "<th class='num'>en: лучший балл</th><th class='num'>en %</th>"
+                 "<th class='num'>Δ п.п.</th>"
+                 "<th>стабильность ru</th><th>стабильность en</th></tr></thead><tbody>")
     deltas = []
     folders = folders_sorted(groups)
     for folder in folders:
@@ -513,17 +517,17 @@ argmax по вариантам — см. оговорку выше.</li>
             deltas.append(d)
             cls = "delta-up" if d > 0 else ("delta-down" if d < 0 else "")
             dtxt = f"<span class='{cls}'>{d:+.1f}</span>"
-        parts.append(f"<tr><td>{folder}</td><td>{rtxt}</td><td>{r_pct}</td>"
-                     f"<td>{etxt}</td><td>{e_pct}</td>"
+        parts.append(f"<tr><td>{folder}</td><td class='num'>{rtxt}</td><td class='num'>{r_pct}</td>"
+                     f"<td class='num'>{etxt}</td><td class='num'>{e_pct}</td>"
                      f"<td class='num'>{dtxt}</td><td>{rst}</td><td>{est}</td></tr>")
     if deltas:
         avg = sum(deltas) / len(deltas)
         verdict = "en лучше" if avg > 0 else "ru лучше" if avg < 0 else "паритет"
-        parts.append("</table>"
+        parts.append("</tbody></table>"
                      f"<div class='muted'>средняя Δ по моделям с обоими языками: "
                      f"<b>{avg:+.1f} п.п.</b> ({verdict})</div>")
     else:
-        parts.append("</table>")
+        parts.append("</tbody></table>")
 
     # карточки моделей
     parts.append("<h2>Модели × языки × уровни</h2>")
@@ -600,8 +604,8 @@ argmax по вариантам — см. оговорку выше.</li>
                  "<code>models/&lt;модель&gt;/quiz[-en]/</code>.</div>")
     parts.append("""<script>
 (function () {
-  var tab = document.getElementById('sumtab');
-  if (!tab) return;
+
+  function makeSortable(tab, defCol) {
   var ths = Array.prototype.slice.call(tab.rows[0].cells);
   var tbody = tab.tBodies[0];
   var cur = { col: -1, desc: true };
@@ -659,8 +663,14 @@ argmax по вариантам — см. оговорку выше.</li>
   ths.forEach(function (th, i) {
     th.addEventListener('click', function () { sortCol(i); });
   });
-  cur.col = 5; cur.desc = true;              // старт: столбец «% (балл)», лучшие сверху
-  mark();
+  cur.col = -1;
+  sortCol(defCol);                           // стартовая сортировка: лучшие сверху
+  }
+
+  var sum = document.getElementById('sumtab');
+  if (sum) makeSortable(sum, 5);             // старт: «% (балл)»
+  var lang = document.getElementById('langtab');
+  if (lang) makeSortable(lang, 5);           // старт: «Δ п.п.»
 })();
 </script>""")
     parts.append("</body></html>")

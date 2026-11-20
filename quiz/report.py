@@ -666,10 +666,13 @@ argmax по вариантам — см. оговорку выше.</li>
     else { cur.col = i; cur.desc = num; }   // числовые — сначала лучшие (убывание)
     var rows = Array.prototype.slice.call(tbody.rows);
     var key = rows.map(function (r) { return cellVal(r.cells[i], num); });
-    // стабильная сортировка по вычисленным ключам
+    // стабильная сортировка по вычисленным ключам;
+    // «—» (null) не инвертируется направлением — всегда внизу
     var idx = rows.map(function (r, k) { return k; });
     idx.sort(function (p, q) {
-      var c = cmp(key[p], key[q]);
+      var a = key[p], b = key[q];
+      if (a === null || b === null) return cmp(a, b);
+      var c = cmp(a, b);
       return cur.desc ? -c : c;
     });
     idx.forEach(function (k) { tbody.appendChild(rows[k]); });

@@ -1,0 +1,253 @@
+{
+  "model": "qwen3.8:27b-pi-100k",
+  "folder": "qwen3.8-27b-pi-100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "medium",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "xhigh"
+    ],
+    "sent": "medium",
+    "note": "think=medium"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T01:05:02.425505+00:00",
+  "duration_s": 19.9,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 522,
+    "eval_count": 3020,
+    "eval_duration": 19813232000,
+    "prompt_eval_duration": 45930000,
+    "load_duration": 441622,
+    "total_duration": 19927273906
+  },
+  "ps_snapshot": [
+    "qwen3.8:27b-pi-100k"
+  ],
+  "ollama_contention": false,
+  "raw": "{\"1\": \"Yellow + Green\", \"2\": \"Red + Blue\", \"3\": \"Red\", \"4\": \"Blue\", \"5\": \"Yellow\", \"6\": \"Blue\", \"7\": \"Blue\", \"8\": \"Green\", \"9\": \"Red\", \"10\": \"Yellow\", \"11\": \"Green\", \"12\": \"Yellow\", \"13\": \"Red\", \"14\": \"Yellow\", \"15\": \"Red\", \"16\": \"Red\", \"17\": \"All four (Red, Yellow, Green, Blue)\", \"18\": \"Yellow\", \"19\": \"Yellow\", \"20\": \"Red\", \"21\": \"Green\", \"22\": \"Blue\", \"23\": \"No single answer (subjective/personal)\"}",
+  "thinking_raw": "Let me think through each question based on the DISC model mapped to colors:\n\n- Red (D - Dominant): Assertive, decisive, competitive, task-oriented, direct, wants to be in charge, quick to judge, doesn't follow rules to get results, takes risks, delegates but still does it himself, prefers to lead.\n- Yellow (I - Influential): Outgoing, enthusiastic, social, talks a lot, enjoys giving speeches, wears latest fashions, social, optimistic, less organized but knows where to find things, quick to assimilate new ideas, willing to try new things.\n- Green (S - Steady): Patient, reliable, good listeners, team players, on time, remembers personal criticism longest (they take things personally), prefer stability, follow instructions carefully.\n- Blue (C - Conscientious): Detail-oriented, analytical, methodical, wants more information/tests before decisions, organized, follows rules, knows exactly where files are saved, best surgeon, most common question - this one is subjective.\n\nLet me go through each:\n\n1. \"Which combination of profiles would naturally agree on a social level?\" - Green and Yellow are both social/easygoing. Red and Blue are more task-oriented. Actually, Yellow and Green would agree socially - they're both warm and relationship-focused. Red and Blue would clash socially. Yellow is social, Green is social. So Yellow + Green.\n\n2. \"Which combination of profiles naturally work well together?\" - This could be Red and Blue (both task-oriented, results-focused) or Yellow and Green (both relationship-focused). Actually, in DISC, Red (D) and Blue (C) work well together as they're both task-focused. But also, a combination that balances - like Yellow and Blue (social + detail) or Red and Green (driver + steadier). I think the classic answer is Red + Blue (both focused on results and accuracy) or Yellow + Green (both focused on people). Let me think... Actually, the \"opposite\" pairs work well: Red+Blue are both task-focused, Yellow+Green are both people-focused. But for \"working well together,\" it might be Red + Blue because they complement each other (one drives, one checks details). Or it could be Yellow + Green. I'll go with Red + Blue as they're both results-oriented and complementary.\n\nWait, let me reconsider. In many DISC training materials:\n- Red + Blue = task-focused team\n- Yellow + Green = people-focused team\n- Best team combination = all four, or Red + Yellow (drives and communicates)\n\nActually, for \"naturally work well together\" - I think Red and Blue complement each other well (one provides direction, the other provides detail/quality). Or Yellow and Green (one brings energy, the other brings stability).\n\n3. \"Which profile will always prefer to be the head of a project?\" - Red (D - Dominant). They want control and leadership.\n\n4. \"Which profile would make the best surgeon?\" - Blue (C - Conscientious). Precise, detail-oriented, analytical.\n\n5. \"Which person would enjoy giving a speech the most?\" - Yellow (I - Influential). They love being in front of people, expressing themselves.\n\n6. \"Which person would know exactly where he saved that email from his boss?\" - Blue (C - Conscientious). Organized, systematic, file things carefully.\n\n7. \"Which person would want to do more tests or get more information before making a decision?\" - Blue (C - Conscientious). Analytical, data-driven.\n\n8. \"Which person can you always rely on to arrive on time?\" - Blue (C) or Green (S). Actually, Green (S) is known for reliability and punctuality. Blue is also punctual. But Green is more associated with reliability and consistency. I'll say Green.\n\nActually, let me reconsider. Blue (C) is very structured and punctual. Green (S) is also reliable and punctual. I think in most DISC materials, Green is the \"reliable, always on time\" one. But Blue could also be. Let me go with Blue for punctuality as it's more about structure and routine... Actually, I'll go with Green as they're the \"steady, reliable\" ones.\n\n9. \"Which person doesn't follow the rulebook to get a job done?\" - Red (D - Dominant). They're results-oriented and will cut through bureaucracy.\n\n10. \"Which person would be the most willing to try something new to get the job done?\" - This could be Yellow (I) who's enthusiastic about new things, or Red (D) who's willing to take risks. Actually, Yellow is more about enthusiasm and novelty, while Red is about getting results. I think Yellow is most willing to \"try something new\" because of their enthusiasm and openness. But Red might be willing to try new approaches to get results. I'll go with Yellow.\n\nWait, actually Red is more about \"will do whatever it takes\" while Yellow is about \"excited about new things.\" For \"willing to try something new to get the job done\" - this sounds more like Yellow's enthusiasm for novelty. But Red's pragmatism could also fit. I'll go with Yellow.\n\n11. \"Which person will remember personal criticism the longest?\" - Green (S - Steady). They take things personally, are sensitive to criticism, and hold onto it. Actually, this could also be Blue (C) who might overanalyze criticism. But I think Green is more associated with taking things personally and remembering hurt feelings.\n\n12. \"Which person is the least organized but knows exactly where to go to get what he needs?\" - Yellow (I - Influential). They're disorganized in appearance but know their networks and resources. They might not have a filing system but they know WHO to call or WHERE to find things through relationships.\n\n13. \"Which profile always wants to make decisions?\" - Red (D - Dominant). They want to be in charge and make decisions.\n\n14. \"Which profile wears the latest fashions?\" - Yellow (I - Influential). They're expressive, fashion-conscious, like to stand out and be seen.\n\n15. \"Which profile would enjoy new challenges the most?\" - Red (D - Dominant) or Yellow (I - Influential). Red loves challenges as a way to demonstrate competence and achieve. Yellow loves new experiences. I think Red is more specifically about \"challenges\" (as in overcoming obstacles, competing), while Yellow is about \"new experiences.\" I'll go with Red.\n\nActually, let me reconsider. Yellow (I) is enthusiastic and loves novelty and new experiences. Red (D) is competitive and loves challenges. \"New challenges\" specifically points to Red.\n\n16. \"Which profile would be the quickest to judge other people?\" - Red (D - Dominant). They're blunt, direct, and quick to form opinions. They evaluate people quickly based on performance.\n\n17. \"Which combination of profiles would form the best team?\" - This is tricky. A balanced team would include all four. But if we're picking a combination... In many DISC materials, the best team is one that has complementary strengths. Red + Blue (task + quality) or Yellow + Green (social + stability). Or all four. I think the answer might be \"all four\" or a specific pairing. Let me think...\n\nActually, for \"best team\" - I think the answer is all four profiles together, as they complement each other. Or it could be Red + Yellow (energy and drive) with Blue + Green (quality and stability). \n\nHmm, but the question asks for \"which combination\" implying a specific answer. In many DISC training contexts, the best team combines all four. But if forced to pick, I'd say Red + Blue + Yellow + Green = all of them. Let me say \"All four (Red, Yellow, Green, Blue)\" or maybe the answer is that there's no single answer.\n\nActually, I think in the context of this quiz, the expected answer might be \"Red and Blue\" (task-focused, complementary) or \"all four.\" Let me go with \"All four profiles\" as the best team.\n\nWait, I need to reconsider. Many DISC resources say the best teams have a mix. But some say Red + Yellow for energy, or Blue + Green for stability. I'll go with \"All four\" as the most complete answer.\n\n18. \"Which profile will probably talk the most?\" - Yellow (I - Influential). They're talkative, expressive, and love to communicate.\n\n19. \"Which profile would assimilate new ideas the quickest?\" - Yellow (I - Influential). They're open, enthusiastic, and quickly pick up new concepts. Or could it be Red who quickly grasps the big picture? I think Yellow is more associated with quick assimilation of new ideas due to their openness and enthusiasm.\n\nActually, this could also be Red who quickly grasps concepts at a high level. But Yellow is more \"open to new ideas\" and \"quick to pick up on trends and ideas.\" I'll go with Yellow.\n\n20. \"Which profile would delegate a task but then still do it himself?\" - Red (D - Dominant). They delegate (or think they do) but then redo the work because they can't trust others to do it their way. This is a classic Red trait - they want control.\n\n21. \"Which profile is the best listener?\" - Green (S - Steady). They're patient, attentive, and good listeners. They don't interrupt and take the time to understand.\n\n22. \"Which profile wouldn't miss the last step of the instructions?\" - Blue (C - Conscientious). They're thorough, follow instructions precisely, and check every step.\n\n23. \"Which profile is most common in your social circle?\" - This is subjective and personal. There's no single answer. I should say there's no single answer or it's subjective.\n\nLet me finalize my answers:\n\n1. Yellow + Green (both social, relationship-oriented)\n2. Red + Blue (both task-oriented, complementary in execution) - or could be Yellow + Green. I'll go with Red + Blue.\n3. Red\n4. Blue\n5. Yellow\n6. Blue\n7. Blue\n8. Green (or Blue) - I'll go with Green for reliability/punctuality\n9. Red\n10. Yellow\n11. Green\n12. Yellow\n13. Red\n14. Yellow\n15. Red\n16. Red\n17. All four (Red, Yellow, Green, Blue)\n18. Yellow\n19. Yellow\n20. Red\n21. Green\n22. Blue\n23. No single answer (subjective/personal)\n\nLet me reconsider a few:\n\nQ8: \"arrive on time\" - Green is steady and reliable. Blue is structured and punctual. I think both could be answers, but Green is more classically associated with reliability and punctuality in DISC materials. I'll stick with Green.\n\nQ10: \"most willing to try something new\" - Yellow is enthusiastic and open to new things. Red is willing to take risks. I'll go with Yellow for \"willingness to try new things.\"\n\nQ15: \"enjoy new challenges the most\" - Red loves challenges (competitive, wants to overcome). Yellow loves new experiences. I'll go with Red for \"challenges\" specifically.\n\nQ19: \"assimilate new ideas the quickest\" - This is tricky. Yellow is open and enthusiastic. Red grasps big picture quickly. Blue needs time to analyze. Green is slow to adopt change. I think Yellow is the answer here - they're open, curious, and quickly absorb new ideas.\n\nQ2: \"naturally work well together\" - Let me think about this more carefully. In DISC:\n- Red (D) + Blue (C): Both task-focused, Red drives, Blue checks quality. Good working pair.\n- Yellow (I) + Green (S): Both people-focused, Yellow brings energy, Green brings stability. Good working pair.\n- Red + Yellow: Both high-energy but can clash (both want to lead/converse)\n- Blue + Green: Both lower energy, can be too slow\n\nI think Red + Blue is the classic \"work well together\" answer as they complement each other in task execution. But it could also be Yellow + Green.\n\nActually, I recall that in many DISC training materials, the complementary pairs are:\n- D (Red) and S (Green) - one drives, one steadies\n- I (Yellow) and C (Blue) - one communicates, one details\n\nBut I think the most common answer for \"work well together\" is Red + Blue (both focused on getting things done correctly) or Yellow + Green (both focused on harmony and relationships).\n\nI'll go with Red + Blue as they're both results-oriented and complementary.\n\nLet me also reconsider Q17. \"Best team\" - I think the answer is all four profiles together, as a balanced team needs all perspectives. I'll say \"All four (Red, Yellow, Green, Blue).\"\n\nFor Q23, since it asks about MY social circle, it's inherently subjective. I'll say \"No single answer (subjective).\"",
+  "parsed": {
+    "answers": {
+      "1": "Yellow + Green",
+      "2": "Red + Blue",
+      "3": "Red",
+      "4": "Blue",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Green",
+      "9": "Red",
+      "10": "Yellow",
+      "11": "Green",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "All four (Red, Yellow, Green, Blue)",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red",
+      "21": "Green",
+      "22": "Blue",
+      "23": "No single answer (subjective/personal)"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 19,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow + Green"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red + Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "All four (Red, Yellow, Green, Blue)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 20,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer (subjective/personal)"
+      }
+    ]
+  }
+}

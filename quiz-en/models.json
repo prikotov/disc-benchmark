@@ -1,0 +1,222 @@
+{
+  "note": "Матрица участников английской анкеты (quiz-en): локальные chat + decision + облачные (deepseek low/high; glm low/high/max).",
+  "models": [
+    {
+      "tag": "qwen3.8:27b-pi-100k",
+      "folder": "qwen3.8-27b-pi-100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "low",
+        "medium",
+        "xhigh"
+      ]
+    },
+    {
+      "tag": "huihui-ai:pi-100k",
+      "folder": "huihui-ai-pi-100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "low",
+        "medium",
+        "xhigh"
+      ]
+    },
+    {
+      "tag": "bonsai-2:ctx100k",
+      "folder": "bonsai-2-27b",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "low",
+        "medium",
+        "xhigh"
+      ]
+    },
+    {
+      "tag": "muse-glimmer:ctx100k",
+      "folder": "muse-glimmer-ctx100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "low",
+        "high"
+      ]
+    },
+    {
+      "tag": "ornith-1.5:35b-ctx100k",
+      "folder": "ornith-1.5-35b-ctx100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "on"
+      ]
+    },
+    {
+      "tag": "ornith-1.5:9b",
+      "folder": "ornith-1.5-9b",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "on"
+      ]
+    },
+    {
+      "tag": "gemma4:26b-pi-100k",
+      "folder": "gemma4-26b-pi-100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "on"
+      ]
+    },
+    {
+      "tag": "gemma4:31b-it-qat-pi-100k",
+      "folder": "gemma4-31b-it-qat-pi-100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "on"
+      ]
+    },
+    {
+      "tag": "gemma4:e2b-ctx100k",
+      "folder": "gemma4-e2b-ctx100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "on"
+      ]
+    },
+    {
+      "tag": "orcarouter/Qwen3.8-27B-Uncensored:ctx100k",
+      "folder": "orcarouter-Qwen3.8-27B-Uncensored-ctx100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off",
+        "on"
+      ]
+    },
+    {
+      "tag": "medgemma:27b-ctx100k",
+      "folder": "medgemma-27b-ctx100k",
+      "provider": "chat",
+      "doc_levels": [
+        "off"
+      ]
+    },
+    {
+      "tag": "deepseek-flash",
+      "folder": "deepseek-flash",
+      "provider": "cloud",
+      "cloud_provider": "deepseek",
+      "doc_levels": [
+        "low"
+      ]
+    },
+    {
+      "tag": "glm-5.3-flash",
+      "folder": "glm-5.3-flash",
+      "provider": "cloud",
+      "cloud_provider": "zai",
+      "doc_levels": [
+        "low",
+        "high",
+        "max"
+      ]
+    },
+    {
+      "tag": "clef",
+      "folder": "clef",
+      "provider": "decision",
+      "doc_levels": [
+        null
+      ]
+    },
+    {
+      "tag": "clef-flash",
+      "folder": "clef-flash",
+      "provider": "decision",
+      "doc_levels": [
+        null
+      ]
+    },
+    {
+      "tag": "qwen4-max-preview",
+      "folder": "qwen4-max-preview",
+      "provider": "cloud",
+      "cloud_provider": "alibabacloud",
+      "doc_levels": [
+        "off",
+        "low",
+        "medium",
+        "xhigh"
+      ],
+      "note": "дока: reasoning_effort low/medium/xhigh (дефолт xhigh); high недокументирован, фактически ≈medium (проба: 323 vs 302 reasoning-ткн); прогоны @high от 2026-11-17 оставлены как точка «high (недокумент.)»"
+    },
+    {
+      "tag": "qwen4-max",
+      "folder": "qwen4-max",
+      "provider": "cloud",
+      "cloud_provider": "alibabacloud",
+      "doc_levels": [
+        "off",
+        "low",
+        "high",
+        "xhigh"
+      ],
+      "note": "дока: reasoning_effort low/high/xhigh (дефолт high); medium маппится в high — не запускаем"
+    },
+    {
+      "tag": "glm-5.3",
+      "folder": "glm-5.3",
+      "provider": "cloud",
+      "cloud_provider": "zai",
+      "doc_levels": [
+        "low",
+        "high",
+        "max"
+      ],
+      "note": "дока z.ai: thinking только enabled, шкала low/high/max (дефолт max); проба: low даёт 0 reasoning — фактически off"
+    },
+    {
+      "tag": "kimi-coding/k3.1-pro",
+      "folder": "kimi-k3.1-pro",
+      "provider": "cloud",
+      "cloud_provider": "kimi-coding (pi-подписка)",
+      "doc_levels": [
+        "low",
+        "high",
+        "max"
+      ],
+      "note": "Kimi K3.1 Pro, подписка Kimi coding (pi-транспорт); thinking всегда включён, reasoning_effort low/high/max (дефолт max)"
+    },
+    {
+      "tag": "mimo-v2.6-flash",
+      "folder": "mimo-v2.6-flash-xiaomi-plan",
+      "provider": "cloud",
+      "cloud_provider": "xiaomi",
+      "doc_levels": [
+        "off",
+        "low",
+        "medium",
+        "high"
+      ],
+      "note": "подписка Xiaomi token plan; off = reasoning_effort none"
+    },
+    {
+      "tag": "mimo-v2.6-pro",
+      "folder": "mimo-v2.6-pro-xiaomi-plan",
+      "provider": "cloud",
+      "cloud_provider": "xiaomi",
+      "doc_levels": [
+        "off",
+        "low",
+        "medium",
+        "high"
+      ],
+      "note": "подписка Xiaomi token plan; off = reasoning_effort none"
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+{
+  "model": "gemma4:e2b-ctx100k",
+  "folder": "gemma4-e2b-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:06:57.589507+00:00",
+  "duration_s": 2.3,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 526,
+    "eval_count": 1275,
+    "eval_duration": 2237778000,
+    "prompt_eval_duration": 4656000,
+    "load_duration": 554434,
+    "total_duration": 2248404615
+  },
+  "ps_snapshot": [
+    "gemma4:e2b-ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n\"1\": \"I and S\",\n\"2\": \"D and C\",\n\"3\": \"D\",\n\"4\": \"C\",\n\"5\": \"I\",\n\"6\": \"C\",\n\"7\": \"C\",\n\"8\": \"S\",\n\"9\": \"D\",\n\"10\": \"I\",\n\"11\": \"S\",\n\"12\": \"D\",\n\"13\": \"D\",\n\"14\": \"I\",\n\"15\": \"D and I\",\n\"16\": \"D\",\n\"17\": \"D, I, S, C\",\n\"18\": \"I\",\n\"19\": \"I\",\n\"20\": \"D\",\n\"21\": \"S\",\n\"22\": \"C\",\n\"23\": \"I or S\"\n}\n```",
+  "thinking_raw": "Thinking Process:\n\n1.  **Analyze the Request:** The user wants me to answer a 23-question quiz about the DISC model. I need to assign one or more profiles (Red, Yellow, Green, Blue) to each question. The output *must* be a strict JSON object mapping question numbers to the answers.\n\n2.  **Recall/Define DISC Profiles:**\n    *   **D (Dominance/Red):** Direct, assertive, results-oriented, takes charge, competitive, fast-paced, decisive.\n    *   **I (Influence/Yellow):** Sociable, enthusiastic, optimistic, expressive, people-oriented, persuasive, enjoys attention.\n    *   **S (Steadiness/Green):** Cooperative, calm, supportive, reliable, patient, prefers stability, values relationships.\n    *   **C (Conscientiousness/Blue):** Analytical, precise, cautious, detail-oriented, logical, follows rules, seeks accuracy.\n\n3.  **Evaluate Each Question and Match Profiles:**\n\n    *   *1. Which combination of profiles would naturally agree on a social level?* (Requires social skills and cooperation.) -> I and S, or potentially S and C.\n    *   *2. Which combination of profiles naturally work well together?* (Focuses on complementary strengths.) -> D and C (D drives results, C ensures accuracy). Or I and S (Socializing and support).\n    *   *3. Which profile will always prefer to be the head of a project?* (Requires leadership, assertiveness.) -> D.\n    *   *4. Which profile would make the best surgeon?* (Requires precision, attention to detail, adherence to protocols.) -> C.\n    *   *5. Which person would enjoy giving a speech the most?* (Requires enthusiasm, social interaction.) -> I.\n    *   *6. Which person would know exactly where he saved that email from his boss?* (Requires organization, adherence to process, detail.) -> C.\n    *   *7. Which person would want to do more tests or get more information before making a decision?* (Requires caution, data gathering.) -> C.\n    *   *8. Which person can you always rely on to arrive on time?* (Requires reliability, structure.) -> S.\n    *   *9. Which person doesn’t follow the rulebook to get a job done?* (Requires disregard for structure, drive.) -> D.\n    *   *10. Which person would be the most willing to try something new to get the job done?* (Requires risk-taking, enthusiasm.) -> I or D. (Leaning towards I for willingness/energy.)\n    *   *11. Which person will remember personal criticism the longest?* (Often related to emotional response and relationship focus.) -> S or I. (S remembers relationship impact; I remembers social feedback.)\n    *   *12. Which person is the least organized but knows exactly where to go to get what he needs?* (Disorganized but strategic.) -> D or perhaps an extreme C who is highly focused but disorganized in execution. (If \"least organized\" means poor internal structure but effective execution.) Let's lean D for action-orientation.\n    *   *13. Which profile always wants to make decisions?* (Requires speed and decisiveness.) -> D.\n    *   *14. Which profile wears the latest fashions?* (Requires enthusiasm, social connection.) -> I.\n    *   *15. Which profile would enjoy new challenges the most?* (Requires excitement and drive.) -> D or I. (D for challenge, I for novelty/social challenge.)\n    *   *16. Which profile would be the quickest to judge other people?* (Requires speed, directness, focus on outcomes/status.) -> D.\n    *   *17. Which combination of profiles would form the best team?* (Needs balanced functionality.) -> D, I, S, C (The complete set or balanced pairs).\n    *   *18. Which profile will probably talk the most?* (Requires high expressiveness.) -> I.\n    *   *19. Which profile would assimilate new ideas the quickest?* (Requires openness, enthusiasm, social learning.) -> I.\n    *   *20. Which profile would delegate a task but then still do it himself?* (Delegation + Control/Drive.) -> D.\n    *   *21. Which profile is the best listener?* (Requires patience, non-judgment, presence.) -> S.\n    *   *22. Which profile wouldn’t miss the last step of the instructions?* (Requires precision, attention to detail.) -> C.\n    *   *23. Which profile is most common in your social circle?* (Highly subjective, but often I or S in general populations.) (I will answer based on typical assumptions for a general user.)\n\n4.  **Construct the Final JSON Output:** (Ensuring strict JSON format.)",
+  "parsed": {
+    "answers": {
+      "1": "I and S",
+      "2": "D and C",
+      "3": "D",
+      "4": "C",
+      "5": "I",
+      "6": "C",
+      "7": "C",
+      "8": "S",
+      "9": "D",
+      "10": "I",
+      "11": "S",
+      "12": "D",
+      "13": "D",
+      "14": "I",
+      "15": "D and I",
+      "16": "D",
+      "17": "D, I, S, C",
+      "18": "I",
+      "19": "I",
+      "20": "D",
+      "21": "S",
+      "22": "C",
+      "23": "I or S"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 16,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 1,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "I and S"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "D and C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 3,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 6,
+        "answer": "C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "C"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "S"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 10,
+        "answer": "I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "S"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 13,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "I"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 15,
+        "answer": "D and I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 16,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "D, I, S, C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 18,
+        "answer": "I"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 20,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "S"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 22,
+        "answer": "C"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 23,
+        "answer": "I or S"
+      }
+    ]
+  }
+}

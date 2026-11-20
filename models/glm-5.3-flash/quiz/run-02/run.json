@@ -1,0 +1,279 @@
+{
+  "model": "glm-5.3-flash",
+  "folder": "glm-5.3-flash",
+  "provider": "cloud",
+  "cloud_provider": "zai",
+  "thinking": {
+    "requested": "low",
+    "scale": [
+      "low",
+      "high",
+      "max"
+    ],
+    "sent": "low",
+    "note": "шкала low/high/max (docs.z.ai, дефолт max); off не существует — «thinking cannot be disabled», запрошенный off провайдер выполняет как минимальное мышление (низведён к low); medium — legacy, не запускаем"
+  },
+  "options": {
+    "thinking": {
+      "type": "enabled"
+    },
+    "reasoning_effort": "low"
+  },
+  "model_version": "glm-5.3-flash",
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-17T00:20:28.267860+00:00",
+  "duration_s": 5.7,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 598,
+    "cached_tokens": 0,
+    "completion_tokens": 368,
+    "reasoning_tokens": 15
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый и зелёный (красный и жёлтый — в общении как экстраверты)",
+      "2": "Красный и синий (взаимодополнение: действие и качество)",
+      "3": "Красный",
+      "4": "Синий (возможно, сочетание красного и синего)",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Зелёный",
+      "9": "Красный",
+      "10": "Красный (или красный с жёлтым)",
+      "11": "Зелёный",
+      "12": "Жёлтый (а также зелёный, но жёлтый — более остро)",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный (или сочетание красного и синего — сложные аналитические задачи)",
+      "17": "Синий",
+      "18": "Однозначного ответа нет — наиболее сбалансированной считается команда из всех четырёх профилей (красный, жёлтый, зелёный, синий)",
+      "19": "Жёлтый",
+      "20": "Жёлтый",
+      "21": "Зелёный",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Однозначного ответа нет — зависит от конкретного круга общения человека"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 13,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 4,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый и зелёный (красный и жёлтый — в общении как экстраверты)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Красный и синий (взаимодополнение: действие и качество)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Синий (возможно, сочетание красного и синего)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный (или красный с жёлтым)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Жёлтый (а также зелёный, но жёлтый — более остро)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Красный (или сочетание красного и синего — сложные аналитические задачи)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 18,
+        "answer": "Однозначного ответа нет — наиболее сбалансированной считается команда из всех четырёх профилей (красный, жёлтый, зелёный, синий)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 21,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Однозначного ответа нет — зависит от конкретного круга общения человека"
+      }
+    ]
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "model": "gemma4:e2b-ctx100k",
+  "folder": "gemma4-e2b-ctx100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 16384,
+    "num_predict": 8192
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T18:02:33.894846+00:00",
+  "duration_s": 5.1,
+  "error": null,
+  "usage": {
+    "prompt_eval_count": 633,
+    "eval_count": 1366,
+    "eval_duration": 2253452000,
+    "prompt_eval_duration": 123911000,
+    "load_duration": 2630159868,
+    "total_duration": 5011928400
+  },
+  "ps_snapshot": [],
+  "ollama_contention": false,
+  "raw": "```json\n{\n\"1\": \"Жёлтый, Зелёный\",\n\"2\": \"Зелёный, Синий\",\n\"3\": \"Красный\",\n\"4\": \"Синий\",\n\"5\": \"Жёлтый\",\n\"6\": \"Синий\",\n\"7\": \"Синий\",\n\"8\": \"Зелёный\",\n\"9\": \"Красный\",\n\"10\": \"Красный\",\n\"11\": \"Зелёный\",\n\"12\": \"Зелёный\",\n\"13\": \"Жёлтый\",\n\"14\": \"Красный\",\n\"15\": \"Жёлтый\",\n\"16\": \"Красный\",\n\"17\": \"Красный\",\n\"18\": \"Красный, Жёлтый, Зелёный, Синий\",\n\"19\": \"Жёлтый\",\n\"20\": \"Красный, Жёлтый\",\n\"21\": \"Красный\",\n\"22\": \"Зелёный\",\n\"23\": \"Синий\",\n\"24\": \"Зависит от контекста\"\n}\n```",
+  "thinking_raw": "Thinking Process:\n\n1.  **Analyze the Request:** The user wants me to take a DISC model quiz (24 questions) and answer them by assigning one or more DISC profiles (Red, Yellow, Green, Blue) to each question. The output *must* be a strict JSON object mapping question numbers to the assigned profile(s).\n\n2.  **Understand DISC Profiles (Quick Review):**\n    *   **Red (Dominance - D):** Direct, results-oriented, assertive, decisive, focused on action, challenges authority. (Focus: Action, results, control).\n    *   **Yellow (Influence - I):** Sociable, optimistic, enthusiastic, persuasive, expressive, focused on people and ideas. (Focus: Relationships, enthusiasm, social interaction).\n    *   **Green (Steadiness - S):** Cooperative, patient, supportive, reliable, focused on stability and harmony, prefers established procedures. (Focus: People, stability, collaboration).\n    *   **Blue (Conscientiousness - C):** Analytical, precise, cautious, detail-oriented, focused on quality, accuracy, and rules. (Focus: Accuracy, quality, logic, process).\n\n3.  **Analyze and Answer Each Question based on typical DISC traits:**\n\n    *   *Q1. Какие профили совместимы в социальном плане?* (Requires people-oriented profiles)\n    *   *Q2. Какие профили совместимы в совместной работе?* (Requires profiles that can collaborate effectively)\n    *   *Q3. Какой профиль всегда хотел бы возглавить проект?* (Requires a decisive, assertive profile)\n    *   *Q4. Какой профиль окажется лучшим хирургом?* (Requires focus, precision, following protocols)\n    *   *Q5. Какой профиль больше всех упивается ролью оратора?* (Requires high expressiveness/social energy)\n    *   *Q6. Какой профиль чаще всего знает, где он сохранил электронное письмо от шефа?* (Requires organization/detail orientation)\n    *   *Q7. Какой профиль стремится провести побольше тестов или собрать побольше информации перед тем, как принять решение?* (Requires caution, analysis)\n    *   *Q8. Какой профиль всегда приходит вовремя и в этом плане на него можно положиться?* (Requires reliability, structure)\n    *   *Q9. Какой профиль раз за разом не следует правилам только ради того, чтобы работа была сделана?* (Requires disregard for rules/focus on results)\n    *   *Q10. Какой профиль охотнее всех апробирует новые технологии или приемы, если это ускорит работу?* (Requires focus on speed/action)\n    *   *Q11. Какой профиль дольше всех помнит критику в свой адрес?* (Requires sensitivity/focus on relationship impact)\n    *   *Q12. Какой профиль болезненнее всего реагирует на личную критику?* (Requires sensitivity/focus on feeling)\n    *   *Q13. Какой профиль менее всех организован, но знает, где может получить нужную информацию?* (Requires lack of structure but ability to find data)\n    *   *Q14. Какой профиль хочет всегда принимать решения?* (Requires decisiveness)\n    *   *Q15. Какой профиль охотнее всего следует последней моде?* (Requires openness to change/social trends)\n    *   *Q16. Какой профиль охотнее берется за сложные задачи?* (Requires challenge/action)\n    *   *Q17. Какой профиль легко судит других?* (Can be D or C, but often I or D depending on context)\n    *   *Q18. Комбинация каких профилей образует самую успешную команду?* (Requires balance: D for direction, I for motivation, S for stability, C for quality)\n    *   *Q19. Какой профиль вероятнее всего окажется самым разговорчивым?* (Requires high social energy)\n    *   *Q20. Какой профиль быстрее всех воспримет новую идею?* (Requires openness/speed)\n    *   *Q21. Какой профиль мог бы поручить задание другим, но все же выполнит его сам?* (Requires independence/competence)\n    *   *Q22. Какой профиль окажется лучшим слушателем?* (Requires patience, empathy, and absorbing information)\n    *   *Q23. Какой профиль не пропустит ни малейшего пункта в инструкции?* (Requires adherence to rules/detail)\n    *   *Q24. Какой профиль чаще всего встречается в вашем круге общения?* (Too subjective, needs an assumption or mixed answer)\n\n4.  **Construct the Final JSON Output:** Ensure the format strictly adheres to the requested JSON structure. (Self-Correction: Use the standard DISC labels: Красный, Жёлтый, Зелёный, Синий.) (The final answers should be concise profile names.)",
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый, Зелёный",
+      "2": "Зелёный, Синий",
+      "3": "Красный",
+      "4": "Синий",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Зелёный",
+      "9": "Красный",
+      "10": "Красный",
+      "11": "Зелёный",
+      "12": "Зелёный",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный",
+      "17": "Красный",
+      "18": "Красный, Жёлтый, Зелёный, Синий",
+      "19": "Жёлтый",
+      "20": "Красный, Жёлтый",
+      "21": "Красный",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Зависит от контекста"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 1,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый, Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Зелёный, Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 17,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "Красный, Жёлтый, Зелёный, Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Красный, Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 24,
+        "answer": "Зависит от контекста"
+      }
+    ]
+  }
+}

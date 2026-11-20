@@ -1,0 +1,256 @@
+{
+  "model": "muse-glimmer:ctx100k",
+  "folder": "muse-glimmer-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "high",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "high",
+      "max"
+    ],
+    "sent": "high",
+    "note": "think=high"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T01:51:15.842879+00:00",
+  "duration_s": 39.0,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 524,
+    "eval_count": 3166,
+    "eval_duration": 38921870000,
+    "prompt_eval_duration": 32859000,
+    "load_duration": 471233,
+    "total_duration": 38980518183
+  },
+  "ps_snapshot": [
+    "muse-glimmer:ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "{\"1\": \"Yellow and Green\", \"2\": \"Red and Blue\", \"3\": \"Red\", \"4\": \"Blue\", \"5\": \"Yellow\", \"6\": \"Blue\", \"7\": \"Blue\", \"8\": \"Green\", \"9\": \"Red\", \"10\": \"Yellow\", \"11\": \"Green\", \"12\": \"Yellow\", \"13\": \"Red\", \"14\": \"Yellow\", \"15\": \"Red\", \"16\": \"Red\", \"17\": \"Red, Yellow, Green and Blue\", \"18\": \"Yellow\", \"19\": \"Yellow\", \"20\": \"Blue\", \"21\": \"Green\", \"22\": \"Blue\", \"23\": \"no single answer\"}",
+  "thinking_raw": "A quick little quiz: how well have you learned the DISC model?\n\nDISC describes four behavioral profiles named after colors: Red, Yellow, Green and Blue. Test yourself: how well do you understand how people of different profiles act and behave?\n\nBelow are 23 questions. For each question, name the profile (color) that fits best; if the answer is a combination of profiles, name the combination; if there is no single answer, say so.\n\nAnswer strictly in JSON — an object mapping question numbers to your answers, no text outside the JSON:\n{\"1\": \"<your answer to question 1>\", ...}\n\nQuestions:\n1. Which combination of profiles would naturally agree on a social level?\n2. Which combination of profiles naturally work well together?\n3. Which profile will always prefer to be the head of a project?\n4. Which profile would make the best surgeon?\n5. Which person would enjoy giving a speech the most?\n6. Which person would know exactly where he saved that email from his boss?\n7. Which person would want to do more tests or get more information before making a decision?\n8. Which person can you always rely on to arrive on time?\n9. Which person doesn’t follow the rulebook to get a job done?\n10. Which person would be the most willing to try something new to get the job done?\n11. Which person will remember personal criticism the longest?\n12. Which person is the least organized but knows exactly where to go to get what he needs?\n13. Which profile always wants to make decisions?\n14. Which profile wears the latest fashions?\n15. Which profile would enjoy new challenges the most?\n16. Which profile would be the quickest to judge other people?\n17. Which combination of profiles would form the best team?\n18. Which profile will probably talk the most?\n19. Which profile would assimilate new ideas the quickest?\n20. Which profile would delegate a task but then still do it himself?\n21. Which profile is the best listener?\n22. Which profile wouldn’t miss the last step of the instructions?\n23. Which profile is most common in your social circle?\n\nWe need answer strictly in JSON. Need to map DISC colors: Red, Yellow, Green, Blue.\n\nBut DISC model mapping: Typically DISC is Dominance (Red), Influence (Yellow), Steadiness (Green), Conscientiousness (Blue). Some color mapping: Red = Dominance, Yellow = Influence, Green = Steadiness, Blue = Conscientiousness.\n\nWe need answer questions. Might be subjective. Need give plausible answers.\n\nLet's think through each.\n\n1. Which combination of profiles would naturally agree on a social level? Social level = agreeableness? Yellow is social, Green is agreeable. Possibly Yellow + Green? Or Yellow+Red? Naturally agree on social level maybe Yellow and Green? Both are people-oriented. Yellow (Influence) and Green (Steadiness) are social. Could be Yellow + Green. Or maybe Yellow alone. Combination? \"naturally agree on a social level\" maybe Yellow and Green agree? Hmm.\n\nAlternative interpretation: Social level = agree. Could be Yellow (Influence) and Green (Steadiness) both value harmony. Possibly Yellow+Green.\n\n2. Which combination of profiles naturally work well together? Many combos work. Perhaps Red + Blue? Dominance + Conscientiousness = results + quality. Or Yellow+Green = people. Could be all four? Best team is all four. Maybe combination of Red and Blue? Hmm.\n\nMaybe typical pairing: Red (Dominance) works well with Blue (Conscientiousness) for task completion. Or Green + Yellow for social.\n\nQuestion ambiguous. Might be generic: Red + Yellow? Let's think typical DISC compatibility: Dominance (Red) complements Steadiness (Green). Influence (Yellow) complements Conscientiousness (Blue). Could be Red + Green naturally work well together? Actually Red is direct, Green is steady. Might clash.\n\nPossibly the question expects: Red and Yellow work well together? Or Yellow and Green?\n\nLet's search memory: Common DISC quiz answers. Might be from a specific source. Could be a known quiz.\n\nLet's attempt reason per question:\n\n3. Which profile will always prefer to be the head of a project? Red (Dominance) wants to lead, be in charge.\n\n4. Which profile would make the best surgeon? Blue (Conscientiousness) detail oriented, precise, or Red? Surgeon needs precision and decisiveness. Probably Blue (Conscientiousness) or Red (Dominance). Best surgeon: Blue for detail and accuracy, also Red for decisiveness under pressure. Many say Blue. Let's pick Blue.\n\n5. Which person would enjoy giving a speech the most? Yellow (Influence) loves attention, public speaking.\n\n6. Which person would know exactly where he saved that email from his boss? Blue (Conscientiousness) organized, detail oriented, knows filing system.\n\n7. Which person would want to do more tests or get more information before making a decision? Blue (Conscientiousness) analytical, cautious.\n\n8. Which person can you always rely on to arrive on time? Green (Steadiness) reliable, punctual? Or Blue? Steadiness is dependable. Green = steady, reliable. Blue also punctual. Typically Green is dependable and arrives on time. Blue also. Might be Green.\n\n9. Which person doesn’t follow the rulebook to get a job done? Red (Dominance) results oriented, bends rules.\n\n10. Which person would be the most willing to try something new to get the job done? Yellow (Influence) open to new, or Red? Red wants results, willing to try new. Yellow is adventurous. Could be Red or Yellow. Possibly Yellow.\n\n11. Which person will remember personal criticism the longest? Green (Steadiness) sensitive, takes things personally, holds grudges. Or Blue? Blue remembers details. Green is sensitive to criticism. Might be Green.\n\n12. Which person is the least organized but knows exactly where to go to get what he needs? Red (Dominance) disorganized but resourceful? Or Yellow? Yellow is disorganized but knows people. \"knows exactly where to go to get what he needs\" = Yellow knows people networks. Least organized = Yellow (Influence) is spontaneous, disorganized. Could be Yellow.\n\nAlso Red is least organized? Red is action oriented, may be messy. Hmm.\n\nAlternative: Green is least organized but knows where? Hmm.\n\nMaybe Red is least organized but knows where to go? Red is assertive, can find resources.\n\nLet's think: DISC stereotypes: Dominance (Red) - decisive, results driven, impatient, somewhat disorganized. Influence (Yellow) - enthusiastic, sociable, disorganized, spontaneous. Steadiness (Green) - patient, calm, organized? Actually steady is organized in routine. Conscientiousness (Blue) - very organized.\n\nSo least organized is Yellow or Red. Knows exactly where to go to get what he needs = knows people? Or knows where things are? \"knows exactly where to go to get what he needs\" could be Red - resourceful, assertive. Or Yellow - knows who to ask.\n\nMaybe Yellow.\n\n13. Which profile always wants to make decisions? Red (Dominance) decisive.\n\n14. Which profile wears the latest fashions? Yellow (Influence) expressive, trendy.\n\n15. Which profile would enjoy new challenges the most? Red (Dominance) or Yellow? Dominance likes challenges. Influence likes variety. Red seeks challenge. Could be Red.\n\n16. Which profile would be the quickest to judge other people? Red (Dominance) judgmental? Or Blue? Blue is analytical, judges based on standards. Red is quick to judge? Could be Red. Might be Blue? Quickest to judge = Red (direct) or Blue (critical). Hmm.\n\nMaybe Blue is critical and judges quickly based on criteria. Red judges by results. I'd pick Red.\n\n17. Which combination of profiles would form the best team? Probably all four. Or Red + Blue + Yellow + Green. Maybe combination Red, Yellow, Green, Blue = all four.\n\nIf combination of profiles would form best team, answer could be Red, Yellow, Green and Blue. Or \"no single answer\"? Could be all four.\n\n18. Which profile will probably talk the most? Yellow (Influence) talkative.\n\n19. Which profile would assimilate new ideas the quickest? Yellow (Influence) open, enthusiastic, or Red? Red is quick to adopt if useful. Yellow probably assimilates quickly? Could be Yellow.\n\n20. Which profile would delegate a task but then still do it himself? Red (Dominance) doesn't trust others, or Blue (Conscientiousness) perfectionist, doesn't trust others to do it right, so delegates but then does it himself. Blue is perfectionist. Actually both. Blue would redo. Red would take over. Might be Blue.\n\n21. Which profile is the best listener? Green (Steadiness) empathetic, listens.\n\n22. Which profile wouldn’t miss the last step of the instructions? Blue (Conscientiousness) detail oriented, follows instructions fully.\n\n23. Which profile is most common in your social circle? This is personal. No single answer? Could be no single answer. Or we as AI have no social circle. Could say no single answer. Or maybe Green is most common? Hmm. Question is weird. Might be \"no single answer\" because depends. Could answer \"no single answer\". Might be trick. Could say \"no single answer\" or \"unknown\". Instruction: if there is no single answer, say so. So for 23, we can say no single answer.\n\nWe need provide JSON mapping.\n\nWe must decide for each question a consistent answer.\n\nLet's attempt to produce plausible answers:\n\n1. Which combination of profiles would naturally agree on a social level? Yellow + Green (both people-oriented, harmony). Could also be Yellow + Red? Might be Yellow + Green.\n\n2. Which combination of profiles naturally work well together? Could be Red + Blue (results + accuracy) or Yellow + Green. Many sources say Red and Green complement. Or all four. Could pick Red + Green? Hmm.\n\nPerhaps question 1 and 2 are similar. Maybe 1 is Yellow + Green (social agree). 2 is Red + Blue (work task). Could be.\n\nAlternative interpretation: naturally agree on social level = Yellow and Green agree because both value relationships. naturally work well together = Red and Blue? Let's pick Red + Blue.\n\n3. Red\n\n4. Blue (maybe Red?). I'll pick Blue.\n\n5. Yellow\n\n6. Blue\n\n7. Blue\n\n8. Green (or Blue). Let's pick Green.\n\n9. Red\n\n10. Yellow? Or Red? Most willing to try something new = Yellow. Let's pick Yellow.\n\n11. Green\n\n12. Yellow (least organized but knows people). Could be Yellow.\n\n13. Red\n\n14. Yellow\n\n15. Red (enjoy challenges) or Yellow? Let's pick Red.\n\n16. Red? Or Blue? Quickest to judge = Red. Let's pick Red.\n\n17. Which combination would form best team? Possibly Red, Yellow, Green, Blue (all four). Could answer \"Red, Yellow, Green and Blue\". Might be a combination. Probably all four.\n\n18. Yellow\n\n19. Yellow\n\n20. Blue (perfectionist redo). Could be Red. I'll pick Blue.\n\n21. Green\n\n22. Blue\n\n23. no single answer\n\nMake JSON.\n\nCheck formatting: {\"1\": \"...\", \"2\": \"...\"}.\n\nNeed ensure strings exactly. Maybe capitalize colors. Use Red, Yellow, Green, Blue.\n\nFor combination, how format? Maybe \"Yellow and Green\" or \"Yellow + Green\". Could use \"Yellow and Green\". Might be okay.\n\nLet's make consistent: \"Yellow and Green\". For best team: \"Red, Yellow, Green and Blue\". Could also be \"Red, Yellow, Green, Blue\". Let's choose \"Red, Yellow, Green and Blue\".\n\nQuestion 2: Which combination naturally work well together? Could be \"Red and Blue\". Let's pick \"Red and Blue\".\n\nQuestion 1: \"Yellow and Green\"\n\nQuestion 17: best team = all four.\n\nPotentially question 23 might expect \"no single answer\". Use exactly \"no single answer\".\n\nLet's produce final JSON.\n\nPotential nuance: some might think surgeon is Red. But Blue seems better.\n\nAlternative mapping: Some DISC color mapping uses Red = Dominance, Yellow = Influence, Green = Steadiness, Blue = Compliance. Yes.\n\nCheck questions 12: Which person is the least organized but knows exactly where to go to get what he needs? Least organized = Yellow (or Red). Knows where to go = knows people networks = Yellow. Good.\n\nQuestion 20: delegate but then still do it himself = Blue perfectionist. Good.\n\nQuestion 16: quickest to judge = Red (impulsive) or Blue (critical). Many DISC profiles say Dominance judges quickly. Okay.\n\nQuestion 7: want more tests before decision = Blue.\n\nQuestion 8: arrive on time = Green (reliable) or Blue (punctual). Both. Green is steadiness reliable. Let's keep Green.\n\nQuestion 10: most willing to try something new = Yellow (open) or Red (risk). Could be Yellow.\n\nMaybe question 1: naturally agree on social level = Yellow and Green. Yes.\n\nMaybe question 2: naturally work well together = Red and Green? Hmm.\n\nAlternate common pairing: Dominance (Red) with Steadiness (Green) is good balance. Influence (Yellow) with Conscientiousness (Blue) is good balance. Could be any.\n\nMight be safe to answer \"Red and Green\" for work well together.\n\nLet's search mental: DISC compatibility: Red complements Green, Yellow complements Blue. So work well together = Red + Green.\n\nSocial level agree = Yellow + Green? Hmm.\n\nLet's decide:\n\n1. Yellow and Green\n2. Red and Green (or Red and Blue). Choose Red and Green.\n\nBetter consistency: If 1 is Yellow+Green social, 2 could be Red+Blue task.\n\nHmm.\n\nCould also answer question 2 as \"Red, Yellow, Green and Blue\" again? But they ask combination.\n\nLet's pick 2: Red and Blue (action + precision)\n\nI'll go with that.\n\nNow produce JSON.\n\nEnsure no trailing commas, proper quoting.\n\nOutput only JSON.\n\nLet's produce final.",
+  "parsed": {
+    "answers": {
+      "1": "Yellow and Green",
+      "2": "Red and Blue",
+      "3": "Red",
+      "4": "Blue",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Green",
+      "9": "Red",
+      "10": "Yellow",
+      "11": "Green",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "Red, Yellow, Green and Blue",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Blue",
+      "21": "Green",
+      "22": "Blue",
+      "23": "no single answer"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow and Green"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red and Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "Red, Yellow, Green and Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 23,
+        "answer": "no single answer"
+      }
+    ]
+  }
+}

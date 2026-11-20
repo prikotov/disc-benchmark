@@ -1,0 +1,273 @@
+{
+  "model": "qwen4-max-preview",
+  "folder": "qwen4-max-preview",
+  "provider": "cloud",
+  "lang": "ru",
+  "cloud_provider": "alibabacloud",
+  "thinking": {
+    "requested": "high",
+    "scale": [
+      "off",
+      "low",
+      "medium",
+      "high"
+    ],
+    "sent": "high",
+    "note": "docs Model Studio: reasoning_effort low/medium/xhigh (дефолт xhigh; max/high→xhigh); off — enable_thinking=False (эквивалент none)"
+  },
+  "options": {
+    "reasoning_effort": "high"
+  },
+  "model_version": "qwen4.0-max-preview",
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-17T03:08:49.321756+00:00",
+  "duration_s": 26.1,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 615,
+    "cached_tokens": 512,
+    "completion_tokens": 1349,
+    "reasoning_tokens": 1020
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый и зелёный (оба ориентированы на людей); в целом совместимы соседние цвета",
+      "2": "Красный и синий (оба ориентированы на задачу/результат)",
+      "3": "Красный",
+      "4": "Синий (в сочетании с красным — точность плюс решительность)",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Синий",
+      "9": "Красный",
+      "10": "Красный (жёлтый — из интереса к новизне)",
+      "11": "Зелёный",
+      "12": "Зелёный (жёлтый тоже раним, но быстрее отходит)",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный",
+      "17": "Синий (красный судит быстро, но по делу)",
+      "18": "Сочетание всех четырёх: красный + жёлтый + зелёный + синий",
+      "19": "Жёлтый",
+      "20": "Жёлтый",
+      "21": "Синий",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Однозначного ответа нет — зависит от окружения (статистически чаще всего встречается зелёный)"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 16,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 4,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый и зелёный (оба ориентированы на людей); в целом совместимы соседние цвета"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Красный и синий (оба ориентированы на задачу/результат)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Синий (в сочетании с красным — точность плюс решительность)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный (жёлтый — из интереса к новизне)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Зелёный (жёлтый тоже раним, но быстрее отходит)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Синий (красный судит быстро, но по делу)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 18,
+        "answer": "Сочетание всех четырёх: красный + жёлтый + зелёный + синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 21,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Однозначного ответа нет — зависит от окружения (статистически чаще всего встречается зелёный)"
+      }
+    ]
+  }
+}

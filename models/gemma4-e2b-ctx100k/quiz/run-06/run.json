@@ -1,0 +1,264 @@
+{
+  "model": "gemma4:e2b-ctx100k",
+  "folder": "gemma4-e2b-ctx100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T19:21:49.490285+00:00",
+  "duration_s": 5.4,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 633,
+    "eval_count": 1472,
+    "eval_duration": 2479946000,
+    "prompt_eval_duration": 183315000,
+    "load_duration": 2607762007,
+    "total_duration": 5274738387
+  },
+  "ps_snapshot": [],
+  "ollama_contention": false,
+  "raw": "```json\n{\n\"1\": \"I и S\",\n\"2\": \"S и C\",\n\"3\": \"D\",\n\"4\": \"C\",\n\"5\": \"I\",\n\"6\": \"C\",\n\"7\": \"C\",\n\"8\": \"S\",\n\"9\": \"D\",\n\"10\": \"D\",\n\"11\": \"S\",\n\"12\": \"C\",\n\"13\": \"I\",\n\"14\": \"D\",\n\"15\": \"I\",\n\"16\": \"D\",\n\"17\": \"D\",\n\"18\": \"D, I, S\",\n\"19\": \"I\",\n\"20\": \"I\",\n\"21\": \"D\",\n\"22\": \"S\",\n\"23\": \"C\",\n\"24\": \"Неоднозначно\"\n}\n```",
+  "thinking_raw": "Thinking Process:\n\n1.  **Analyze the Request:** The user wants me to take a short DISC assessment and answer 24 questions based on the DISC model.\n2.  **Identify the DISC Profiles:**\n    *   **D (Dominance/Red):** Direct, decisive, results-oriented, assertive, fast-paced, competitive.\n    *   **I (Influence/Yellow):** Sociable, optimistic, expressive, persuasive, enthusiastic, people-focused.\n    *   **S (Steadiness/Green):** Supportive, calm, patient, cooperative, reliable, focused on relationships.\n    *   **C (Conscientiousness/Blue):** Analytical, precise, detail-oriented, cautious, logic-driven, focused on quality/rules.\n3.  **Analyze the Output Format Requirement:** The answer must be a strict JSON object mapping question numbers (1-24) to the profile (color, combination, or \"no single answer\").\n4.  **Process Each Question based on DISC tendencies (Self-Assessment/General DISC knowledge):**\n\n    *   *Q1. Какие профили совместимы в социальном плане?* (Focus on people/interaction) -> I and S.\n    *   *Q2. Какие профили совместимы в совместной работе?* (Focus on collaboration/task management) -> S and C (for detail) or D and S (for action).\n    *   *Q3. Какой профиль всегда хотел бы возглавить проект?* (Focus on leadership/control) -> D.\n    *   *Q4. Какой профиль окажется лучшим хирургом?* (Focus on precision/analysis/protocol) -> C.\n    *   *Q5. Какой профиль больше всех упивается ролью оратора?* (Focus on persuasion/energy) -> I.\n    *   *Q6. Какой профиль чаще всего знает, где он сохранил электронное письмо от шефа?* (Focus on organization/routine) -> C or S (S remembers routine/details; C organizes files). Let's lean towards C for systematic filing.\n    *   *Q7. Какой профиль стремится провести побольше тестов или собрать побольше информации перед тем, как принять решение?* (Focus on data/analysis) -> C.\n    *   *Q8. Какой профиль всегда приходит вовремя и в этом плане на него можно положиться?* (Focus on reliability/structure) -> S.\n    *   *Q9. Какой профиль раз за разом не следует правилам только ради того, чтобы работа была сделана?* (Focus on defiance/action over rules) -> D.\n    *   *Q10. Какой профиль охотнее всех апробирует новые технологии или приемы, если это ускорит работу?* (Focus on speed/innovation/action) -> D or I. (D for implementation, I for adopting trends). Let's go with D for rapid adoption.\n    *   *Q11. Какой профиль дольше всех помнит критику в свой адрес?* (Focus on feelings/relationship) -> S or I. (S handles criticism calmly; I might feel it strongly). S is often more resilient.\n    *   *Q12. Какой профиль болезненнее всего реагирует на личную критику?* (Focus on logic/accuracy) -> C.\n    *   *Q13. Какой профиль менее всех организован, но знает, где может получить нужную информацию?* (Focus on exploring/flexibility) -> I or D. (I explores, D is action-oriented). Let's lean towards I (less structured).\n    *   *Q14. Какой профиль хочет всегда принимать решения?* (Focus on speed/control) -> D.\n    *   *Q15. Какой профиль охотнее всего следует последней моде?* (Focus on trends/excitement) -> I.\n    *   *Q16. Какой профиль охотнее берется за сложные задачи?* (Focus on challenge/impact) -> D.\n    *   *Q17. Какой профиль легко судит других?* (Focus on judgment/directness) -> D or C. (D is quick judgment; C is analytical judgment).\n    *   *Q18. Комбинация каких профилей образует самую успешную команду?* (Focus on balance: Action + People + Quality). -> D + I + S (The classic high-performance team).\n    *   *Q19. Какой профиль вероятнее всего окажется самым разговорчивым?* (Focus on communication/enthusiasm) -> I.\n    *   *Q20. Какой профиль быстрее всех воспримет новую идею?* (Focus on speed/excitement) -> D or I. (D implements fast; I embraces fast). I is often the initial adopter.\n    *   *Q21. Какой профиль мог бы поручить задание другим, но все же выполнит его сам?* (Focus on competence/autonomy) -> D or C. (D takes ownership; C ensures quality). Let's choose D.\n    *   *Q22. Какой профиль окажется лучшим слушателем?* (Focus on empathy/patience) -> S.\n    *   *Q23. Какой профиль не пропустит ни малейшего пункта в инструкции?* (Focus on detail/rules) -> C.\n    *   *Q24. Какой профиль чаще всего встречается в вашем круге общения?* (This is a personal question, so the answer must reflect that no single answer can be determined by the test alone). -> No single answer.\n\n5.  **Construct the Final JSON:** Assemble the derived answers into the required strict JSON format. (Self-Correction: Ensure the answers are concise profile names.)",
+  "parsed": {
+    "answers": {
+      "1": "I и S",
+      "2": "S и C",
+      "3": "D",
+      "4": "C",
+      "5": "I",
+      "6": "C",
+      "7": "C",
+      "8": "S",
+      "9": "D",
+      "10": "D",
+      "11": "S",
+      "12": "C",
+      "13": "I",
+      "14": "D",
+      "15": "I",
+      "16": "D",
+      "17": "D",
+      "18": "D, I, S",
+      "19": "I",
+      "20": "I",
+      "21": "D",
+      "22": "S",
+      "23": "C",
+      "24": "Неоднозначно"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 17,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "I и S"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "S и C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 3,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 6,
+        "answer": "C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "C"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "S"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "D"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "S"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 13,
+        "answer": "I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 15,
+        "answer": "I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 16,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 17,
+        "answer": "D"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 18,
+        "answer": "D, I, S"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 19,
+        "answer": "I"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "I"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "D"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 22,
+        "answer": "S"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 23,
+        "answer": "C"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Неоднозначно"
+      }
+    ]
+  }
+}

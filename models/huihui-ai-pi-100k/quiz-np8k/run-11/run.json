@@ -1,0 +1,260 @@
+{
+  "model": "huihui-ai:pi-100k",
+  "folder": "huihui-ai-pi-100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "medium",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "xhigh"
+    ],
+    "sent": "medium",
+    "note": "think=medium"
+  },
+  "options": {
+    "num_ctx": 16384,
+    "num_predict": 8192
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T17:27:52.919289+00:00",
+  "duration_s": 16.1,
+  "error": null,
+  "usage": {
+    "prompt_eval_count": 603,
+    "eval_count": 1978,
+    "eval_duration": 12948025000,
+    "prompt_eval_duration": 239270000,
+    "load_duration": 2808523419,
+    "total_duration": 16000455006
+  },
+  "ps_snapshot": [],
+  "ollama_contention": false,
+  "raw": "{\"1\": \"жёлтый и зелёный\", \"2\": \"красный и синий\", \"3\": \"красный\", \"4\": \"синий\", \"5\": \"жёлтый\", \"6\": \"синий\", \"7\": \"синий\", \"8\": \"синий\", \"9\": \"красный\", \"10\": \"жёлтый\", \"11\": \"зелёный\", \"12\": \"зелёный\", \"13\": \"жёлтый\", \"14\": \"красный\", \"15\": \"жёлтый\", \"16\": \"красный\", \"17\": \"красный\", \"18\": \"красный, жёлтый, зелёный и синий (сбалансированная команда)\", \"19\": \"жёлтый\", \"20\": \"жёлтый\", \"21\": \"красный\", \"22\": \"зелёный\", \"23\": \"синий\", \"24\": \"жёлтый и зелёный\"}",
+  "thinking_raw": "The user is asking me to answer 24 questions about the DISC model (Red, Yellow, Green, Blue) and respond strictly in JSON format.\n\nLet me think through each question based on standard DISC model characteristics:\n\n- **Red (Dominant/Доминирующий)**: Decisive, competitive, task-oriented, direct, wants to lead, takes charge, impatient, decisive, can be critical, gets upset when criticized (but moves on quickly), less organized but knows where to get info, takes risks, tries new things, wants to make decisions, judges others, delegates but does it themselves.\n\n- **Yellow (Influencing/Влияющий)**: Social, enthusiastic, persuasive, talkative, likes to be the speaker/orator, follows trends, quick to accept new ideas, social, friendly, not very organized, remembers where to get info, creative.\n\n- **Green (Steady/Стабильный)**: Patient, loyal, good listener, follows rules, steady, reliable, slow to accept change, remembers criticism long, sensitive to personal criticism, team player, good in social compatibility.\n\n- **Blue (Compliant/Совестливый)**: Detail-oriented, analytical, systematic, follows rules, collects information before deciding, organized, remembers where things are stored, precise, thorough, best surgeon (precision), doesn't miss any point in instructions.\n\nNow let me answer each:\n\n1. Social compatibility: Yellow and Green are most socially compatible. Actually, in DISC theory, Yellow and Red can work together, but socially Yellow and Green are compatible. Let me think... Actually, in many DISC frameworks, Yellow (social, outgoing) and Green (steady, patient) are socially compatible. But Red and Yellow can also be compatible. I'll go with \"жёлтый и зелёный\" for social compatibility.\n\n2. Work compatibility: Red and Blue work well together in tasks (Red drives, Blue details). Or Red and Yellow? Actually, Red and Blue complement each other well in work - Red drives decisions, Blue ensures quality. I'll say \"красный и синий.\"\n\n3. Always wants to lead: Red (Dominant) - \"красный\"\n\n4. Best surgeon: Blue (detail-oriented, precise, systematic) - \"синий\"\n\n5. Most enjoys being an orator: Yellow (Influencing, persuasive, loves to speak) - \"жёлтый\"\n\n6. Most often knows where they saved an email: Blue (organized, detail-oriented) - \"синий\"\n\n7. Strives to conduct more tests or gather more info before deciding: Blue (analytical, thorough) - \"синий\"\n\n8. Always comes on time and can be relied upon: Blue (organized, punctual) or Green (steady, reliable). Actually, Blue is more about precision and organization, Green is about steadiness and reliability. I'll go with \"синий\" for punctuality and reliability in terms of time. Actually, Green is often described as the one who's always on time and dependable. Let me think... In many DISC descriptions, Blue is the one who's organized and punctual. But Green is also reliable. I'll say \"синий\" as they're more structured about time.\n\nActually, rethinking: Green (Steady) is typically the one who's punctual, reliable, and steady. Blue is more about being thorough and organized. For \"always on time and you can rely on them\" - this sounds more Green. But Blue is also very structured. I'll go with \"синий\" for organization/punctuality.\n\nHmm, actually let me reconsider. In many DISC descriptions:\n- Blue: precise, organized, punctual, systematic\n- Green: steady, reliable, patient, consistent\n\n\"Always comes on time\" - this could be either. But \"relied upon\" suggests Green's steadiness. I'll go with \"синий\" as they're more structured about schedules.\n\n9. Repeatedly doesn't follow rules just to get work done: Red (task-oriented, gets results, doesn't care about process) - \"красный\"\n\n10. Eagerly tries new technologies if it speeds up work: Yellow (enthusiastic, new ideas) or Red (wants efficiency). Actually, Yellow is more about excitement and new things, Red is about efficiency. \"If it speeds up work\" - this sounds more Red (efficiency-driven). But Yellow loves new things. I'll say \"жёлтый\" for enthusiasm about new technology, but the \"if it speeds up work\" part suggests Red. I'll go with \"жёлтый\" as they're most enthusiastic about new things, but with the efficiency caveat it could be Red. Let me go with \"жёлтый.\"\n\nActually, re-reading: \"охотнее всех апробирует новые технологии или приемы, если это ускорит работу\" - the key is \"if it speeds up work\" - this efficiency focus is very Red. But Yellow loves novelty. I think this is \"жёлтый\" because they're the most eager to try new things, with the condition being that it's useful.\n\n11. Remembers criticism the longest: Green (sensitive, takes it personally, holds onto it) - \"зелёный\"\n\n12. Reacts most painfully to personal criticism: Green (sensitive, values harmony, personal criticism hurts) - \"зелёный\"\n\n13. Least organized but knows where to get needed info: Yellow (not very organized, but social and knows where to get things) - \"жёлтый\"\n\n14. Always wants to make decisions: Red (Dominant, decisive) - \"красный\"\n\n15. Most eagerly follows the latest fashion: Yellow (likes to be seen, trendy, social) - \"жёлтый\"\n\n16. Most eagerly takes on complex tasks: Red (challenging, competitive) - \"красный\"\n\n17. Easily judges others: Red (critical, decisive, evaluates quickly) - \"красный\"\n\n18. Combination of profiles forming the most successful team: This could be all four, or Red + Blue (task + detail), or Red + Yellow (drive + social). In many DISC frameworks, a balanced team needs all four. But if I must pick a combination, Red + Blue is often cited as the most effective work combination. Or all four. I'll say \"все четыре\" or \"красный и синий\" - actually, the most successful team would have all four profiles balanced. But the question asks for a \"combination\" suggesting not all four. I'll go with \"красный, жёлтый, зелёный и синий\" (all four) or perhaps \"красный и синий\" for task effectiveness. \n\nActually, in many DISC training materials, the ideal team has all four, but if we're talking about the most effective combination, it's often Red + Blue (one drives, one perfects) or Red + Yellow (one leads, one sells). I'll go with \"все четыре (сбалансированная команда)\" or simply list all four.\n\nLet me go with \"красный, жёлтый, зелёный и синий\" - a balanced team of all four.\n\n19. Most likely to be the most talkative: Yellow (sociable, expressive) - \"жёлтый\"\n\n20. Fastest to accept a new idea: Yellow (enthusiastic, open) - \"жёлтый\"\n\n21. Could delegate but will do it themselves: Red (takes charge, does it their way, doesn't fully trust others) - \"красный\"\n\n22. Best listener: Green (patient, attentive, supportive) - \"зелёный\"\n\n23. Won't miss any single point in instructions: Blue (detail-oriented, thorough) - \"синий\"\n\n24. Most often encountered in your social circle: This is subjective. I'll say \"жёлтый и зелёный\" as these are the most common in everyday social interactions. Or I could say it's a mix. I'll go with \"жёлтый и зелёный\" as they represent the most common social profiles.\n\nLet me format this as JSON.",
+  "parsed": {
+    "answers": {
+      "1": "жёлтый и зелёный",
+      "2": "красный и синий",
+      "3": "красный",
+      "4": "синий",
+      "5": "жёлтый",
+      "6": "синий",
+      "7": "синий",
+      "8": "синий",
+      "9": "красный",
+      "10": "жёлтый",
+      "11": "зелёный",
+      "12": "зелёный",
+      "13": "жёлтый",
+      "14": "красный",
+      "15": "жёлтый",
+      "16": "красный",
+      "17": "красный",
+      "18": "красный, жёлтый, зелёный и синий (сбалансированная команда)",
+      "19": "жёлтый",
+      "20": "жёлтый",
+      "21": "красный",
+      "22": "зелёный",
+      "23": "синий",
+      "24": "жёлтый и зелёный"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 19,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "жёлтый и зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "красный и синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 17,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "красный, жёлтый, зелёный и синий (сбалансированная команда)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 24,
+        "answer": "жёлтый и зелёный"
+      }
+    ]
+  }
+}

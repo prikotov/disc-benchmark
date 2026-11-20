@@ -1,0 +1,265 @@
+{
+  "model": "gemma4:31b-it-qat-pi-100k",
+  "folder": "gemma4-31b-it-qat-pi-100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T19:21:13.287395+00:00",
+  "duration_s": 30.2,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 633,
+    "eval_count": 2115,
+    "eval_duration": 29882144000,
+    "prompt_eval_duration": 135873000,
+    "load_duration": 1116277,
+    "total_duration": 30173411197
+  },
+  "ps_snapshot": [
+    "gemma4:31b-it-qat-pi-100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"Жёлтый и Зелёный\",\n  \"2\": \"Сочетание всех профилей\",\n  \"3\": \"Красный\",\n  \"4\": \"Красный и Синий\",\n  \"5\": \"Жёлтый\",\n  \"6\": \"Синий\",\n  \"7\": \"Синий\",\n  \"8\": \"Синий\",\n  \"9\": \"Красный\",\n  \"10\": \"Красный и Жёлтый\",\n  \"11\": \"Зелёный\",\n  \"12\": \"Жёлтый\",\n  \"13\": \"Жёлтый\",\n  \"14\": \"Красный\",\n  \"15\": \"Жёлтый\",\n  \"16\": \"Красный\",\n  \"17\": \"Синий\",\n  \"18\": \"Сочетание всех профилей\",\n  \"19\": \"Жёлтый\",\n  \"20\": \"Жёлтый\",\n  \"21\": \"Синий\",\n  \"22\": \"Зелёный\",\n  \"23\": \"Синий\",\n  \"24\": \"Нет однозначного ответа\"\n}\n```",
+  "thinking_raw": "*   Task: Answer a 24-question blitz test about the DISC model.\n    *   Model mappings: Red (Dominance), Yellow (Influence), Green (Steadiness), Blue (Compliance/Conscientiousness).\n    *   Format: Strict JSON object (`{\"1\": \"...\", ...}`). No external text.\n\n    *   *Red (D):* Direct, result-oriented, decisive, competitive, impatient, likes control.\n    *   *Yellow (I):* Outgoing, enthusiastic, persuasive, impulsive, social, optimistic.\n    *   *Green (S):* Patient, reliable, cooperative, avoids conflict, loyal, good listener.\n    *   *Blue (C):* Analytical, precise, detail-oriented, rule-following, reserved, cautious.\n\n    *   *Q1: Which profiles are socially compatible?*\n        Usually, similar styles or complementary ones. Red/Yellow (high energy) or Green/Blue (low energy/stable). However, Yellow and Green are often seen as the \"friendly\" side. *Better answer: All can be compatible depending on the context, but typically Yellow and Green.* Let's go with \"Все\" (All) or \"Жёлтый и Зелёный\". Actually, in DISC theory, opposites often attract or clash. Yellow/Green are socially harmonious. Let's say \"Все\" because compatibility is contextual, but usually, Yellow/Green are the most social. Let's stick to a more general answer or \"Нет однозначного ответа\" if it's too vague. But usually, \"Жёлтый и Зелёный\" are the social heart. Let's re-evaluate: Red-Yellow (active), Green-Blue (reserved). I'll go with \"Все\" or \"Нет однозначного ответа\". Wait, if forced to choose a *combination*, Yellow and Green are the most \"socially\" easy-going.\n    *   *Q2: Which profiles are compatible in collaborative work?*\n        A mix of all four creates a balanced team. Red (direction), Yellow (energy), Green (stability), Blue (quality). *Answer: Сочетание всех профилей.*\n    *   *Q3: Which profile always wants to lead the project?*\n        Red (Dominance). *Answer: Красный.*\n    *   *Q4: Which profile would be the best surgeon?*\n        Needs precision (Blue) and the ability to make quick, decisive actions under pressure (Red). *Answer: Красный и Синий.*\n    *   *Q5: Which profile enjoys being a public speaker the most?*\n        Yellow (Influence). *Answer: Жёлтый.*\n    *   *Q6: Which profile usually knows where they saved the email from the boss?*\n        Blue (Compliance/Organization). *Answer: Синий.*\n    *   *Q7: Which profile strives to run more tests or collect more information before making a decision?*\n        Blue (Analytical). *Answer: Синий.*\n    *   *Q8: Which profile always arrives on time and can be relied upon in this regard?*\n        Blue or Green. Blue is about rules/time; Green is about reliability. Usually Blue. *Answer: Синий.*\n    *   *Q9: Which profile repeatedly ignores rules just to get the job done?*\n        Red (Result over process). *Answer: Красный.*\n    *   *Q10: Which profile is most willing to try new technologies/methods if it speeds up the work?*\n        Red (efficiency) or Yellow (novelty). Red is driven by speed/results. *Answer: Красный и Жёлтый.*\n    *   *Q11: Which profile remembers criticism the longest?*\n        Green or Blue. Green takes things personally; Blue analyzes the error. Green is often more emotional about the relationship. *Answer: Зелёный.*\n    *   *Q12: Which profile reacts most painfully to personal criticism?*\n        Yellow (needs approval) or Green (avoids conflict). Yellow's self-esteem is tied to social image. *Answer: Жёлтый.*\n    *   *Q13: Which profile is the least organized but knows where to get the necessary information?*\n        Yellow (chaotic but networked). *Answer: Жёлтый.*\n    *   *Q14: Which profile always wants to make the decisions?*\n        Red. *Answer: Красный.*\n    *   *Q15: Which profile is most likely to follow the latest fashion?*\n        Yellow (social trendsetter). *Answer: Жёлтый.*\n    *   *Q16: Which profile more readily takes on complex tasks?*\n        Red (challenge) or Blue (technical complexity). Usually Red for the *challenge* aspect. *Answer: Красный.*\n    *   *Q17: Which profile easily judges others?*\n        Blue (standards) or Red (competence). Blue judges based on rules/logic. *Answer: Синий.*\n    *   *Q18: Which combination of profiles forms the most successful team?*\n        A mix of all four. *Answer: Сочетание всех профилей.*\n    *   *Q19: Which profile is most likely to be the most talkative?*\n        Yellow. *Answer: Жёлтый.*\n    *   *Q20: Which profile perceives a new idea the fastest?*\n        Yellow (openness) or Red (fast pace). Yellow is the most open to new things. *Answer: Жёлтый.*\n    *   *Q21: Which profile might delegate a task to others but still do it themselves?*\n        Blue (distrust of others' quality) or Red (impatience). Blue is the classic \"I'll just do it myself to make sure it's right.\" *Answer: Синий.*\n    *   *Q22: Which profile would be the best listener?*\n        Green. *Answer: Зелёный.*\n    *   *Q23: Which profile won't miss a single point in the instructions?*\n        Blue. *Answer: Синий.*\n    *   *Q24: Which profile is most common in your circle of communication?*\n        As an AI, I don't have a \"circle of communication\" in the human sense. *Answer: Нет однозначного ответа.*\n\n    1.  Socially compatible: Yellow and Green (The \"People\" axis). Or Red-Yellow / Green-Blue. Let's say \"Жёлтый и Зелёный\".\n    2.  Collaborative: Red, Yellow, Green, Blue. \"Сочетание всех профилей\".\n    3.  Lead project: Red. \"Красный\".\n    4.  Surgeon: Red (decisive) + Blue (precise). \"Красный и Синий\".\n    5.  Speaker: Yellow. \"Жёлтый\".\n    6.  Email location: Blue. \"Синий\".\n    7.  Tests/Info: Blue. \"Синий\".\n    8.  On time: Blue. \"Синий\".\n    9.  Ignore rules for result: Red. \"Красный\".\n    10. New tech for speed: Red/Yellow. \"Красный и Жёлтый\".\n    11. Remembers criticism: Green. \"Зелёный\".\n    12. Painful personal criticism: Yellow. \"Жёлтый\".\n    13. Unorganized but knows where to get info: Yellow. \"Жёлтый\".\n    14. Make decisions: Red. \"Красный\".\n    15. Fashion: Yellow. \"Жёлтый\".\n    16. Complex tasks: Red. \"Красный\".\n    17. Judge others: Blue. \"Синий\".\n    18. Successful team: All. \"Сочетание всех профилей\".\n    19. Talkative: Yellow. \"Жёлтый\".\n    20. New idea fast: Yellow. \"Жёлтый\".\n    21. Delegate but do it self: Blue. \"Синий\".\n    22. Best listener: Green. \"Зелёный\".\n    23. Instructions: Blue. \"Синий\".\n    24. My circle: N/A. \"Нет однозначного ответа\".\n\n    *   Check for JSON format.\n    *   Ensure no text outside JSON.",
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый и Зелёный",
+      "2": "Сочетание всех профилей",
+      "3": "Красный",
+      "4": "Красный и Синий",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Синий",
+      "9": "Красный",
+      "10": "Красный и Жёлтый",
+      "11": "Зелёный",
+      "12": "Жёлтый",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный",
+      "17": "Синий",
+      "18": "Сочетание всех профилей",
+      "19": "Жёлтый",
+      "20": "Жёлтый",
+      "21": "Синий",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Нет однозначного ответа"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 17,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 2,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый и Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "all-option",
+        "correct": false,
+        "n": 2,
+        "answer": "Сочетание всех профилей"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Красный и Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный и Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 18,
+        "answer": "Сочетание всех профилей"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 21,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 24,
+        "answer": "Нет однозначного ответа"
+      }
+    ]
+  }
+}

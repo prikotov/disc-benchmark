@@ -1,0 +1,265 @@
+{
+  "model": "huihui-ai:pi-100k",
+  "folder": "huihui-ai-pi-100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "xhigh",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "xhigh"
+    ],
+    "sent": "xhigh",
+    "note": "think=xhigh"
+  },
+  "options": {
+    "num_ctx": 16384,
+    "num_predict": 8192
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T17:34:07.769200+00:00",
+  "duration_s": 44.2,
+  "error": null,
+  "usage": {
+    "prompt_eval_count": 645,
+    "eval_count": 5901,
+    "eval_duration": 44060711000,
+    "prompt_eval_duration": 47323000,
+    "load_duration": 1108965,
+    "total_duration": 44181625844
+  },
+  "ps_snapshot": [
+    "huihui-ai:pi-100k"
+  ],
+  "ollama_contention": false,
+  "raw": "{\n  \"1\": \"жёлтый и зелёный\",\n  \"2\": \"красный и синий\",\n  \"3\": \"красный\",\n  \"4\": \"синий\",\n  \"5\": \"жёлтый\",\n  \"6\": \"синий\",\n  \"7\": \"синий\",\n  \"8\": \"зелёный\",\n  \"9\": \"красный\",\n  \"10\": \"красный\",\n  \"11\": \"синий\",\n  \"12\": \"зелёный\",\n  \"13\": \"жёлтый\",\n  \"14\": \"красный\",\n  \"15\": \"жёлтый\",\n  \"16\": \"красный\",\n  \"17\": \"красный\",\n  \"18\": \"красный, жёлтый, зелёный и синий\",\n  \"19\": \"жёлтый\",\n  \"20\": \"жёлтый\",\n  \"21\": \"красный\",\n  \"22\": \"зелёный\",\n  \"23\": \"синий\",\n  \"24\": \"нет однозначного ответа\"\n}",
+  "thinking_raw": "We need answer in Russian, strict JSON only. User asks to answer quiz on DISC model with colors. Need produce JSON object keys \"1\" to \"24\". Need decide best answers according to DISC profiles: Red (D) dominant, yellow (I) influential, green (S) steady, blue (C) careful/conscientious? In Russian DISC colors: красный = D, жёлтый = I, зелёный = S, синий = C. Need answer profiles, combinations if appropriate, if no unambiguous answer write so. We must output strict JSON no text outside.\n\nNeed reason each question.\n\n1. Какие профили совместимы в социальном плане? Likely Yellow and Green? In DISC, I and S are people-oriented, social. Red and Blue? Social compatibility? Usually I (жёлтый) and S (зелёный) compatible socially? But \"социальном плане\" maybe friendly, outgoing: Yellow. Or combination? Which profiles are socially compatible? Could be жёлтый и зелёный. Need best: maybe жёлтый и зелёный (I+S) are social/people-oriented; red and blue less social. But question: \"Какие профили совместимы в социальном плане?\" plural. Could be \"жёлтый и зелёный\". Let's keep.\n\n2. Какие профили совместимы в совместной работе? Probably red and blue? D and C task-oriented, structured, detail. Or red and yellow? For teamwork? \"совместная работа\" could be work compatibility: синий и красный? Maybe \"красный и синий\" because results and quality. But question may ask from some quiz. Need infer. DISC: Red (D) and Blue (C) are work/task oriented; Yellow and Green social. But for collaborative work, maybe yellow and green? Hmm. \"совместимы в совместной работе\" could mean which profiles work well together. Usually D+C or I+S? Let's think. In team compatibility, high D with high C may clash (both task focused) but compatible in work? Social: I+S. Work: D+C. Could be.\n\n3. Какой профиль всегда хотел бы возглавить проект? Red (D).\n\n4. Какой профиль окажется лучшим хирургом? Blue (C) careful, precise, detail. Red maybe decisive, but surgeon requires precision: blue.\n\n5. Какой профиль больше всех упивается ролью оратора? Yellow (I).\n\n6. Какой профиль чаще всего знает, где он сохранил электронное письмо от шефа? Blue (C) organized, detail.\n\n7. Какой профиль стремится провести побольше тестов или собрать побольше информации перед тем, как принять решение? Blue (C).\n\n8. Какой профиль всегда приходит вовремя и в этом плане на него можно положиться? Green (S) steady, punctual. Could also Blue reliable. But \"всегда приходит вовремя\" likely Green. DISC: S are dependable, timely; C also. But if single, green? Need consider.\n\n9. Какой профиль раз за разом не следует правилам только ради того, чтобы работа была сделана? Red (D).\n\n10. Какой профиль охотнее всех апробирует новые технологии или приемы, если это ускорит работу? Yellow (I) likes new, or Red (D) if speed. \"ускорит работу\" Red? But \"охотнее всех апробирует новые технологии\" often Yellow. If speed -> Red. Could be red + yellow. Need choose maybe \"красный\" or combination. Question: \"охотнее всех апробирует новые технологии или приемы, если это ускорит работу\" - result/speed: Red; novelty: Yellow. Could be combination \"красный и жёлтый\". We'll consider.\n\n11. Какой профиль дольше всех помнит критику в свой адрес? Green (S) or Blue? Green feelings hurt, hold onto; Blue may remember facts. Common DISC: S remembers criticism and personal rejection; I forgets; D gets over? \"болезненнее всего реагирует на личную критику\" green. So 11 green.\n\n12. Какой профиль болезненнее всего реагирует на личную критику? Green (S).\n\n13. Какой профиль менее всех организован, но знает, где может получить нужную информацию? Yellow (I) people network. Or Red? \"less organized but knows where to get info\" Yellow social. So yellow.\n\n14. Какой профиль хочет всегда принимать решения? Red (D).\n\n15. Какой профиль охотнее всего следует последней моде? Yellow (I).\n\n16. Какой профиль охотнее берется за сложные задачи? Red (D) challenges. Could be blue? but complex tasks: Red likes challenges, Yellow? likely Red.\n\n17. Какой профиль легко судит других? Red (D) critical? Or Blue? D judges, critical. C also critical. \"легко судит\" maybe Red. But could be Blue (C) high standards. Need infer. In DISC, D: decisive, critical, direct; C: analytical, critical. Question \"легко судит других\" perhaps Red.\n\n18. Комбинация каких профилей образует самую успешную команду? Usually all four? Or red and blue? \"комбинация каких профилей\" likely \"красный, жёлтый, зелёный, синий\" balanced team. Or \"красный и жёлтый\"? Successful team needs all. The question: \"Комбинация каких профилей образует самую успешную команду?\" In DISC, best team has balance: D, I, S, C. So all four.\n\n19. Какой профиль вероятнее всего окажется самым разговорчивым? Yellow (I).\n\n20. Какой профиль быстрее всех воспримет новую идею? Yellow (I) or Red? New idea: Yellow enthusiastic. \"быстрее всех воспримет\" = I. Could be yellow.\n\n21. Какой профиль мог бы поручить задание другим, но все же выполнит его сам? Red (D) control, does it himself if no one else. Could be Blue? D likes control, delegate but if not done right does himself. So red.\n\n22. Какой профиль окажется лучшим слушателем? Green (S) patient listener. Could be Blue? But best listener = S.\n\n23. Какой профиль не пропустит ни малейшего пункта в инструкции? Blue (C).\n\n24. Какой профиль чаще всего встречается в вашем круге общения? Personal, no unambiguous answer. Could write \"зависит от ситуации\" or \"нет однозначного ответа\". User: if no unambiguous answer, write so. Since question about your circle, likely no universal answer. Could say \"нет однозначного ответа\" or \"зависит от круга общения\". Need JSON string. Use Russian.\n\nNeed ensure strict JSON. Values can be strings. Need maybe no trailing commas.\n\nNeed decide each answer with possible combinations. Let's scrutinize each question and DISC common interpretations. The user says \"если ответ — сочетание профилей, назовите сочетание; если однозначного ответа нет, так и напишите.\" So answers can be colors or combinations. We can output e.g. \"жёлтый и зелёный\". Need likely expected simple.\n\nPotential ambiguity: Some questions may be designed to test model. Need answer best. Let's map traits:\nD (Red): direct, results-oriented, decisive, competitive, leads, challenges, less organized, critical, may ignore rules, delegates but takes over, hates being told, quick to anger? Not necessarily remember criticism.\nI (Yellow): social, enthusiastic, talkative, persuasive, optimistic, forgets details, not organized, knows contacts, new ideas, fashion, orator, quick to accept new, maybe less patient.\nS (Green): steady, patient, loyal, listens, punctual, reliable, dislikes conflict, remembers personal criticism, avoids change, follows rules? Not necessarily.\nC (Blue): analytical, detail, quality, organized, rules, information, critical, perfectionist, cautious, remembers facts/criticism? maybe.\n\nQuestion 1: \"Какие профили совместимы в социальном плане?\" In social compatibility: I+S? Or I with D? Usually I and S are extroverted people-oriented; D and C task-oriented. But social compatibility could be Yellow with Red? Let's think of DISC compatibility: High D and High C: task, may be incompatible due to style; High I and High S: people, compatible? Many sources: D and C are \"task people\", I and S are \"people people\". For social setting, I and S are friendly. But if asking \"which profiles are compatible socially\" maybe \"жёлтый и красный\"? Because D and I both extroverted? Wait DISC dimensions: Dominant vs Steadfast, Influential vs Careful. Extroversion vs introversion? D/I are extroverted? S/C are introverted? Social: I and D are extroverted, S and C introverted. Compatible social maybe I and D? But \"socially compatible\" could mean both people-oriented? Let's examine typical DISC: \n- D (Red): direct, assertive, results, competitive, not necessarily social but can be persuasive.\n- I (Yellow): extroverted, social, friendly, expressive.\n- S (Green): introverted, steady, cooperative, reserved.\n- C (Blue): introverted, cautious, detail.\nSocially: I most social; S also sociable but reserved; D may be socially assertive; C less. Compatibility: I with S? In social, I and S can work: I leads conversation, S supports. D and C may not be socially warm. However \"совместимы в социальном плане\" could be \"жёлтый и зелёный\" because both are people-oriented? D and C are task-oriented. Let's use that.\n\nQuestion 2: \"Какие профили совместимы в совместной работе?\" Work/task: D and C? Both task-oriented, but D wants speed/results, C wants accuracy; can clash. Maybe D and I? For collaborative work, complementary: D leads, I motivates, S supports, C details. But question plural: \"Какие профили совместимы в совместной работе?\" Could be \"красный и синий\" (task) or \"красный и жёлтый\" (results and ideas). Need infer from contrast with social: 1 social, 2 joint work. Likely 1 = yellow/green (social/people), 2 = red/blue (work/task). Yes.\n\nQuestion 8: \"всегда приходит вовремя и в этом плане на него можно положиться\" Green or Blue. S is steady, punctual, reliable; C also organized. In many DISC examples, S is punctual and dependable, C is detail. Could be green. But \"на него можно положиться\" could be blue? Let's think: S: reliable, consistent, punctual; C: thorough, accurate. If asking time, S. Use green.\n\nQuestion 10: \"охотнее всех апробирует новые технологии или приемы, если это ускорит работу\" Red or Yellow? The qualifier \"ускорит работу\" points to D (results/speed). But \"новые технологии\" often I (likes novelty, tries new). \"охотнее всех\" maybe Yellow. If it speeds work, Red may adopt if efficient. Could be combination \"красный и жёлтый\". Need decide. Since user allows combinations, perhaps safest: \"красный и жёлтый\". But expected might be single. Let's evaluate: D: \"prefers to do things their way, likes to try new methods if faster\". I: \"likes to try new things, enthusiastic\". The phrase \"если это ускорит работу\" strongly D. \"охотнее всех апробирует\" maybe I. Could answer \"красный (иногда с жёлтым)\" but strict string. Maybe \"красный и жёлтый\". But if only one best, red. Let's not overcomplicate? Need likely test from some source. Could have expected \"Красный\" for tasks/speed, \"Жёлтый\" for new ideas/fashion. Question 20 new idea = yellow, question 15 fashion = yellow. Question 10 new tech if speed = red? Use red.\n\nQuestion 11 and 12 both criticism: 11 \"дольше всех помнит критику\" maybe Blue? 12 \"болезненнее всего реагирует на личную критику\" Green. Different? 11 might be blue (analytical, remembers facts), 12 green (feelings). Let's examine. DISC: \n- D: critical, forgets criticism after a while? \n- I: takes criticism lightly, forgets.\n- S: holds onto personal criticism, feels rejected.\n- C: remembers details and may analyze, can be critical.\nIf 11 \"дольше всех помнит критику в свой адрес\" could be Blue (C) because detail-oriented and factual memory; or Green (S) because personal. 12 \"болезненнее всего реагирует на личную критику\" clearly Green. Maybe 11 is Blue? Need distinguish. Many DISC: C (blue) are critical and may remember every mistake; S (green) are sensitive. \"помнит критику\" could be S because personal, but \"болезненнее\" is S. If both same, okay. But maybe they intentionally have 11 = blue, 12 = green. Let's think. \"Дольше всех помнит критику\" - Blue: C is thorough, detail, remembers facts, may dwell. Green: S is steady, patient, but holds grudges? Which profile \"remembers criticism longest\"? In DISC, S is sensitive and may remember rejection; C is critical and remembers errors. If \"в свой адрес\" personal, S. \"болезненнее всего реагирует на личную критику\" S. Could both be green. But question 11 says \"критику в свой адрес\" not necessarily personal; 12 says \"личную критику\". Both similar. Maybe 11 blue? Let's search memory: DISC profile traits:\nD (Red): critical, decisive, may remember criticism? \nI (Yellow): friendly, forgets criticism.\nS (Green): sensitive, remembers slights.\nC (Blue): detail-oriented, may hold onto data, not emotional.\nCommon phrase: \"Green remembers criticism longer than others, Blue remembers facts\". The wording \"болезненнее\" = emotional, green. \"дольше всех помнит\" = green? I'd answer green for both? But if they ask two questions maybe expect different: 11 blue, 12 green. Let's examine \"больше всех упивается ролью оратора\" = yellow. \"чаще всего знает, где сохранил письмо\" = blue. \"стремится провести тесты/собрать информацию\" = blue. \"всегда приходит вовремя\" = green. \"не следует правилам\" = red. \"новое ускорит\" = red/yellow. \"помнит критику\" maybe green. \"болезненнее на личную\" = green. If both same, not an issue. But question likely from quiz; maybe each answer maps to one profile, not all distinct. Need not make all different.\n\nQuestion 13: \"менее всех организован, но знает, где может получить нужную информацию\" Yellow (I) network. Could be Red? D less organized but knows who to call. Yellow social. Use yellow.\n\nQuestion 17: \"легко судит других\" Could be Red (D) critical, or Blue (C) critical. Which one \"судит\" (judges) others? D: decisive, critical, may be blunt; C: analytical, high standards, critical. \"Легко судит\" sounds Red. Use red.\n\nQuestion 18: combination most successful team? all four. Could be \"красный, жёлтый, зелёный и синий\". If combination profiles, maybe \"красный + синий\"? But phrase \"самая успешная команда\" in DISC often needs all four profiles balanced. Let's answer all four.\n\nQuestion 21: \"мог бы поручить задание другим, но все же выполнит его сам\" Red (D) wants control. Could also Blue? D: delegate but if no confidence does it himself. Use red.\n\nQuestion 24: \"Какой профиль чаще всего встречается в вашем круге общения?\" Since \"вашем\" (AI's) personal, no unambiguous. Could answer \"нет однозначного ответа\". Or \"зависит от круга общения\". User says if no unambiguous answer, so write that. Use \"нет однозначного ответа\".\n\nNeed ensure JSON string values maybe with accents. Strict JSON: keys quoted, values quoted. No extra text. Need maybe values in Russian. Could include combination: \"красный и жёлтый\". For all four: \"красный, жёлтый, зелёный и синий\". Need ensure no unescaped quotes. Good.\n\nLet's consider if any answers should be combinations for 1 and 2 and 18. Could output:\n1: \"жёлтый и зелёный\"\n2: \"красный и синий\"\n3: \"красный\"\n4: \"синий\"\n5: \"жёлтый\"\n6: \"синий\"\n7: \"синий\"\n8: \"зелёный\"\n9: \"красный\"\n10: \"красный\" (or \"красный и жёлтый\")\n11: \"зелёный\" (or blue)\n12: \"зелёный\"\n13: \"жёлтый\"\n14: \"красный\"\n15: \"жёлтый\"\n16: \"красный\"\n17: \"красный\"\n18: \"красный, жёлтый, зелёный и синий\"\n19: \"жёлтый\"\n20: \"жёлтый\"\n21: \"красный\"\n22: \"зелёный\"\n23: \"синий\"\n24: \"нет однозначного ответа\"\n\nBut need maybe 11 = \"синий\". Let's decide. Which is more likely? Let's think of DISC colors in Russian: Red, Yellow, Green, Blue.\n- Red (D): direct, strong-willed, leader, results, decisive, may ignore rules, critical, challenge.\n- Yellow (I): social, cheerful, talkative, persuasion, new ideas, fashion, network, disorganized.\n- Green (S): stable, patient, friendly, reliable, punctual, listens, sensitive, holds criticism.\n- Blue (C): exact, analytical, organized, rules, information, tests, remembers details, critical.\nQuestion 11 \"дольше всех помнит критику в свой адрес\". Blue is detail and may remember; Green is sensitive. The phrase \"помнит\" (memory) suggests blue; \"болезненнее\" (feels) suggests green. Since both 11 and 12 about criticism, likely they intend 11 = blue, 12 = green to test difference. Let's adopt 11: \"синий\". But could be green. Need choose. Let's inspect: \"в свой адрес\" personal, \"болезненнее всего реагирует на личную критику\" clearly green. If 11 also green, redundant. Quiz may include different answers. Many DISC: Blue (C) is \"remembers criticism and mistakes\", Green (S) is \"takes criticism personally\". So set 11 blue, 12 green. Good.\n\nQuestion 17 \"легко судит других\" could be blue? C is critical, judges. But red also. If 11 is blue, 17 maybe red? Let's map: D: critical, quick to judge? C: critical, detailed. \"Легко судит\" perhaps D because decisive and direct. Use red.\n\nQuestion 10: If 16 red for complex tasks, 14 red decisions, 9 red rules, 21 red delegate, 17 red judge. Many reds. Could be okay. Yellow many: 5,13,15,19,20. Green: 8,12,22. Blue: 4,6,7,11,23. Red: 3,9,10?,14,16,17,21. Balanced? Red 7, yellow 5, green 3, blue 5. 18 all.\n\nQuestion 1 and 2: Could 1 = \"жёлтый и красный\"? Socially compatible? Let's re-evaluate. \"Совместимы в социальном плане\" maybe \"жёлтый и красный\" because both extroverted, social? But D and I can be extroverted; S and C introverted. \"Social\" = extroversion? In DISC, D and I are extroverted, S and C introverted. However \"совместимы\" could mean pair works together socially: I and S? The contrast with \"совместная работа\" (work) could be social vs task. In DISC, I and S are \"people\" oriented; D and C \"task\" oriented. So 1 = I+S, 2 = D+C. That seems likely. But if \"socially compatible\" in terms of social interaction, I and D are both outgoing? Hmm.\n\nLet's think of typical DISC compatibility: \n- D and C: both results/task, can work well if D gives C freedom, C gives D accuracy. But can conflict: D impatient, C detail.\n- I and S: both people, can work well: I motivates, S stabilizes. \nQuestion 1: \"Какие профили совместимы в социальном плане?\" Social: I and S? Socially, I and S are friendly; D and C may be less social. Yes.\nQuestion 2: \"Какие профили совместимы в совместной работе?\" Work: D and C? Yes.\n\nCould 2 be \"красный и жёлтый\" because in work, D directs, I motivates? But C and S also. The phrase \"совместная работа\" maybe \"teamwork\" not task. In team, D and C? Let's keep.\n\nQuestion 18: \"Комбинация каких профилей образует самую успешную команду?\" If 1 and 2 are pairs, 18 could be combination of all four, or \"красный + жёлтый + зелёный + синий\". Good.\n\nNeed final JSON. Could include \"синий (C)\"? User asks colors, so only colors. For combinations, use \"и\". For all: \"красный, жёлтый, зелёный и синий\". For 24: \"нет однозначного ответа\". Ensure JSON valid.\n\nDouble-check possible answer for 4 surgeon: Red? A surgeon needs decisiveness, steady hands, precision. DISC: C (blue) best for detail, D (red) for leadership. \"лучшим хирургом\" likely blue (careful). Some might say red (decisive, pressure). But model: C = quality, detail, precision. Use blue.\n\nQuestion 8: punctual: green. Could be blue? Use green.\n\nQuestion 22: best listener: green. Good.\n\nQuestion 23: instructions: blue.\n\nQuestion 24: no unambiguous. Good.\n\nNeed maybe include \"жёлтый\" not \"желтый\" with ё. JSON can contain Unicode. Use consistent.\n\nLet's consider if \"сочетание профилей\" should be like \"красный + жёлтый\" or \"красный и жёлтый\". Either okay. Use natural.\n\nPotential issue: strict JSON object with answers by numbers, no text outside. We can output minified or pretty. Ensure no trailing commas.\n\nLet's produce:\n{\n\"1\": \"жёлтый и зелёный\",\n\"2\": \"красный и синий\",\n\"3\": \"красный\",\n\"4\": \"синий\",\n\"5\": \"жёлтый\",\n\"6\": \"синий\",\n\"7\": \"синий\",\n\"8\": \"зелёный\",\n\"9\": \"красный\",\n\"10\": \"красный\",\n\"11\": \"синий\",\n\"12\": \"зелёный\",\n\"13\": \"жёлтый\",\n\"14\": \"красный\",\n\"15\": \"жёлтый\",\n\"16\": \"красный\",\n\"17\": \"красный\",\n\"18\": \"красный, жёлтый, зелёный и синий\",\n\"19\": \"жёлтый\",\n\"20\": \"жёлтый\",\n\"21\": \"красный\",\n\"22\": \"зелёный\",\n\"23\": \"синий\",\n\"24\": \"нет однозначного ответа\"\n}\n\nNeed ensure if 11 blue and 12 green. Good.\n\nLet's maybe reconsider 10. If \"охотнее всех апробирует новые технологии или приемы, если это ускорит работу\" In DISC, D is \"likes to try new methods, wants efficiency\"; I \"likes new things, but not necessarily if speed\". I'd keep red. Could be yellow? If expected yellow, our red might be wrong. But phrase \"ускорит\" strongly D. Good.\n\nQuestion 16: \"охотнее берется за сложные задачи\" Red. Good.\n\nQuestion 17: \"легко судит других\" Could be blue? If 11 is blue, 17 red. Good.\n\nNeed no analysis in final. final JSON only. Ensure Russian quotes? JSON double quotes. Good.",
+  "parsed": {
+    "answers": {
+      "1": "жёлтый и зелёный",
+      "2": "красный и синий",
+      "3": "красный",
+      "4": "синий",
+      "5": "жёлтый",
+      "6": "синий",
+      "7": "синий",
+      "8": "зелёный",
+      "9": "красный",
+      "10": "красный",
+      "11": "синий",
+      "12": "зелёный",
+      "13": "жёлтый",
+      "14": "красный",
+      "15": "жёлтый",
+      "16": "красный",
+      "17": "красный",
+      "18": "красный, жёлтый, зелёный и синий",
+      "19": "жёлтый",
+      "20": "жёлтый",
+      "21": "красный",
+      "22": "зелёный",
+      "23": "синий",
+      "24": "нет однозначного ответа"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 17,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "жёлтый и зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "красный и синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 17,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "красный, жёлтый, зелёный и синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 24,
+        "answer": "нет однозначного ответа"
+      }
+    ]
+  }
+}

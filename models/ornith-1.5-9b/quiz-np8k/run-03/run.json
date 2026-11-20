@@ -1,0 +1,270 @@
+{
+  "model": "ornith-1.5:9b",
+  "folder": "ornith-1.5-9b",
+  "provider": "chat",
+  "thinking": {
+    "requested": "off",
+    "scale": [],
+    "sent": false,
+    "note": "think=false"
+  },
+  "options": {
+    "num_ctx": 16384,
+    "num_predict": 8192
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T17:55:19.407800+00:00",
+  "duration_s": 1.0,
+  "error": null,
+  "usage": {
+    "prompt_eval_count": 605,
+    "eval_count": 226,
+    "eval_duration": 1012589000,
+    "prompt_eval_duration": 16099000,
+    "load_duration": 823005,
+    "total_duration": 1031644298
+  },
+  "ps_snapshot": [
+    "ornith-1.5:9b"
+  ],
+  "ollama_contention": false,
+  "raw": "{\"1\": \"жёлтый+синий\", \"2\": \"красный+зелёный\", \"3\": \"красный+жёлтый\", \"4\": \"синий\", \"5\": \"жёлтый\", \"6\": \"красный\", \"7\": \"зелёный\", \"8\": \"синий\", \"9\": \"красный\", \"10\": \"жёлтый\", \"11\": \"зелёный\", \"12\": \"зелёный\", \"13\": \"красный\", \"14\": \"красный\", \"15\": \"жёлтый\", \"16\": \"жёлтый\", \"17\": \"красный\", \"18\": \"красный+зелёный+жёлтый+синий\", \"19\": \"жёлтый\", \"20\": \"жёлтый\", \"21\": \"зелёный\", \"22\": \"зелёный\", \"23\": \"синий\", \"24\": \"синий\"}",
+  "thinking_raw": null,
+  "parsed": {
+    "answers": {
+      "1": "жёлтый+синий",
+      "2": "красный+зелёный",
+      "3": "красный+жёлтый",
+      "4": "синий",
+      "5": "жёлтый",
+      "6": "красный",
+      "7": "зелёный",
+      "8": "синий",
+      "9": "красный",
+      "10": "жёлтый",
+      "11": "зелёный",
+      "12": "зелёный",
+      "13": "красный",
+      "14": "красный",
+      "15": "жёлтый",
+      "16": "жёлтый",
+      "17": "красный",
+      "18": "красный+зелёный+жёлтый+синий",
+      "19": "жёлтый",
+      "20": "жёлтый",
+      "21": "зелёный",
+      "22": "зелёный",
+      "23": "синий",
+      "24": "синий"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 13,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 1,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "blue"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "жёлтый+синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "green"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "красный+зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 3,
+        "answer": "красный+жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 6,
+        "answer": "красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 7,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 13,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 17,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "красный+зелёный+жёлтый+синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 21,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 24,
+        "answer": "синий"
+      }
+    ]
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "model": "glm-5.3",
+  "folder": "glm-5.3",
+  "provider": "cloud",
+  "lang": "ru",
+  "cloud_provider": "zai",
+  "thinking": {
+    "requested": "max",
+    "scale": [
+      "low",
+      "high",
+      "max"
+    ],
+    "sent": "max",
+    "note": "шкала low/high/max (docs.z.ai, дефолт max); off не существует — «thinking cannot be disabled», запрошенный off провайдер выполняет как минимальное мышление (низведён к low); medium — legacy, не запускаем"
+  },
+  "options": {
+    "thinking": {
+      "type": "enabled"
+    },
+    "reasoning_effort": "max"
+  },
+  "model_version": "glm-5.3",
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-17T05:35:35.212653+00:00",
+  "duration_s": 129.4,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 598,
+    "cached_tokens": 576,
+    "completion_tokens": 7832,
+    "reasoning_tokens": 7439
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый и зелёный (экстраверт-рассказчик + терпеливый слушатель); неплохо также красный + жёлтый",
+      "2": "Красный и синий (оба нацелены на задачу: решения/скорость + анализ/качество), а также жёлтый и зелёный (оба ориентированы на людей)",
+      "3": "Красный",
+      "4": "Синий (точность, хладнокровие, следование протоколу), в идеале с примесью красного (решительность)",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Синий (пунктуальность, планирование)",
+      "9": "Красный",
+      "10": "Красный (если это ускоряет работу и результат)",
+      "11": "Зелёный",
+      "12": "Жёлтый (остро нуждается в одобрении, критику воспринимает как отвержение)",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный",
+      "17": "Красный (также синий, но он критикует по фактам и стандартам)",
+      "18": "Сочетание всех четырёх профилей",
+      "19": "Жёлтый",
+      "20": "Жёлтый (схватывает и загорается мгновенно)",
+      "21": "Красный (уверен, что сам сделает быстрее и лучше)",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Однозначного ответа нет — зависит от конкретного круга общения (статистически в популяции чаще всего встречается зелёный)"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 2,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый и зелёный (экстраверт-рассказчик + терпеливый слушатель); неплохо также красный + жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Красный и синий (оба нацелены на задачу: решения/скорость + анализ/качество), а также жёлтый и зелёный (оба ориентированы на людей)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Синий (точность, хладнокровие, следование протоколу), в идеале с примесью красного (решительность)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 8,
+        "answer": "Синий (пунктуальность, планирование)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный (если это ускоряет работу и результат)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Жёлтый (остро нуждается в одобрении, критику воспринимает как отвержение)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Красный (также синий, но он критикует по фактам и стандартам)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 18,
+        "answer": "Сочетание всех четырёх профилей"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый (схватывает и загорается мгновенно)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "Красный (уверен, что сам сделает быстрее и лучше)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Однозначного ответа нет — зависит от конкретного круга общения (статистически в популяции чаще всего встречается зелёный)"
+      }
+    ]
+  }
+}

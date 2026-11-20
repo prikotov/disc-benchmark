@@ -1,0 +1,286 @@
+{
+  "model": "qwen4-max",
+  "folder": "qwen4-max",
+  "provider": "cloud",
+  "lang": "ru",
+  "cloud_provider": "alibabacloud",
+  "thinking": {
+    "requested": "low",
+    "scale": [
+      "off",
+      "low",
+      "medium",
+      "high"
+    ],
+    "sent": "low",
+    "note": "docs Model Studio: reasoning_effort low/medium/xhigh (дефолт xhigh; max/high→xhigh); off — enable_thinking=False (эквивалент none)"
+  },
+  "options": {
+    "reasoning_effort": "low"
+  },
+  "model_version": "qwen4-max",
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-17T04:20:18.050097+00:00",
+  "duration_s": 36.0,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 615,
+    "cached_tokens": 512,
+    "completion_tokens": 2002,
+    "reasoning_tokens": 1507
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый + зелёный (оба ориентированы на людей и отношения); жёлтый с жёлтым — тоже легко. Красный и синий в чисто социальном плане тяжелее.",
+      "2": "Красный + синий (оба ориентированы на задачу и результат); зелёный + синий тоже хорошо работают — спокойно и тщательно.",
+      "3": "Красный",
+      "4": "Синий (точность, процедуры, внимание к деталям); в идеале с красным — решительность в критический момент.",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Зелёный + синий (зелёный — надёжность и постоянство, синий — пунктуальность до минуты)",
+      "9": "Красный",
+      "10": "Красный (ради скорости и результата); жёлтый — тоже охотно, но из любви к новизне.",
+      "11": "Зелёный",
+      "12": "Зелёный (жёлтый тоже весьма болезненно — ему важно быть принятым и любимым)",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный (вызов и сложность его заводят); синий — если задача требует глубокого анализа.",
+      "17": "Красный (быстро выносит вердикт); синий тоже критичен, но по критериям качества, а не напором.",
+      "18": "Все четыре вместе: красный + жёлтый + зелёный + синий — при взаимном уважении и распределении ролей.",
+      "19": "Жёлтый",
+      "20": "Жёлтый (красный схватывает так же быстро, но сразу прикидывает практическую пользу)",
+      "21": "Синий (перфекционист: «хочешь сделать хорошо — сделай сам»)",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Однозначного ответа нет — вопрос о личном окружении, у каждого своё; статистически в популяции чаще всего встречается зелёный."
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 14,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 7,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый + зелёный (оба ориентированы на людей и отношения); жёлтый с жёлтым — тоже легко. Красный и синий в чисто социальном плане тяжелее."
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Красный + синий (оба ориентированы на задачу и результат); зелёный + синий тоже хорошо работают — спокойно и тщательно."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Синий (точность, процедуры, внимание к деталям); в идеале с красным — решительность в критический момент."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Зелёный + синий (зелёный — надёжность и постоянство, синий — пунктуальность до минуты)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный (ради скорости и результата); жёлтый — тоже охотно, но из любви к новизне."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Зелёный (жёлтый тоже весьма болезненно — ему важно быть принятым и любимым)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Красный (вызов и сложность его заводят); синий — если задача требует глубокого анализа."
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Красный (быстро выносит вердикт); синий тоже критичен, но по критериям качества, а не напором."
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "Все четыре вместе: красный + жёлтый + зелёный + синий — при взаимном уважении и распределении ролей."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый (красный схватывает так же быстро, но сразу прикидывает практическую пользу)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 21,
+        "answer": "Синий (перфекционист: «хочешь сделать хорошо — сделай сам»)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Однозначного ответа нет — вопрос о личном окружении, у каждого своё; статистически в популяции чаще всего встречается зелёный."
+      }
+    ]
+  }
+}

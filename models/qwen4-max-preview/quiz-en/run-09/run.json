@@ -1,0 +1,261 @@
+{
+  "model": "qwen4-max-preview",
+  "folder": "qwen4-max-preview",
+  "provider": "cloud",
+  "lang": "en",
+  "cloud_provider": "alibabacloud",
+  "thinking": {
+    "requested": "xhigh",
+    "scale": [
+      "off",
+      "low",
+      "medium",
+      "high"
+    ],
+    "sent": "xhigh",
+    "note": "ШКАЛА ЗАВИСИТ ОТ МОДЕЛИ (доки 2026-11-17): qwen4-max — low/high/xhigh (дефолт high; medium→high); qwen4-max-preview — low/medium/xhigh (дефолт xhigh; high недокументирован, фактически ≈medium). off — enable_thinking=False"
+  },
+  "options": {
+    "reasoning_effort": "xhigh"
+  },
+  "model_version": "qwen4.0-max-preview",
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T04:49:06.256031+00:00",
+  "duration_s": 59.8,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 535,
+    "cached_tokens": 512,
+    "completion_tokens": 2933,
+    "reasoning_tokens": 2690
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Yellow + Green (both people-oriented)",
+      "2": "Red + Blue (both task-oriented)",
+      "3": "Red",
+      "4": "Blue (Red + Blue would be the ideal mix: precision plus decisiveness)",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Blue (Green is a close second)",
+      "9": "Red",
+      "10": "Yellow (Red too, if the new way gets results faster)",
+      "11": "Green",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red",
+      "17": "All four: Red + Yellow + Green + Blue (complementary strengths)",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Blue (perfectionist — can't trust others to meet the standard)",
+      "21": "Green",
+      "22": "Blue",
+      "23": "No single answer — it depends on the individual's circle; statistically Green is the most common in the population"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 16,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 3,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow + Green (both people-oriented)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red + Blue (both task-oriented)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Blue (Red + Blue would be the ideal mix: precision plus decisiveness)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Blue (Green is a close second)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Yellow (Red too, if the new way gets results faster)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "All four: Red + Yellow + Green + Blue (complementary strengths)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Blue (perfectionist — can't trust others to meet the standard)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer — it depends on the individual's circle; statistically Green is the most common in the population"
+      }
+    ]
+  }
+}

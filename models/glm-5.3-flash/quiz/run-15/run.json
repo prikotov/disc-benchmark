@@ -1,0 +1,276 @@
+{
+  "model": "glm-5.3-flash",
+  "folder": "glm-5.3-flash",
+  "provider": "cloud",
+  "cloud_provider": "zai",
+  "thinking": {
+    "requested": "max",
+    "scale": [
+      "low",
+      "high",
+      "max"
+    ],
+    "sent": "max",
+    "note": "шкала low/high/max (docs.z.ai, дефолт max); off не существует — «thinking cannot be disabled», запрошенный off провайдер выполняет как минимальное мышление (низведён к low); medium — legacy, не запускаем"
+  },
+  "options": {
+    "thinking": {
+      "type": "enabled"
+    },
+    "reasoning_effort": "max"
+  },
+  "model_version": "glm-5.3-flash",
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-17T00:33:22.388525+00:00",
+  "duration_s": 58.1,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 598,
+    "cached_tokens": 0,
+    "completion_tokens": 3657,
+    "reasoning_tokens": 3133
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Красный с жёлтым (оба активные и общительные) и зелёный с синим (оба сдержанные и спокойные) — социально совместимы похожие по темпераменту профили",
+      "2": "Красный с зелёным и жёлтый с синим — в совместной работе хорошо дополняют друг друга противоположные профили",
+      "3": "Красный (D)",
+      "4": "Синий (C) — точность, аккуратность, следование протоколам",
+      "5": "Жёлтый (I)",
+      "6": "Синий (C)",
+      "7": "Синий (C)",
+      "8": "Зелёный (S) — эталон надёжности и пунктуальности; близко к этому и синий (C)",
+      "9": "Красный (D) — ради результата готов нарушать правила",
+      "10": "Красный (D) — если новое ускоряет достижение результата",
+      "11": "Зелёный (S)",
+      "12": "Жёлтый (I) — остро и болезненно реагирует на личную критику (страх отвержения); зелёный при этом дольше всех её помнит",
+      "13": "Жёлтый (I) — неорганизован, но знает нужных людей и источники информации",
+      "14": "Красный (D)",
+      "15": "Жёлтый (I)",
+      "16": "Красный (D) — вызовы и амбициозные задачи; сложные аналитические задачи охотно берёт и синий (C)",
+      "17": "Синий (C) — высокие стандарты, критичность к другим",
+      "18": "Однозначного ответа нет — самая успешная команда сбалансирована и включает все четыре профиля: красный, жёлтый, зелёный, синий",
+      "19": "Жёлтый (I)",
+      "20": "Жёлтый (I)",
+      "21": "Красный (D) — «быстрее и надёжнее сделать самому», хотя мог бы делегировать",
+      "22": "Зелёный (S)",
+      "23": "Синий (C)",
+      "24": "Однозначного ответа нет — зависит от конкретного круга общения"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 15,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 3,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Красный с жёлтым (оба активные и общительные) и зелёный с синим (оба сдержанные и спокойные) — социально совместимы похожие по темпераменту профили"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Красный с зелёным и жёлтый с синим — в совместной работе хорошо дополняют друг друга противоположные профили"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный (D)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "Синий (C) — точность, аккуратность, следование протоколам"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый (I)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий (C)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий (C)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Зелёный (S) — эталон надёжности и пунктуальности; близко к этому и синий (C)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный (D) — ради результата готов нарушать правила"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный (D) — если новое ускоряет достижение результата"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный (S)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Жёлтый (I) — остро и болезненно реагирует на личную критику (страх отвержения); зелёный при этом дольше всех её помнит"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый (I) — неорганизован, но знает нужных людей и источники информации"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный (D)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый (I)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Красный (D) — вызовы и амбициозные задачи; сложные аналитические задачи охотно берёт и синий (C)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Синий (C) — высокие стандарты, критичность к другим"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 18,
+        "answer": "Однозначного ответа нет — самая успешная команда сбалансирована и включает все четыре профиля: красный, жёлтый, зелёный, синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый (I)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый (I)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "Красный (D) — «быстрее и надёжнее сделать самому», хотя мог бы делегировать"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный (S)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий (C)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "Однозначного ответа нет — зависит от конкретного круга общения"
+      }
+    ]
+  }
+}

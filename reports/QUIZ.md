@@ -1,6 +1,6 @@
 # Анкета DISC (блиц-тест): своды (ru + en)
 
-480 прогонов. ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). Оговорка о форматах: в книге вопросы даны с вариантами; генеративные LLM получают их без вариантов (воспроизведение — строже), decision-модели (clef) — с видимыми кандидатами (выбор). Сформировано 2026-11-20 05:18 UTC.
+485 прогонов. ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). Оговорка о форматах: в книге вопросы даны с вариантами; генеративные LLM получают их без вариантов (воспроизведение — строже), decision-модели (clef) — с видимыми кандидатами (выбор). Сформировано 2026-11-20 05:40 UTC.
 
 ## Методика
 
@@ -133,6 +133,7 @@ Questions:
 | qwen3.8-27b-pi-100k | xhigh | en | 5 | 18–19 | **81%** (18.6) | 4 уник., попарно 10% | 100% | 0 | 0 | 11481 | 86.7 |
 | mimo-v2.6-pro-xiaomi-plan | off | ru | 3 | 19–20 | **81%** (19.3) | 3 уник., попарно 0% | 100% | 0 | 0 | 1035 | 4.7 |
 | qwen4-max-preview | off | en | 2 | 18–19 | **80%** (18.5) | 2 уник., попарно 0% | 100% | 0 | 0 | 720 | 5.5 |
+| deepseek-flash | high | en | 5 | 16–20 | **80%** (18.4) | 5 уник., попарно 0% | 100% | 0 | 0 | 17649 | 147.0 |
 | orcarouter-Qwen3.8-27B-Uncensored-ctx100k | on | en | 5 | 17–20 | **80%** (18.4) | 5 уник., попарно 0% | 100% | 0 | 0 | 3860 | 42.3 |
 | kimi-k3.1-pro | max | en | 3 | 17–19 | **80%** (18.3) | 3 уник., попарно 0% | 100% | 0 | 0 | — | 317.2 |
 | mimo-v2.6-flash-xiaomi-plan | low | en | 3 | 18–19 | **80%** (18.3) | 3 уник., попарно 0% | 100% | 0 | 0 | 4637 | 134.2 |
@@ -253,6 +254,7 @@ Questions:
 | **deepseek-flash** @ low | ru | 0 | 0 | 100 | 100 | 100 | 100 | 100 | 80 | 100 | 0 | 0 | 0 | 100 | 100 | 100 | 80 | 0 | 100 | 100 | 0 | 0 | 100 | 100 | 100 |
 | **deepseek-flash** @ high | ru | 0 | 0 | 100 | 100 | 100 | 100 | 100 | 60 | 100 | 0 | 80 | 80 | 100 | 100 | 100 | 100 | 0 | 100 | 100 | 0 | 20 | 100 | 100 | 100 |
 | **deepseek-flash** @ low | en | 0 | 0 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 60 | 80 | — | 100 | 100 | 100 | 100 | 60 | 100 | 100 | 0 | 100 | 100 | 100 | 100 |
+| **deepseek-flash** @ high | en | 0 | 0 | 100 | 100 | 100 | 100 | 100 | 40 | 100 | 60 | 100 | — | 100 | 100 | 100 | 100 | 60 | 100 | 100 | 0 | 80 | 100 | 100 | 100 |
 | **gemma4-26b-pi-100k** @ off | ru | 0 | 0 | 100 | 100 | 100 | 100 | 100 | 40 | 100 | 100 | 100 | 0 | 100 | 100 | 100 | 60 | 80 | 20 | 100 | 0 | 100 | 100 | 100 | 100 |
 | **gemma4-26b-pi-100k** @ on | ru | 0 | 0 | 100 | 100 | 100 | 100 | 100 | 60 | 100 | 20 | 100 | 0 | 100 | 100 | 100 | 100 | 100 | 60 | 100 | 0 | 100 | 100 | 100 | 100 |
 | **gemma4-26b-pi-100k** @ off | en | 0 | 0 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | 100 | — | 100 | 100 | 100 | 0 | 100 | 0 | 100 | 0 | 100 | 100 | 100 | 100 |
@@ -390,24 +392,24 @@ Questions:
 
 **Q1 (en 1)** Какие профили совместимы в социальном плане?
 Эталон: ru «Два желтых» · en «Two Yellows»
-Верных: ru 5/242 (2%) · en 10/236 (4%)
+Верных: ru 5/242 (2%) · en 10/241 (4%)
 Решили все свои прогоны: ru — clef-flash ru@decision · en — clef en@decision; clef-flash en@decision
 Ответы ru: 26% «жёлтый и зелёный», 19% «Жёлтый + Зелёный», 4% «Красный и жёлтый; зелёный и синий», 4% «Красный и Жёлтый», прочее 45%
-Ответы en: 35% «Yellow and Green», 14% «Red and Yellow», 9% «Yellow + Green», 4% «Two Yellows», прочее 36%
+Ответы en: 36% «Yellow and Green», 14% «Red and Yellow», 9% «Yellow + Green», 4% «Two Yellows», прочее 35%
 
 **Q20 (en 19)** Какой профиль быстрее всех воспримет новую идею?
 Эталон: ru «Красный» · en «Red»
-Верных: ru 8/242 (3%) · en 8/236 (3%)
+Верных: ru 8/242 (3%) · en 8/241 (3%)
 Решили все свои прогоны: ru — никто · en — никто
 Ответы ru: 87% «Жёлтый», 3% «красный», 0% «Жёлтый (I)», 0% «∅», прочее 7%
-Ответы en: 79% «Yellow», 3% «Red», 2% «Green», 2% «Blue», прочее 13%
+Ответы en: 79% «Yellow», 3% «Red», 2% «Green», 2% «Blue», прочее 12%
 
 **Q2 (en 2)** Какие профили совместимы в совместной работе?
 Эталон: ru «Зеленый и любой другой» · en «Green with anyone else»
-Верных: ru 11/242 (5%) · en 21/236 (9%)
+Верных: ru 11/242 (5%) · en 21/241 (9%)
 Решили все свои прогоны: ru — clef ru@decision; clef-flash ru@decision · en — clef en@decision; clef-flash en@decision
 Ответы ru: 18% «красный и синий», 14% «Красный + Синий», 4% «Зеленый и любой другой», 3% «синий и зелёный», прочее 58%
-Ответы en: 33% «Red and Blue», 8% «Red + Blue», 5% «Red and Green», 5% «No single answer», прочее 47%
+Ответы en: 35% «Red and Blue», 8% «Red + Blue», 4% «Red and Green», 4% «No single answer», прочее 46%
 
 **Q12 (en —)** Какой профиль болезненнее всего реагирует на личную критику?
 Эталон: ru «Желтый»
@@ -417,14 +419,14 @@ Questions:
 
 **Q10 (en 10)** Какой профиль охотнее всех апробирует новые технологии или приемы, если это ускорит работу?
 Эталон: ru «Желтый» · en «Yellow»
-Верных: ru 64/242 (26%) · en 150/236 (64%)
+Верных: ru 64/242 (26%) · en 153/241 (63%)
 Решили все свои прогоны: ru — clef-flash ru@decision; gemma4-26b-pi-100k ru@off; gemma4-e2b-ctx100k ru@off; ornith-1.5-9b ru@off · en — clef-flash en@decision; gemma4-26b-pi-100k en@off; gemma4-31b-it-qat-pi-100k en@off; gemma4-e2b-ctx100k en@off; glm-5.3-flash en@max; medgemma-27b-ctx100k en@off; mimo-v2.6-flash-xiaomi-plan en@off; mimo-v2.6-flash-xiaomi-plan en@medium; mimo-v2.6-pro-xiaomi-plan en@off; mimo-v2.6-pro-xiaomi-plan en@medium; ornith-1.5-9b en@off
 Ответы ru: 60% «Красный», 26% «жёлтый», 1% «Красный, Жёлтый», 1% «Красный и жёлтый», прочее 10%
 Ответы en: 58% «Yellow», 25% «Red», 0% «Red and Yellow», 0% «Yellow — spontaneous, creative and open to experimenting wit», прочее 14%
 
 **Q8 (en 8)** Какой профиль всегда приходит вовремя и в этом плане на него можно положиться?
 Эталон: ru «Синий» · en «Blue»
-Верных: ru 107/242 (44%) · en 126/236 (53%)
+Верных: ru 107/242 (44%) · en 128/241 (53%)
 Решили все свои прогоны: ru — bonsai-2-27b ru@off; clef ru@decision; clef-flash ru@decision; gemma4-e2b-ctx100k ru@off; huihui-ai-pi-100k ru@off; mimo-v2.6-flash-xiaomi-plan ru@off; orcarouter-Qwen3.8-27B-Uncensored-ctx100k ru@off; ornith-1.5-35b-ctx100k ru@off; qwen4-max-preview ru@xhigh · en — clef en@decision; clef-flash en@decision; deepseek-flash en@low; gemma4-26b-pi-100k en@off; gemma4-26b-pi-100k en@on; gemma4-31b-it-qat-pi-100k en@off; gemma4-31b-it-qat-pi-100k en@on; gemma4-e2b-ctx100k en@off; huihui-ai-pi-100k en@off; huihui-ai-pi-100k en@medium; kimi-k3.1-pro en@low; orcarouter-Qwen3.8-27B-Uncensored-ctx100k en@off; qwen3.8-27b-pi-100k en@off; qwen3.8-27b-pi-100k en@low; qwen4-max en@off; qwen4-max en@xhigh; qwen4-max-preview en@off
 Ответы ru: 43% «Синий», 40% «Зелёный», 1% «Синий или Зелёный», 1% «синий (также зелёный)», прочее 13%
-Ответы en: 51% «Blue», 30% «Green», 1% «Red», 0% «S», прочее 15%
+Ответы en: 51% «Blue», 31% «Green», 1% «Red», 0% «S», прочее 15%

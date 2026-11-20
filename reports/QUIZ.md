@@ -1,6 +1,6 @@
 # Анкета DISC (блиц-тест): своды (ru + en)
 
-Прогонов: 480. Промпт v1. ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). Методика: quiz/README.md, quiz-en/README.md. Сформировано 2026-11-17 15:43 UTC.
+Прогонов: 480. Промпт v1. ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). Методика: quiz/README.md, quiz-en/README.md. Сформировано 2026-11-20 01:58 UTC.
 
 | модель | язык | уровень | прогонов | балл (ср) | min–max | % | стабильность | json_ok | unparsed/skipped | p_correct | токены вх/вых | время, с |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -317,3 +317,12 @@
 Решили все свои прогоны: ru — bonsai-2-27b ru@off; clef ru@decision; clef-flash ru@decision; gemma4-e2b-ctx100k ru@off; huihui-ai-pi-100k ru@off; mimo-v2.6-flash-xiaomi-plan ru@off; orcarouter-Qwen3.8-27B-Uncensored-ctx100k ru@off; ornith-1.5-35b-ctx100k ru@off; qwen4-max-preview ru@xhigh · en — clef en@decision; clef-flash en@decision; deepseek-flash en@low; gemma4-26b-pi-100k en@off; gemma4-26b-pi-100k en@on; gemma4-31b-it-qat-pi-100k en@off; gemma4-31b-it-qat-pi-100k en@on; gemma4-e2b-ctx100k en@off; huihui-ai-pi-100k en@off; huihui-ai-pi-100k en@medium; kimi-k3.1-pro en@low; orcarouter-Qwen3.8-27B-Uncensored-ctx100k en@off; qwen3.8-27b-pi-100k en@off; qwen3.8-27b-pi-100k en@low; qwen4-max en@off; qwen4-max en@xhigh; qwen4-max-preview en@off
 Ответы ru: 43% «Синий», 40% «Зелёный», 1% «Синий или Зелёный», 1% «синий (также зелёный)», прочее 13%
 Ответы en: 51% «Blue», 30% «Green», 1% «Red», 0% «S», прочее 15%
+
+## Методика
+
+- **Материал**: блиц-тест DISC, 24 вопроса (ru) / 23 (en) из книги Эриксона (гл. 20, эталонные ответы сверены с разделом ответов книги); вопросы без вариантов; книга и автор в промпте не упоминаются. Четыре вопроса — с эталонным ответом не одиночный цвет.
+- **Транспорт**: локальные — ollama `/api/chat`; облачные — родные API; clef — decision-протокол `/v1/systemone` (argmax по вариантам); kimi — подписка Kimi coding, non-stream.
+- **Уровни**: только существующие по `/api/show` (или документированные у облачных); генерация — дефолты модели + единые num_ctx 65536 / num_predict 32768; seed не фиксируется.
+- **Серия**: 5 прогонов на модель×уровень (флагманы-облака — 2); выгрузка модели после блока; снапшот /api/ps; ретраи только на транспортные ошибки; сбои — вне метрик; траты — `reports/spend.csv`.
+- **Скоринг**: машинный — нормализация + словарь синонимов эталона; skipped/unparsed/ambiguous/near; «не распознано» ≠ «неверно».
+- **Языки**: ru и en из оригинальных редакций; сопоставлены 1:1 (ru 12 без en-аналога), сравнение по процентам.

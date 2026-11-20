@@ -433,8 +433,7 @@ argmax по вариантам — см. оговорку выше.</li>
         parts.append(
             f"<tr><td><a href='{href}'>{g[0]}</a></td><td>{g[2]}</td><td>{g[1]}</td>"
             f"<td class='num'>{a['n']}</td><td class='num'><b>{a['mean']:.1f}</b></td>"
-            f"<td class='num'>{a['min']}–{a['max']}</td><td class='num'>{pct_lang(a)}"
-            f"<div class='bar'><div style='width:{a['mean'] / a['total'] * 100:.0f}%'></div></div></td>"
+            f"<td class='num'>{a['min']}–{a['max']}</td><td class='num'>{pct_lang(a)}</td>"
             f"<td>{stab}</td><td class='num'>{j}</td>"
             f"<td class='num'>{a['unparsed']}/{a['skipped']}</td>"
             f"<td class='num'>{fails}</td>"

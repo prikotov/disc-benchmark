@@ -1,10 +1,10 @@
 # Анкета DISC (блиц-тест): своды (ru + en)
 
-Прогонов: 480. Промпт v1. ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). Сформировано 2026-11-20 02:58 UTC.
+Прогонов: 480. Промпт v1. ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). Сформировано 2026-11-20 03:11 UTC.
 
 ## Методика
 
-1. **Материал** — анкета по методологии DISC, 24 вопроса (ru) / 23 (en); вопросы без вариантов — модель называет профиль, сочетание или «нет однозначного ответа». Источник — блиц-тест из книги Томаса Эриксона: ru — «Кругом одни идиоты. Если вам так кажется, возможно, вам не кажется» (Эксмо, 2014); en — «Surrounded by Idiots» (английское издание, Macmillan/Ebury, 2019). Эталонные ответы сверены с разделом ответов книги (гл. 20). Источник анкеты и эталонных ответов в промпте не упоминается.
+1. **Материал** — анкета по методологии DISC, 24 вопроса (ru) / 23 (en); вопросы без вариантов — модель называет профиль, сочетание или «нет однозначного ответа». Источник — блиц-тест из книги Томаса Эриксона: ru — «Кругом одни идиоты. Если вам так кажется, возможно, вам не кажется» (Эксмо, 2014); en — «Surrounded by Idiots» (английское издание, Macmillan/Ebury, 2019). Эталонные ответы сверены с разделом ответов книги (гл. 20) — снимки с правильными ответами: quiz/reference/quiz-with-key.md, quiz-en/reference/quiz-with-key.md. Источник анкеты и эталонных ответов в промпте не упоминается.
 2. **Прогон и запрос** — модель отвечает на все вопросы одним ответом (JSON «номер → ответ»), по 5 прогонов на модель×уровень (часть флагманов-облаков — по 2); сбойные прогоны вне метрик. Для clef — decision-протокол (argmax по вариантам).
 
 Запрос (системный промпт отсутствует — один user-месседж с полным текстом задания; seed не задаётся, остальное — дефолты модели):
@@ -28,7 +28,9 @@
 }
 ```
 
-Пользовательский промпт (ru — дословно; en — аналог quiz-en/prompts/prompt.json):
+Пользовательские промпты (дословно):
+
+- ru — `quiz/prompts/prompt.json`:
 
 ```text
 Небольшой блиц-тест: насколько хорошо вы усвоили модель DISC.
@@ -65,6 +67,43 @@
 22. Какой профиль окажется лучшим слушателем?
 23. Какой профиль не пропустит ни малейшего пункта в инструкции?
 24. Какой профиль чаще всего встречается в вашем круге общения?
+```
+- en — `quiz-en/prompts/prompt.json`:
+
+```text
+A quick little quiz: how well have you learned the DISC model?
+
+DISC describes four behavioral profiles named after colors: Red, Yellow, Green and Blue. Test yourself: how well do you understand how people of different profiles act and behave?
+
+Below are 23 questions. For each question, name the profile (color) that fits best; if the answer is a combination of profiles, name the combination; if there is no single answer, say so.
+
+Answer strictly in JSON — an object mapping question numbers to your answers, no text outside the JSON:
+{"1": "<your answer to question 1>", "2": "<your answer to question 2>", "3": "<your answer to question 3>", ..., "23": "<your answer to question 23>"}
+
+Questions:
+1. Which combination of profiles would naturally agree on a social level?
+2. Which combination of profiles naturally work well together?
+3. Which profile will always prefer to be the head of a project?
+4. Which profile would make the best surgeon?
+5. Which person would enjoy giving a speech the most?
+6. Which person would know exactly where he saved that email from his boss?
+7. Which person would want to do more tests or get more information before making a decision?
+8. Which person can you always rely on to arrive on time?
+9. Which person doesn’t follow the rulebook to get a job done?
+10. Which person would be the most willing to try something new to get the job done?
+11. Which person will remember personal criticism the longest?
+12. Which person is the least organized but knows exactly where to go to get what he needs?
+13. Which profile always wants to make decisions?
+14. Which profile wears the latest fashions?
+15. Which profile would enjoy new challenges the most?
+16. Which profile would be the quickest to judge other people?
+17. Which combination of profiles would form the best team?
+18. Which profile will probably talk the most?
+19. Which profile would assimilate new ideas the quickest?
+20. Which profile would delegate a task but then still do it himself?
+21. Which profile is the best listener?
+22. Which profile wouldn’t miss the last step of the instructions?
+23. Which profile is most common in your social circle?
 ```
 3. **Уровни мышления** — каждый уровень, поддерживаемый моделью.
 4. **Скоринг** — машинный, без судей: сопоставление с эталоном через словарь синонимов; «не распознано» ≠ «неверно».

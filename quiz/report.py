@@ -281,8 +281,10 @@ table.matrix td.na{color:#9aa7b3}
 «нет однозначного ответа». Источник — блиц-тест из книги Томаса Эриксона: ru — «Кругом одни
 идиоты. Если вам так кажется, возможно, вам не кажется» (Эксмо, 2014); en —
 «Surrounded by Idiots» (английское издание, Macmillan/Ebury, 2019). Эталонные ответы сверены
-с разделом ответов книги (гл. 20). Источник анкеты и эталонных ответов в промпте
-не упоминается.</li>
+с разделом ответов книги (гл. 20) — снимки с правильными ответами:
+ru — <a href='../quiz/reference/quiz-with-key.md'>quiz/reference/quiz-with-key.md</a> ·
+en — <a href='../quiz-en/reference/quiz-with-key.md'>quiz-en/reference/quiz-with-key.md</a>.
+Источник анкеты и эталонных ответов в промпте не упоминается.</li>
 <li style="margin-bottom:10px"><b>Прогон и запрос.</b> Модель отвечает на все вопросы одним
 ответом (JSON «номер → ответ»), по 5 прогонов на модель×уровень (часть флагманов-облаков —
 по 2); сбойные прогоны не участвуют в метриках (колонка «сбои»).<br>
@@ -311,11 +313,11 @@ table.matrix td.na{color:#9aa7b3}
   },
   &quot;think&quot;: &quot;&lt;off | low | medium | high | xhigh — по модели&gt;&quot;
 }</pre>
-Пользовательский промпт (ru — дословно; en — аналог
-<code>quiz-en/prompts/prompt.json</code>):
-<details><summary style="cursor:pointer">показать текст промпта</summary>
-<pre style="background:#f4f6f8; padding:8px; font-size:12px; white-space:pre-wrap">Небольшой блиц-тест: насколько хорошо вы усвоили модель DISC.
-
+Пользовательские промпты (дословно):
+<ul>
+<li>ru — <code>quiz/prompts/prompt.json</code>:
+<details><summary style='cursor:pointer'>показать текст</summary>
+<pre style="background:#f4f6f8; padding:8px; font-size:12px; white-space:pre-wrap">
 В модели DISC четыре поведенческих профиля, названных цветами: красный, жёлтый, зелёный и синий. Проверьте себя: насколько хорошо вы представляете, как действуют и поступают люди разных профилей.
 
 Ниже 24 вопроса. На каждый ответьте, назвав профиль (цвет), который лучше всего подходит; если ответ — сочетание профилей, назовите сочетание; если однозначного ответа нет, так и напишите.
@@ -347,7 +349,9 @@ table.matrix td.na{color:#9aa7b3}
 21. Какой профиль мог бы поручить задание другим, но все же выполнит его сам?
 22. Какой профиль окажется лучшим слушателем?
 23. Какой профиль не пропустит ни малейшего пункта в инструкции?
-24. Какой профиль чаще всего встречается в вашем круге общения?</pre>
+</pre></details></li>
+<li>en — <code>quiz-en/prompts/prompt.json</code>:
+<details><summary style='cursor:pointer'>показать текст</summary>
 <pre style="background:#f4f6f8; padding:8px; font-size:12px; white-space:pre-wrap">EN (дословно):
 A quick little quiz: how well have you learned the DISC model?
 
@@ -383,6 +387,7 @@ Questions:
 22. Which profile wouldn’t miss the last step of the instructions?
 23. Which profile is most common in your social circle?</pre>
 </details></li>
+</ul></li>
 <li style="margin-bottom:10px"><b>Уровни мышления.</b> Каждый уровень, поддерживаемый
 моделью.</li>
 <li style="margin-bottom:10px"><b>Скоринг.</b> Машинный, без судей: сопоставление ответа
@@ -392,8 +397,8 @@ Questions:
 вопросы сопоставлены 1:1, сравнение по процентам. Decision-модели (clef) отвечают
 argmax по вариантам — см. оговорку выше.</li>
 </ol>
-<b>Подробно:</b> <a href='../quiz/README.md'>quiz/README.md</a> ·
-<a href='../quiz-en/README.md'>quiz-en/README.md</a>
+<div style="margin-top:10px"><b>Подробно:</b> <a href='../quiz/README.md'>quiz/README.md</a> ·
+<a href='../quiz-en/README.md'>quiz-en/README.md</a></div>
 </div>""")
 
     # сводная таблица
@@ -641,7 +646,9 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         "ru — «Кругом одни идиоты. Если вам так кажется, возможно, вам не кажется» "
         "(Эксмо, 2014); en — «Surrounded by Idiots» (английское издание, "
         "Macmillan/Ebury, 2019). Эталонные ответы сверены с разделом ответов книги "
-        "(гл. 20). Источник анкеты и эталонных ответов в промпте не упоминается.",
+        "(гл. 20) — снимки с правильными ответами: quiz/reference/quiz-with-key.md, "
+        "quiz-en/reference/quiz-with-key.md. Источник анкеты и эталонных ответов "
+        "в промпте не упоминается.",
         "2. **Прогон и запрос** — модель отвечает на все вопросы одним ответом (JSON "
         "«номер → ответ»), по 5 прогонов на модель×уровень (часть флагманов-облаков — "
         "по 2); сбойные прогоны вне метрик. Для clef — decision-протокол (argmax "
@@ -654,10 +661,17 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         REQ_JSON,
         "```",
         "",
-        "Пользовательский промпт (ru — дословно; en — аналог quiz-en/prompts/prompt.json):",
+        "Пользовательские промпты (дословно):",
+        "",
+        "- ru — `quiz/prompts/prompt.json`:",
         "",
         "```text",
         PROMPT_RU,
+        "```",
+        "- en — `quiz-en/prompts/prompt.json`:",
+        "",
+        "```text",
+        PROMPT_EN,
         "```",
         "3. **Уровни мышления** — каждый уровень, поддерживаемый моделью.",
         "4. **Скоринг** — машинный, без судей: сопоставление с эталоном через словарь "

@@ -3,8 +3,8 @@
 
 Читает models/*/quiz/run-*/run.json (ru) и models/*/quiz-en/run-*/run.json
 (en), агрегирует по (модель × язык × уровень): баллы, стабильность, json_ok,
-токены, время, p_correct для decision-моделей; матрицы по вопросам на каждый
-язык, сложность вопросов, точность по цветам и сравнение ru vs en.
+токены, время; матрицы по вопросам на каждый язык, сложность вопросов,
+точность по цветам и сравнение ru vs en.
 
 Запуск:
     python3 quiz/report.py            # QUIZ.md + QUIZ.html
@@ -418,7 +418,7 @@ argmax по вариантам — см. оговорку выше.</li>
                  "<th class='num'>min–max</th><th class='num'>% (балл)</th>"
                  "<th>стабильность</th><th class='num'>json_ok</th>"
                  "<th class='num'>unparsed</th><th class='num'>skipped</th>"
-                 "<th class='num'>p_correct</th><th class='num'>токены вх/вых</th>"
+                 "<th class='num'>токены</th>"
                  "<th class='num'>время, с</th></tr></thead><tbody>")
     for g in sorted(groups, key=lambda g: (-groups[g]["mean"] / groups[g]["total"],
                                            sort_key(g))):
@@ -426,9 +426,9 @@ argmax по вариантам — см. оговорку выше.</li>
         stab = f"{a['distinct']} уник."
         if a["identical"] is not None:
             stab += f", попарно {a['identical'] * 100:.0f}%"
-        tok = f"{a['tok_in'] or '—'}/{a['tok_out'] or '—'}"
+        ti, to = a["tok_in"], a["tok_out"]
+        tok = "—" if ti is None and to is None else str((ti or 0) + (to or 0))
         j = "—" if a["json_ok"] is None else f"{a['json_ok'] * 100:.0f}%"
-        p = "—" if a["p_correct"] is None else str(a["p_correct"])
         href = f"../models/{g[0]}/{('quiz' if g[1] == 'ru' else 'quiz-en')}/"
         parts.append(
             f"<tr><td><a href='{href}'>{g[0]}</a></td><td>{g[2]}</td><td>{g[1]}</td>"
@@ -436,7 +436,7 @@ argmax по вариантам — см. оговорку выше.</li>
             f"<td class='num'>{a['min']}–{a['max']}</td><td class='num'><b>{pct_lang(a)}</b> ({a['mean']:.1f})</td>"
             f"<td>{stab}</td><td class='num'>{j}</td>"
             f"<td class='num'>{a['unparsed']}</td><td class='num'>{a['skipped']}</td>"
-            f"<td class='num'>{p}</td><td class='num'>{tok}</td>"
+            f"<td class='num'>{tok}</td>"
             f"<td class='num'>{a['dur']}</td></tr>")
     parts.append("</tbody></table>")
     if any(a["contention"] for a in groups.values()):
@@ -753,8 +753,8 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         "- **Подробно**: quiz/README.md · quiz-en/README.md",
         "",
         "| модель | уровень | язык | прогонов | min–max | % (балл) | стабильность | json_ok | "
-        "unparsed | skipped | p_correct | токены вх/вых | время, с |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+        "unparsed | skipped | токены | время, с |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|",
         "",
         "Сортировка — по правильности (%), лучшие сверху; в скобках — балл: среднее "
         "число верных ответов из 24 (ru) / 23 (en).",
@@ -767,11 +767,12 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         if a["identical"] is not None:
             stab += f", попарно {a['identical'] * 100:.0f}%"
         j = "—" if a["json_ok"] is None else f"{a['json_ok'] * 100:.0f}%"
-        p = "—" if a["p_correct"] is None else str(a["p_correct"])
+        ti, to = a["tok_in"], a["tok_out"]
+        tok = "—" if ti is None and to is None else str((ti or 0) + (to or 0))
         lines.append(
             f"| {g[0]} | {g[2]} | {g[1]} | {a['n']} | {a['min']}–{a['max']} | "
-            f"**{pct_lang(a)}** ({a['mean']:.1f}) | {stab} | {j} | {a['unparsed']} | {a['skipped']} | {p} | "
-            f"{a['tok_in'] or '—'}/{a['tok_out'] or '—'} | {a['dur']} |")
+            f"**{pct_lang(a)}** ({a['mean']:.1f}) | {stab} | {j} | {a['unparsed']} | {a['skipped']} | "
+            f"{tok} | {a['dur']} |")
     lines += ["", "## Язык: ru vs en", "",
               "Лучший уровень модели на каждом языке; Δ = en% − ru% "
               "(множества вопросов разные: 24/23).",

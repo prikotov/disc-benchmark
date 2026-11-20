@@ -257,6 +257,9 @@ table.matrix td.model{text-align:left;position:sticky;left:0;background:#fff;z-i
 table.matrix th.model{text-align:left;position:sticky;left:0;background:#eef2f6;z-index:2}
 table.matrix td.na{color:#9aa7b3}
 .delta-up{color:#2e7d32;font-weight:600}.delta-down{color:#c62828;font-weight:600}
+table.sortable th{cursor:pointer;white-space:nowrap}
+table.sortable th:hover{background:#e0e8ef}
+table.sortable th .arr{color:#0b62a4;font-size:11px}
 </style></head><body>""")
 
     gen = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -403,15 +406,21 @@ argmax по вариантам — см. оговорку выше.</li>
 <a href='../quiz-en/README.md'>quiz-en/README.md</a></div>
 </div>""")
 
-    # сводная таблица
-    parts.append("<h2>Сводная таблица</h2><table><tr>"
-                 "<th>модель</th><th>язык</th><th>уровень</th><th>прогонов</th>"
-                 "<th class='num'>балл (ср)</th><th class='num'>min–max</th><th>%</th>"
+    # сводная таблица (дефолтный порядок — по правильности, лучшие сверху;
+    # заголовки кликабельны — сортировка по любому столбцу)
+    parts.append("<h2>Сводная таблица</h2>"
+                 "<div class='muted'>по умолчанию — по правильности (%), лучшие сверху; "
+                 "клик по заголовку — сортировка по столбцу, повторный клик — в обратную "
+                 "сторону</div>"
+                 "<table class='sortable' id='sumtab'><thead><tr>"
+                 "<th>модель</th><th>язык</th><th>уровень</th><th class='num'>прогонов</th>"
+                 "<th class='num'>балл (ср)</th><th class='num'>min–max</th><th class='num'>%</th>"
                  "<th>стабильность</th><th class='num'>json_ok</th>"
                  "<th class='num'>unparsed/skipped</th><th class='num'>сбои</th>"
                  "<th class='num'>p_correct</th><th class='num'>токены вх/вых</th>"
-                 "<th class='num'>время, с</th></tr>")
-    for g in sorted(groups, key=sort_key):
+                 "<th class='num'>время, с</th></tr></thead><tbody>")
+    for g in sorted(groups, key=lambda g: (-groups[g]["mean"] / groups[g]["total"],
+                                           sort_key(g))):
         a = groups[g]
         stab = f"{a['distinct']} уник. из {a['n']}"
         if a["identical"] is not None:
@@ -424,14 +433,14 @@ argmax по вариантам — см. оговорку выше.</li>
         parts.append(
             f"<tr><td><a href='{href}'>{g[0]}</a></td><td>{g[1]}</td><td>{g[2]}</td>"
             f"<td class='num'>{a['n']}</td><td class='num'><b>{a['mean']:.1f}</b></td>"
-            f"<td class='num'>{a['min']}–{a['max']}</td><td>{pct_lang(a)}"
+            f"<td class='num'>{a['min']}–{a['max']}</td><td class='num'>{pct_lang(a)}"
             f"<div class='bar'><div style='width:{a['mean'] / a['total'] * 100:.0f}%'></div></div></td>"
             f"<td>{stab}</td><td class='num'>{j}</td>"
             f"<td class='num'>{a['unparsed']}/{a['skipped']}</td>"
             f"<td class='num'>{fails}</td>"
             f"<td class='num'>{p}</td><td class='num'>{tok}</td>"
             f"<td class='num'>{a['dur']}</td></tr>")
-    parts.append("</table>")
+    parts.append("</tbody></table>")
     parts.append("<div class='muted'>Сбои — прогоны с транспортными ошибками (run.json "
                  "error), в метриках не участвуют; сырой результат сохранён рядом.</div>")
     if any(a["contention"] for a in groups.values()):
@@ -616,6 +625,68 @@ argmax по вариантам — см. оговорку выше.</li>
                  "уточнения. Стабильность — уникальные наборы ответов и попарное совпадение "
                  "прогонов группы. Ссылки — папки прогонов "
                  "<code>models/&lt;модель&gt;/quiz[-en]/</code>.</div>")
+    parts.append("""<script>
+(function () {
+  var tab = document.getElementById('sumtab');
+  if (!tab) return;
+  var ths = Array.prototype.slice.call(tab.rows[0].cells);
+  var tbody = tab.tBodies[0];
+  var cur = { col: -1, desc: true };
+
+  function cellVal(td, num) {
+    var t = td.textContent.trim();
+    if (!t || t === '\\u2014') return null;   // нет значения — всегда внизу
+    if (!num) return t.toLowerCase();
+    var m = t.replace(/\\s/g, '').match(/-?\\d+(?:\\.\\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  function cmp(a, b) {
+    if (a === null && b === null) return 0;
+    if (a === null) return 1;
+    if (b === null) return -1;
+    if (typeof a === 'number' && typeof b === 'number')
+      return a < b ? -1 : (a > b ? 1 : 0);
+    var sa = String(a), sb = String(b);
+    return sa < sb ? -1 : (sa > sb ? 1 : 0);
+  }
+
+  function mark() {
+    ths.forEach(function (th, i) {
+      var a = th.querySelector('.arr');
+      if (a) a.remove();
+      if (i === cur.col) {
+        a = document.createElement('span');
+        a.className = 'arr';
+        a.textContent = cur.desc ? '\\u25bc' : '\\u25b2';
+        th.appendChild(a);
+      }
+    });
+  }
+
+  function sortCol(i) {
+    var num = ths[i].classList.contains('num');
+    if (cur.col === i) cur.desc = !cur.desc;
+    else { cur.col = i; cur.desc = num; }   // числовые — сначала лучшие (убывание)
+    var rows = Array.prototype.slice.call(tbody.rows);
+    var key = rows.map(function (r) { return cellVal(r.cells[i], num); });
+    // стабильная сортировка по вычисленным ключам
+    var idx = rows.map(function (r, k) { return k; });
+    idx.sort(function (p, q) {
+      var c = cmp(key[p], key[q]);
+      return cur.desc ? -c : c;
+    });
+    idx.forEach(function (k) { tbody.appendChild(rows[k]); });
+    mark();
+  }
+
+  ths.forEach(function (th, i) {
+    th.addEventListener('click', function () { sortCol(i); });
+  });
+  cur.col = 6; cur.desc = true;              // старт: столбец «%», лучшие сверху
+  mark();
+})();
+</script>""")
     parts.append("</body></html>")
     out.write_text("".join(parts), encoding="utf-8")
 
@@ -688,8 +759,12 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         "| модель | язык | уровень | прогонов | балл (ср) | min–max | % | стабильность | json_ok | "
         "unparsed/skipped | p_correct | токены вх/вых | время, с |",
         "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+        "",
+        "Сортировка — по правильности (%), лучшие сверху.",
+        "",
     ]
-    for g in sorted(groups, key=sort_key):
+    for g in sorted(groups, key=lambda g: (-groups[g]["mean"] / groups[g]["total"],
+                                           sort_key(g))):
         a = groups[g]
         stab = f"{a['distinct']} уник. из {a['n']}"
         if a["identical"] is not None:

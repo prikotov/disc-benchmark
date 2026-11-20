@@ -21,7 +21,7 @@ table.matrix td.model{text-align:left;position:sticky;left:0;background:#fff;z-i
 table.matrix th.model{text-align:left;position:sticky;left:0;background:#eef2f6;z-index:2}
 table.matrix td.na{color:#9aa7b3}
 .delta-up{color:#2e7d32;font-weight:600}.delta-down{color:#c62828;font-weight:600}
-</style></head><body><h1>Анкета DISC (блиц-тест): своды по прогонам — ru + en</h1><div class='sub'>24 вопроса (ru) / 23 вопроса (en) по методологии DISC; модель называет профиль без вариантов. Промпт v1 (оба языка). Прогонов: 480. Сформировано: 2026-11-20 02:32 UTC.</div><div class='warn'><b>Оговорки.</b> (1) Межформатная: chat-модели отвечают открыто, decision (clef) — argmax по кандидатам-утверждениям в пробах noul (у них кандидаты видны); баллы сравнимы, условия — нет. (2) Межъязыковая: ru — 24 вопроса, en — 23 (вопроса про болезненную реакцию на критику в английском оригинале нет), поэтому сравниваем проценты, а не сырые баллы.</div><h2>Методика</h2><div class='model' style="max-width:1000px">
+</style></head><body><h1>Анкета DISC (блиц-тест): своды по прогонам — ru + en</h1><div class='sub'>24 вопроса (ru) / 23 вопроса (en) по методологии DISC; модель называет профиль без вариантов. Промпт v1 (оба языка). Прогонов: 480. Сформировано: 2026-11-20 02:58 UTC.</div><div class='warn'><b>Оговорки.</b> (1) Межформатная: chat-модели отвечают открыто, decision (clef) — argmax по кандидатам-утверждениям в пробах noul (у них кандидаты видны); баллы сравнимы, условия — нет. (2) Межъязыковая: ru — 24 вопроса, en — 23 (вопроса про болезненную реакцию на критику в английском оригинале нет), поэтому сравниваем проценты, а не сырые баллы.</div><h2>Методика</h2><div class='model' style="max-width:1000px">
 <ol style="margin:0; padding-left:24px">
 <li style="margin-bottom:10px"><b>Материал.</b> Анкета по методологии DISC — 24 вопроса (ru) /
 23 (en); вопросы задаются <b>без вариантов</b> — модель называет профиль, сочетание или
@@ -40,7 +40,96 @@ table.matrix td.na{color:#9aa7b3}
 <code>reasoning_effort</code> / <code>enable_thinking false</code> — по API провайдера),
 <code>seed</code> не задаётся; остальное — дефолты модели.
 Для kimi (подписка Kimi coding) — тот же user-промпт без системного.
-Для clef — decision-протокол (см. оговорку выше).</li>
+Для clef — decision-протокол <code>/v1/systemone</code> (см. оговорку выше).
+<pre style="background:#f4f6f8; padding:8px; font-size:12px; overflow:auto">POST /api/chat
+{
+  &quot;model&quot;: &quot;&lt;тег модели&gt;&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;&lt;пользовательский промпт — см. ниже&gt;&quot;
+    }
+  ],
+  &quot;stream&quot;: false,
+  &quot;keep_alive&quot;: &quot;10m&quot;,
+  &quot;options&quot;: {
+    &quot;num_ctx&quot;: 65536,
+    &quot;num_predict&quot;: 32768
+  },
+  &quot;think&quot;: &quot;&lt;off | low | medium | high | xhigh — по модели&gt;&quot;
+}</pre>
+Пользовательский промпт (ru — дословно; en — аналог
+<code>quiz-en/prompts/prompt.json</code>):
+<details><summary style="cursor:pointer">показать текст промпта</summary>
+<pre style="background:#f4f6f8; padding:8px; font-size:12px; white-space:pre-wrap">Небольшой блиц-тест: насколько хорошо вы усвоили модель DISC.
+
+В модели DISC четыре поведенческих профиля, названных цветами: красный, жёлтый, зелёный и синий. Проверьте себя: насколько хорошо вы представляете, как действуют и поступают люди разных профилей.
+
+Ниже 24 вопроса. На каждый ответьте, назвав профиль (цвет), который лучше всего подходит; если ответ — сочетание профилей, назовите сочетание; если однозначного ответа нет, так и напишите.
+
+Ответьте строго JSON-ом — объект с ответами по номерам вопросов, без текста вне JSON:
+{&quot;1&quot;: &quot;&lt;ответ на вопрос 1&gt;&quot;, &quot;2&quot;: &quot;&lt;ответ на вопрос 2&gt;&quot;, &quot;3&quot;: &quot;&lt;ответ на вопрос 3&gt;&quot;, …, &quot;24&quot;: &quot;&lt;ответ на вопрос 24&gt;&quot;}
+
+Вопросы:
+1. Какие профили совместимы в социальном плане?
+2. Какие профили совместимы в совместной работе?
+3. Какой профиль всегда хотел бы возглавить проект?
+4. Какой профиль окажется лучшим хирургом?
+5. Какой профиль больше всех упивается ролью оратора?
+6. Какой профиль чаще всего знает, где он сохранил электронное письмо от шефа?
+7. Какой профиль стремится провести побольше тестов или собрать побольше информации перед тем, как принять решение?
+8. Какой профиль всегда приходит вовремя и в этом плане на него можно положиться?
+9. Какой профиль раз за разом не следует правилам только ради того, чтобы работа была сделана?
+10. Какой профиль охотнее всех апробирует новые технологии или приемы, если это ускорит работу?
+11. Какой профиль дольше всех помнит критику в свой адрес?
+12. Какой профиль болезненнее всего реагирует на личную критику?
+13. Какой профиль менее всех организован, но знает, где может получить нужную информацию?
+14. Какой профиль хочет всегда принимать решения?
+15. Какой профиль охотнее всего следует последней моде?
+16. Какой профиль охотнее берется за сложные задачи?
+17. Какой профиль легко судит других?
+18. Комбинация каких профилей образует самую успешную команду?
+19. Какой профиль вероятнее всего окажется самым разговорчивым?
+20. Какой профиль быстрее всех воспримет новую идею?
+21. Какой профиль мог бы поручить задание другим, но все же выполнит его сам?
+22. Какой профиль окажется лучшим слушателем?
+23. Какой профиль не пропустит ни малейшего пункта в инструкции?
+24. Какой профиль чаще всего встречается в вашем круге общения?</pre>
+<pre style="background:#f4f6f8; padding:8px; font-size:12px; white-space:pre-wrap">EN (дословно):
+A quick little quiz: how well have you learned the DISC model?
+
+DISC describes four behavioral profiles named after colors: Red, Yellow, Green and Blue. Test yourself: how well do you understand how people of different profiles act and behave?
+
+Below are 23 questions. For each question, name the profile (color) that fits best; if the answer is a combination of profiles, name the combination; if there is no single answer, say so.
+
+Answer strictly in JSON — an object mapping question numbers to your answers, no text outside the JSON:
+{&quot;1&quot;: &quot;&lt;your answer to question 1&gt;&quot;, &quot;2&quot;: &quot;&lt;your answer to question 2&gt;&quot;, &quot;3&quot;: &quot;&lt;your answer to question 3&gt;&quot;, ..., &quot;23&quot;: &quot;&lt;your answer to question 23&gt;&quot;}
+
+Questions:
+1. Which combination of profiles would naturally agree on a social level?
+2. Which combination of profiles naturally work well together?
+3. Which profile will always prefer to be the head of a project?
+4. Which profile would make the best surgeon?
+5. Which person would enjoy giving a speech the most?
+6. Which person would know exactly where he saved that email from his boss?
+7. Which person would want to do more tests or get more information before making a decision?
+8. Which person can you always rely on to arrive on time?
+9. Which person doesn’t follow the rulebook to get a job done?
+10. Which person would be the most willing to try something new to get the job done?
+11. Which person will remember personal criticism the longest?
+12. Which person is the least organized but knows exactly where to go to get what he needs?
+13. Which profile always wants to make decisions?
+14. Which profile wears the latest fashions?
+15. Which profile would enjoy new challenges the most?
+16. Which profile would be the quickest to judge other people?
+17. Which combination of profiles would form the best team?
+18. Which profile will probably talk the most?
+19. Which profile would assimilate new ideas the quickest?
+20. Which profile would delegate a task but then still do it himself?
+21. Which profile is the best listener?
+22. Which profile wouldn’t miss the last step of the instructions?
+23. Which profile is most common in your social circle?</pre>
+</details></li>
 <li style="margin-bottom:10px"><b>Уровни мышления.</b> Каждый уровень, поддерживаемый
 моделью.</li>
 <li style="margin-bottom:10px"><b>Скоринг.</b> Машинный, без судей: сопоставление ответа

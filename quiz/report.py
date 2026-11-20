@@ -411,10 +411,11 @@ argmax по вариантам — см. оговорку выше.</li>
     parts.append("<h2>Сводная таблица</h2>"
                  "<div class='muted'>по умолчанию — по правильности (%), лучшие сверху; "
                  "клик по заголовку — сортировка по столбцу, повторный клик — в обратную "
-                 "сторону</div>"
+                 "сторону. В скобках — балл: среднее число верных ответов из 24 (ru) / "
+                 "23 (en); min–max — разброс баллов по прогонам.</div>"
                  "<table class='sortable' id='sumtab'><thead><tr>"
                  "<th>модель</th><th>уровень</th><th>язык</th><th class='num'>прогонов</th>"
-                 "<th class='num'>балл (ср)</th><th class='num'>min–max</th><th class='num'>%</th>"
+                 "<th class='num'>min–max</th><th class='num'>% (балл)</th>"
                  "<th>стабильность</th><th class='num'>json_ok</th>"
                  "<th class='num'>unparsed/skipped</th><th class='num'>сбои</th>"
                  "<th class='num'>p_correct</th><th class='num'>токены вх/вых</th>"
@@ -432,8 +433,8 @@ argmax по вариантам — см. оговорку выше.</li>
         fails = (failed_counts or {}).get(g, 0)
         parts.append(
             f"<tr><td><a href='{href}'>{g[0]}</a></td><td>{g[2]}</td><td>{g[1]}</td>"
-            f"<td class='num'>{a['n']}</td><td class='num'><b>{a['mean']:.1f}</b></td>"
-            f"<td class='num'>{a['min']}–{a['max']}</td><td class='num'>{pct_lang(a)}</td>"
+            f"<td class='num'>{a['n']}</td>"
+            f"<td class='num'>{a['min']}–{a['max']}</td><td class='num'><b>{pct_lang(a)}</b> ({a['mean']:.1f})</td>"
             f"<td>{stab}</td><td class='num'>{j}</td>"
             f"<td class='num'>{a['unparsed']}/{a['skipped']}</td>"
             f"<td class='num'>{fails}</td>"
@@ -682,7 +683,7 @@ argmax по вариантам — см. оговорку выше.</li>
   ths.forEach(function (th, i) {
     th.addEventListener('click', function () { sortCol(i); });
   });
-  cur.col = 6; cur.desc = true;              // старт: столбец «%», лучшие сверху
+  cur.col = 5; cur.desc = true;              // старт: столбец «% (балл)», лучшие сверху
   mark();
 })();
 </script>""")
@@ -755,11 +756,12 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         "по вариантам.",
         "- **Подробно**: quiz/README.md · quiz-en/README.md",
         "",
-        "| модель | уровень | язык | прогонов | балл (ср) | min–max | % | стабильность | json_ok | "
+        "| модель | уровень | язык | прогонов | min–max | % (балл) | стабильность | json_ok | "
         "unparsed/skipped | p_correct | токены вх/вых | время, с |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|",
         "",
-        "Сортировка — по правильности (%), лучшие сверху.",
+        "Сортировка — по правильности (%), лучшие сверху; в скобках — балл: среднее "
+        "число верных ответов из 24 (ru) / 23 (en).",
         "",
     ]
     for g in sorted(groups, key=lambda g: (-groups[g]["mean"] / groups[g]["total"],
@@ -771,8 +773,8 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         j = "—" if a["json_ok"] is None else f"{a['json_ok'] * 100:.0f}%"
         p = "—" if a["p_correct"] is None else str(a["p_correct"])
         lines.append(
-            f"| {g[0]} | {g[2]} | {g[1]} | {a['n']} | **{a['mean']:.1f}** | {a['min']}–{a['max']} | "
-            f"{pct_lang(a)} | {stab} | {j} | {a['unparsed']}/{a['skipped']} | {p} | "
+            f"| {g[0]} | {g[2]} | {g[1]} | {a['n']} | {a['min']}–{a['max']} | "
+            f"**{pct_lang(a)}** ({a['mean']:.1f}) | {stab} | {j} | {a['unparsed']}/{a['skipped']} | {p} | "
             f"{a['tok_in'] or '—'}/{a['tok_out'] or '—'} | {a['dur']} |")
     lines += ["", "## Язык: ru vs en", "",
               "Лучший уровень модели на каждом языке; Δ = en% − ru% "

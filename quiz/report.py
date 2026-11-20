@@ -444,6 +444,43 @@ argmax по вариантам — см. оговорку выше.</li>
                      "(факт в run.json ollama_contention) — на баллы это не влияет, "
                      "но время может быть завышено.</div>")
 
+    # единая матрица: столбцы по нумерации ru, en-вопросы сопоставлены
+    gs_all = [g for g in sorted(groups, key=sort_key)]
+    mx = {lang: matrix_rows(groups, lang) for lang in ("ru", "en")}
+    parts.append("<h2>Матрица: модель × язык × уровень × вопрос</h2>"
+                 "<div class='muted'>столбцы — нумерация ru (24 вопроса); вторая строка шапки — "
+                 "номера сопоставленных en-вопросов (ru 12 не имеет en-аналога). Ячейка — доля "
+                 "верных ответов на вопрос по прогонам группы, 0–100 (наведение — точные "
+                 "«верных/всего»); 📘 — эталонный ответ не однозначный</div>")
+    parts.append("<table class='matrix'><tr><th class='model'>модель @ уровень</th><th>язык</th>")
+    for q in KEYS["ru"]["questions"]:
+        mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
+        parts.append(f"<th class='num'>{q['n']}{mark}</th>")
+    en_head = "".join(
+        f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}"
+        f"{' <span class=\'bm\'>📘</span>' if RU_TO_EN[q['n']] and KEYS['en']['questions'][RU_TO_EN[q['n']] - 1]['kind'] in ('book', 'none') else ''}</th>"
+        for q in KEYS["ru"]["questions"])
+    parts.append("<tr><th class='model'></th><th>№ en →</th>" + en_head + "</tr>")
+    for g in gs_all:
+        lang = g[1]
+        rates = mx[lang][g]
+        cells = []
+        for q in KEYS["ru"]["questions"]:
+            if lang == "ru":
+                rate = rates[q["n"] - 1]
+            else:
+                en_n = RU_TO_EN[q["n"]]
+                rate = rates[en_n - 1] if en_n else None
+            if rate is None:
+                cells.append("<td class='num na'>—</td>")
+            else:
+                okc = round(rate * groups[g]["n"])
+                cells.append(f"<td class='num' style='{heat_color(rate)}' "
+                             f"title='{okc} из {groups[g]['n']} прогонов'>{rate * 100:.0f}</td>")
+        parts.append(f"<tr><td class='model'>{g[0]} "
+                     f"@ {g[2]}</td><td>{g[1]}</td>" + "".join(cells) + "</tr>")
+    parts.append("</table>")
+
     # Язык: ru vs en — главный вопрос исследования
     parts.append("<h2>Язык: ru vs en (влияние языка на точность и устойчивость)</h2>"
                  "<div class='muted'>лучший уровень модели на каждом языке; "
@@ -512,43 +549,6 @@ argmax по вариантам — см. оговорку выше.</li>
                          f"<td class='num'>{dtxt}</td><td class='num'>{a['n']}</td>"
                          f"<td>{stab}</td></tr>")
         parts.append("</table></div>")
-
-    # единая матрица: столбцы по нумерации ru, en-вопросы сопоставлены
-    gs_all = [g for g in sorted(groups, key=sort_key)]
-    mx = {lang: matrix_rows(groups, lang) for lang in ("ru", "en")}
-    parts.append("<h2>Матрица: модель × язык × уровень × вопрос</h2>"
-                 "<div class='muted'>столбцы — нумерация ru (24 вопроса); вторая строка шапки — "
-                 "номера сопоставленных en-вопросов (ru 12 не имеет en-аналога). Ячейка — доля "
-                 "верных ответов на вопрос по прогонам группы, 0–100 (наведение — точные "
-                 "«верных/всего»); 📘 — эталонный ответ не однозначный</div>")
-    parts.append("<table class='matrix'><tr><th class='model'>модель @ уровень</th><th>язык</th>")
-    for q in KEYS["ru"]["questions"]:
-        mark = " <span class='bm'>📘</span>" if q["kind"] in ("book", "none") else ""
-        parts.append(f"<th class='num'>{q['n']}{mark}</th>")
-    en_head = "".join(
-        f"<th class='num na'>{RU_TO_EN[q['n']] or '—'}"
-        f"{' <span class=\'bm\'>📘</span>' if RU_TO_EN[q['n']] and KEYS['en']['questions'][RU_TO_EN[q['n']] - 1]['kind'] in ('book', 'none') else ''}</th>"
-        for q in KEYS["ru"]["questions"])
-    parts.append("<tr><th class='model'></th><th>№ en →</th>" + en_head + "</tr>")
-    for g in gs_all:
-        lang = g[1]
-        rates = mx[lang][g]
-        cells = []
-        for q in KEYS["ru"]["questions"]:
-            if lang == "ru":
-                rate = rates[q["n"] - 1]
-            else:
-                en_n = RU_TO_EN[q["n"]]
-                rate = rates[en_n - 1] if en_n else None
-            if rate is None:
-                cells.append("<td class='num na'>—</td>")
-            else:
-                okc = round(rate * groups[g]["n"])
-                cells.append(f"<td class='num' style='{heat_color(rate)}' "
-                             f"title='{okc} из {groups[g]['n']} прогонов'>{rate * 100:.0f}</td>")
-        parts.append(f"<tr><td class='model'>{g[0]} "
-                     f"@ {g[2]}</td><td>{g[1]}</td>" + "".join(cells) + "</tr>")
-    parts.append("</table>")
 
     parts.append("<h2>Проблемные вопросы (модели массово не отвечают)</h2>")
     parts.append("<div class='muted'>включены вопросы с суммарной долей верных &lt;50% "
@@ -776,31 +776,8 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
             f"| {g[0]} | {g[2]} | {g[1]} | {a['n']} | {a['min']}–{a['max']} | "
             f"**{pct_lang(a)}** ({a['mean']:.1f}) | {stab} | {j} | {a['unparsed']} | {a['skipped']} | "
             f"{tok} | {a['dur']} |")
-    lines += ["", "## Язык: ru vs en", "",
-              "Лучший уровень модели на каждом языке; Δ = en% − ru% "
-              "(множества вопросов разные: 24/23).",
-              "",
-              "| модель | ru лучший | ru % | en лучший | en % | Δ п.п. |",
-              "|---|---|---|---|---|---|"]
-    deltas = []
-    folders = folders_sorted(groups)
-    for folder in folders:
-        br = lang_best(groups, folder, "ru")
-        be = lang_best(groups, folder, "en")
-        rp = f"{br['mean']:.1f} @ {lang_level(groups, folder, 'ru', br)}" if br else "—"
-        ep = f"{be['mean']:.1f} @ {lang_level(groups, folder, 'en', be)}" if be else "—"
-        r_pct = f"{br['mean'] / br['total'] * 100:.0f}%" if br else "—"
-        e_pct = f"{be['mean'] / be['total'] * 100:.0f}%" if be else "—"
-        d = "—"
-        if br and be:
-            dd = be["mean"] / be["total"] * 100 - br["mean"] / br["total"] * 100
-            deltas.append(dd)
-            d = f"{dd:+.1f}"
-        lines.append(f"| {folder} | {rp} | {r_pct} | {ep} | {e_pct} | {d} |")
-    if deltas:
-        lines += ["", f"Средняя Δ: **{sum(deltas) / len(deltas):+.1f} п.п.**"]
 
-    # единая матрица + сложность (столбцы по нумерации ru, en сопоставлен)
+    # единая матрица (столбцы по нумерации ru, en сопоставлен) — сразу за сводной
     mx = {lang: matrix_rows(groups, lang) for lang in ("ru", "en")}
     en_head = " | ".join(
         f"{RU_TO_EN[q['n']] or '—'}"
@@ -827,6 +804,30 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
                 rate = rates[en - 1] if en else None
             cells.append(f"{rate * 100:.0f}" if rate is not None else "—")
         lines.append(f"| **{g[0]}** @ {g[2]} | {lang} | " + " | ".join(cells) + " |")
+
+    lines += ["", "## Язык: ru vs en", "",
+              "Лучший уровень модели на каждом языке; Δ = en% − ru% "
+              "(множества вопросов разные: 24/23).",
+              "",
+              "| модель | ru лучший | ru % | en лучший | en % | Δ п.п. |",
+              "|---|---|---|---|---|---|"]
+    deltas = []
+    folders = folders_sorted(groups)
+    for folder in folders:
+        br = lang_best(groups, folder, "ru")
+        be = lang_best(groups, folder, "en")
+        rp = f"{br['mean']:.1f} @ {lang_level(groups, folder, 'ru', br)}" if br else "—"
+        ep = f"{be['mean']:.1f} @ {lang_level(groups, folder, 'en', be)}" if be else "—"
+        r_pct = f"{br['mean'] / br['total'] * 100:.0f}%" if br else "—"
+        e_pct = f"{be['mean'] / be['total'] * 100:.0f}%" if be else "—"
+        d = "—"
+        if br and be:
+            dd = be["mean"] / be["total"] * 100 - br["mean"] / br["total"] * 100
+            deltas.append(dd)
+            d = f"{dd:+.1f}"
+        lines.append(f"| {folder} | {rp} | {r_pct} | {ep} | {e_pct} | {d} |")
+    if deltas:
+        lines += ["", f"Средняя Δ: **{sum(deltas) / len(deltas):+.1f} п.п.**"]
 
     q_stat = {lang: defaultdict(lambda: [0, 0]) for lang in ("ru", "en")}
     for r in runs:

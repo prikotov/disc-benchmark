@@ -251,8 +251,7 @@ table.matrix td.na{color:#9aa7b3}
         f"<div class='sub'>24 вопроса (ru) / 23 вопроса (en) по методологии DISC "
         f"(блиц-тест курса, материалы по книге Эриксона); модель называет профиль "
         f"без вариантов. Промпт v{pv} (оба языка). Прогонов: {total_runs}. "
-        f"Сформировано: {gen}. Методика: <code>quiz/README.md</code>, "
-        f"<code>quiz-en/README.md</code></div>")
+        f"Сформировано: {gen}.</div>")
     parts.append(
         "<div class='warn'><b>Оговорки.</b> (1) Межформатная: chat-модели отвечают "
         "открыто, decision (clef) — argmax по кандидатам-утверждениям в пробах noul "
@@ -274,7 +273,9 @@ table.matrix td.na{color:#9aa7b3}
 отдельно).<br><br>
 <b>5. Языки.</b> ru и en анкеты — из оригинальных редакций (не перевод друг друга);
 вопросы сопоставлены 1:1, сравнение по процентам. Decision-модели (clef) отвечают
-argmax по вариантам — см. оговорку выше.
+argmax по вариантам — см. оговорку выше.<br>
+<b>Подробно:</b> <a href='../quiz/README.md'>quiz/README.md</a> ·
+<a href='../quiz-en/README.md'>quiz-en/README.md</a>
 </div>""")
 
     # сводная таблица
@@ -511,7 +512,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         "",
         f"Прогонов: {len(runs)}. Промпт v{runs[0]['prompt_version'] if runs else 1}. "
         f"ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). "
-        f"Методика: quiz/README.md, quiz-en/README.md. Сформировано "
+        f"Сформировано "
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}.",
         "",
         "## Методика",
@@ -530,6 +531,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         "5. **Языки** — ru и en из оригинальных редакций (не перевод), вопросы "
         "сопоставлены 1:1, сравнение по процентам. Decision-модели (clef) — argmax "
         "по вариантам.",
+        "- **Подробно**: quiz/README.md · quiz-en/README.md",
         "",
         "| модель | язык | уровень | прогонов | балл (ср) | min–max | % | стабильность | json_ok | "
         "unparsed/skipped | p_correct | токены вх/вых | время, с |",

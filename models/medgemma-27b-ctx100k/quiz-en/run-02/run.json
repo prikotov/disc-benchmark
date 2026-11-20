@@ -1,0 +1,252 @@
+{
+  "model": "medgemma:27b-ctx100k",
+  "folder": "medgemma-27b-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "off",
+    "scale": [],
+    "sent": false,
+    "note": "think=false"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T02:11:15.569285+00:00",
+  "duration_s": 5.4,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 519,
+    "eval_count": 417,
+    "eval_duration": 5319831000,
+    "prompt_eval_duration": 67035000,
+    "load_duration": 446372,
+    "total_duration": 5390857581
+  },
+  "ps_snapshot": [
+    "medgemma:27b-ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"All profiles can agree on a social level, but Green and Blue often have the most natural affinity for harmony and connection.\",\n  \"2\": \"There's no single perfect combination, but often a mix is best. For example, Red and Green can balance directness with stability. Or Yellow and Blue can balance enthusiasm with precision. A well-rounded team often includes elements of all styles.\",\n  \"3\": \"Red\",\n  \"4\": \"Blue (due to precision, accuracy, and analytical skills)\",\n  \"5\": \"Yellow\",\n  \"6\": \"Blue\",\n  \"7\": \"Blue (or possibly Green, depending on the context)\",\n  \"8\": \"Green (or Blue, depending on the context - Green values consistency, Blue values accuracy)\",\n  \"9\": \"Red (willing to bend or break rules for efficiency or results)\",\n  \"10\": \"Yellow\",\n  \"11\": \"Blue\",\n  \"12\": \"Yellow (often lacks traditional organization but has strong networks and social skills)\",\n  \"13\": \"Red\",\n  \"14\": \"Yellow\",\n  \"15\": \"Yellow\",\n  \"16\": \"Red (can be quick to judge based on results and efficiency)\",\n  \"17\": \"Again, depends on the task, but a mix is often ideal. A common answer is R, Y, G, B all together, or perhaps a combination like Red, Yellow, and Green (RYG) for drive, enthusiasm, and stability.\",\n  \"18\": \"Yellow\",\n  \"19\": \"Yellow\",\n  \"20\": \"Red (can be controlling and want to ensure quality, even if delegating)\",\n  \"21\": \"Green\",\n  \"22\": \"Blue\",\n  \"23\": \"This is subjective and depends entirely on the individual.\"\n}\n```",
+  "thinking_raw": null,
+  "parsed": {
+    "answers": {
+      "1": "All profiles can agree on a social level, but Green and Blue often have the most natural affinity for harmony and connection.",
+      "2": "There's no single perfect combination, but often a mix is best. For example, Red and Green can balance directness with stability. Or Yellow and Blue can balance enthusiasm with precision. A well-rounded team often includes elements of all styles.",
+      "3": "Red",
+      "4": "Blue (due to precision, accuracy, and analytical skills)",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue (or possibly Green, depending on the context)",
+      "8": "Green (or Blue, depending on the context - Green values consistency, Blue values accuracy)",
+      "9": "Red (willing to bend or break rules for efficiency or results)",
+      "10": "Yellow",
+      "11": "Blue",
+      "12": "Yellow (often lacks traditional organization but has strong networks and social skills)",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Yellow",
+      "16": "Red (can be quick to judge based on results and efficiency)",
+      "17": "Again, depends on the task, but a mix is often ideal. A common answer is R, Y, G, B all together, or perhaps a combination like Red, Yellow, and Green (RYG) for drive, enthusiasm, and stability.",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Red (can be controlling and want to ensure quality, even if delegating)",
+      "21": "Green",
+      "22": "Blue",
+      "23": "This is subjective and depends entirely on the individual."
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 16,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 2,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "flag": "all-option",
+        "correct": false,
+        "n": 1,
+        "answer": "All profiles can agree on a social level, but Green and Blue often have the most natural affinity for harmony and connection."
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 2,
+        "answer": "There's no single perfect combination, but often a mix is best. For example, Red and Green can balance directness with stability. Or Yellow and Blue can balance enthusiasm with precision. A well-rounded team often includes elements of all styles."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue (due to precision, accuracy, and analytical skills)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 7,
+        "answer": "Blue (or possibly Green, depending on the context)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Green (or Blue, depending on the context - Green values consistency, Blue values accuracy)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "Red (willing to bend or break rules for efficiency or results)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow (often lacks traditional organization but has strong networks and social skills)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 15,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 16,
+        "answer": "Red (can be quick to judge based on results and efficiency)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "no-answer",
+        "correct": false,
+        "n": 17,
+        "answer": "Again, depends on the task, but a mix is often ideal. A common answer is R, Y, G, B all together, or perhaps a combination like Red, Yellow, and Green (RYG) for drive, enthusiasm, and stability."
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 20,
+        "answer": "Red (can be controlling and want to ensure quality, even if delegating)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "This is subjective and depends entirely on the individual."
+      }
+    ]
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "model": "ornith-1.5:35b-ctx100k",
+  "folder": "ornith-1.5-35b-ctx100k",
+  "provider": "chat",
+  "lang": "en",
+  "thinking": {
+    "requested": "off",
+    "scale": [],
+    "sent": false,
+    "note": "think=false"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T01:52:37.119757+00:00",
+  "duration_s": 1.5,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 524,
+    "eval_count": 435,
+    "eval_duration": 1426580000,
+    "prompt_eval_duration": 20197000,
+    "load_duration": 373802,
+    "total_duration": 1449145156
+  },
+  "ps_snapshot": [
+    "ornith-1.5:35b-ctx100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"Red and Yellow (both are sociable and expressive; they enjoy social interaction)\",\n  \"2\": \"Red and Blue (complementary skills: Red drives results, Blue ensures quality/accuracy)\",\n  \"3\": \"Red (dominant, wants control and leadership)\",\n  \"4\": \"Blue (precise, detail-oriented, error-averse)\",\n  \"5\": \"Yellow (outgoing, expressive, enjoys being center of attention)\",\n  \"6\": \"Blue (organized, systematic, records where things are stored)\",\n  \"7\": \"Blue (cautious, needs all information and analysis before deciding)\",\n  \"8\": \"Blue (punctual, follows rules and schedules)\",\n  \"9\": \"Red (results-driven, may bend rules to achieve outcomes)\",\n  \"10\": \"Red (bold, willing to take risks to get results)\",\n  \"11\": \"Blue (sensitive, takes things personally, holds onto criticism)\",\n  \"12\": \"Yellow (disorganized but social/knows who to ask)\",\n  \"13\": \"Red (dominant, decision-focused)\",\n  \"14\": \"Yellow (fashionable, trend-conscious, expressive)\",\n  \"15\": \"Red (thrives on challenges and new opportunities)\",\n  \"16\": \"Red (blunt, judgmental, quick to assess)\",\n  \"17\": \"Red and Blue (balanced combination of drive and precision)\",\n  \"18\": \"Yellow (talkative, expressive, sociable)\",\n  \"19\": \"Yellow (quick to grasp new ideas, enthusiastic learner)\",\n  \"20\": \"Red (delegates but remains hands-on due to high standards)\",\n  \"21\": \"Green (peaceful, patient, good listener)\",\n  \"22\": \"Blue (meticulous, follows instructions step by step)\",\n  \"23\": \"No single answer (depends on the individual's social circle)\"\n}\n```",
+  "thinking_raw": null,
+  "parsed": {
+    "answers": {
+      "1": "Red and Yellow (both are sociable and expressive; they enjoy social interaction)",
+      "2": "Red and Blue (complementary skills: Red drives results, Blue ensures quality/accuracy)",
+      "3": "Red (dominant, wants control and leadership)",
+      "4": "Blue (precise, detail-oriented, error-averse)",
+      "5": "Yellow (outgoing, expressive, enjoys being center of attention)",
+      "6": "Blue (organized, systematic, records where things are stored)",
+      "7": "Blue (cautious, needs all information and analysis before deciding)",
+      "8": "Blue (punctual, follows rules and schedules)",
+      "9": "Red (results-driven, may bend rules to achieve outcomes)",
+      "10": "Red (bold, willing to take risks to get results)",
+      "11": "Blue (sensitive, takes things personally, holds onto criticism)",
+      "12": "Yellow (disorganized but social/knows who to ask)",
+      "13": "Red (dominant, decision-focused)",
+      "14": "Yellow (fashionable, trend-conscious, expressive)",
+      "15": "Red (thrives on challenges and new opportunities)",
+      "16": "Red (blunt, judgmental, quick to assess)",
+      "17": "Red and Blue (balanced combination of drive and precision)",
+      "18": "Yellow (talkative, expressive, sociable)",
+      "19": "Yellow (quick to grasp new ideas, enthusiastic learner)",
+      "20": "Red (delegates but remains hands-on due to high standards)",
+      "21": "Green (peaceful, patient, good listener)",
+      "22": "Blue (meticulous, follows instructions step by step)",
+      "23": "No single answer (depends on the individual's social circle)"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 17,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Red and Yellow (both are sociable and expressive; they enjoy social interaction)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red and Blue (complementary skills: Red drives results, Blue ensures quality/accuracy)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 3,
+        "answer": "Red (dominant, wants control and leadership)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue (precise, detail-oriented, error-averse)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow (outgoing, expressive, enjoys being center of attention)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue (organized, systematic, records where things are stored)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue (cautious, needs all information and analysis before deciding)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 8,
+        "answer": "Blue (punctual, follows rules and schedules)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "Red (results-driven, may bend rules to achieve outcomes)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Red (bold, willing to take risks to get results)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "Blue (sensitive, takes things personally, holds onto criticism)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow (disorganized but social/knows who to ask)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 13,
+        "answer": "Red (dominant, decision-focused)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow (fashionable, trend-conscious, expressive)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 15,
+        "answer": "Red (thrives on challenges and new opportunities)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 16,
+        "answer": "Red (blunt, judgmental, quick to assess)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "Red and Blue (balanced combination of drive and precision)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow (talkative, expressive, sociable)"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow (quick to grasp new ideas, enthusiastic learner)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 20,
+        "answer": "Red (delegates but remains hands-on due to high standards)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "Green (peaceful, patient, good listener)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue (meticulous, follows instructions step by step)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer (depends on the individual's social circle)"
+      }
+    ]
+  }
+}

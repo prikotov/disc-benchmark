@@ -1,0 +1,271 @@
+{
+  "model": "qwen4-max",
+  "folder": "qwen4-max",
+  "provider": "cloud",
+  "lang": "en",
+  "cloud_provider": "alibabacloud",
+  "thinking": {
+    "requested": "high",
+    "scale": [
+      "off",
+      "low",
+      "medium",
+      "high"
+    ],
+    "sent": "high",
+    "note": "ШКАЛА ЗАВИСИТ ОТ МОДЕЛИ (доки 2026-11-17): qwen4-max — low/high/xhigh (дефолт high; medium→high); qwen4-max-preview — low/medium/xhigh (дефолт xhigh; high недокументирован, фактически ≈medium). off — enable_thinking=False"
+  },
+  "options": {
+    "reasoning_effort": "high"
+  },
+  "model_version": "qwen4-max",
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T04:28:48.469828+00:00",
+  "duration_s": 76.4,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 534,
+    "cached_tokens": 512,
+    "completion_tokens": 4020,
+    "reasoning_tokens": 3594
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Yellow + Green – both are people-oriented, warm and harmony-seeking, so they click socially (Red + Yellow also click, being the two outgoing types)",
+      "2": "Red + Blue – both task-focused: Red drives the result, Blue secures the quality (Green + Blue is the other natural working pair, both methodical)",
+      "3": "Red",
+      "4": "Blue – precision, procedure, zero tolerance for error; ideally Blue with a dash of Red for cool decisiveness under pressure",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Blue (Green is dependable too, but Blue is punctual by principle)",
+      "9": "Red – results beat rules (Yellow also bends rules, but out of chaos rather than drive)",
+      "10": "Red – will try anything that gets the job done faster; Yellow loves novelty for its own sake",
+      "11": "Green – takes it personally and stores it quietly for years",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red – forms an opinion instantly (Yellow also judges fast, but on feeling rather than efficiency)",
+      "17": "All four – Red + Yellow + Green + Blue in balance; no single pair is best for every task",
+      "18": "Yellow",
+      "19": "Yellow – quick, enthusiastic, open to novelty (Red grasps it just as fast but only asks 'is it useful?')",
+      "20": "Red – delegates, gets impatient, takes it back (Blue redoes it too, but for quality reasons)",
+      "21": "Green",
+      "22": "Blue",
+      "23": "No single answer – your circle usually mirrors your own colour (like attracts like); statistically Green is the most common type overall"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 15,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 7,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow + Green – both are people-oriented, warm and harmony-seeking, so they click socially (Red + Yellow also click, being the two outgoing types)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 2,
+        "answer": "Red + Blue – both task-focused: Red drives the result, Blue secures the quality (Green + Blue is the other natural working pair, both methodical)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Blue – precision, procedure, zero tolerance for error; ideally Blue with a dash of Red for cool decisiveness under pressure"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Blue (Green is dependable too, but Blue is punctual by principle)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 9,
+        "answer": "Red – results beat rules (Yellow also bends rules, but out of chaos rather than drive)"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Red – will try anything that gets the job done faster; Yellow loves novelty for its own sake"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "Green – takes it personally and stores it quietly for years"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Red – forms an opinion instantly (Yellow also judges fast, but on feeling rather than efficiency)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 17,
+        "answer": "All four – Red + Yellow + Green + Blue in balance; no single pair is best for every task"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow – quick, enthusiastic, open to novelty (Red grasps it just as fast but only asks 'is it useful?')"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Red – delegates, gets impatient, takes it back (Blue redoes it too, but for quality reasons)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer – your circle usually mirrors your own colour (like attracts like); statistically Green is the most common type overall"
+      }
+    ]
+  }
+}

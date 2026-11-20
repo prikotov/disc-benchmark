@@ -1,0 +1,256 @@
+{
+  "model": "glm-5.3",
+  "folder": "glm-5.3",
+  "provider": "cloud",
+  "lang": "en",
+  "cloud_provider": "zai",
+  "thinking": {
+    "requested": "low",
+    "scale": [
+      "low",
+      "high",
+      "max"
+    ],
+    "sent": "low",
+    "note": "шкала low/high/max (docs.z.ai, дефолт max); off не существует — «thinking cannot be disabled», запрошенный off провайдер выполняет как минимальное мышление (низведён к low); medium — legacy, не запускаем"
+  },
+  "options": {
+    "thinking": {
+      "type": "enabled"
+    },
+    "reasoning_effort": "low"
+  },
+  "model_version": "glm-5.3",
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T05:13:31.552560+00:00",
+  "duration_s": 8.3,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 479,
+    "cached_tokens": 448,
+    "completion_tokens": 499,
+    "reasoning_tokens": 17
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Yellow and Green — both are people-oriented and value harmony and rapport on a social level",
+      "2": "Red and Blue — task-oriented profiles that complement each other: drive/decisions plus analysis/quality (though friction is possible); socially, Green and Blue also pair well as calm, steady types",
+      "3": "Red — dominant, wants control and leadership",
+      "4": "Blue — precise, meticulous, follows procedures, low error tolerance",
+      "5": "Yellow — loves attention, being center stage, enthusiastic communicator",
+      "6": "Blue — organized, structured, keeps meticulous records",
+      "7": "Blue — needs data, facts and analysis before deciding",
+      "8": "Blue — punctual, disciplined, respects schedules (Green is also reliable, but Blue is the strictest about time)",
+      "9": "Red — pragmatic, results over rules, breaks procedures to get things done",
+      "10": "Yellow — open, experimental, likes novelty and improvisation",
+      "11": "Green — takes criticism personally and holds onto emotional wounds longest",
+      "12": "Yellow — disorganized but has a great network and knows who to contact",
+      "13": "Red — decisive, wants to be in control of decisions",
+      "14": "Yellow — expressive, wants to stand out and impress",
+      "15": "Red — thrives on challenges, competition and winning",
+      "16": "Red — quick, decisive, judges others fast and bluntly",
+      "17": "All four together (Red, Yellow, Green, Blue) — a complementary team with a driver, communicator, supporter and analyst; no single 'best' pairing",
+      "18": "Yellow — extroverted, talkative, tells stories",
+      "19": "Yellow — enthusiastic, quickly embraces new ideas; Red also adopts fast if it serves results, but Yellow is quickest to get excited",
+      "20": "Red — delegates but doesn't trust others to do it right, so takes it back over",
+      "21": "Green — patient, empathetic, listens well",
+      "22": "Blue — follows instructions precisely to the last step",
+      "23": "No single answer — depends on the individual's actual social circle; statistically Greens are often cited as the most common profile in the general population, but I can't know my 'social circle'"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 19,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 2,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow and Green — both are people-oriented and value harmony and rapport on a social level"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red and Blue — task-oriented profiles that complement each other: drive/decisions plus analysis/quality (though friction is possible); socially, Green and Blue also pair well as calm, steady types"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 3,
+        "answer": "Red — dominant, wants control and leadership"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 4,
+        "answer": "Blue — precise, meticulous, follows procedures, low error tolerance"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow — loves attention, being center stage, enthusiastic communicator"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue — organized, structured, keeps meticulous records"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue — needs data, facts and analysis before deciding"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Blue — punctual, disciplined, respects schedules (Green is also reliable, but Blue is the strictest about time)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 9,
+        "answer": "Red — pragmatic, results over rules, breaks procedures to get things done"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 10,
+        "answer": "Yellow — open, experimental, likes novelty and improvisation"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 11,
+        "answer": "Green — takes criticism personally and holds onto emotional wounds longest"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow — disorganized but has a great network and knows who to contact"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 13,
+        "answer": "Red — decisive, wants to be in control of decisions"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow — expressive, wants to stand out and impress"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 15,
+        "answer": "Red — thrives on challenges, competition and winning"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 16,
+        "answer": "Red — quick, decisive, judges others fast and bluntly"
+      },
+      {
+        "verdict": "correct",
+        "matched": "generic",
+        "correct": true,
+        "n": 17,
+        "answer": "All four together (Red, Yellow, Green, Blue) — a complementary team with a driver, communicator, supporter and analyst; no single 'best' pairing"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow — extroverted, talkative, tells stories"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow — enthusiastic, quickly embraces new ideas; Red also adopts fast if it serves results, but Yellow is quickest to get excited"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 20,
+        "answer": "Red — delegates but doesn't trust others to do it right, so takes it back over"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 21,
+        "answer": "Green — patient, empathetic, listens well"
+      },
+      {
+        "verdict": "correct",
+        "matched": "color-token",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue — follows instructions precisely to the last step"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer — depends on the individual's actual social circle; statistically Greens are often cited as the most common profile in the general population, but I can't know my 'social circle'"
+      }
+    ]
+  }
+}

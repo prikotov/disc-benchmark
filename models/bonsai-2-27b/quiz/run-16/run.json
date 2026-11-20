@@ -1,0 +1,266 @@
+{
+  "model": "bonsai-2:ctx100k",
+  "folder": "bonsai-2-27b",
+  "provider": "chat",
+  "thinking": {
+    "requested": "xhigh",
+    "scale": [
+      false,
+      "low",
+      "medium",
+      "xhigh"
+    ],
+    "sent": "xhigh",
+    "note": "think=xhigh"
+  },
+  "options": {
+    "num_ctx": 65536,
+    "num_predict": 32768
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T18:52:44.671357+00:00",
+  "duration_s": 97.4,
+  "error": null,
+  "done_reason": "stop",
+  "usage": {
+    "prompt_eval_count": 645,
+    "eval_count": 11721,
+    "eval_duration": 95040036000,
+    "prompt_eval_duration": 223625000,
+    "load_duration": 2036521366,
+    "total_duration": 97304753860
+  },
+  "ps_snapshot": [],
+  "ollama_contention": false,
+  "raw": "{\n  \"1\": \"жёлтый и зелёный\",\n  \"2\": \"красный и синий\",\n  \"3\": \"красный\",\n  \"4\": \"синий\",\n  \"5\": \"жёлтый\",\n  \"6\": \"синий\",\n  \"7\": \"синий\",\n  \"8\": \"синий\",\n  \"9\": \"красный\",\n  \"10\": \"красный\",\n  \"11\": \"синий\",\n  \"12\": \"зелёный\",\n  \"13\": \"жёлтый\",\n  \"14\": \"красный\",\n  \"15\": \"жёлтый\",\n  \"16\": \"жёлтый\",\n  \"17\": \"синий\",\n  \"18\": \"красный, жёлтый, зелёный и синий\",\n  \"19\": \"жёлтый\",\n  \"20\": \"жёлтый\",\n  \"21\": \"красный\",\n  \"22\": \"зелёный\",\n  \"23\": \"синий\",\n  \"24\": \"неоднозначного ответа нет\"\n}",
+  "thinking_raw": "We need answer in JSON only. User Russian asks to answer 24 DISC profile questions strictly JSON object with numbers 1-24 values. Need infer likely intended DISC colors. Need provide valid JSON only, no text. Need think through each.\n\nDISC model: Red = dominant, assertive, goal-oriented, quick decisions, leader, likes control, can be impatient, short fuse? Yellow = expressive, enthusiastic, sociable, creative, talkative, enjoys attention, likes variety, follows fashions, quick to grasp ideas, persuader. Green = amiable, supportive, patient, team player, listener, risk-averse, cautious, dislikes conflict, follows rules? Blue = analytical, detail-oriented, careful, cautious, critical, organized, remembers details, tests/information, perfectionist, dislikes mistakes. Sometimes Blue is analytical, Green is cautious/supportive, Red assertive, Yellow expressive.\n\nNeed answer each question with profile(s). Some may combinations if question asks combinations. If no single answer, write \"no clear answer\"? But likely each has intended answer. Need produce plausible JSON. Let's parse Russian questions:\n1. Какие профили совместимы в социальном плане? Which profiles are compatible socially? In DISC: Red and Yellow both high outward, socially compatible? Also Green? Blue? \"socially\" likely Red+Yellow? Red and Yellow like social, active, talkative. But maybe Red+Yellow are compatible socially; Blue+Green? Need decide. DISC compatibility: Red works well with Yellow (both action/social) but Red can frustrate Green/Blue; Yellow can be compatible with Green? In social setting, Red and Yellow are outgoing, Green and Blue are quieter? Maybe \"Red+Yellow\". The question plural \"профили\" asks which profiles. Could be \"красный и жёлтый\".\n2. Какие профили совместимы в совместной работе? Compatible in joint work. Maybe all? But likely Red and Blue? Let's think. In DISC work compatibility: Red (dominant) with Blue (detail) can be complementary? Yellow with Green? There's matrix: Red+Blue: conflict? Red wants fast, Blue cautious; Yellow+Green: Yellow social, Green supportive? In team, best combinations? Maybe \"Red and Blue, Yellow and Green\"? But question asks profiles compatible in joint work. Could be \"Red and Yellow\"? No social vs work. In work, Red and Blue? Actually Dominant and Analytical can be compatible if both goal-oriented? But Red impatient with Blue. Yellow and Green? Yellow needs feedback, Green supportive. Hmm.\n\nMaybe from some DISC test material. Need infer likely answers from list. Let's examine all questions for clues:\n3. Which profile always wants to lead project? Red.\n4. Which profile will be best surgeon? Need precision, calm, detail? Blue? Or Red? Surgeon needs steady hands, detail, maybe Blue. But surgeon also decisive, under pressure, could be Red? In DISC: Blue careful, analytical, precise. Best surgeon likely Blue.\n5. Which profile enjoys orator role most? Yellow.\n6. Which profile often knows where they saved email from boss? Blue (detail, memory). Maybe Green? But Blue remembers details.\n7. Which profile wants to conduct more tests or gather more information before decision? Blue.\n8. Which profile always comes on time and can rely? Green? Blue? Punctuality: Green amiable? Blue detail? In DISC, Blue is detail-oriented, careful, punctual? Green is cooperative, likes routine? Actually Green: amiable, patient, careful? Blue: analytical, careful, cautious, detail-oriented. Punctuality maybe Green? Let's recall DISC: Blue is \"analytical, cautious, detail-oriented, organized, critical\"; Green is \"amiable, patient, supportive, avoids conflict, steady\". Punctuality maybe Blue or Green. \"Always comes on time and in this plan can rely\" reliability, routine, maybe Green. But \"on time\" detail? Could be Blue. Need decide.\n9. Which profile repeatedly does not follow rules just to get work done? Red? Red dominant, result-oriented, may ignore rules? Or Yellow? \"раз за разом не следует правилам только ради того, чтобы работа была сделана\" Could be Red (does whatever gets job done), but \"only to get work done\" maybe Green? Let's analyze. Red: fast, goal-oriented, may take shortcuts. Blue: follows rules. Yellow: creative, maybe ignores rules for fun? But \"work was done\" suggests practical, results, Red. Or maybe Green? Green amiable avoids conflict but not rules? Hmm.\n10. Which profile eagerly tries new technologies or methods if it speeds work? Yellow? Red? \"ускорит работу\" Red likes speed. But new tech, creative, Yellow? Red is dominant, likes control and speed, may adopt if effective. Yellow is enthusiastic, likes novelty, variety, but \"if speeds work\" practical Red. Which one? DISC: Red: \"gets results, quick, efficient, action-oriented\"; Yellow: \"likes variety, creative, enjoys new challenges\". Could be Red+Yellow. But question asks which profile (singular maybe combination). \"охотнее берется за сложные задачи\" later maybe Yellow/Red? Need consistency.\n11. Which profile remembers criticism most? Blue? Red? Blue remembers details and critical. Green? Red forgets? Blue likely.\n12. Which profile reacts most painfully to personal criticism? Red? Dominant doesn't like criticism? Yellow? Actually Red takes criticism personally? In DISC, Blue is critical but less personal? Green may be hurt by personal criticism? Let's recall: Red: impulsive, short-tempered, dislikes criticism? Blue: critical, detail. Green: amiable, avoids conflict, may hold grudges? \"болезненнее всего реагирует на личную критику\" maybe Green or Yellow? Personal criticism hurts amiable? Need think.\n13. Which profile is least organized but knows where to get needed information? Yellow? Red? \"knows where to get information\" networking, social: Yellow. Least organized: Yellow? Red maybe disorganized? But Red decisive, not detail. Yellow expressive, disorganized, good at networking. So Yellow.\n14. Which profile wants to make decisions always? Red.\n15. Which profile most follows latest fashion? Yellow.\n16. Which profile more willingly takes complex tasks? Red? Yellow? Complex tasks: Yellow enjoys variety and challenges? Red likes challenging? Blue? In DISC, Yellow: \"creative, enjoys variety, likes complex tasks?\" Red: \"seeks power and control, takes charge, challenge\". Could be Red or Yellow. Need infer from other questions: 16 maybe Yellow? \"охотнее берется за сложные задачи\" could be Yellow because enthusiastic, creative. But Red likes results, may avoid complexity? Hmm.\n17. Which profile judges others easily? Blue? Analytical, critical. Or Red? \"легко судит других\" Blue (critical, detail) or Red (impatient). Blue likely.\n18. Combination of which profiles forms the most successful team? Could be all four? Or Red+Yellow? In many DISC, best team includes all profiles? But question likely expects combination: Red, Yellow, Green, Blue? Or Red+Blue? Let's parse: \"Комбинация каких профилей образует самую успешную команду?\" In DISC, balanced team: all four colors. Or \"Red and Blue\"? Need answer. Since 1-2 ask compatible pairs, 18 likely \"all four profiles\" or \"red, yellow, green, blue\". If asking combination profiles, maybe \"Red + Yellow + Green + Blue\". Need be safe: \"красный, жёлтый, зелёный, синий\". But if \"самая успешная команда\" could be \"Red and Yellow\" because dynamic? Let's think.\n19. Which profile is most talkative? Yellow.\n20. Which profile fastest grasps new idea? Yellow? Or Red? Yellow quick, intuitive, enthusiastic. Red quick action. \"быстрее всех воспримет новую идею\" likely Yellow.\n21. Which profile could assign task to others but still does it itself? Red? Dominant, controls, may delegate but ensure? Or Blue? \"could give assignment to others but still executes himself\" Red (in control) or Blue? Red: wants control, may do it himself to ensure quality/speed. Yellow? Maybe.\n22. Which profile is best listener? Green? Blue? Green amiable, supportive, patient, good listener. Blue analytical, listens to details. DISC: Green is patient, supportive, good listener. Blue is careful but can be critical. Likely Green.\n23. Which profile won't miss any instruction point? Blue.\n24. Which profile most often encountered in your social circle? This is subjective, no clear answer. The user allows if no single answer, write so. But they expect maybe \"no clear answer\"? It asks about your circle, cannot know. We can answer \"неоднозначно\" or \"зависит от окружения\". But they said strictly JSON, values answer. Could put \"неоднозначный ответ\". Need maybe for 24: \"зависит от круга общения\". But if test expects a profile? It's personal, impossible. So \"неоднозначного ответа нет\".\n\nNeed ensure all values strings. Could be combinations: \"красный + жёлтый\" etc. Need maybe Russian color names. User says naming profile (color). Could use \"красный\", \"жёлтый\", \"зелёный\", \"синий\". For combination: \"красный и жёлтый\". For no clear: \"неоднозначно\". Need JSON only.\n\nNeed refine each answer with likely DISC.\n\nLet's research from memory of DISC colors characteristics:\nRed: dominant, assertive, goal-oriented, decisive, direct, fast, impulsive, competitive, may overlook details, dislikes being controlled, likes authority, leadership. Socially outgoing? Red can be forceful, not necessarily social? They are \"dominant\" often short, direct.\nYellow: expressive, enthusiastic, optimistic, sociable, creative, likes attention, talkative, persuasive, avoids conflict, needs variety, can be disorganized, forgetful.\nGreen: amiable, patient, supportive, team-oriented, avoids conflict, risk-averse, cautious, follows routine, detail? Good listener, cooperative, dislikes changes.\nBlue: analytical, detail-oriented, precise, cautious, critical, careful, systematic, seeks accuracy, may be pessimistic, critical, slow, thorough.\n\nCompatibility:\n- Red and Yellow: both high outward, energetic, social? Red+Yellow can be dynamic, but Red can dominate, Yellow can be flaky.\n- Red and Blue: both detail? No, Red wants speed, Blue cautious; can be complementary if Blue handles details, Red leads, but potential conflict.\n- Yellow and Green: both supportive? Yellow needs appreciation, Green supportive; both avoid conflict, social? Good.\n- Green and Blue: both cautious, detail? Green amiable, Blue analytical; can work well? But both low energy.\nMaybe \"compatible in social plan\" = Red and Yellow? Because both are sociable/outgoing. \"compatible in joint work\" = Red and Blue? Because leader and detail? Or Yellow and Green? Let's think from typical DISC pairings: In work, Red and Blue are complementary: Red initiates and drives, Blue plans and checks. But they may conflict: Red impatient with Blue. Yellow and Green are also complementary: Yellow motivates, Green supports. Which pair is \"compatible\"? The question might be from a quiz with single expected answers. Let's infer from wording:\n1. Какие профили совместимы в социальном плане? Social compatibility likely \"Red and Yellow\" because both sociable, expressive, dominant? In DISC, social (outgoing) vs work? Actually DISC has two axes: D and S? Red and Yellow are \"outgoing\"? D is dominant, E expressive? In Russian \"социальный план\" maybe \"socially compatible\" means people who get along socially. Red and Yellow are both active, sociable, like status and attention? Yellow more social. Green is amiable, but less outgoing; Blue reserved. So 1: красный и жёлтый.\n2. Какие профили совместимы в совместной работе? Work compatibility maybe \"красный и синий\"? Because Red drives, Blue checks details, both results? Or \"жёлтый и зелёный\"? Let's see if there is a known DISC compatibility: \"Red and Blue are incompatible: Red wants fast results, Blue wants details; Yellow and Green are also incompatible?\" Hmm.\nMaybe in work, \"Red and Yellow\" can be compatible? Both want action, but Yellow not detail. \"Green and Blue\" can be compatible? Both cautious, detail? But question \"совместная работа\" maybe pair that can work together: Red and Blue? Let's search memory: In DISC, \"Red and Blue are not good together; Red and Yellow are good; Green and Blue are good; Yellow and Green are good\"? Actually the 4-color model has \"compatibility pairs\": D (Red) and E (Yellow) are \"outgoing\" and can work well? I and S? Hmm.\n\nMaybe from DISC: Red and Blue both \"analytical\"? No, Blue analytical, Green cautious. Red and Yellow both \"dominant/expressive\" can be social. Work: Red and Blue can form \"control\"? Let's consider typical team: A successful team needs Red (leadership), Yellow (creative communication), Green (support), Blue (detail). So 2 maybe \"all four\". But question 1 asks social compatibility, 2 work compatibility. Could be: social: Red+Yellow; work: Blue+Green? Because work requires careful and cooperative? But no, work also needs Red.\n\nLet's examine other questions to calibrate intended mapping:\n3 lead: Red.\n4 surgeon: Blue? maybe Red? Let's see if surgeon requires \"steady hands, calm, detail\" = Blue. If 4 Blue and 6 Blue, 7 Blue, 23 Blue, 11 Blue, 17 Blue: too many Blue. But okay.\n5 orator: Yellow.\n6 knows email: Blue.\n7 tests/info: Blue.\n8 punctual: maybe Green? If 8 Green, 22 Green, 9? maybe Green? 18 maybe all.\n9 doesn't follow rules to get work done: Red? Yellow? \"раз за разом\" repeated, perhaps \"Red\" because results over rules.\n10 tries new tech if speeds work: Yellow? or Red. If 10 Yellow, then Yellow many.\n11 remembers criticism: Blue.\n12 personal criticism pain: Green? Let's examine. Green avoids conflict, may be hurt by criticism personally, holds resentment. Blue reacts to personal criticism? Blue may be critical but less personal? Red may be defensive. In DISC, Green: \"patient, but holds grudges; personal criticism hurts.\" Yellow: \"needs positive feedback, dislikes criticism\"? Actually Yellow can be sensitive to criticism? Let's recall: Yellow: positive, attention-seeking, dislikes criticism because they are ego? Blue: critical but fair? Green: supportive, avoid conflict, may be hurt by personal attacks. So 12 Green likely.\n13 least organized but knows where to get info: Yellow.\n14 make decisions: Red.\n15 follows fashion: Yellow.\n16 complex tasks: Yellow? or Red. If 16 Yellow, 19/20/13/15/10/5/1 = many Yellow. Red: 3,9,14,21 maybe. Blue: 4,6,7,11,17,23. Green: 8,12,22.\n17 judges others: Blue? Red? \"легко судит других\" could be Blue (critical). Or Red (impatient, quick judgments). Blue is analytical, critical. Use Blue.\n18 successful team: all four? If 18 all four, then combination.\n19 talkative: Yellow.\n20 fastest new idea: Yellow? Maybe Red? If Yellow many, okay. But \"быстрее всех воспримет новую идею\" could be Red (quick, decisive) or Yellow (intuitive). Yellow is fast to grasp? DISC: Yellow \"quick, enthusiastic, intuitive\". Use Yellow.\n21 assign but does itself: Red? Dominant control. Could be Blue (quality) but likely Red.\n22 listener: Green.\n23 instruction point: Blue.\n24: no clear.\n\nNeed maybe include \"синий\" for 8? Let's examine \"всегда приходит вовремя\" in DISC: Blue is detail-oriented and punctual? Green is careful? Which is more \"can rely on punctuality\"? Blue: analytical, systematic, punctual. Green: amiable, cooperative, maybe reliable? \"в этом плане на него можно положиться\" reliability, routine, Green? Blue can be detail but not necessarily always on time? Green is steady. In many DISC: Blue = \"analytical, cautious, detail-oriented, critical, organized, punctual\"? Actually Blue often \"organized\" yes. But 13 says \"less organized\" for Yellow. If Blue is organized, 8 could be Blue. But Green may be \"punctual\" because likes routine? Let's check memory: DISC colors:\n- Blue: analytical, cautious, detail-oriented, critical, exact, systematic, organized, precise.\n- Green: amiable, patient, cooperative, supportive, risk-averse, avoid conflict, dislikes change, likes routine, maybe punctual.\n\"always comes on time\" could be Green due to routine/reliability. \"in this plan can rely\" could be Green (steady). But if Blue is organized, also. Need choose one. The question likely from a set where each profile gets distinct answers. We have Blue: 4,6,7,11,17,23 (6). Green: 8,12,22 (3). That's okay. Could be 8 Green.\n\n9: \"не следует правилам только ради того, чтобы работа была сделана\" Could be Red. But \"radically follows rules only for work\" maybe \"Yellow\"? Let's think: Red wants results, may ignore rules; Yellow creative, may ignore rules for fun/variety; Green follows rules? Blue follows rules. If \"only to get work done\" suggests practical Red. Use Red.\n\n10: \"охотнее всех апробирует новые технологии или приемы, если это ускорит работу\" If it speeds work, Red. Yellow might try new tech for variety/creativity, not necessarily speed. Red is action-oriented, efficiency. Use Red? But \"апробирует новые технологии\" maybe Yellow? Let's check DISC: Red: \"likes to be first, quick, efficient, takes shortcuts\"; Yellow: \"likes variety, creative, enjoys trying new things\". The condition \"if this speeds work\" points to Red. Use Red.\n\n16: \"охотнее берется за сложные задачи\" Could be Yellow (enjoys challenges) or Red (seeks challenge). Which profile likes complex tasks? Yellow is \"creative, enjoys variety, likes to take on challenging projects\". Red wants power and control, may take charge. But \"complex\" not necessarily speed. Yellow likely. Use Yellow.\n\n17: \"легко судит других\" Blue (critical) or Red (impatient). Use Blue.\n\n20: \"быстрее всех воспримет новую идею\" Yellow? Red? If 10 and 16, Yellow. Use Yellow.\n\nNeed ensure JSON valid, Russian strings. Could use \"красный + жёлтый\" with plus. Need no extra text.\n\nBut let's deeply consider if there are known answers from \"DISC model quick test\". It might be from a specific article with 24 questions. Maybe expected answers are:\n1. Red and Yellow? or Red, Yellow, Green? Let's search memory mentally. DISC compatibility: \"Red and Yellow are compatible socially, Red and Blue are compatible in work?\" Hmm.\n\nQuestion 1: \"Какие профили совместимы в социальном плане?\" In DISC, \"social\" could refer to \"D/S?\" Maybe Red and Yellow are \"outgoing\" (D/E) and socially compatible. But Green is sociable too? Yellow and Green are \"S/E\"? In DISC, \"S\" includes Green and Blue? Actually DISC: D = Dominant (Red), S = Steady (Green), I = Influential (Yellow), C = Conscientious (Blue). In Russian, colors: Red=D, Yellow=I, Green=S, Blue=C. Compatibility: D/I (Red/Yellow) are \"outgoing\" maybe social; S/C (Green/Blue) are \"reserved\". In social plan, Red and Yellow. In work, maybe Red and Blue? D/C? Because D and C both analytical? Or I/S? Let's see: D/I are social, S/C are work? Actually S (Green) and C (Blue) are more task-focused? But S is supportive, C detail. Work compatibility maybe Green and Blue? Because both task-oriented? But D and I can be social. However, work requires all. The question \"совместной работе\" maybe pair that works well together: Red (dominant) and Blue (detail) - a classic complementary team. But Red/Blue conflict? In many leadership: D and C can work together if D respects C's detail and C respects D's speed. I and S also complementary? The \"most successful team\" 18 could be all four. If 2 asks pair compatible in joint work, maybe \"Red and Blue\". Let's evaluate.\n\nIn Russian \"совместимы\" could mean \"compatible\" not just pair. If social: Red+Yellow. Work: Red+Blue? Why not Yellow+Green? Yellow and Green: both sociable/supportive, but Yellow can be disorganized, Green steady; can work? But for joint work, Red and Blue: leader and analyst. I'd lean Red+Blue.\n\nBut maybe \"Red and Yellow\" are socially compatible; \"Green and Blue\" are work-compatible (both detail/cautious, task-oriented). Yet Red is work too. Need likely quiz: They want one or combination. Let's infer from all answers distribution. If 18 all four, then 2 maybe \"Red and Blue\" or \"Yellow and Green\". Which pair is \"совместная работа\" likely? In DISC, \"Red and Blue are incompatible\" because Red wants fast, Blue careful. Actually many DISC resources: \"Red and Blue are a tough combination: Red is impatient, Blue is cautious; but together can be effective.\" \"Yellow and Green are a good combination: Yellow is enthusiastic, Green is supportive.\" Hmm.\n\nLet's search memory of DISC color compatibility from e.g. \"DISC colors: Red and Yellow are compatible, Red and Blue not, Yellow and Green compatible, Green and Blue compatible\"? There is a \"DISC compatibility matrix\":\n- D (Red) + E (Yellow): both outward, can work well but D can be domineering, E can be flaky.\n- D + S (Green): D can be impatient with S's caution.\n- D + C (Blue): D impatient with C's details.\n- E + S: E can be too much for S.\n- E + C: E can be unstructured for C.\n- S + C: both task-oriented, good.\nMaybe compatible pairs: E+S (Yellow+Green), S+C (Green+Blue), maybe D+E? Not sure.\n\nBut question 1 social: \"какие профили совместимы в социальном плане?\" Could be \"Red and Yellow\" because both social. 2 work: \"какие профили совместимы в совместной работе?\" Could be \"Green and Blue\" because both careful/task. But \"совместной работе\" could be any pair that can collaborate: maybe \"Red and Blue\" because leadership and detail.\n\nLet's see if there are distinct answers for each profile. We need assign each profile at least one. If 1 Red+Yellow, 2 Green+Blue, 18 all four. Then all colors. If 2 Red+Blue, then Green only 8,12,22; Yellow many; Blue many. Both okay.\n\nNeed decide. The wording \"совместные работе\" maybe \"in joint work\" not \"socially\". Which profiles are compatible in joint work? In DISC, \"Red and Blue\"? Let's think of surgeon: best surgeon Blue. If work compatibility is Red+Blue, then Blue is work, Red leadership. That makes sense. Social compatibility Red+Yellow (outgoing). But Red is both social and work. Could be.\n\nQuestion 18 \"Комбинация каких профилей образует самую успешную команду?\" If 1 and 2 identify compatible pairs, 18 likely \"all four\" or \"Red+Yellow+Green+Blue\". If \"most successful team\" could be combination of all four, because each contributes. Use all four.\n\nLet's consider alternative: 1 \"Red, Yellow, Green\" (socially compatible because they like people) and 2 \"Red, Blue\" (work). But question plural maybe expects two. \"Какие профили совместимы в социальном плане?\" could be \"Red and Yellow\" (both extraverts). Green is sociable too, but more reserved. Use Red+Yellow.\n\nQuestion 8: Let's maybe choose Blue? If 2 is Red+Blue, then Blue appears as work compatibility and many detail. But 8 \"always comes on time\" could be Blue (organized). If 8 Green, then Green appears in 12,22. Which is more plausible? In DISC, Blue is \"organized, punctual\". Green is \"patient, supportive, reliable\". The phrase \"всегда приходит вовремя и в этом плане на него можно положиться\" = punctual and reliable. Blue's detail orientation includes punctuality; Green's steadiness includes reliability. Which profile \"всегда\" comes on time? Blue. But \"на него можно положиться\" maybe Green. Let's check typical DISC: Blue: \"detail-oriented, critical, cautious, precise, organized, may be pessimistic; likes to be right; can be slow; reliable.\" Green: \"amiable, supportive, patient, avoids conflict, likes harmony; may be passive, not decisive; reliable?\" I'd pick Blue for punctual because organized. But then 23 also Blue, 6,7,11,17,4: many Blue. Green 12,22 only. Could be okay. If 8 Green, Blue even more. Need balance? Not necessary.\n\nMaybe 8 = Green because \"punctual\" is often associated with \"Steady (Green)\". In DISC, Green: \"likes routine, careful, reliable\". Blue: \"cautious, detail-oriented, may overthink, not necessarily punctual\". The question says \"всегда приходит вовремя\" (always on time) and \"на него можно положиться\" (can rely) -> Green's amiable, steady, trustworthy. Use Green.\n\n12 personal criticism: If 8 Green and 22 Green, then Green 3. Good.\n\n9: \"не следует правилам только ради того, чтобы работа была сделана\" Could be Red. But maybe \"Yellow\"? Yellow may ignore rules for variety; \"work was done\" maybe \"Red\". Use Red.\n\n10: if Red, then Red many. If Yellow, Yellow many. Need decide based on \"ускорит работу\". Red. But 16 Yellow, 20 Yellow. Red: 3,9,10,14,21 maybe. Blue: 4,6,7,11,17,23. Yellow: 5,13,15,16,19,20. Green: 8,12,22. 1/2/18 combos, 24 no. Balanced.\n\nBut 10 could be Yellow? Let's examine: \"охотнее всех апробирует новые технологии или приемы, если это ускорит работу\" The profile that likes new technology if speeds work. Yellow is \"likes variety, creative, enthusiastic about new ideas\"; Red is \"practical, wants results, may adopt if faster\". In DISC, Red: \"gets the job done, efficient, decisive, may be impatient with new processes that slow them down; but if it speeds work, yes.\" Yellow: \"likes to be in the spotlight, enjoys new challenges, may not care about speed.\" The condition \"if speeds work\" is very Red. Use Red.\n\n16: \"охотнее берется за сложные задачи\" Yellow? Complex tasks require variety and creativity; Red may take on to show control. Yellow likely. Use Yellow.\n\n20: \"быстрее всех воспримет новую идею\" Yellow (intuitive). Use Yellow.\n\n21: \"мог бы поручить задание другим, но все же выполнит его сам\" Red? Dominant, may delegate but do it himself to ensure control/quality. Could be Blue (quality) but \"could assign\" indicates authority: Red. Use Red.\n\n24: no single answer. Use \"неоднозначный ответ\" or \"зависит от окружения\". The prompt: if no single answer, write so. \"неоднозначного ответа нет\" maybe. Need concise.\n\nNow need ensure JSON keys strings \"1\"...\"24\". Values maybe Russian. Could use \"красный\" etc. For combos: \"красный и жёлтый\". For all four: \"красный, жёлтый, зелёный и синий\". For no: \"неоднозначного ответа нет\". Need maybe \"зависит от окружения\" but if no single answer, maybe \"неоднозначно\". The prompt: \"если однозначного ответа нет, так и напишите.\" Means if no single answer, write that. Could be \"неоднозначного ответа нет\". For 24, there is no objective answer. Use \"неоднозначного ответа нет\". For 1/2/18 combinations, prompt says if answer is combination, name combination. So values can be combinations.\n\nNeed maybe include \"красный + жёлтый\" or \"красный и жёлтый\". Use natural Russian \"красный и жёлтый\". For all four: \"красный, жёлтый, зелёный и синий\". For 18 maybe \"красный, жёлтый, зелёный и синий\". Good.\n\nLet's double-check all:\n1. Какие профили совместимы в социальном плане? \"красный и жёлтый\". Could also \"жёлтый и зелёный\"? Social plan: Yellow is most sociable, Green amiable. But Red can be socially dominant. Which two are socially compatible? Red+Yellow? In DISC, Red and Yellow are both \"outgoing\" but Red may be too aggressive, Yellow likes approval. Green is \"social\" but not assertive. Let's think: If social compatibility means \"get along in social situations\", Yellow+Green maybe: both avoid conflict, supportive, social? Yellow expressive, Green amiable; both like harmony. Red can be domineering. But question \"какие профили\" plural not \"какой\". Could be \"жёлтый и зелёный\"? Hmm.\n\nNeed consider DISC axes: In Russian, \"социальный план\" might correspond to \"outgoing\" vs \"work\"? Colors: Red and Yellow are \"outgoing\" (экстравертированные), Green and Blue are \"reserved\"? Actually Green is amiable but not necessarily outgoing. In social settings, Yellow and Green maybe more socially compatible because they avoid conflict and are friendly. Red may be aggressive, Blue critical. But Red and Yellow both like attention? Let's see typical: Red = \"dominant, goal-oriented, can be short-tempered\"; Yellow = \"expressive, sociable, fun\"; Green = \"supportive, patient\"; Blue = \"critical, detail\". In social plan, which are compatible? If \"socially\" as \"interpersonal\" maybe Red+Yellow (both high outward energy) and Yellow+Green (both people-oriented). But question asks profiles plural maybe one pair. Which pair is most socially compatible? Yellow+Green? They are both S? In DISC, D and E are outgoing, S and C are reserved? Actually D and I are \"outgoing\"? D is assertive, I is social. S and C are \"task-oriented\"? I and S are \"people-oriented\"? Let's recall DISC model: D = Dominant (task/achieving), E = Expressive (people/social), S = Steady (people/process), C = Conscientious (task/details). So people-oriented: E and S. Social compatibility: Yellow (I) and Green (S). Task/work: Red (D) and Blue (C)? This is interesting. If question 1 social: Yellow+Green. Question 2 work: Red+Blue. That would be elegant: social = people-oriented (Yellow, Green), work = task-oriented (Red, Blue). But is Red task-oriented? D is goal-oriented/task, C is detail/task. Yes. Yellow/Green are people/social. This may be intended.\n\nLet's re-evaluate: In DISC, Red (D) and Blue (C) are \"task-oriented\"? D: goal-oriented, achievement, results; C: detail-oriented, accuracy. They can work together in task. Yellow (I) and Green (S) are \"people-oriented\", social compatibility. That seems plausible. The question: 1 social compatibility: Yellow and Green. 2 joint work compatibility: Red and Blue. 18 most successful team: all four. This distribution: social pair Yellow+Green; work pair Red+Blue. It also uses all colors in 1/2. Which is more likely than Red+Yellow social? Let's examine wording: \"социальном плане\" not \"в общении\". In DISC, \"social\" could mean \"people-oriented\". Yellow is most social, Green amiable. Red can be social but dominant. I'd lean Yellow+Green for social. But earlier I thought Red+Yellow. Need decide.\n\nQuestion 2: \"совместной работе\" if social = Yellow+Green, work = Red+Blue. This is neat. Does Red and Blue work compatible? D/C: both task-oriented, can collaborate on project; Red drives, Blue checks. Yes. Does Yellow and Green social compatible? E/S: both people-oriented, supportive, avoid conflict. Yes.\n\nWhich pair is \"совместимы в совместной работе\"? Red+Blue maybe. In many DISC, D and C are both \"task-oriented\" but may conflict due to pace/detail. However compatibility? E/S are social but may be less decisive. The question likely from a simple quiz: \"Which profiles are compatible socially?\" Answer: yellow and green (people-oriented). \"Which profiles are compatible in joint work?\" Answer: red and blue (task-oriented). This seems likely.\n\nLet's see if any other questions align with this mapping. 18 successful team: all four. Good.\n\nNeed adjust 1 and 2 accordingly? Let's decide. The user expects maybe \"модель DISC\" known. In DISC, colors: Red = D, Yellow = I, Green = S, Blue = C. The axes: D and I are \"outgoing\"? Wait, D (Red) is not necessarily outgoing but assertive; I (Yellow) is social. S (Green) is amiable; C (Blue) is analytical. People-oriented: I and S. Task-oriented: D and C. So social compatibility likely I and S (Yellow+Green), work compatibility D and C (Red+Blue). This is a standard classification. Use that. But is Red socially compatible with Yellow? Both outward? In DISC, D and I are \"outgoing\"? Let's check: D: \"dominant, assertive, action-oriented, goal-oriented, short-tempered\". I: \"expressive, enthusiastic, optimistic, sociable\". They may be socially compatible because both active, but D can be domineering. S: \"amiable, patient, supportive, avoids conflict\". I and S both people-oriented but I can be too much, S too reserved. Which is more \"social\"? I and S maybe both \"people-oriented\". The phrase \"социальном плане\" could mean \"socially\" as \"in social situations\" not \"people-oriented\". If in social situation, Red may be socially dominant, Yellow expressive. But if compatibility, Red+Yellow can be energetic but Red may dominate. Yellow+Green can be harmonious.\n\nLet's think of typical Russian DISC: \"Красный — доминантный, желтый — экспрессивный, зеленый — спокойный/социальный, синий — аналитический.\" Sometimes \"зеленый\" is \"social, amiable\". So social compatibility could be \"yellow and green\" because both social. \"Red and blue\" work. Yes.\n\nQuestion 2 \"совместной работе\" maybe \"red and blue\" because red leads, blue details. Use Red+Blue.\n\nNow 18 \"самая успешная команда\" all four.\n\nNeed maybe for 1: \"жёлтый и зелёный\". 2: \"красный и синий\". Let's see if 18 all four then no conflict.\n\nLet's consider if 2 could be \"красный и жёлтый\" if social = yellow+green? Work pair maybe red+blue. Good.\n\nNow 4 surgeon: Blue. If 2 includes Blue work, okay.\n\n8 punctual: Could be Blue or Green. If social/work pairs, Green social, Blue work. Punctual/reliable could be Blue (work) or Green (social). The question \"всегда приходит вовремя\" maybe task/work reliability -> Blue. But Green amiable reliable. Need choose. If 2 Blue work, 8 Blue maybe. But 23 Blue, etc. If 8 Green, then Green social pair plus 12/22. Which is better? Let's analyze DISC traits:\nBlue (C): \"analytical, detail-oriented, precise, cautious, systematic, organized, punctual\". Yes, likely.\nGreen (S): \"amiable, patient, cooperative, supportive, avoids conflict, dislikes changes, likes routine; can be indecisive, slow.\" Punctuality maybe routine but not primary. \"always comes on time\" sounds Blue. \"в этом плане на него можно положиться\" reliability, Blue? Green also. But if 23 \"won't miss any point in instruction\" Blue, 6 memory Blue, 7 tests Blue, 11 criticism Blue, 17 judges Blue, 4 surgeon Blue. Adding 8 Blue makes 7 Blue. Could be okay. But maybe 8 Green to balance and because \"punctual\" is often \"steady\". Let's see if there is a known question: \"Какой профиль всегда приходит вовремя и в этом плане на него можно положиться?\" In DISC, Green: \"is reliable, punctual, cooperative\"? Blue: \"is meticulous but can be pessimistic\". Green's \"steady\" includes dependability. I'd pick Green? Need decide.\n\nLet's recall typical DISC color descriptions from e.g. \"DISC: Red - goal-oriented, direct; Yellow - sociable, enthusiastic; Green - amiable, patient; Blue - detail-oriented, cautious.\" Punctuality is a detail/routine trait, could be Blue. But \"always on time\" is often \"Blue\" because organized. \"Can rely on him in this regard\" could be Green because steady. Hmm.\n\nMaybe 8 = Blue because \"always comes on time\" is specific, and Blue is organized. 22 listener = Green, 12 personal criticism = Green. If 8 Blue, Green only 2. But 1 social Yellow+Green gives Green. Good.\n\nLet's check 9: \"does not follow rules only to get work done\" maybe Red. But if work pair Red+Blue, Blue follows rules, Red may ignore. Good.\n\n10: new tech if speeds work: Red. 16 complex tasks: Yellow? Could be Red? If Red many. Need maybe 16 Yellow to balance. Good.\n\n17 judges others: Blue? But Red can judge easily due to impatience. Blue analytical, critical. Use Blue.\n\n21 assign but does himself: Red? Dominant. Could be Blue? If assign to others but still does himself to ensure quality, maybe Blue? \"мог бы поручить задание другим\" indicates has authority; Red. Good.\n\n24 no clear.\n\nNeed ensure final JSON only. Could include \"неоднозначного ответа нет\" for 24. If the user expects a profile for 24? It's personal, no objective. They explicitly allow no single answer. Good.\n\nLet's think if any question may have \"no clear answer\" besides 24. 1 and 2 maybe combinations. 18 combination. If no single answer, we write no. For 1/2, they ask \"какие профили\" so combination expected.\n\nNow, need maybe use uppercase? Not necessary. JSON values with Russian. Need ensure JSON valid: double quotes, commas. No trailing comma. Use Cyrillic. Example:\n{\n  \"1\": \"жёлтый и зелёный\",\n  \"2\": \"красный и синий\",\n  \"3\": \"красный\",\n  \"4\": \"синий\",\n  \"5\": \"жёлтый\",\n  \"6\": \"синий\",\n  \"7\": \"синий\",\n  \"8\": \"синий\",\n  \"9\": \"красный\",\n  \"10\": \"красный\",\n  \"11\": \"синий\",\n  \"12\": \"зелёный\",\n  \"13\": \"жёлтый\",\n  \"14\": \"красный\",\n  \"15\": \"жёлтый\",\n  \"16\": \"жёлтый\",\n  \"17\": \"синий\",\n  \"18\": \"красный, жёлтый, зелёный и синий\",\n  \"19\": \"жёлтый\",\n  \"20\": \"жёлтый\",\n  \"21\": \"красный\",\n  \"22\": \"зелёный\",\n  \"23\": \"синий\",\n  \"24\": \"неоднозначного ответа нет\"\n}\n\nNeed verify if 8 should be Green. Let's weigh. If 1 = Yellow+Green social, 2 = Red+Blue work. 8 \"always comes on time and reliable\" could be Blue (work/task) or Green (people/social). Punctuality is task/process, so Blue. But Blue is already C. \"всегда приходит вовремя\" maybe \"Blue\" because detail-oriented. I'll keep Blue.\n\nBut if 8 Blue, then 22 best listener? Green. 12 personal criticism? Green. Good.\n\nLet's think 11 \"remembers criticism most\" Blue. 12 \"painful personal criticism\" maybe Green. Could 12 be Blue? Blue remembers personal criticism? But \"personal\" and \"painful\" suggests Green/Red? In DISC, Green holds grudges, personal criticism hurts. Use Green.\n\n13 \"least organized but knows where to get needed information\" Yellow. Yellow may be disorganized but networking. Good.\n\n17 \"easily judges others\" Could be Blue. But Red may judge easily too. If Blue, okay.\n\n20 \"fastest perceives new idea\" Yellow. Could be Red? If Red, then Red more. But Yellow likely.\n\nNeed maybe for 16: \"охотнее берется за сложные задачи\" Could be Red? Let's examine. Yellow: \"likes variety, creative, enjoys complex challenges?\" Red: \"seeks challenges, takes responsibility\". In DISC, Red: \"wants to be in control, likes challenges, takes on complex tasks\"? Yellow: \"enjoys variety, creative, may avoid difficult details\". The phrase \"берется за сложные задачи\" could be Yellow (enthusiastic, creative). But \"complex\" may require detail (Blue) or leadership (Red). Which profile \"охотнее всех берется\"? Yellow because optimistic, creative, likes to take on new projects. Red may be goal-oriented, but complex tasks might require patience (Blue). Use Yellow.\n\nCould 16 be \"Red and Yellow\"? The prompt allows combination. But if they ask singular \"какой профиль\" maybe one. We can answer one. If ambiguous, maybe combination? But likely one. Use Yellow.\n\n10: Could be Red and Yellow? New tech if speeds work. Red. Good.\n\n9: Could be Red and Yellow? \"doesn't follow rules only to get work done\" maybe Yellow (creative shortcuts) or Red. If combination, \"красный и жёлтый\"? But prompt says if answer combination, name combination. The phrase \"раз за разом\" suggests a specific profile, likely Red. Use Red.\n\nLet's consider if 1 social should be \"жёлтый и красный\" instead. Need final confidence. Let's search memory of DISC compatibility: In DISC, \"Red and Yellow are compatible in social situations; Green and Blue are compatible in work\"? Wait, maybe D/E are outgoing, S/C are task? Let's see: D = Red, E = Yellow. They are both \"outgoing\" (extraverted) and can be socially compatible. S = Green, C = Blue are \"inward\" (introverted) and task-oriented? But S is people-oriented. Actually DISC has two dimensions: D vs S (task?); I vs C (people? task?). The colors are not simply outgoing/reserved. D and I are \"outward\"? D is goal-oriented (outward?), I is people; S is people, C is task. People-oriented: I and S (Yellow/Green). Task-oriented: D and C (Red/Blue). So social compatibility could be I/S, work D/C. That seems model-based.\n\nBut \"socially compatible\" might mean \"in social interactions\" where Yellow and Green are both people-oriented and non-conflict. Red may be too aggressive, Blue too critical. So Yellow+Green. Good.\n\n\"work compatible\" might mean D/C (task-oriented) but D and C can conflict. Yet they are both task-oriented. Use Red+Blue.\n\nNow, 18 \"most successful team\" maybe \"Red+Yellow+Green+Blue\". Good.\n\nNeed maybe for 24: \"зависит от окружения\" is more accurate than \"no single answer\". The prompt: \"если однозначного ответа нет, так и напишите.\" Could be \"неоднозначного ответа нет\". Use that. It is not a profile, but allowed. If they want JSON only, okay.\n\nNeed maybe avoid \"жёлтый\" vs \"желтый\"? User uses \"жёлтый\". Use same.\n\nDouble-check JSON escaping: none.\n\nLet's think if there are any hidden traps: The user says \"Небольшой блиц-тест: насколько хорошо вы усвоили модель DISC.\" They might be testing if we know DISC. We should answer as if we know. If some questions subjective, we can use no answer. But they may expect all profiles. 24 subjective. Could answer \"зависит от окружения\" but if they want color, maybe impossible. Use \"неоднозначного ответа нет\".\n\nCould there be a known answer for 24: \"желтый\" because in your circle? But as AI no personal circle. So no.\n\nNeed maybe final answer only JSON. No markdown code fences. Good.\n\nLet's maybe include all values in Russian lowercase. For 18: \"красный, жёлтый, зелёный и синий\". For combos 1/2: \"жёлтый и зелёный\", \"красный и синий\".\n\nLet's re-evaluate 4 surgeon: Best surgeon might be \"Red\" because decisive, calm under pressure? But Blue detail. Surgeon requires precision and detail, but also quick decisions. In DISC, Blue is \"cautious, detail-oriented, may be slow\"; surgeon needs speed? Red is \"decisive, action-oriented, can take risks\". Best surgeon? Could be \"Red and Blue\" combination? But question asks which profile will be best surgeon. In medical, need both detail and decisiveness. But single: Blue for precision, or Red for leadership under pressure. Which is more likely? \"лучшим хирургом\" requires steady hands, attention to detail, calm, careful. Blue. Use Blue.\n\n5 orator: Yellow.\n\n6 knows email: Blue.\n\n7 tests/info: Blue.\n\n8 punctual: Blue? Let's maybe keep Blue. But if 8 Blue, 4,6,7,8,11,17,23 = 7 Blue. Could be too many but okay.\n\n9 Red.\n\n10 Red.\n\n11 Blue.\n\n12 Green.\n\n13 Yellow.\n\n14 Red.\n\n15 Yellow.\n\n16 Yellow.\n\n17 Blue.\n\n19 Yellow.\n\n20 Yellow.\n\n21 Red.\n\n22 Green.\n\n23 Blue.\n\nNow, if 1 is Yellow+Green, 2 Red+Blue, 18 all. Counts: Red: 3,9,10,14,21 =5. Yellow:5,13,15,16,19,20=6. Green:12,22=2 (plus social). Blue:4,6,7,8,11,17,23=7. Blue heavy but trait detail.\n\nMaybe 17 judges others: Red? If 17 Red, Blue 6, Red 6. \"легко судит других\" could be Red (impatient, quick judgments) or Blue (critical). In DISC, Blue is \"critical, detail-oriented, may judge others by facts\". Red may be \"dominant, may judge easily due to impatience\". Which is more likely? \"судит\" often means \"judges/criticizes\" -> Blue. Use Blue.\n\nMaybe 11 remembers criticism: Blue. 12 personal criticism: Green. Good.\n\nCould 8 be Green to reduce Blue? If 8 Green, Green 3. Blue 6. Which is more likely? Let's decide final. I think 8 = Blue because \"always comes on time\" = organized. But Green \"steady\" also. The phrase \"в этом плане на него можно положиться\" = reliable, Green. In DISC, Green: \"reliable, patient, cooperative\". Blue: \"cautious, detail-oriented, may be pessimistic\". I'd maybe choose Green for \"can rely\". But \"always comes on time\" is punctuality, a detail/routine trait. Blue is more \"organized\". Green may like routine but can be indecisive. Hmm.\n\nLet's see typical DISC: Blue is \"conscientious, detail-oriented, organized, precise, cautious\". So punctual. Green is \"amiable, supportive, patient, avoid conflict, risk-averse\". Punctuality not primary. Use Blue.\n\nNow, 22 best listener: Green. Blue may listen but critical. Green patient, supportive. Good.\n\nPotential issue: 1 \"socially compatible\" if Yellow+Green, but 19 talkative Yellow, 22 Green listener. Good.\n\nLet's think if 18 \"most successful team\" maybe \"Red, Yellow, Green, Blue\" but if 1 and 2 are pairs, 18 could be \"Red and Yellow, Green and Blue\"? The question: \"Комбинация каких профилей образует самую успешную команду?\" Could answer \"красный, жёлтый, зелёный и синий\". Good.\n\nNeed maybe include \"синий\" not \"синий/голубой\". Use user's \"синий\".\n\nNow final JSON. Ensure no extra text. Could be minified or pretty. JSON object. Use double quotes. No comments.\n\nLet's final. But before final, maybe consider if answer should be in English? User Russian, JSON values can be Russian. Good.\n\nOne more check: If 1 and 2 expected combinations, we use \"и\". If 18 all four, use \"и\". Good.\n\nLet's maybe for 24 use \"неоднозначный ответ\" rather than \"неоднозначного ответа нет\". Prompt: \"если однозначного ответа нет, так и напишите.\" Could be \"неоднозначно\". Use \"неоднозначного ответа нет\" clear. JSON value string.\n\nNeed final only.",
+  "parsed": {
+    "answers": {
+      "1": "жёлтый и зелёный",
+      "2": "красный и синий",
+      "3": "красный",
+      "4": "синий",
+      "5": "жёлтый",
+      "6": "синий",
+      "7": "синий",
+      "8": "синий",
+      "9": "красный",
+      "10": "красный",
+      "11": "синий",
+      "12": "зелёный",
+      "13": "жёлтый",
+      "14": "красный",
+      "15": "жёлтый",
+      "16": "жёлтый",
+      "17": "синий",
+      "18": "красный, жёлтый, зелёный и синий",
+      "19": "жёлтый",
+      "20": "жёлтый",
+      "21": "красный",
+      "22": "зелёный",
+      "23": "синий",
+      "24": "неоднозначного ответа нет"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 16,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 0,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "жёлтый и зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "красный и синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 8,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 11,
+        "answer": "синий"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 17,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 18,
+        "answer": "красный, жёлтый, зелёный и синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 24,
+        "answer": "неоднозначного ответа нет"
+      }
+    ]
+  }
+}

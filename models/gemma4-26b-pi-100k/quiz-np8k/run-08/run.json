@@ -1,0 +1,259 @@
+{
+  "model": "gemma4:26b-pi-100k",
+  "folder": "gemma4-26b-pi-100k",
+  "provider": "chat",
+  "thinking": {
+    "requested": "on",
+    "scale": [
+      false,
+      true
+    ],
+    "sent": true,
+    "note": "think=true"
+  },
+  "options": {
+    "num_ctx": 16384,
+    "num_predict": 8192
+  },
+  "prompt_version": 1,
+  "prompt_sha256": "0a4d3764a4415dedc50485a56b70767fc3f2b45a537aaafda507754291e54cb5",
+  "started_utc": "2026-11-16T17:59:15.140526+00:00",
+  "duration_s": 15.9,
+  "error": null,
+  "usage": {
+    "prompt_eval_count": 633,
+    "eval_count": 4987,
+    "eval_duration": 15815422000,
+    "prompt_eval_duration": 41552000,
+    "load_duration": 1137767,
+    "total_duration": 15912163818
+  },
+  "ps_snapshot": [
+    "gemma4:26b-pi-100k"
+  ],
+  "ollama_contention": false,
+  "raw": "```json\n{\n  \"1\": \"Жёлтый и Зелёный\",\n  \"2\": \"Нет однозначного ответа\",\n  \"3\": \"Красный\",\n  \"4\": \"Синий\",\n  \"5\": \"Жёлтый\",\n  \"6\": \"Синий\",\n  \"7\": \"Синий\",\n  \"8\": \"Зелёный и Синий\",\n  \"9\": \"Красный\",\n  \"10\": \"Красный\",\n  \"11\": \"Зелёный\",\n  \"12\": \"Зелёный\",\n  \"13\": \"Жёлтый\",\n  \"14\": \"Красный\",\n  \"15\": \"Жёлтый\",\n  \"16\": \"Красный\",\n  \"17\": \"Красный\",\n  \"18\": \"Все четыре профиля\",\n  \"19\": \"Жёлтый\",\n  \"20\": \"Жёлтый\",\n  \"21\": \"Красный\",\n  \"22\": \"Зелёный\",\n  \"23\": \"Синий\",\n  \"24\": \"Нет однозначного ответа\"\n}\n```",
+  "thinking_raw": "DISC model (Red/Dominance, Yellow/Influence, Green/Steadiness, Blue/Compliance).\nAnswer 24 questions based on these profiles.\nJSON object where keys are question numbers and values are the profile(s) or \"no unambiguous answer\".\nStrict JSON, no extra text.\n\n    *   *Red (Dominance):* Results-oriented, decisive, direct, competitive, loves control, impatient, task-focused.\n    *   *Yellow (Influence):* People-oriented, enthusiastic, persuasive, social, creative, spontaneous, sometimes disorganized.\n    *   *Green (Steadiness):* People-oriented, calm, reliable, patient, loyal, avoids conflict, slow to change, good listener.\n    *   *Blue (Compliance):* Task-oriented, analytical, precise, detail-oriented, cautious, follows rules, perfectionist.\n\n    1.  *Какие профили совместимы в социальном плане?* (Social compatibility?) Usually, Yellow and Green are social/people-oriented. Red/Blue are task-oriented. *Answer: Жёлтый и Зелёный.*\n    2.  *Какие профили совместимы в совместной работе?* (Work compatibility?) Often high-performing teams need a mix of task and people orientations. Red/Blue (tasks) and Yellow/Green (people). Often, \"everyone\" works if managed, but theoretically, Red-Blue (efficiency) or Yellow-Green (harmony). However, looking for a standard answer: often seen as Red/Blue for task completion or all of them. Let's go with a balance or specific pairing. Actually, there isn't one \"correct\" answer in DISC theory for \"compatible in work\" without context, but usually, Yellow/Green are more *socially* compatible. Let's see if there's a better fit. Actually, many say Red and Blue balance each other, or all are needed. Let's try \"Нет однозначного ответа\" or a combination. Wait, often Red and Yellow are fast-paced, Blue and Green are slow-paced. *Answer: Нет однозначного ответа* (or maybe Red/Blue and Yellow/Green). Let's try to see if there's a standard textbook answer. Most sources say compatibility depends on communication styles. I'll go with \"Нет однозначного ответа\".\n    3.  *Какой профиль всегда хотел бы возглавить проект?* (Wants to lead?) *Answer: Красный.*\n    4.  *Какой профиль окажется лучшим хирургом?* (Best surgeon?) Needs precision and calm. *Answer: Синий.* (Though Red is decisive, Blue is precise).\n    5.  *Какой профиль больше всех упивается ролью оратора?* (Loves being an orator?) *Answer: Жёлтый.*\n    6.  *Какой профиль чаще всего знает, где он сохранил электронное письмо от шефа?* (Knows where emails are?) *Answer: Синий.*\n    7.  *Какой профиль стремится провести побольше тестов или собрать побольше информации перед тем, как принять решение?* (Needs info before decision?) *Answer: Синий.*\n    8.  *Какой профиль всегда приходит вовремя и в этом плане на него можно положиться?* (Punctual/reliable?) *Answer: Зелёный или Синий.* Green is reliable/steady, Blue is precise/punctual. Usually, Green is the \"dependable\" one in a social sense, but Blue is \"precise\". Let's say *Зелёный и Синий*.\n    9.  *Какой профиль раз за разом не следует правилам только ради того, чтобы работа была сделана?* (Breaks rules to get job done?) *Answer: Красный.*\n    10. *Какой профиль охотнее всех апробирует новые технологии или приемы, если это ускорит работу?* (Tries new tech to speed up?) *Answer: Красный или Жёлтый.* Red wants speed, Yellow wants novelty. Red is more likely focused on the efficiency aspect. *Answer: Красный.*\n    11. *Какой профиль дольше всех помнит критику в свой адрес?* (Remembers criticism longest?) Green (sensitive) or Blue (logic-based/perfectionist). Green is usually the most sensitive to social rejection. *Answer: Зелёный.*\n    12. *Какой профиль болезненнее всего реагирует на личную критику?* (Reacts most painfully to personal criticism?) *Answer: Зелёный.*\n    13. *Какой профиль менее всех организован, но знает, где может получить нужную информацию?* (Least organized but knows where to get info?) *Answer: Жёлтый.*\n    14. *Какой профиль хочет всегда принимать решения?* (Wants to make decisions?) *Answer: Красный.*\n    15. *Какой профиль охотнее всего следует последней моде?* (Follows trends?) *Answer: Жёлтый.*\n    16. *Какой профиль охотнее берется за сложные задачи?* (Takes on hard tasks?) Red (challenge) and Blue (complexity). Usually Red for the \"conquest\" aspect. *Answer: Красный.*\n    17. *Какой профиль легко судит других?* (Judges others easily?) Red (direct/harsh) or Blue (standards). Red is more blunt. *Answer: Красный.*\n    18. *Комбинация каких профилей образует самую успешную команду?* (Most successful team combination?) Theoretically, all four. No single pair is \"the most successful\". *Answer: Все четыре профиля.* (Or \"Нет однозначного ответа\"). Let's use \"Все четыре профиля\".\n    19. *Какой профиль вероятнее всего окажется самым разговорчивым?* (Most talkative?) *Answer: Жёлтый.*\n    20. *Какой профиль быстрее всех воспримет новую идею?* (Adopts new ideas fastest?) *Answer: Жёлтый.*\n    21. *Какой профиль мог бы поручить задание другим, но все же выполнит его сам?* (Delegates but does it himself?) This sounds like a Red (wants it done right/fast) or a perfectionist Blue. But Red is the delegator. *Answer: Красный.*\n    22. *Какой профиль окажется лучшим слушателем?* (Best listener?) *Answer: Зелёный.*\n    23. *Какой профиль не пропустит ни малейшего пункта в инструкции?* (Doesn't miss a single instruction point?) *Answer: Синий.*\n    24. *Какой профиль чаще всего встречается в вашем круге общения?* (Most common in your circle?) This is subjective/personal. *Answer: Нет однозначного ответа.*\n\n    *Self-Correction on specific questions:*\n    - Q1: Socially compatible? Yellow and Green are both \"I\" and \"S\" types (people-oriented).\n    - Q2: Work compatible? Hard to say. Red/Blue (Task/Task) or Yellow/Green (People/People). Usually, a mix is best. I'll say \"Нет однозначного ответа\".\n    - Q4: Surgeon. A surgeon needs speed/decisiveness (Red) but also extreme precision (Blue). However, in DISC tests, Blue is the \"analytical/precision\" type. I'll go with \"Синий\".\n    - Q8: Punctual. Green is reliable/steady. Blue is systematic. Both. I'll say \"Зелёный и Синий\".\n    - Q11/12: Criticism. Green is the most sensitive/relational. Blue is perfectionist. Green is the standard answer for sensitivity.\n    - Q16: Hard tasks. Red likes the challenge/dominance.\n    - Q17: Judging. Red is blunt and direct.\n    - Q18: Best team. A balanced team includes all.\n    - Q21: Delegating but doing it himself. This is a classic \"Dominant\" trait (if it's not done to my standard/speed, I'll do it). Or a \"Compliance\" trait. I'll go with \"Красный\".\n\n    1. Жёлтый и Зелёный\n    2. Нет однозначного ответа\n    3. Красный\n    4. Синий\n    5. Жёлтый\n    6. Синий\n    7. Синий\n    8. Зелёный и Синий\n    9. Красный\n    10. Красный\n    11. Зелёный\n    12. Зелёный\n    13. Жёлтый\n    14. Красный\n    15. Жёлтый\n    16. Красный\n    17. Красный\n    18. Все четыре профиля\n    19. Жёлтый\n    20. Жёлтый\n    21. Красный\n    22. Зелёный\n    23. Синий\n    24. Нет однозначного ответа\n\n    *Refining Q16/21:*\n    Q16 (Complex tasks): Red is \"results/challenge\", Blue is \"detail/complexity\". In most DISC assessments, Red takes the *hard* (challenging) tasks, while Blue takes the *complex* (intricate) tasks. I will stick to Red.\n    Q21 (Delegate but do it oneself): This is often a characteristic of the \"high D\" (Red) who loses patience.\n\n    *Final JSON check:*\n    Ensure keys are \"1\" to \"24\".\n\n    *Double check Q4:* Surgeons. High D (Red) and High C (Blue) are required. But \"best\" usually implies the precision of Blue.\n\n    *Double check Q8:* Reliability. Green is \"Steady/Reliable\". Blue is \"Compliance/Consistent\".\n\n    *Double check Q18:* Usually, \"Successful team\" means a balance of all colors.\n\n    *Wait, looking at Q1:* \"Socially compatible\". Yellow (Influence) and Green (Steadiness) are the \"People\" types.\n\n    *Wait, looking at Q2:* \"Compatible in work\". This is a bit vague. If it means \"working together well\", sometimes people say Red/Blue (Task) or Green/Yellow (People). But usually, it's a mix. I'll stick to \"Нет однозначного ответа\".\n\n    *Let's review the answers one more time against standard DISC logic:*\n    1. Yellow/Green (People oriented)\n    2. No clear answer (Depends on context)\n    3. Red (Dominant)\n    4. Blue (Compliance/Precision)\n    5. Yellow (Influence/Expression)\n    6. Blue (Compliance/Organization)\n    7. Blue (Compliance/Data)\n    8. Green/Blue (Reliability/Precision)\n    9. Red (Dominance/Results)\n    10. Red (Dominance/Speed)\n    11. Green (Steadiness/Sensitive)\n    12. Green (Steadiness/Sensitive)\n    13. Yellow (Influence/Spontaneous)\n    14. Red (Dominance)\n    15. Yellow (Influence/Social)\n    16. Red (Dominance/Challenge)\n    17. Red (Dominance/Directness)\n    18. All four (Balance)\n    19. Yellow (Influence/Talkative)\n    20. Yellow (Influence/New ideas)\n    21. Red (Dominance/Control)\n    22. Green (Steadiness/Listening)\n    23. Blue (Compliance/Detail)\n    24. No clear answer (Subjective)\n\n    *Wait, for Q4:* In many DISC contexts, \"Red\" is the leader/decisive person, but \"Blue\" is the technical expert. A surgeon is highly technical.\n\n    *One final thought on Q17:* \"Easy to judge others\". Red is direct/critical. Blue is critical based on standards. Red is more \"judgmental\" in a social sense.\n\n    *Wait, Q18:* If the user expects a specific \"combination\", usually it's Red-Blue and Yellow-Green. But a single team is usually all four. I will provide \"Все четыре профиля\".\n\n    *Let's re-read Q2:* \"Compatible in work\". Some sources suggest Red and Blue are the \"task\" pair and Yellow and Green are the \"people\" pair. I'll provide \"Нет однозначного ответа\" to be safe and accurate to the theory's nuance.\n\n    *Double check Q21:* \"Could delegate but does it himself\". This is a very specific behavior. High D's want control and speed. High C's want perfection. High D is more likely to delegate and then take it back if it's slow.\n\n    *Re-checking Q10:* \"New tech to speed up\". Red wants results/speed. Yellow wants fun/novelty. Red is the better fit for \"speed up work\".\n\n    *Constructing JSON:*\n    {\"1\": \"Жёлтый и Зелёный\", \"2\": \"Нет однозначного ответа\", \"3\": \"Красный\", \"4\": \"Синий\", \"5\": \"Жёлтый\", \"6\": \"Синий\", \"7\": \"Синий\", \"8\": \"Зелёный и Синий\", \"9\": \"Красный\", \"10\": \"Красный\", \"11\": \"Зелёный\", \"12\": \"Зелёный\", \"13\": \"Жёлтый\", \"14\": \"Красный\", \"15\": \"Жёлтый\", \"16\": \"Красный\", \"17\": \"Красный\", \"18\": \"Все четыре профиля\", \"19\": \"Жёлтый\", \"20\": \"Жёлтый\", \"21\": \"Красный\", \"22\": \"Зелёный\", \"23\": \"Синий\", \"24\": \"Нет однозначного ответа\"}\n\n    *Wait, let's check Q16 again.* \"Complexity\" vs \"Difficulty\".\n    Red: Difficulty/Challenge.\n    Blue: Complexity/Detail.\n    Question says \"Сложные задачи\" (Complex/Hard tasks). Red is usually the answer for \"hard/challenging\".\n\n    *Let's check Q17 again.* \"Easy to judge others\". High D is blunt. High C is perfectionist. \"Judge\" often implies a social/character judgement. Red.\n\n    *Let's check Q21 again.* A Red person is driven by results and might delegate to save time, but if they don't trust the speed/result, they take it back.\n\n    *Check Q1:* Socially compatible. Yellow/Green (People/People). Correct.\n\n    *Final check of the prompt requirements:* \"Strictly JSON\", \"no text outside JSON\".\n\n    (Self-Correction on Q4: Blue is technically correct for precision, but Red is correct for decisiveness. In professional tests, Blue is the 'perfectionist/expert').\n\n    (Self-Correction on Q8: Punctuality is a trait of both Blue (accuracy) and Green (reliability/routine). I will provide both).\n\n    (Self-Correction on Q18: Usually, in management theory, the \"ideal\" team has all colors. I will use \"Все четыре профиля\").\n\n    (Self-Correction on Q24: It is subjective).\n\n    (Wait, Q2: If I had to pick a combination for *work* compatibility, some say Red/Blue and Yellow/Green are the pairings of 'task' vs 'people'. But most sources say there is no single answer. \"Нет однозначного ответа\" is the safest and most professional approach).\n\n    (Wait, Q21: Sometimes Green is the one who does it themselves because they don't want to burden others, but the \"delegate then do it yourself\" is a classic \"High D\" frustration with lack of control/speed).\n\n    *Final Review of values:*\n    1. Жёлтый и Зелёный\n    2. Нет однозначного ответа\n    3. Красный\n    4. Синий\n    5. Жёлтый\n    6. Синий\n    7. Синий\n    8. Зелёный и Синий\n    9. Красный\n    10. Красный\n    11. Зелёный\n    12. Зелёный\n    13. Жёлтый\n    14. Красный\n    15. Жёлтый\n    16. Красный\n    17. Красный\n    18. Все четыре профиля\n    19. Жёлтый\n    20. Жёлтый\n    21. Красный\n    22. Зелёный\n    23. Синий\n    24. Нет однозначного ответа\n\n    *Wait, Q11/12:* Green is more sensitive to social criticism. Blue is more sensitive to being \"wrong\". The question asks for \"personal criticism\" (личная критика). That is Green.\n\n    *Checking question 10 again:* \"Aprobiates new tech to accelerate work\".\n    Red wants speed.\n    Yellow wants novelty.\n    \"To accelerate work\" points to Red.\n\n    *Ready.*\n\n    *Wait, let's look at Q17 again.* \"Easily judges others\".\n    Red: \"You are incompetent.\"\n    Blue: \"You are not following the procedure.\"\n    Red is more \"judgmental\" in a person-to-person sense.\n\n    *Wait, Q16 again:* \"Takes on complex tasks\".\n    In many DISC materials:\n    Red: Challenging.\n    Blue: Complex/Detail.\n    The word \"Сложные\" in Russian can mean both. But \"complex\" usually goes to Blue. However, \"Hard/Difficult\" goes to Red. I'll stick with Red as they are the \"doers\" of difficult things.\n\n    *Wait, let's re-verify Q4:* Surgeon.\n    Red: Decisive.\n    Blue: Precise.\n    Blue is the standard answer for precision-based professions.\n\n    *Let's check Q6:* \"Knows where the email is\".\n    This is a sign of an organized/structured person. Blue.\n\n    *Final JSON structure verification:*\n    Keys \"1\" to \"24\" are strings.\n    Values are strings.\n    No extra text.\n\n    *One last check on Q16:*\n    If the question meant \"intellectually complex\", it's Blue. If \"difficult/daunting\", it's Red. In the context of DISC, Red is usually the one who jumps into the \"hard\" stuff.\n\n    *One last check on Q21:*\n    \"Could delegate but does it himself\".\n    Red: Wants it done NOW and my way.\n    Green: Doesn't want to bother anyone.\n    Yellow: Forgets to delegate.\n    Blue: Delegates but then checks every detail/does it themselves to ensure accuracy.\n    Actually, \"Delegate but do it yourself\" is a very common trait of High C (Blue) perfectionists too. But High D (Red) is more likely to \"hand it off and then snatch it back\". Given the options, Red is a very strong candidate.\n\n    *Actually, let's look at Q17 again:* \"Easy to judge others\".\n    Some say Blue (judging against rules) and Red (judging against results).\n    Let's check common DISC quiz answers. Red is usually described as \"critical/blunt\".\n\n    *Final Polish:*\n    1. Жёлтый и Зелёный\n    2. Нет однозначного ответа\n    3. Красный\n    4. Синий\n    5. Жёлтый\n    6. Синий\n    7. Синий\n    8. Зелёный и Синий\n    9. Красный\n    10. Красный\n    11. Зелёный\n    12. Зелёный\n    13. Жёлтый\n    14. Красный\n    15. Жёлтый\n    16. Красный\n    17. Красный\n    18. Все четыре профиля\n    19. Жёлтый\n    20. Жёлтый\n    21. Красный\n    22. Зелёный\n    23. Синий\n    24. Нет однозначного ответа\n\n    (Wait, Q18: \"Most successful team combination\" - sometimes textbooks say Red + Yellow (for drive/energy) or Red + Blue (for drive/structure). But modern management says a balance. I'll stick to \"Все четыре профиля\").\n\n    (Wait, Q10: Could it be Yellow? \"Aprobiates new technology\". Yellow loves new things. But \"if it speeds up work\" (если это ускорит работу) is the motivator. Speed is Red's motivator. I'll stick with Red).\n\n    (Wait, Q11: \"Remembers criticism longest\". Green (emotionally) or Blue (logically/perfectionism). Green is the standard personality answer for \"sensitive\").\n\n    (Wait, Q4: Surgeon. Red is also good. But surgeon training is all about Blue precision. Blue).\n\n    Let's go.",
+  "parsed": {
+    "answers": {
+      "1": "Жёлтый и Зелёный",
+      "2": "Нет однозначного ответа",
+      "3": "Красный",
+      "4": "Синий",
+      "5": "Жёлтый",
+      "6": "Синий",
+      "7": "Синий",
+      "8": "Зелёный и Синий",
+      "9": "Красный",
+      "10": "Красный",
+      "11": "Зелёный",
+      "12": "Зелёный",
+      "13": "Жёлтый",
+      "14": "Красный",
+      "15": "Жёлтый",
+      "16": "Красный",
+      "17": "Красный",
+      "18": "Все четыре профиля",
+      "19": "Жёлтый",
+      "20": "Жёлтый",
+      "21": "Красный",
+      "22": "Зелёный",
+      "23": "Синий",
+      "24": "Нет однозначного ответа"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 18,
+    "total": 24,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 1,
+      "ambiguous": 1,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Жёлтый и Зелёный"
+      },
+      {
+        "verdict": "unparsed",
+        "correct": false,
+        "n": 2,
+        "answer": "Нет однозначного ответа"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 4,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Зелёный и Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "green"
+        ],
+        "correct": false,
+        "n": 12,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 16,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 17,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 18,
+        "answer": "Все четыре профиля"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 19,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Жёлтый"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Красный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Зелёный"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 23,
+        "answer": "Синий"
+      },
+      {
+        "verdict": "correct",
+        "matched": "alias",
+        "correct": true,
+        "n": 24,
+        "answer": "Нет однозначного ответа"
+      }
+    ]
+  }
+}

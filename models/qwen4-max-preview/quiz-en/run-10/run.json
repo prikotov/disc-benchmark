@@ -1,0 +1,265 @@
+{
+  "model": "qwen4-max-preview",
+  "folder": "qwen4-max-preview",
+  "provider": "cloud",
+  "lang": "en",
+  "cloud_provider": "alibabacloud",
+  "thinking": {
+    "requested": "xhigh",
+    "scale": [
+      "off",
+      "low",
+      "medium",
+      "high"
+    ],
+    "sent": "xhigh",
+    "note": "ШКАЛА ЗАВИСИТ ОТ МОДЕЛИ (доки 2026-11-17): qwen4-max — low/high/xhigh (дефолт high; medium→high); qwen4-max-preview — low/medium/xhigh (дефолт xhigh; high недокументирован, фактически ≈medium). off — enable_thinking=False"
+  },
+  "options": {
+    "reasoning_effort": "xhigh"
+  },
+  "model_version": "qwen4.0-max-preview",
+  "prompt_version": 1,
+  "prompt_sha256": "4b3fccb37221a3ff77afd9f9d7ea278e7336c644ff22dbdf6a662fe0019aba67",
+  "started_utc": "2026-11-17T04:50:03.429248+00:00",
+  "duration_s": 57.2,
+  "error": null,
+  "done_reason": null,
+  "usage": {
+    "prompt_tokens": 535,
+    "cached_tokens": 512,
+    "completion_tokens": 3116,
+    "reasoning_tokens": 2763
+  },
+  "ps_snapshot": [
+    "облако, /api/ps неприменим"
+  ],
+  "parsed": {
+    "answers": {
+      "1": "Yellow + Green — both are people-oriented and warm, so they click socially",
+      "2": "Red + Blue — both task-oriented: Red drives the result, Blue secures the quality",
+      "3": "Red",
+      "4": "Blue (precision, procedure, zero tolerance for error), ideally with a Red streak for cool decisiveness under pressure",
+      "5": "Yellow",
+      "6": "Blue",
+      "7": "Blue",
+      "8": "Blue (Green is also dependably punctual)",
+      "9": "Red",
+      "10": "Red — whatever gets the result fastest; Yellow tries new things for the fun of it",
+      "11": "Green",
+      "12": "Yellow",
+      "13": "Red",
+      "14": "Yellow",
+      "15": "Red",
+      "16": "Red — snap judgments; Blue is critical too, but only after gathering the facts",
+      "17": "All four: Red + Yellow + Green + Blue — complementary strengths (drive, ideas, cohesion, accuracy)",
+      "18": "Yellow",
+      "19": "Yellow",
+      "20": "Blue — perfectionist: nobody else meets his standard, so he redoes it",
+      "21": "Green",
+      "22": "Blue",
+      "23": "No single answer — it depends on the individual's circle (and I have none); statistically Green is the most common profile overall"
+    },
+    "json_ok": true,
+    "fallback": false
+  },
+  "verdict": {
+    "score": 15,
+    "total": 23,
+    "stats": {
+      "skipped": 0,
+      "unparsed": 0,
+      "ambiguous": 4,
+      "near": 0
+    },
+    "per_question": [
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow",
+          "green"
+        ],
+        "correct": false,
+        "n": 1,
+        "answer": "Yellow + Green — both are people-oriented and warm, so they click socially"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 2,
+        "answer": "Red + Blue — both task-oriented: Red drives the result, Blue secures the quality"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 3,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 4,
+        "answer": "Blue (precision, procedure, zero tolerance for error), ideally with a Red streak for cool decisiveness under pressure"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 5,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 6,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 7,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "green",
+          "blue"
+        ],
+        "correct": false,
+        "n": 8,
+        "answer": "Blue (Green is also dependably punctual)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 9,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "yellow"
+        ],
+        "correct": false,
+        "n": 10,
+        "answer": "Red — whatever gets the result fastest; Yellow tries new things for the fun of it"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 11,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 12,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 13,
+        "answer": "Red"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 14,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 15,
+        "answer": "Red"
+      },
+      {
+        "verdict": "incorrect",
+        "flag": "ambiguous",
+        "colors": [
+          "red",
+          "blue"
+        ],
+        "correct": false,
+        "n": 16,
+        "answer": "Red — snap judgments; Blue is critical too, but only after gathering the facts"
+      },
+      {
+        "verdict": "correct",
+        "matched": "all-four-colors",
+        "correct": true,
+        "n": 17,
+        "answer": "All four: Red + Yellow + Green + Blue — complementary strengths (drive, ideas, cohesion, accuracy)"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 18,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "yellow"
+        ],
+        "correct": false,
+        "n": 19,
+        "answer": "Yellow"
+      },
+      {
+        "verdict": "incorrect",
+        "colors": [
+          "blue"
+        ],
+        "correct": false,
+        "n": 20,
+        "answer": "Blue — perfectionist: nobody else meets his standard, so he redoes it"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 21,
+        "answer": "Green"
+      },
+      {
+        "verdict": "correct",
+        "matched": "exact",
+        "correct": true,
+        "n": 22,
+        "answer": "Blue"
+      },
+      {
+        "verdict": "correct",
+        "matched": "no-single-answer",
+        "correct": true,
+        "n": 23,
+        "answer": "No single answer — it depends on the individual's circle (and I have none); statistically Green is the most common profile overall"
+      }
+    ]
+  }
+}

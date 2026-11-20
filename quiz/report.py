@@ -423,7 +423,7 @@ argmax по вариантам — см. оговорку выше.</li>
     for g in sorted(groups, key=lambda g: (-groups[g]["mean"] / groups[g]["total"],
                                            sort_key(g))):
         a = groups[g]
-        stab = f"{a['distinct']} уник. из {a['n']}"
+        stab = f"{a['distinct']} уник."
         if a["identical"] is not None:
             stab += f", попарно {a['identical'] * 100:.0f}%"
         tok = f"{a['tok_in'] or '—'}/{a['tok_out'] or '—'}"
@@ -767,7 +767,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
     for g in sorted(groups, key=lambda g: (-groups[g]["mean"] / groups[g]["total"],
                                            sort_key(g))):
         a = groups[g]
-        stab = f"{a['distinct']} уник. из {a['n']}"
+        stab = f"{a['distinct']} уник."
         if a["identical"] is not None:
             stab += f", попарно {a['identical'] * 100:.0f}%"
         j = "—" if a["json_ok"] is None else f"{a['json_ok'] * 100:.0f}%"

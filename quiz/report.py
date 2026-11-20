@@ -50,9 +50,6 @@ LEVEL_ORDER = {m["folder"]: m.get("doc_levels") or [None]
 # en 1..11 = ru 1..11; ru 12 (болезненная реакция на критику) не имеет
 # en-аналога; en 12..23 = ru 13..24
 RU_TO_EN = {n: (n if n <= 11 else n - 1 if n >= 13 else None) for n in range(1, 25)}
-COLOR_OF = {"Красный": "D", "Желтый": "I", "Зеленый": "S", "Синий": "C",
-            "Red": "D", "Yellow": "I", "Green": "S", "Blue": "C"}
-COLOR_TITLE = {"D": "красный (D)", "I": "жёлтый (I)", "S": "зелёный (S)", "C": "синий (C)"}
 LANG_TOTAL = {"ru": 24, "en": 23}
 
 
@@ -594,28 +591,6 @@ argmax по вариантам — см. оговорку выше.</li>
             lines_h.append("Ответы en: " + dist_str(s_en))
         parts.append("<br>".join(lines_h) + "</div>")
     parts.append("</table>")
-
-    # точность по цветам, по языкам
-    for lang in ("ru", "en"):
-        rs_lang = [r for r in runs if r["_lang"] == lang]
-        if not rs_lang:
-            continue
-        color_stats = defaultdict(lambda: [0, 0])
-        for r in rs_lang:
-            for x, q in zip(r["verdict"]["per_question"], KEYS[lang]["questions"]):
-                if q["kind"] == "color":
-                    c = COLOR_OF[q["key"]]
-                    color_stats[c][0] += 1 if x.get("correct") else 0
-                    color_stats[c][1] += 1
-        parts.append(f"<h2>Точность по профилям — {lang} (single-цветные вопросы)</h2>"
-                     "<table><tr><th>профиль</th><th class='num'>верных</th><th>%</th></tr>")
-        for c in ("D", "I", "S", "C"):
-            okc, tot = color_stats[c]
-            rate = okc / tot if tot else 0
-            parts.append(f"<tr><td>{COLOR_TITLE[c]}</td><td class='num'>{okc}/{tot}</td>"
-                         f"<td>{rate * 100:.0f}%<div class='bar'><div "
-                         f"style='width:{rate * 100:.0f}%'></div></div></td></tr>")
-        parts.append("</table>")
 
     parts.append("<div class='muted' style='margin-top:20px'>Флаги: unparsed — ответ не "
                  "распознан (это не «неверный ответ»); skipped — вопроса нет в JSON; "

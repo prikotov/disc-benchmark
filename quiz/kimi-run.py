@@ -2,9 +2,9 @@
 """Разовый прогон модели через pi-подписку (pi -p, OAuth-провайдеры типа
 kimi-coding): 1 прогон на каждый документированный уровень мышления.
 
-Отличие от runner.py: транспорт pi (pi сам refresh'ит OAuth-токен и знает
-формат параметров провайдера), usage недоступен (--no-session).
-Скоринг и артефакты — общие (quiz.runner).
+Отличие от runner.py: транспорт pi-подписки с прямым non-stream вызовом
+(pi сам refresh'ит OAuth-токен; streaming-транспорт pi рвёт соединение на
+длинной генерации). Скоринг и артефакты — общие (quiz.runner).
 
 Запуск: python3 quiz/kimi-run.py --lang ru --model kimi-coding/k3.1-pro \
     --folder kimi-k3.1-pro --levels low,high,max
@@ -36,10 +36,11 @@ def kimi_token() -> str:
 
 
 def api_call(model_short: str, level: str, prompt: str,
-             timeout: int = PI_TIMEOUT) -> tuple[str, str | None, str]:
+             timeout: int = PI_TIMEOUT) -> tuple[str, str | None, str, dict]:
     """Прямой non-stream вызов api.kimi.com (pi-транспорт со streaming рвёт
     соединение на длинной генерации: UND_ERR_SOCKET/ECONNRESET ×6 —
-    наблюдение 2026-11-17; подписка та же, токен из pi-auth)."""
+    наблюдение 2026-11-17; подписка та же, токен из pi-auth).
+    Возвращает (content, thinking, длительность, usage)."""
     body = {"model": model_short,
             "messages": [{"role": "user", "content": prompt}],
             "stream": False}
@@ -60,7 +61,10 @@ def api_call(model_short: str, level: str, prompt: str,
             if thinking is None and embedded:
                 thinking = embedded
             dur = f"{round(time.monotonic() - t0, 1)}s"
-            return content, thinking, dur
+            u = d.get("usage") or {}
+            usage = {"prompt_tokens": u.get("prompt_tokens"),
+                     "completion_tokens": u.get("completion_tokens")}
+            return content, thinking, dur, usage
         except urllib.error.HTTPError as e:
             if e.code == 401 and attempt == 0:
                 # токен протух — pi refresh (тестовый вызов) и повтор
@@ -112,11 +116,11 @@ def main() -> int:
         d = R.next_run_dir(args.folder)
         t0 = time.monotonic()
         try:
-            content, thinking, dur_note = api_call(
+            content, thinking, dur_note, usage = api_call(
                 args.model.split("/")[-1], level, prompt)
             error = None
         except (RuntimeError, subprocess.TimeoutExpired) as e:
-            content, thinking, dur_note = "", None, None
+            content, thinking, dur_note, usage = "", None, None, {}
             error = str(e)[:300]
             log(f"  прогон прерван: {error}")
         duration = round(time.monotonic() - t0, 1)
@@ -134,7 +138,7 @@ def main() -> int:
             "prompt_version": pver, "prompt_sha256": psha,
             "started_utc": datetime.now(timezone.utc).isoformat(),
             "duration_s": duration, "error": error,
-            "done_reason": dur_note, "usage": {},
+            "done_reason": dur_note, "usage": usage,
             "ps_snapshot": ["облако (pi-подписка), /api/ps неприменим"],
             "parsed": {"answers": {str(k): v for k, v in sorted(answers.items())}, **flags},
             "verdict": {"score": score, "total": len(R.KEY["questions"]),

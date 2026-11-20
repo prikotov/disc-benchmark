@@ -263,10 +263,8 @@ table.matrix td.na{color:#9aa7b3}
     pv = runs[0]["prompt_version"] if runs else 1
     parts.append(
         f"<h1>Анкета DISC (блиц-тест): своды по прогонам — ru + en</h1>"
-        f"<div class='sub'>24 вопроса (ru) / 23 вопроса (en) по методологии DISC; "
-        f"модель называет профиль "
-        f"без вариантов. Промпт v{pv} (оба языка). Прогонов: {total_runs}. "
-        f"Сформировано: {gen}.</div>")
+        f"<div class='sub'>24 вопроса (ru) / 23 вопроса (en) по методологии DISC/"
+        f" {total_runs} прогонов. Сформировано: {gen}.</div>")
     parts.append(
         "<div class='warn'><b>Оговорки.</b> (1) Межформатная: chat-модели отвечают "
         "открыто, decision (clef) — argmax по кандидатам-утверждениям в пробах noul "
@@ -633,8 +631,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
     lines = [
         "# Анкета DISC (блиц-тест): своды (ru + en)",
         "",
-        f"Прогонов: {len(runs)}. Промпт v{runs[0]['prompt_version'] if runs else 1}. "
-        f"ru — 24 вопроса, en — 23 (межъязыковое сравнение — по процентам). "
+        f"{len(runs)} прогонов. ru — 24 вопроса, en — 23. "
         f"Сформировано "
         f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}.",
         "",

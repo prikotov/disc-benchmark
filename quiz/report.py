@@ -413,7 +413,7 @@ argmax по вариантам — см. оговорку выше.</li>
                  "клик по заголовку — сортировка по столбцу, повторный клик — в обратную "
                  "сторону</div>"
                  "<table class='sortable' id='sumtab'><thead><tr>"
-                 "<th>модель</th><th>язык</th><th>уровень</th><th class='num'>прогонов</th>"
+                 "<th>модель</th><th>уровень</th><th>язык</th><th class='num'>прогонов</th>"
                  "<th class='num'>балл (ср)</th><th class='num'>min–max</th><th class='num'>%</th>"
                  "<th>стабильность</th><th class='num'>json_ok</th>"
                  "<th class='num'>unparsed/skipped</th><th class='num'>сбои</th>"
@@ -431,7 +431,7 @@ argmax по вариантам — см. оговорку выше.</li>
         href = f"../models/{g[0]}/{('quiz' if g[1] == 'ru' else 'quiz-en')}/"
         fails = (failed_counts or {}).get(g, 0)
         parts.append(
-            f"<tr><td><a href='{href}'>{g[0]}</a></td><td>{g[1]}</td><td>{g[2]}</td>"
+            f"<tr><td><a href='{href}'>{g[0]}</a></td><td>{g[2]}</td><td>{g[1]}</td>"
             f"<td class='num'>{a['n']}</td><td class='num'><b>{a['mean']:.1f}</b></td>"
             f"<td class='num'>{a['min']}–{a['max']}</td><td class='num'>{pct_lang(a)}"
             f"<div class='bar'><div style='width:{a['mean'] / a['total'] * 100:.0f}%'></div></div></td>"
@@ -756,7 +756,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         "по вариантам.",
         "- **Подробно**: quiz/README.md · quiz-en/README.md",
         "",
-        "| модель | язык | уровень | прогонов | балл (ср) | min–max | % | стабильность | json_ok | "
+        "| модель | уровень | язык | прогонов | балл (ср) | min–max | % | стабильность | json_ok | "
         "unparsed/skipped | p_correct | токены вх/вых | время, с |",
         "|---|---|---|---|---|---|---|---|---|---|---|---|---|",
         "",
@@ -772,7 +772,7 @@ def build_md(groups: dict, runs: list[dict], out: Path, problems: list | None = 
         j = "—" if a["json_ok"] is None else f"{a['json_ok'] * 100:.0f}%"
         p = "—" if a["p_correct"] is None else str(a["p_correct"])
         lines.append(
-            f"| {g[0]} | {g[1]} | {g[2]} | {a['n']} | **{a['mean']:.1f}** | {a['min']}–{a['max']} | "
+            f"| {g[0]} | {g[2]} | {g[1]} | {a['n']} | **{a['mean']:.1f}** | {a['min']}–{a['max']} | "
             f"{pct_lang(a)} | {stab} | {j} | {a['unparsed']}/{a['skipped']} | {p} | "
             f"{a['tok_in'] or '—'}/{a['tok_out'] or '—'} | {a['dur']} |")
     lines += ["", "## Язык: ru vs en", "",

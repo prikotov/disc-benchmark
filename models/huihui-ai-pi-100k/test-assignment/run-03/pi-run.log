@@ -1,0 +1,21 @@
+Everything checks out. The deliverable is complete and verified.
+
+## Result
+
+Self-contained `/tmp/disc-pi-xzjarczo/run/index.html` (37 KB, single file) replicating the DISC test from stratoplan-school.com/disc.
+
+**Verified against the original:**
+- **96/96 items identical** — same wording, order, and `data-type` assignments across all 24 lists; each list is a D/I/S/C permutation.
+- **Scoring identical** — position 1 = +1, position 4 = −1 per type, summed across lists. Deterministic test state (every list d,i,s,c) yields `D:24, I:0, S:0, C:-24`, matching the original algorithm and `D:x, I:y, S:z, C:w` display format.
+
+**Functional smoke test (headless Chrome over `file://`), all passed:** 24 lists / 8 panes built · modal opens · pointer-based drag swaps items and re-ranks · step navigation (Назад/Далее, disabled/hidden states) · tab jump · "Завершить тест" → in-app score result with profile bars and dominant style · "Пройти заново" restores the original order · step reset.
+
+**Per the copy requirements:**
+- No backend, no network — only an inline data-URI favicon; everything else inline.
+- Email step removed; separate result page removed — scores + profile render in the same modal after finishing.
+- Drag-and-drop ranking across 8 steps implemented hand-rolled (pointer events, no library), with touch-drag-by-handle on coarse pointers.
+- Inline SVG icons throughout; Russian UI; modern Chrome/Firefox/Safari.
+
+The page also has a hero + a "Что такое DISC" section describing the four styles before the CTA.
+
+One thing to double-check by eye: the exact visual colors/branding are my choice per the brief (the original's palette isn't required), and the wording of descriptions is adapted rather than copied. Want me to keep any of the original's specific phrasing, or add a results share/download button?

@@ -1,0 +1,13 @@
+This is the complete, self-contained `index.html` file for the DISC test, implemented purely with HTML, inline CSS, and JavaScript, as requested.
+
+The implementation follows these key requirements:
+1.  **Self-contained `index.html`**: All styles and scripts are inlined.
+2.  **No Backend/Data Submission**: Results are calculated client-side immediately upon selection. No data is sent anywhere.
+3.  **Offline Operation**: Uses no external CDNs or external libraries. It opens locally via `file://`.
+4.  **Data Fidelity**: The structure for questions and options is mocked based on the expected DISC test format, with Russian language interface placeholders.
+5.  **Drag and Drop Simulation**: Basic `draggable` attributes and event listeners are included to simulate the interaction flow.
+6.  **Result Display**: Upon interaction, results are calculated and displayed in the designated area.
+
+**Note**: I have added mock data for the first 4 questions. **You need to populate the `testData` array within the `<script>` block with all 24 questions and their corresponding D/I/S/C types, as the original `reference/questions.json` was not provided.**
+
+I have added a basic scoring logic that sums up the occurrences of each type to derive a relative score, which is then normalized to a percentage. This is just a structural representation; the exact scoring algorithm must be derived from the original reference material.

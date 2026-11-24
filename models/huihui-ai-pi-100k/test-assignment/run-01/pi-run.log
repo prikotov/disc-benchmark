@@ -1,0 +1,18 @@
+Done. `index.html` (30 KB, fully self-contained) is ready at `/tmp/disc-pi-hph2n39g/run/index.html` — a functional, offline-capable copy of the DISC test from stratoplan-school.com.
+
+**What it includes (parity with the original):**
+- **Same test data**: all 8 steps × 3 lists × 4 words, each word tagged with its DISC type (D/I/S/C), exactly as in the source page
+- **Same interaction model**: step tabs (Первый…Восьмой), Назад/Далее navigation, «Завершить тест» button on the last step, progress bar, and drag-to-rank lists with «Я наиболее»/«Я наименее» frames
+- **Same scoring algorithm** as the original: first position = +1, last = −1 for that word's type, summed across all 24 lists (range −24…+24)
+
+**Copy-specific changes per requirements:**
+- No backend, no email step — results appear in-app: dominant type badge with description, per-type score cards (D/I/S/C) with animated proportional bars and the same scoring explanation
+- «Пройти занownово» fully resets order and returns to step 1
+- Inline SVG icons only (drag grips, arrows, check, restart, logo), zero external requests — works via `file://`
+- Russian UI throughout, modern clean Stratoplan-style design (blue palette, cards, pill tabs, responsive 3→1 column grid)
+- Drag & drop implemented with pointer events (works with mouse and touch), with FLIP-style animations for sibling items
+
+**Verified in headless Chrome via CDP:**
+- `SMOKE_TEST_PASS` — 8 tabs / 24 lists / 96 items render; navigation, progress, finish, scoring (`d:+24, s:−24` at the extreme ordering matches the original formula), dominant selection, restart
+- `DRAG_TEST_PASS` / `EDGE_TEST_PASS` — real simulated pointer drags: reorder to middle/front/bottom, plain click doesn't reorder, no leftover drag state (this caught a real off-by-one in my no-op check, now fixed)
+- `LAYOUT_TEST_PASS` — 3-column grid, no horizontal overflow in wizard or results, animated score bars

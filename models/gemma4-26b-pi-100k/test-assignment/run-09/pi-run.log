@@ -1,0 +1,36 @@
+I have successfully retrieved the core test logic from the local reference files. Although the live website returns a 404 for `disc_patched.js`, the file is available in the `test-assignment/reference/source/` directory.
+
+### Analysis of the retrieved sources:
+
+1.  **`disc_patched.js` (Logic)**:
+    *   **Workflow**: It manages a multi-step modal (`#wizardmodal`) with 8 steps.
+    *   **Interactions**: It uses `SortableJS` for drag-and-drop of items in lists (`.disc-list`). It has specific handling for mobile (drag by handle) vs. desktop (drag by element).
+    *   **Scoring Logic**:
+        *   It collects the position of each item in the lists.
+        *   The score for a DISC type is calculated as: `(count of type in position 0) - (count of type in position 3)`.
+        *   Types: `d` (Dominance), `i` (Influence), `s` (Stability), `c` (Compliance).
+    *   **Security/Redirect**: It "encrypts" the result using AES-GCM (WebCrypto) and creates a token to redirect to a result page with the token in the URL.
+    *   **Post-test**: After the test, it opens a second modal (`#apruve`) for email collection.
+
+2.  **`widget.html` (Structure)**:
+    *   Contains the HTML for the test wizard (`#wizardmodal`) and the email capture modal (`#apruve`).
+    *   The wizard has 8 tabs/steps, each containing 3 cards with 4 items each.
+
+3.  **`result-page.html` (Output)**:
+    *   Shows the calculated DISC profile.
+    *   Note: The provided HTML shows a hardcoded example `D:-1, I:0, S:-3, C:4`, which I will need to replace with dynamic logic in my solution.
+
+4.  **`questions.json` (Data)**:
+    *   I have the reference questions with their correct `data-type` attributes.
+
+### Plan for `index.html`:
+I will now build the single-file solution. I will:
+1.  Combine the structure from `widget.html` and `page.html` (as a base).
+2.  Add a "Result" section that mimics `result-page.html`.
+3.  Inline all CSS (mimicking the original's look as closely as possible).
+4.  Inline the JavaScript logic from `disc_patched.js`, but modified to:
+    *   Replace the email collection/redirect step with an immediate display of the results in the `index.html` file.
+    *   Use the data from `questions.json` to populate the lists dynamically (or hardcode them as they appear in the HTML if preferred for simplicity, but dynamic is cleaner).
+    *   Include `SortableJS` (I will use a CDN-less approach if possible, or since the requirement is "offline-capable", I should ideally inline the library or provide a way to include it. Given "no CDNs", I will attempt to find a minimal way or include the logic). *Correction*: Since I must be offline-capable, I will look to see if I can implement a simple native drag-and-drop fallback or include a minified version of SortableJS directly in the file.
+
+I am ready to proceed with the implementation.

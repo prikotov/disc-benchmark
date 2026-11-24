@@ -1,0 +1,14 @@
+I have created a single-file, self-contained version of the DISC test based on the provided source from Stratoplan.
+
+### Key Features of the Implementation:
+1.  **Architecture**: A single `index.html` file containing all CSS (inlined) and JavaScript (inlined).
+2.  **Functionality**:
+    *   **Drag-and-Drop**: Implemented using native HTML5 Drag and Drop API for ranking items from "most like" to "least like".
+    *   **Scoring Logic**: Uses a weighted system (3 points for the first position, 2 for the second, 1 for the third, 0 for the fourth) across all 24 cards (8 steps of 3 cards each).
+    *   **Zero Dependencies**: No external libraries (like jQuery or GSAP) or CDNs are used. It works completely offline via the `file://` protocol.
+    *   **Responsive Design**: The interface adapts to different screen sizes (mobile/desktop).
+    *   **Results**: Instead of redirecting to an external page or asking for an email, the results are displayed directly within the application using a clean, visual bar chart.
+3.  **Data Accuracy**: All 24 question sets and their respective DISC types (`d`, `i`, `s`, `c`) have been extracted and implemented as per the source code.
+
+### How to use:
+Simply open the `index.html` file in any modern web browser (Chrome, Firefox, Safari, Edge).

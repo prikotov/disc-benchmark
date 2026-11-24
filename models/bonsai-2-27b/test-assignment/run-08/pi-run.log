@@ -1,0 +1,30 @@
+The DISC test copy is complete and fully verified. Here's the summary:
+
+## Deliverable: `index.html` (632 lines, ~32 KB)
+
+A single self-contained file that replicates the DISC test from `stratoplan-school.com/disc/`:
+
+| Requirement | Status |
+|---|---|
+| One `index.html`, all CSS/JS inline | ✅ |
+| No backend / external requests / CDN | ✅ (only the SVG namespace URI, not a request) |
+| Russian UI | ✅ (`lang="ru"`) |
+| Drag-to-rank (8 steps × 3 cards × 4 items = 96) | ✅ |
+| Scores shown in-app (no `#apruve` email step) | ✅ |
+| Inline SVG icons (3-dot handle) | ✅ |
+| Works on `file://` (Chrome, headless-verified) | ✅ |
+| 24 questions, data matches `questions.json` exactly (order + text + types) | ✅ |
+| Correct scoring (top=+1, bottom=−1, summed) | ✅ |
+
+## Bugs I found and fixed
+1. **Missing open handler** — the `.btn-open` button had no click listener; added `[data-modal-open]` delegation.
+2. **Main bug — `collectPayload()` structure mismatch.** `buildAll()` stored `lists` as a 2-D array (`lists[pane][card] = {el, lis}`), but `collectPayload()` treated it as a flat array, so `list.lis` was `undefined` → `TypeError: Cannot read properties of undefined (reading 'forEach')` — which is why the result never appeared. Fixed by rewriting `collectPayload()` to query the DOM directly (`document.querySelectorAll('.disc-list')`) and removing the now-dead `lists` variable.
+
+## Verification (headless Chrome + CDP)
+- Modal opens; 96 `.disc-item` render (24 of each type).
+- Deterministic reorder (all cards: `d` @ top, `s` @ bottom) → scores **D: 24, I: 0, S: −24, C: 0**.
+- Result view correct: score `D: 24 · I: 0 · S: −24 · C: 0`, dominant `Доминирующий тип: D — Доминирование.`, all four types with right values.
+- **Drag-to-rank works**: synthetic `PointerEvent`s fire the real `pointerdown/move/up` handlers and change the list order (`['i','c','d','s']` → `['c','d','s','i']`).
+- **Zero console errors**; all DOM assertions pass.
+
+The helper test scripts (`cdp_test.py`, `cdp_drag_test.py`, etc.) are left in the run catalog as the research trace per workspace convention; the solution itself is `index.html`.

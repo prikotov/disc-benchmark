@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC</title>
+<style>
+  :root{
+    --bg:#eef3fa;
+    --paper:#ffffff;
+    --ink:#152033;
+    --muted:#61708a;
+    --line:#d9e2ef;
+    --accent:#1f5bd6;
+    --accent-ink:#1b3f95;
+    --accent-soft:#e9f0fd;
+    --green:#2f9e44;
+    --green-dark:#237c34;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -320px, #dbe8ff 0%, rgba(219,232,255,0) 70%),
+      var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.35;
+    -webkit-text-size-adjust:100%;
+    min-height:100vh;
+  }
+  .app{max-width:1180px;margin:0 auto;padding:36px 20px 64px}
+  [hidden]{display:none !important}
+
+  /* ---------- header ---------- */
+  .head{text-align:center;margin-bottom:24px}
+  .head__logo{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:7px 16px 7px 12px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-ink);
+    font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    margin-bottom:16px;
+  }
+  .head__logo svg{display:block}
+  .head__title{
+    margin:0 0 10px;font-size:clamp(26px,4.4vw,40px);line-height:1.1;
+    font-weight:800;letter-spacing:-.015em;
+  }
+  .head__sub{margin:0 0 14px;font-size:clamp(14px,1.7vw,17px);color:var(--muted)}
+  .head__lead{
+    display:inline-block;margin:0;padding:10px 18px;border-radius:999px;
+    background:var(--paper);border:1px solid var(--line);
+    font-size:clamp(13px,1.6vw,15px);color:var(--ink);
+    box-shadow:0 2px 10px rgba(21,32,51,.05);
+  }
+
+  /* ---------- wizard ---------- */
+  .wizard{
+    background:var(--paper);border:1px solid var(--line);border-radius:22px;
+    box-shadow:0 24px 60px rgba(21,32,51,.09),0 2px 6px rgba(21,32,51,.04);
+    padding:22px clamp(14px,2.4vw,30px) 24px;
+  }
+  .tabs{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+    padding-bottom:6px;
+  }
+  .tab{
+    font:inherit;font-size:clamp(13px,1.5vw,15px);font-weight:600;
+    padding:9px 16px;border-radius:999px;border:1px solid transparent;
+    background:var(--accent-soft);color:var(--accent-ink);
+    cursor:pointer;white-space:nowrap;
+    transition:background .15s ease,color .15s ease,box-shadow .15s ease;
+  }
+  .tab:hover{background:#dbe7fb}
+  .tab.is-active{background:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(31,91,214,.28)}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .pane{display:none;padding-top:14px}
+  .pane.is-active{display:block}
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+
+  /* ---------- card ---------- */
+  .card{
+    display:flex;flex-direction:column;
+    border:1px solid var(--line);border-radius:16px;background:var(--paper);
+    overflow:hidden;box-shadow:0 2px 6px rgba(21,32,51,.04);
+  }
+  .card__title,.card__foot{
+    padding:11px 14px;font-size:12px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);background:#f7fafe;
+  }
+  .card__title{border-bottom:1px solid var(--line)}
+  .card__foot{border-top:1px solid var(--line);text-align:right}
+
+  .list{list-style:none;margin:0;padding:8px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .item{
+    position:relative;display:flex;align-items:center;gap:10px;
+    padding:11px 8px 11px 10px;border-radius:10px;
+    background:#fff;border:1px solid var(--line);
+    font-size:clamp(14px,1.6vw,16px);color:var(--ink);
+    cursor:grab;user-select:none;-webkit-user-select:none;
+    transition:background .12s ease,border-color .12s ease,box-shadow .12s ease;
+  }
+  .item:hover{background:#f8fbff;border-color:#c6d7ef}
+  .item__num{
+    flex:0 0 auto;width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--accent-soft);color:var(--accent-ink);
+    font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  .item__text{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+  .item.is-dragging{
+    background:#fffdf3;border-color:#e9c86a;
+    box-shadow:0 10px 24px rgba(21,32,51,.16);
+    opacity:.96;
+  }
+  .item.is-dragging .item__num{background:#f6e3ae;color:#7a5b10}
+  .list.is-reordering .item{transition:none}
+  .list.is-reordering{cursor:grabbing}
+
+  .handle{
+    flex:0 0 auto;width:28px;height:28px;padding:0;border:0;border-radius:8px;
+    background:transparent;display:flex;align-items:center;justify-content:center;
+    cursor:grab;touch-action:none;color:#b3bccb;
+  }
+  .handle:hover{background:#eef3fb;color:#8e9aad}
+  .handle:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .handle svg{display:block;width:16px;height:16px;fill:currentColor}
+  .item.is-dragging .handle{cursor:grabbing}
+
+  /* ---------- progress + actions ---------- */
+  .progress{margin-top:22px}
+  .progress__meta{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:12px;color:var(--muted);margin-bottom:7px;
+  }
+  .progress__track{height:8px;border-radius:999px;background:#e7eef8;overflow:hidden}
+  .progress__bar{
+    height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,#41b95c,#2f9e44);
+    transition:width .22s ease;
+  }
+  .actions{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    margin-top:20px;flex-wrap:wrap;
+  }
+  .actions__hint{
+    flex:1 1 220px;font-size:12.5px;color:var(--muted);text-align:center;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .actions__hint svg{flex:0 0 auto;opacity:.75}
+  .btn{
+    font:inherit;font-size:15px;font-weight:600;
+    padding:12px 30px;border-radius:999px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);cursor:pointer;
+    transition:background .15s ease,color .15s ease,box-shadow .15s ease,transform .06s ease;
+  }
+  .btn:hover{background:#f6f9fe}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn--primary{
+    border-color:transparent;background:var(--green);color:#fff;
+    box-shadow:0 8px 20px rgba(47,158,68,.24);
+  }
+  .btn--primary:hover{background:var(--green-dark)}
+  .btn:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+  .btn:disabled:hover{background:#fff}
+
+  /* ---------- result ---------- */
+  .result{
+    background:var(--paper);border:1px solid var(--line);border-radius:22px;
+    box-shadow:0 24px 60px rgba(21,32,51,.09);
+    padding:clamp(24px,4vw,44px);text-align:center;
+  }
+  .result__kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--green-dark);background:#e8f7ec;border-radius:999px;padding:7px 15px;
+    margin-bottom:18px;
+  }
+  .result__title{margin:0 0 14px;font-size:clamp(17px,2.2vw,21px);font-weight:700;color:var(--muted)}
+  .result__score{
+    margin:0 0 8px;font-size:clamp(26px,4.6vw,40px);font-weight:800;
+    letter-spacing:-.01em;font-variant-numeric:tabular-nums;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  .result__note{margin:0 0 26px;font-size:13px;color:var(--muted)}
+  .gauges{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 34px;
+    max-width:640px;margin:0 auto 28px;text-align:left;
+  }
+  .gauge{display:flex;align-items:center;gap:12px}
+  .gauge__label{
+    flex:0 0 auto;width:26px;height:26px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--accent-soft);color:var(--accent-ink);
+    font-size:13px;font-weight:800;
+  }
+  .gauge__track{
+    position:relative;flex:1 1 auto;height:10px;border-radius:999px;
+    background:#edf2f9;overflow:hidden;
+  }
+  .gauge__track::after{
+    content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;
+    background:#c6d3e6;
+  }
+  .gauge__fill{
+    position:absolute;top:0;bottom:0;width:0;border-radius:999px;
+    background:linear-gradient(90deg,#3f7bec,#1f5bd6);
+    transition:width .5s ease,left .5s ease;
+  }
+  .gauge__fill--neg{background:linear-gradient(90deg,#f0a63a,#e08a19)}
+  .gauge__value{
+    flex:0 0 auto;min-width:44px;text-align:right;
+    font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink);
+  }
+  .result__actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:920px){
+    .grid3{grid-template-columns:1fr;gap:14px}
+  }
+  @media (max-width:767px){
+    .app{padding:22px 12px 44px}
+    .wizard{padding:16px 12px 18px;border-radius:18px}
+    .tabs{
+      flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;
+      padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .actions{gap:10px}
+    .actions__hint{order:3;flex-basis:100%}
+    .btn{flex:1 1 0;padding:12px 18px}
+    .gauges{grid-template-columns:1fr}
+    .result{border-radius:18px}
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="head">
+    <span class="head__logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm0 2.2a7.3 7.3 0 0 1 7.1 5.5H4.9A7.3 7.3 0 0 1 12 4.7Zm0 14.6a7.3 7.3 0 0 1-7.1-5.5h14.2a7.3 7.3 0 0 1-7.1 5.5Z" fill="currentColor"/>
+      </svg>
+      DISC
+    </span>
+    <h1 class="head__title">Тестирование DISC</h1>
+    <p class="head__sub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+    <p class="head__lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+  </header>
+
+  <section class="wizard" id="wizard">
+    <div class="tabs" id="tabs" role="tablist" aria-label="Шаги теста">
+      <button class="tab is-active" type="button" role="tab" aria-selected="true" aria-controls="pane0" data-step-btn="0">Первый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane1" data-step-btn="1">Второй</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane2" data-step-btn="2">Третий</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane3" data-step-btn="3">Четвертый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane4" data-step-btn="4">Пятый</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane5" data-step-btn="5">Шестой</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane6" data-step-btn="6">Седьмой</button>
+      <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="pane7" data-step-btn="7">Восьмой</button>
+    </div>
+
+    <div class="panes">
+      <div class="pane is-active" id="pane0" role="tabpanel" aria-label="Первый" data-step-pane="0">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="1">
+              <li class="item" data-type="i">Экспресcивный</li>
+              <li class="item" data-type="c">Покладистый</li>
+              <li class="item" data-type="d">Волевой</li>
+              <li class="item" data-type="s">Осторожный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="2">
+              <li class="item" data-type="d">Пылкий</li>
+              <li class="item" data-type="i">Разговорчивый</li>
+              <li class="item" data-type="s">Добродушный</li>
+              <li class="item" data-type="c">Сдержанный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="3">
+              <li class="item" data-type="i">Любитель приключений</li>
+              <li class="item" data-type="c">Энтузиаст</li>
+              <li class="item" data-type="d">Исполнитель инструкций</li>
+              <li class="item" data-type="s">Верный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" id="pane1" role="tabpanel" aria-label="Второй" data-step-pane="1">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="4">
+              <li class="item" data-type="d">Настойчивый</li>
+              <li class="item" data-type="c">Осторожный</li>
+              <li class="item" data-type="i">Эмоциональный</li>
+              <li class="item" data-type="s">Удовлетворенный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="5">
+              <li class="item" data-type="s">Довольный</li>
+              <li class="item" data-type="d">Нетерпеливый</li>
+              <li class="item" data-type="i">Убедительный</li>
+              <li class="item" data-type="c">Безропотный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="6">
+              <li class="item" data-type="c">Смиренный</li>
+              <li class="item" data-type="s">Умеющий слушать</li>
+              <li class="item" data-type="i">Душа компании</li>
+              <li class="item" data-type="d">Волевой</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" id="pane2" role="tabpanel" aria-label="Третий" data-step-pane="2">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="7">
+              <li class="item" data-type="c">Правильный</li>
+              <li class="item" data-type="d">Первопроходец</li>
+              <li class="item" data-type="s">Спокойный</li>
+              <li class="item" data-type="i">Влиятельный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="8">
+              <li class="item" data-type="c">Почтительный</li>
+              <li class="item" data-type="i">Контактный</li>
+              <li class="item" data-type="d">Агрессивный</li>
+              <li class="item" data-type="s">Мягкий</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="9">
+              <li class="item" data-type="i">Весельчак</li>
+              <li class="item" data-type="s">Покорный</li>
+              <li class="item" data-type="c">Тактичный</li>
+              <li class="item" data-type="d">Соперничающий</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" id="pane3" role="tabpanel" aria-label="Четвертый" data-step-pane="3">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="10">
+              <li class="item" data-type="c">Точный</li>
+              <li class="item" data-type="d">Доминирующий</li>
+              <li class="item" data-type="s">Охотный</li>
+              <li class="item" data-type="i">Притягательный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="11">
+              <li class="item" data-type="i">Уравновешенный</li>
+              <li class="item" data-type="c">Уступчивый</li>
+              <li class="item" data-type="d">Идущий на риск</li>
+              <li class="item" data-type="s">Услужливый</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="12">
+              <li class="item" data-type="c">Осмотрительный</li>
+              <li class="item" data-type="s">Добрососедский</li>
+              <li class="item" data-type="d">Энергичный</li>
+              <li class="item" data-type="i">Убедительный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" id="pane4" role="tabpanel" aria-label="Пятый" data-step-pane="4">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="13">
+              <li class="item" data-type="s">Уравновешенный</li>
+              <li class="item" data-type="i">Мотивирующий</li>
+              <li class="item" data-type="c">Щепетильный</li>
+              <li class="item" data-type="d">Решительный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="14">
+              <li class="item" data-type="i">Уверенный</li>
+              <li class="item" data-type="c">Готовый к сотрудничеству</li>
+              <li class="item" data-type="s">Беззаботный</li>
+              <li class="item" data-type="d">Аргументирующий</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="15">
+              <li class="item" data-type="s">Сдержанный</li>
+              <li class="item" data-type="d">Прямой</li>
+              <li class="item" data-type="c">Строгий</li>
+              <li class="item" data-type="i">Убедительный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" id="pane5" role="tabpanel" aria-label="Шестой" data-step-pane="5">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="16">
+              <li class="item" data-type="c">Застенчивый</li>
+              <li class="item" data-type="d">Требовательный</li>
+              <li class="item" data-type="s">Терпеливый</li>
+              <li class="item" data-type="i">Очаровательный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="17">
+              <li class="item" data-type="d">Неугомонный</li>
+              <li class="item" data-type="c">Дисциплинированный</li>
+              <li class="item" data-type="i">Вдохновляющий</li>
+              <li class="item" data-type="s">Внимательный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="18">
+              <li class="item" data-type="s">Обязательный</li>
+              <li class="item" data-type="i">Оживленный</li>
+              <li class="item" data-type="d">Решительный</li>
+              <li class="item" data-type="c">Точный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" id="pane6" role="tabpanel" aria-label="Седьмой" data-step-pane="6">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="19">
+              <li class="item" data-type="c">Добросовестный</li>
+              <li class="item" data-type="i">Компанейский</li>
+              <li class="item" data-type="s">Добрый</li>
+              <li class="item" data-type="d">Уверенный в себе</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="20">
+              <li class="item" data-type="c">Дипломатичный</li>
+              <li class="item" data-type="d">Отважный</li>
+              <li class="item" data-type="s">Сочувствующий</li>
+              <li class="item" data-type="i">Оптимистичный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="21">
+              <li class="item" data-type="d">Настойчивый</li>
+              <li class="item" data-type="i">Общительный</li>
+              <li class="item" data-type="s">Постоянный</li>
+              <li class="item" data-type="c">Организованный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" id="pane7" role="tabpanel" aria-label="Восьмой" data-step-pane="7">
+        <div class="grid3">
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="22">
+              <li class="item" data-type="c">Соглашающийся</li>
+              <li class="item" data-type="s">Владеющий собой</li>
+              <li class="item" data-type="d">Шутливый</li>
+              <li class="item" data-type="i">Настойчивый</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="23">
+              <li class="item" data-type="i">Обаятельный</li>
+              <li class="item" data-type="d">Позитивный</li>
+              <li class="item" data-type="s">Снисходительный</li>
+              <li class="item" data-type="c">Требовательный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+          <div class="card">
+            <div class="card__title">Я наиболее</div>
+            <ul class="list" data-list="24">
+              <li class="item" data-type="i">Коммуникабельный</li>
+              <li class="item" data-type="d">Смелый</li>
+              <li class="item" data-type="c">Перфекционист</li>
+              <li class="item" data-type="s">Сдержанный</li>
+            </ul>
+            <div class="card__foot">Я наименее</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress">
+      <div class="progress__meta">
+        <span id="stepLabel">Шаг 1 из 8</span>
+        <span>Готово <span id="stepPercent">12%</span></span>
+      </div>
+      <div class="progress__track" role="progressbar" aria-labelledby="stepLabel" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" id="progressTrack">
+        <div class="progress__bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="button" id="btnPrev">Назад</button>
+      <div class="actions__hint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M5 20h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Перетащите вариант, чтобы изменить порядок</span>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNext">Далее</button>
+      <button class="btn btn--primary" type="button" id="btnFinish" hidden>Завершить тест</button>
+    </div>
+  </section>
+
+  <section class="result" id="result" hidden aria-live="polite">
+    <div class="result__kicker">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Тест завершён
+    </div>
+    <h2 class="result__title">Ваш DISC-профиль:</h2>
+    <p class="result__score" id="scoreLine">D:0, I:0, S:0, C:0</p>
+    <p class="result__note">Баллы считаются по первому и последнему месту в каждой из 24 групп.</p>
+
+    <div class="gauges" id="gauges">
+      <div class="gauge" data-gauge="d">
+        <div class="gauge__label">D</div>
+        <div class="gauge__track"><div class="gauge__fill"></div></div>
+        <div class="gauge__value">0</div>
+      </div>
+      <div class="gauge" data-gauge="i">
+        <div class="gauge__label">I</div>
+        <div class="gauge__track"><div class="gauge__fill"></div></div>
+        <div class="gauge__value">0</div>
+      </div>
+      <div class="gauge" data-gauge="s">
+        <div class="gauge__label">S</div>
+        <div class="gauge__track"><div class="gauge__fill"></div></div>
+        <div class="gauge__value">0</div>
+      </div>
+      <div class="gauge" data-gauge="c">
+        <div class="gauge__label">C</div>
+        <div class="gauge__track"><div class="gauge__fill"></div></div>
+        <div class="gauge__value">0</div>
+      </div>
+    </div>
+
+    <div class="result__actions">
+      <button class="btn btn--primary" type="button" id="btnRestart">Пройти ещё раз</button>
+    </div>
+  </section>
+
+  <div id="srStatus" aria-live="polite" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0"></div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var STEP_MAX = 7;
+  var LISTS = 24;
+  var TYPES = ["d", "i", "s", "c"];
+
+  var wizard = document.getElementById("wizard");
+  var resultEl = document.getElementById("result");
+  var tabs = Array.prototype.slice.call(document.querySelectorAll("[data-step-btn]"));
+  var panes = Array.prototype.slice.call(document.querySelectorAll("[data-step-pane]"));
+  var btnPrev = document.getElementById("btnPrev");
+  var btnNext = document.getElementById("btnNext");
+  var btnFinish = document.getElementById("btnFinish");
+  var btnRestart = document.getElementById("btnRestart");
+  var progressBar = document.getElementById("progressBar");
+  var progressTrack = document.getElementById("progressTrack");
+  var stepLabel = document.getElementById("stepLabel");
+  var stepPercent = document.getElementById("stepPercent");
+  var scoreLine = document.getElementById("scoreLine");
+  var gauges = document.getElementById("gauges");
+  var srStatus = document.getElementById("srStatus");
+  var lists = Array.prototype.slice.call(document.querySelectorAll(".list"));
+  var coarse = window.matchMedia ? window.matchMedia("(pointer: coarse)") : { matches: false };
+
+  var HANDLE_SVG =
+    '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">' +
+    '<circle cx="6" cy="3.5" r="1.35"/><circle cx="10" cy="3.5" r="1.35"/>' +
+    '<circle cx="6" cy="8" r="1.35"/><circle cx="10" cy="8" r="1.35"/>' +
+    '<circle cx="6" cy="12.5" r="1.35"/><circle cx="10" cy="12.5" r="1.35"/>' +
+    "</svg>";
+
+  var step = 0;
+  var dnd = null;
+  var initialOrders = [];
+
+  function announce(text) {
+    if (srStatus) srStatus.textContent = text;
+  }
+
+  /* ---------- items: number badge + drag handle ---------- */
+  function updateNumbers(ul) {
+    var items = ul.children;
+    for (var i = 0; i < items.length; i++) {
+      var num = items[i].querySelector(".item__num");
+      if (num) num.textContent = String(i + 1);
+      items[i].setAttribute("aria-posinset", String(i + 1));
+      items[i].setAttribute("aria-setsize", String(items.length));
+    }
+  }
+
+  function buildItemChrome(li) {
+    if (!li.querySelector(".item__num")) {
+      var num = document.createElement("span");
+      num.className = "item__num";
+      num.setAttribute("aria-hidden", "true");
+      li.insertBefore(num, li.firstChild);
+    }
+
+    if (!li.querySelector(".handle")) {
+      var handle = document.createElement("button");
+      handle.type = "button";
+      handle.className = "handle";
+      handle.setAttribute("aria-label", "Изменить порядок: стрелки вверх и вниз");
+      handle.innerHTML = HANDLE_SVG;
+      li.appendChild(handle);
+    }
+  }
+
+  function initLists() {
+    lists.forEach(function (ul) {
+      Array.prototype.forEach.call(ul.children, buildItemChrome);
+      updateNumbers(ul);
+      initialOrders.push(Array.prototype.slice.call(ul.children));
+
+      ul.addEventListener("pointerdown", onPointerDown);
+      ul.addEventListener("keydown", onHandleKeyDown);
+      ul.addEventListener("dragstart", function (e) { e.preventDefault(); });
+    });
+  }
+
+  /* ---------- pointer drag & drop ---------- */
+  function onPointerDown(e) {
+    if (dnd) return;
+    if (typeof e.button === "number" && e.button !== 0) return;
+
+    var ul = e.currentTarget;
+    var li = e.target.closest ? e.target.closest(".item") : null;
+    if (!li || li.parentElement !== ul) return;
+
+    var fromHandle = !!(e.target.closest && e.target.closest(".handle"));
+    if (!fromHandle && coarse.matches) return; // на тач-устройствах тянем только за ручку
+
+    dnd = {
+      ul: ul,
+      li: li,
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      active: false
+    };
+
+    window.addEventListener("pointermove", onPointerMove, { passive: false });
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+    window.addEventListener("blur", onPointerUp);
+
+    try { li.setPointerCapture(e.pointerId); } catch (err) { /* старые браузеры */ }
+
+    if (!fromHandle) e.preventDefault();
+  }
+
+  function onPointerMove(e) {
+    if (!dnd || e.pointerId !== dnd.pointerId) return;
+
+    if (!dnd.active) {
+      var dx = e.clientX - dnd.startX;
+      var dy = e.clientY - dnd.startY;
+      if (Math.sqrt(dx * dx + dy * dy) < 5) return;
+      dnd.active = true;
+      dnd.li.classList.add("is-dragging");
+      dnd.ul.classList.add("is-reordering");
+      dnd.ul.__drag = dnd.li;
+    }
+
+    if (e.cancelable) e.preventDefault();
+
+    var kids = Array.prototype.slice.call(dnd.ul.children);
+    var before = null;
+
+    for (var i = 0; i < kids.length; i++) {
+      var el = kids[i];
+      if (el === dnd.li) continue;
+      var rect = el.getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height / 2) {
+        before = el;
+        break;
+      }
+    }
+
+    if (before) {
+      if (dnd.li !== before && dnd.li.nextElementSibling !== before) {
+        dnd.ul.insertBefore(dnd.li, before);
+        updateNumbers(dnd.ul);
+      }
+    } else if (dnd.ul.lastElementChild !== dnd.li) {
+      dnd.ul.appendChild(dnd.li);
+      updateNumbers(dnd.ul);
+    }
+  }
+
+  function onPointerUp() {
+    if (!dnd) return;
+    var ul = dnd.ul;
+    var li = dnd.li;
+    var pid = dnd.pointerId;
+
+    window.removeEventListener("pointermove", onPointerMove);
+    window.removeEventListener("pointerup", onPointerUp);
+    window.removeEventListener("pointercancel", onPointerUp);
+    window.removeEventListener("blur", onPointerUp);
+
+    try {
+      if (li.hasPointerCapture && li.hasPointerCapture(pid)) li.releasePointerCapture(pid);
+    } catch (err) { /* noop */ }
+
+    li.classList.remove("is-dragging");
+    ul.classList.remove("is-reordering");
+    ul.__drag = null;
+
+    var wasActive = dnd.active;
+    dnd = null;
+    updateNumbers(ul);
+
+    if (wasActive) {
+      announce("Позиция " + (indexOf(li) + 1) + " из " + ul.children.length);
+    }
+  }
+
+  function indexOf(li) {
+    var i = 0;
+    var el = li;
+    while ((el = el.previousElementSibling)) i++;
+    return i;
+  }
+
+  /* ---------- keyboard reordering ---------- */
+  function onHandleKeyDown(e) {
+    var handle = e.target.closest ? e.target.closest(".handle") : null;
+    if (!handle) return;
+
+    var li = handle.parentElement;
+    var ul = li.parentElement;
+    var moved = false;
+
+    if (e.key === "ArrowUp" && li.previousElementSibling) {
+      ul.insertBefore(li, li.previousElementSibling);
+      moved = true;
+    } else if (e.key === "ArrowDown" && li.nextElementSibling) {
+      ul.insertBefore(li.nextElementSibling, li);
+      moved = true;
+    } else if (e.key === "Home" && li.previousElementSibling) {
+      ul.insertBefore(li, ul.firstElementChild);
+      moved = true;
+    } else if (e.key === "End" && li.nextElementSibling) {
+      ul.appendChild(li);
+      moved = true;
+    }
+
+    if (!moved) return;
+    e.preventDefault();
+    updateNumbers(ul);
+    handle.focus({ preventScroll: true });
+    announce("Позиция " + (indexOf(li) + 1) + " из " + ul.children.length);
+  }
+
+  /* ---------- steps ---------- */
+  function render() {
+    for (var i = 0; i < tabs.length; i++) {
+      var isActive = Number(tabs[i].getAttribute("data-step-btn")) === step;
+      tabs[i].classList.toggle("is-active", isActive);
+      tabs[i].setAttribute("aria-selected", isActive ? "true" : "false");
+      tabs[i].setAttribute("tabindex", isActive ? "0" : "-1");
+    }
+
+    for (var j = 0; j < panes.length; j++) {
+      panes[j].classList.toggle("is-active", Number(panes[j].getAttribute("data-step-pane")) === step);
+    }
+
+    btnPrev.disabled = step === 0;
+    btnNext.hidden = step === STEP_MAX;
+    btnFinish.hidden = step !== STEP_MAX;
+
+    var pct = ((step + 1) / 8) * 100;
+    progressBar.style.width = pct + "%";
+    progressTrack.setAttribute("aria-valuenow", String(step + 1));
+    stepLabel.textContent = "Шаг " + (step + 1) + " из 8";
+    stepPercent.textContent = Math.round(pct) + "%";
+
+    var activeTab = tabs[step];
+    if (activeTab && coarse.matches && activeTab.scrollIntoView) {
+      activeTab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }
+
+  function setStep(next) {
+    var target = Math.max(0, Math.min(STEP_MAX, next));
+    var changed = target !== step;
+    step = target;
+    render();
+
+    if (changed && wizard.getBoundingClientRect().top < 0) {
+      wizard.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  /* ---------- scoring (как в оригинале: позиция 0 — «наиболее», позиция 3 — «наименее») ---------- */
+  function collectPayload() {
+    var payload = [];
+    for (var l = 0; l < lists.length; l++) {
+      var items = lists[l].children;
+      for (var pos = 0; pos < items.length; pos++) {
+        payload.push({
+          list: l,
+          pos: pos,
+          type: items[pos].getAttribute("data-type")
+        });
+      }
+    }
+    return payload;
+  }
+
+  function score(payload) {
+    var maj = [];
+    var min = [];
+
+    for (var i = 0; i < payload.length; i++) {
+      if (payload[i].pos === 0) maj.push(payload[i].type);
+      if (payload[i].pos === 3) min.push(payload[i].type);
+    }
+
+    function count(arr, ch) {
+      var n = 0;
+      for (var k = 0; k < arr.length; k++) if (arr[k] === ch) n++;
+      return n;
+    }
+
+    return {
+      d: count(maj, "d") - count(min, "d"),
+      i: count(maj, "i") - count(min, "i"),
+      s: count(maj, "s") - count(min, "s"),
+      c: count(maj, "c") - count(min, "c")
+    };
+  }
+
+  function renderResult(res) {
+    var parts = [];
+    for (var i = 0; i < TYPES.length; i++) {
+      parts.push(TYPES[i].toUpperCase() + ":" + res[TYPES[i]]);
+    }
+    scoreLine.textContent = parts.join(", ");
+
+    for (var j = 0; j < TYPES.length; j++) {
+      var key = TYPES[j];
+      var row = gauges.querySelector('[data-gauge="' + key + '"]');
+      if (!row) continue;
+      var value = res[key];
+      var fill = row.querySelector(".gauge__fill");
+      var valEl = row.querySelector(".gauge__value");
+      var half = (Math.abs(value) / LISTS) * 50;
+      fill.style.width = half + "%";
+      fill.style.left = value >= 0 ? "50%" : 50 - half + "%";
+      fill.classList.toggle("gauge__fill--neg", value < 0);
+      valEl.textContent = String(value);
+    }
+  }
+
+  function finishTest() {
+    renderResult(score(collectPayload()));
+    wizard.hidden = true;
+    resultEl.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    btnRestart.focus({ preventScroll: true });
+  }
+
+  function restartTest() {
+    for (var l = 0; l < lists.length; l++) {
+      var ul = lists[l];
+      while (ul.firstChild) ul.removeChild(ul.firstChild);
+      var order = initialOrders[l];
+      for (var i = 0; i < order.length; i++) ul.appendChild(order[i]);
+      updateNumbers(ul);
+    }
+    step = 0;
+    render();
+    resultEl.hidden = true;
+    wizard.hidden = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    tabs[0].focus({ preventScroll: true });
+  }
+
+  /* ---------- wiring ---------- */
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      setStep(Number(tab.getAttribute("data-step-btn")));
+    });
+  });
+
+  document.getElementById("tabs").addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var dir = e.key === "ArrowRight" ? 1 : -1;
+    var next = (step + dir + tabs.length) % tabs.length;
+    setStep(next);
+    tabs[next].focus({ preventScroll: true });
+    e.preventDefault();
+  });
+
+  btnPrev.addEventListener("click", function () { setStep(step - 1); });
+  btnNext.addEventListener("click", function () { setStep(step + 1); });
+  btnFinish.addEventListener("click", finishTest);
+  btnRestart.addEventListener("click", restartTest);
+
+  initLists();
+  render();
+})();
+</script>
+</body>
+</html>

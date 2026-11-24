@@ -27,6 +27,21 @@ except Exception:
 
 ROOT = Path(__file__).resolve().parents[1]
 
+def _shot_file(run_dir, name):
+    """Скриншот прогона как отдельный файл в reports/img/ (не base64-встройка:
+    411 картинок раздували HTML до 62 МБ). Возвращает относительный src или None."""
+    import shutil
+    p = Path(run_dir) / "screenshots" / name
+    if not p.is_file():
+        return None
+    img_dir = ROOT / "reports" / "img"
+    img_dir.mkdir(parents=True, exist_ok=True)
+    slug = re.sub(r"[^A-Za-z0-9._-]+", "_", f"{run_dir.parent.parent.name}_{run_dir.name}_{name}")
+    dst = img_dir / slug
+    if not dst.exists():
+        shutil.copy2(p, dst)
+    return f"img/{slug}"
+
 
 def load(run, name):
     p = Path(run) / name
@@ -568,9 +583,9 @@ def build_original_section():
     for name, cap in (("start.png", "старт — лендинг"), ("step.png", "вопрос (шаг 1/8)"),
                       ("result.png", "результат — отдельная страница /disc/result/")):
         p = run / "screenshots" / name
-        if p.is_file():
-            b64 = base64.b64encode(p.read_bytes()).decode()
-            shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap}</figcaption></figure>')
+        src = _shot_file(run, name)
+        if src:
+            shots.append(f'<figure><img class="shot" src="{src}" alt="{cap}" loading="lazy"><figcaption>{cap}</figcaption></figure>')
     pt = load(run, "playthrough.json")
     chk = load(run, "check.json")
     uxj = (json.loads((run / "judge-ux.json").read_text(encoding="utf-8")).get("verdict") or {}) if (run / "judge-ux.json").is_file() else {}
@@ -605,31 +620,73 @@ def build_original_section():
         rows.append(f"<tr><td><code>{fname}</code></td><td>{_fmt_size(meta.get('bytes', 0))}</td><td>{html_mod.escape(str(meta.get('origin', '')))[:80]}</td></tr>")
     # сверка типов оригинала с методикой DISC (Т. Эриксон, «Кругом одни идиоты»)
     qs = json.loads((ROOT / "test-assignment" / "reference" / "questions.json").read_text(encoding="utf-8"))["questions"]
-    pos_count = {}
-    for q in qs:
-        for it in q["items"]:
-            pos_count[it["text"]] = pos_count.get(it["text"], 0) + 1
-    # сверка по книге-первоисточнику (английское издание, PDF/EPUB)
-    book = [  # (слово, тип в тесте, по книге, обоснование)
-        ("Энтузиаст", "c", "i", "жёлтые: «They're enthusiastic, excited» — открывающий пассаж гл. 5 «Yellow Behavior»"),
-        ("Шутливый", "d", "i", "жёлтые: «entertaining jokes», «They joke around a lot»; красным шутливость не приписывается нигде"),
-        ("Позитивный", "d", "i", "жёлтые: «their incurably positive outlook on life»"),
-        ("Исполнитель инструкций", "d", "c", "синие: «precisely follow instructions to the letter without questioning», «reads the instructions twice»; красные «gets going even before he's heard the instructions», жёлтые «put away the instruction manual»"),
-        ("Соглашающийся", "c", "s", "зелёный «out of fear of conflict, says yes but means no»; синие, напротив, «need serious proof»"),
-        ("Безропотный", "c", "s", "покорность — зелёная: «help others, with no concern for personal gain», «Team comes before self»; в тесте Покорный и Услужливый — в S"),
-        ("Уступчивый", "c", "s", "уступчивость — зелёная («usually strive to fit in»); анти-пример: красный «determination is usually unyielding»"),
-        ("Покладистый", "c", "s", "зелёные «Calm, leisurely, and easygoing»; в тесте Мягкий — в S"),
-        ("Готовый к сотрудничеству", "c", "s", "зелёные «are also pronounced team players», «Team comes before self»"),
-        ("Дипломатичный", "c", "s?", "прямой атрибуции в книге нет; синим приписывается обратное: «deliver their observations in an insensitive fashion», красным — «no problem being blunt»"),
-        ("Уравновешенный", "i", "s/c", "«Greens are the most balanced», синие «very calm and balanced»; в тесте слово стоит в I и в S — расхождение только жёлтая позиция"),
-        ("Настойчивый", "i", "d", "красный респондент книги: «I'm a little too pushy… I push people»; красные «perceived as unyielding, impatient, aggressive»; в тесте слово стоит и в D, и в I"),
+    book = [  # (слово, типы книги с прямым/косвенным атрибутом, подпись «по книге», обоснование)
+        ("Энтузиаст", {"i"}, "i", "жёлтые: «They're enthusiastic, excited» — открывающий пассаж гл. 5 «Yellow Behavior»"),
+        ("Шутливый", {"i"}, "i", "жёлтые: «entertaining jokes», «They joke around a lot»; красным шутливость не приписывается нигде"),
+        ("Позитивный", {"i"}, "i", "жёлтые: «their incurably positive outlook on life»"),
+        ("Исполнитель инструкций", {"c"}, "c", "синие: «precisely follow instructions to the letter without questioning», «reads the instructions twice»; красные «gets going even before he's heard the instructions», жёлтые «put away the instruction manual»"),
+        ("Соглашающийся", {"s"}, "s", "зелёный «out of fear of conflict, says yes but means no»; синие, напротив, «need serious proof»"),
+        ("Безропотный", {"s"}, "s", "покорность — зелёная: «help others, with no concern for personal gain», «Team comes before self»; в тесте Покорный и Услужливый — в S"),
+        ("Уступчивый", {"s"}, "s", "уступчивость — зелёная («usually strive to fit in»); анти-пример: красный «determination is usually unyielding»"),
+        ("Покладистый", {"s"}, "s", "зелёные «Calm, leisurely, and easygoing»; в тесте Мягкий — в S"),
+        ("Готовый к сотрудничеству", {"s"}, "s", "зелёные «are also pronounced team players», «Team comes before self»"),
+        ("Дипломатичный", set(), "s?", "прямой атрибуции в книге нет; синим приписывается обратное: «deliver their observations in an insensitive fashion», красным — «no problem being blunt»"),
+        ("Беззаботный", {"i"}, "i?", "прямого слова «carefree» в книге нет, но беззаботность — жёлтая: «easygoing and happy-go-lucky» (глава «Yellow Behavior»), «Yellows are distracted and careless»; зелёным беззаботность не приписывается"),
+        ("Аргументирующий", {"c"}, "c", "синие: «Logical and rational thinking is critical to a Blue», «they like to say they use rational arguments when making decisions», «Blues argue that if they're going to do something, they must do it correctly»; красным приписывается спор как конфликтность — «perceive Red behavior as belligerent… they like to argue and debate»"),
+        ("Осторожный", {"c"}, "c", "синие: «They're generally very cautious. They often think safety first. Where a Red or Yellow would take a wild chance, a Blue will hold off and consider everything one more time» (глава «Blue Behavior»); зелёным осторожность в книге не приписывается"),
+        ("Владеющий собой", {"c"}, "c", "синие: «a Blue's voice is restrained and subdued», «Their impression tends to be controlled» (глава «Blue Behavior»), «they're very calm and balanced»; зелёным самовладение в книге не приписывается"),
+        ("Уравновешенный", {"s", "c"}, "s/c", "«Greens are the most balanced», синие «very calm and balanced»; в тесте слово стоит в I и в S — жёлтая позиция расходится"),
+        ("Настойчивый", {"d"}, "d", "красный респондент книги: «I'm a little too pushy… I push people»; красные «perceived as unyielding, impatient, aggressive»; в тесте слово стоит и в D, и в I — синяя позиция расходится"),
     ]
-    n_pos = sum(pos_count.get(w, 0) for w, *_ in book)
+    # шкала самооценки русского издания: какими прилагательными цвет описывает сам себя
+    self_view = {}
+    _sa = ROOT / "test-assignment" / "reference" / "self-assessment.json"
+    if _sa.is_file():
+        self_view = json.loads(_sa.read_text(encoding="utf-8"))
+    def _sv_colors(word, test_ty):
+        """Цвета шкалы самооценки, содержащие слово (стем-сравнение). Пусто — слова нет в шкале."""
+        def st(w):
+            wl = w.lower().replace("ё", "е")
+            for suf in ("ый", "ой", "ий", "ая", "ое", "ые", "ие", "ые", "ей"):
+                if wl.endswith(suf) and len(wl) - len(suf) >= 4:
+                    return wl[:len(wl) - len(suf)]
+            return wl[:len(wl) - 2] if len(wl) > 6 else wl
+        s = st(word)
+        out = []
+        for c, items in self_view.items():
+            for itw in items:
+                iw = st(itw)
+                if iw == s or (len(s) >= 5 and iw.startswith(s[:6])) or (len(iw) >= 5 and s.startswith(iw[:6])):
+                    out.append(c)
+                    break
+        return out
+    # где в снимке Stratoplan лежит каждая пара: page.html, <li class="disc-item" data-type="…">слово</li>
+    pos_stat = {}   # слово → [всего позиций, расходящихся]
+    types_in_test = {}  # слово → типы, встречающиеся в тесте
+    for qi, q in enumerate(qs, 1):
+        for slot, it in enumerate(q["items"], 1):
+            w = it["text"]
+            b = next((b for b in book if b[0] == w), None)
+            if not b:
+                continue
+            ty = it["type"].strip().lower()
+            div = ty not in b[1]
+            st = pos_stat.setdefault(w, [0, 0])
+            st[0] += 1
+            st[1] += int(div)
+            types_in_test.setdefault(w, set()).add(ty)
+    n_pos = sum(s[1] for s in pos_stat.values())   # расходящиеся позиции
+    n_all = sum(s[0] for s in pos_stat.values())   # все позиции этих слов
+    def _sv_cell(w, test_ty):
+        cols = _sv_colors(w, test_ty)
+        if not cols:
+            return "<td class='st muted' title='слова нет в шкале самооценки русского издания'>—</td>"
+        cells = "".join(f"<span class='st {'ok' if c.lower() == test_ty.lower() else 'fail'}' style='padding:1px 6px'>{c}</span>" for c in cols)
+        return f"<td>{cells}</td>"
     brow = "".join(
-        f"<tr><td><code>{html_mod.escape(w)}</code></td><td class='st fail'>{ty.upper()}</td>"
-        f"<td class='st pass'>{book_ty.upper()}</td><td>{html_mod.escape(why)}</td>"
-        f"<td>{pos_count.get(w, '?')}</td></tr>"
-        for w, ty, book_ty, why in book)
+        f"<tr><td><code>{html_mod.escape(w)}</code></td><td class='st fail'>{'/'.join(sorted(x.upper() for x in types_in_test.get(w, set()))) or '—'}</td>"
+        f"<td class='st pass'>{bty.upper()}</td>{_sv_cell(w, '/'.join(sorted(x.lower() for x in types_in_test.get(w, set()))))}<td>{html_mod.escape(why)}</td></tr>"
+        for w, _a, bty, why in book)
     # агрегат метрики «заметил–исправил–сообщил» по всем копиям
     agg = {}
     for mf in sorted(p for p in ROOT.glob("models/*/test-assignment/run-*") if "_original" not in str(p)):
@@ -697,16 +754,26 @@ formdesigner для сбора email. Задание копиям требует
 Publishing Group, EN) и PDF (284 с.).</p>
 <p>Цветовая модель книги: красный D, жёлтый I, зелёный S, синий C. Цитаты ниже — из
 английского издания, границы цветовых глав — по маркерам «Conclusions on … Behavior».</p>
-<p><b>В тесте Stratoplan {n_pos} позиций из 96 ({n_pos*100//96}%)</b> расходятся с признаками книги.
-Расхождения не рассеяны случайно — девять из пятнадцати ложатся в две тематические группы:
-слова веселья и позитива (Энтузиаст, Шутливый, Позитивный) стоят в D/C, хотя по книге это
-жёлтое I; слова покорности и сотрудничества (Соглашающийся, Безропотный, Уступчивый,
-Покладистый, Готовый к сотрудничеству, Дипломатичный) стоят в C, хотя по книге это зелёное S.
-Остальные шесть — точечные случаи (Исполнитель инструкций, Уравновешенный, Настойчивый).</p>
+<p><b>В тесте Stratoplan {n_pos} позиций из 96 ({n_pos*100//96}%)</b> расходятся с признаками книги
+(у слов «Настойчивый» и «Уравновешенный» по две позиции в тесте — вторые позиции книге
+соответствуют и расходящимися не считаются). Расхождения не рассеяны случайно — девять из
+шестнадцати ложатся в две тематические группы: слова веселья и позитива (Энтузиаст, Шутливый,
+Позитивный) стоят в D/C, хотя по книге это жёлтое I; слова покорности и сотрудничества
+(Соглашающийся, Безропотный, Уступчивый, Покладистый, Готовый к сотрудничеству, Дипломатичный)
+стоят в C, хотя по книге это зелёное S. Остальные семь — точечные случаи (Исполнитель
+инструкций, Уравновешенный, Настойчивый, Владеющий собой, Осторожный, Беззаботный — по
+косвенной жёлтой атрибуции, Аргументирующий — синяя рациональная аргументация).</p>
+<p>Каждая пара «слово → тип» — это разметка страницы Stratoplan
+(<a href="https://stratoplan-school.com/disc/">stratoplan-school.com/disc/</a>):
+<code>&lt;li class="disc-item" data-type="…"&gt;слово&lt;/li&gt;</code> — таких блоков 96.
+Логика подсчёта берёт тип из этого атрибута: <code>disc_patched.js</code>, строка 360 —
+<code>li.getAttribute("data-type")</code>. Колонка «самооценка» — сверка со шкалой
+самооценки русского издания: какими прилагательными каждый цвет описывает сам себя
+(48 слов). Прочерк — слова нет в шкале: тестовые списки шире книжной таблицы.</p>
 <p>Причина неизвестна: это может быть сознательная трактовка авторов теста («как вас
 видят»), а может и небрежность списков. <b>Эталон для копий остаётся оригинал
 «как есть»</b> — судья по-прежнему карает самовольную правку типов.</p>
-<table><tr><th>слово</th><th>тип в тесте</th><th>по книге</th><th>обоснование</th><th>позиций</th></tr>{brow}</table>
+<table><tr><th>слово</th><th>тип в тесте</th><th>по книге</th><th><span title="шкала самооценки русского издания: какими прилагательными цвет описывает сам себя (48 слов)">самооценка из книги</span></th><th>обоснование</th></tr>{brow}</table>
 <div class="owner-note">
 <b>Заметка владельца проекта.</b> Гипотеза: смещение «покорных» слов в синий тип
 может быть не небрежностью, а психологическим приёмом — прохождение теста настраивает
@@ -810,14 +877,19 @@ def build_report_html():
             has_app = (run / "index.html").is_file()
             raw = []
             for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
-                p = run / "screenshots" / name
-                if p.is_file():
-                    raw.append((cap, base64.b64encode(p.read_bytes()).decode()))
+                sp = run / "screenshots" / name
+                if sp.is_file():
+                    raw.append((cap, name, sp.read_bytes()))
             # дедупликация: если все кадры одинаковые — приложение визуально не менялось
-            if len(raw) > 1 and len({b for _, b in raw}) == 1:
-                shots = [f'<figure><img class="shot" src="data:image/png;base64,{raw[0][1]}" alt="{raw[0][0]}"><figcaption>{raw[0][0]} — вид не менялся за весь тест (приложение не отрисовывает шаги)</figcaption></figure>']
+            if len(raw) > 1 and len({b for _, _, b in raw}) == 1:
+                src = _shot_file(run, raw[0][1])
+                shots = [f'<figure><img class="shot" src="{src}" alt="{raw[0][0]}" loading="lazy"><figcaption>{raw[0][0]} — вид не менялся за весь тест (приложение не отрисовывает шаги)</figcaption></figure>'] if src else []
             else:
-                shots = [f'<figure><img class="shot" src="data:image/png;base64,{b}" alt="{cap}"><figcaption>{cap}</figcaption></figure>' for cap, b in raw]
+                shots = []
+                for cap, name, _b in raw:
+                    src = _shot_file(run, name)
+                    if src:
+                        shots.append(f'<figure><img class="shot" src="{src}" alt="{cap}" loading="lazy"><figcaption>{cap}</figcaption></figure>')
             uxf = run / "judge-ux.json"
             ux_score = (json.loads(uxf.read_text(encoding="utf-8")).get("verdict") or {}).get("score") if uxf.is_file() else None
             ptf = run / "playthrough.json"
@@ -1073,6 +1145,9 @@ th{{background:#eef0f4}}
 .avg{{font-size:13px;font-weight:normal;color:#666;background:#e8eaed;padding:2px 10px;border-radius:12px;vertical-align:middle;margin-left:8px}}
 .gcard{{background:#fff;border:1px solid #d5d8de;border-radius:12px;padding:16px 20px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}}
 .gcard.hi{{border-left:4px solid #22c55e}} .gcard.mid{{border-left:4px solid #f59e0b}} .gcard.lo{{border-left:4px solid #ef4444}}
+.factnote{{border-left:3px solid var(--acc,#315f9e);background:#f4f7fb;padding:14px 18px;margin:18px 0;font-size:14.5px;line-height:1.55;border-radius:0 8px 8px 0}}
+.factnote p{{margin:0 0 10px}}
+.factnote p:last-child{{margin-bottom:0}}
 .final-note{{font-size:13px;color:#7c2d12;background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:6px 10px;margin:8px 0 0}}
 .gmeta{{font-size:12px;color:#6b7280;margin:6px 0 0;font-variant-numeric:tabular-nums}}
 .ganno{{font-size:11px;margin-top:5px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}}
@@ -1119,7 +1194,7 @@ figure{{margin:0}} figcaption{{font-size:11px;color:#888;text-align:center}}
 <h1>disc: сводный отчёт — тестирование копирования DISC-теста</h1>
 <p class="small">Обновлено 2026-11-18. Полная методика: reports/METHOD.md · конвенции: AGENTS.md.
 Все скриншоты кликабельны (1:1).</p>
-<div class="toc"><a href="#intro">Введение</a><a href="#method">Методика</a><a href="#matrix">Матрица моделей</a><a href="#forecast">Прогноз</a><a href="#original">Исходный проект</a><a href="#runs">Прогоны и результаты</a><a href="#limits">Ограничения и решения</a><a href="#next">Что дальше</a></div>
+<div class="toc"><a href="#intro">Введение</a><a href="#method">Методика</a><a href="#matrix">Матрица моделей</a><a href="#forecast">Корреляция</a><a href="#original">Исходный проект</a><a href="#runs">Прогоны и результаты</a><a href="#limits">Ограничения и решения</a><a href="#next">Что дальше</a></div>
 
 <h2 id="intro">0. Введение</h2>
 <p>Задание выглядит обманчиво простым: «скопируй тест с сайта». На деле это многослойная
@@ -1266,19 +1341,22 @@ impl (ограничения и чистота кода). Сумма 0–16. И�
 <h2 id="matrix">2. Матрица моделей</h2>
 <table><tr><th>модель</th><th>уровни мышления</th><th>прогонов</th><th>машиный итог</th></tr>{matrix_rows}</table>
 
-<h2 id="forecast">3. Прогноз (предрегистрация 2026-11-14, reports/FORECAST.md)</h2>
-<p>Вопрос: переносится ли рейтинг карты знаний (Всего ru, вопросник PHP) на агентную задачу?</p>
+<h2 id="forecast">3. Есть ли корреляция с картой знаний</h2>
+<p>Цель серии — проверить, переносится ли рейтинг <a href="https://prikotov.pro/raw/knowledge-map-20261111/report.html">карты знаний PHP</a> (296 вопросов, русские серии) на фронтенд-задачу — копирование живого DISC-теста. Особый вопрос — колонка «Фронт.» в таблице «Метрики серий» карты: предсказывают ли знания по фронтенд-темам результат на фронтенд-задаче. Для этого 14 ноября, до первого прогона, я записал прогноз расстановки локальных моделей (<a href="https://github.com/prikotov/disc-benchmark/blob/main/reports/FORECAST.md">FORECAST.md в репозитории</a>): сценарий A — слепой перенос рейтинга карты, сценарий B (основной) — рейтинг с поправками на агентные треки моделей.</p>
 <table><tr><th>место</th><th>прогноз A «слепой перенос рейтинга»</th><th>прогноз B «карта + агентные поправки» (основной)</th></tr>
 <tr><td>1</td><td>huihui (low/medium)</td><td><b>huihui (low)</b></td></tr>
 <tr><td>2</td><td>orca (on)</td><td><b>qwen3.8 (low)</b></td></tr>
 <tr><td>3</td><td>qwen3.8 (low/medium)</td><td><b>orca (on)</b></td></tr>
 <tr><td>4</td><td>ornith (on)</td><td><b>muse-glimmer (high)</b> — вне карты</td></tr>
-<tr><td>5</td><td>ornith (on)</td><td><b>ornith (on)</b> — карта 88.6, агентный трек провальный</td></tr>
+<tr><td>5</td><td>bonsai (low)</td><td><b>ornith (on)</b> — карта 88.6, агентный трек провальный</td></tr>
 <tr><td>6</td><td>—</td><td><b>gemma4-26b (on)</b> — вне карты, бимодальность</td></tr>
 <tr><td>7</td><td>—</td><td><b>bonsai (low/off)</b> — карта 87.0, агентный трек — дно (ключевой кейс)</td></tr>
 </table>
-<p class="small">Проверка после серии: Spearman рейтинга «Всего»/«Глубины» с фактическим итогом,
-совпадение топ-1, кейс bonsai.</p>
+<div class="factnote"><b>Факт — серия закрыта 18 ноября 2026.</b>
+<p>В карте знаний и в этой серии пересеклись 10 моделей: пять локальных из матрицы, негатив-контроль gemma4:e2b и четыре облачные.</p>
+<p>Ранговая корреляция (Спирмен) между картой и фактическим средним баллом судьи: «Всего ru» — <b>0.97</b>, колонка «Фронт.» — <b>0.95</b>, «Глубина» (редкие знания L9–L10) — 0.48. Порог значимости при n=10 — 0.65: рейтинг карты и его фронтенд-колонка предсказывают результат значимо, «Глубина» — нет (гипотеза первой волны о преимуществе «Глубины» не подтвердилась).</p>
+<p>Верх и низ таблицы совпали: Haiku 5.5, MiMo и DeepSeek сверху, gemma4:e2b внизу. Расхождения — в середине: huihui с самым низким «Всего» локальной тройки (81.7) — лучшая локальная в задаче (20/20); ornith при «Фронт.» 82.2 собрал работающее приложение в 0–1 прогонах из 5 — знания есть, сборки нет.</p>
+<p>Итог: карту знаний можно использовать как первичный фильтр при подборе модели под фронтенд-задачу, финальный отбор — только агентный прогон.</p></div>
 
 {orig_html}
 <h2 id="runs">5. Прогоны и результаты</h2>
@@ -1426,10 +1504,9 @@ def html_report(runs):
                  if jd else "судья: не выполнялся")
         shots = []
         for name, cap in (("start.png", "старт"), ("step.png", "вопрос"), ("result.png", "результат")):
-            p = Path(run) / "screenshots" / name
-            if p.is_file():
-                b64 = base64.b64encode(p.read_bytes()).decode()
-                shots.append(f'<figure><img class="shot" src="data:image/png;base64,{b64}" alt="{cap}"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
+            src = _shot_file(Path(run), name)
+            if src:
+                shots.append(f'<figure><img class="shot" src="{src}" alt="{cap}" loading="lazy"><figcaption>{cap} (клик — 1:1)</figcaption></figure>')
         cards.append(f"""
 <div class="card">
   <h3>{r['model']} · think {r['thinking']} · <span class="run">{r['run']}</span></h3>

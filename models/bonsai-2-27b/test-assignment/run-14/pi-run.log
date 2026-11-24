@@ -1,0 +1,29 @@
+The `index.html` file is complete and all checks pass. Here's a summary of what I built:
+
+**`index.html`** — a self-contained, 319-line, 18.9KB single-file copy of the DISC test:
+
+**Structure:**
+- **Hero section** with "Пройти тест DISC" button (matches the original landing page)
+- **8-step wizard modal** with tabs (Первый through Восьмой)
+- **3 cards per step**, 4 draggable items per card, 96 total items
+- **All 24 data-types** (d/i/s/c) with exact labels from the original page
+
+**Features:**
+- HTML5 drag-and-drop for reordering items within each card
+- Click-to-swap fallback (click an item to move it up one position)
+- Progress bar, back/next navigation, and step tabs
+- **Scoring**: position-based (3/2/1/0 points) summed by type across all steps — total per card = 6, per step = 18, per test = 144
+- Results displayed in-app as `D:X, I:X, S:X, C:X` with colored cards
+- Copy-to-clipboard for the result code
+- Close on Esc, click overlay, or "Готово" button
+- **Fully offline** — no external URLs, no network calls, no CDN dependencies
+- All styles inline in `<style>` block, all logic in a single inline `<script>` block
+- Responsive (media queries for mobile)
+
+**Verified:**
+- 96 items, 24 of each type (d/i/s/c)
+- All labels match the original `stratoplan-school.com/disc/` page
+- JS syntax valid (passes `new Function()` compilation)
+- Scoring math correct (each step sums to 18, total 144)
+- No external HTTP/HTTPS URLs
+- All DOM element IDs referenced in JS exist in the HTML

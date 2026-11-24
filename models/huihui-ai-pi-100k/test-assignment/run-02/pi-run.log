@@ -1,0 +1,23 @@
+Done. The self-contained `index.html` is built and verified in a real browser (Chrome headless, `file://`).
+
+**`/tmp/disc-pi-adqe3o3g/run/index.html`** — 614 lines, 32 KB, fully offline (0 external references, no CDN/fonts/images).
+
+## What it does
+- **Self-contained single file** — all CSS + JS inline, no fetches, works from `file://`.
+- **Russian UI, inline SVG icons** (nav arrows, grip handle, trophy/check marks, type chips).
+- **Step wizard** identical to the original: 8 шага (Первый…Восьмой), each with 3 cards × 4 items. Progress bar + step indicator + "Назад/Далее/Завершить".
+- **Drag-and-drop ranking** — pointer-based, works with **mouse (drag anywhere on item)** and **touch (drag the ⋮⋮ handle)**. No library; reorders within each card.
+- **No email step / no redirect** — finish computes the score and shows it in the same app.
+
+## Scoring (matches the original exactly)
+Per card list: position 0 («Я наиболее») = **+1** to that letter, position 3 («Я наименее») = **−1**. Summed across all 24 lists. Result shown as `D: n · I: n · S: n · C: n`, plus the dominant type (highest score, tie-break D>I>S>C) with the decoded type descriptions and a "Пройти ещё раз" reset.
+
+## Verified
+- JS syntax OK; data balanced: 24 cards, each exactly one of D/I/S/C.
+- Headless browser: deterministic run (`all D top, all C bottom`) → **D: 24 · I: 0 · S: 0 · C: −24**, dominant D ✔
+- Synthetic pointer-drag moved the top item to the bottom (`i,c,d,s` → `c,d,s,i`) ✔
+- Finish → result screen renders; restart/again buttons work ✔
+
+Targets Chrome/Firefox/Safari (standard HTML, CSS Grid/flex, pointer events — no vendor prefixes needed).
+
+Open it: `file:///tmp/disc-pi-adqe3o3g/run/index.html`

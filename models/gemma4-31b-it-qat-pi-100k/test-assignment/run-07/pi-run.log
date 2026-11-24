@@ -1,0 +1,19 @@
+I have created a standalone, single-file HTML copy of the DISC test.
+
+### Implementation Details:
+- **Data Extraction**: I extracted all 24 question sets and their corresponding DISC types (D, I, S, C) directly from the source HTML.
+- **Functionality**:
+    - **Step-by-Step Flow**: The test is divided into steps (3 question sets per page) to ensure a clean user experience.
+    - **Drag-and-Drop**: Implemented a native HTML5 drag-and-drop interface allowing users to rank adjectives from "Most" (top) to "Least" (bottom).
+    - **Scoring Logic**: Implemented the standard DISC forced-choice algorithm where the top-ranked item increments the "Most" tally and the bottom-ranked item increments the "Least" tally for their respective types. The final score for each dimension is calculated as `Most - Least`.
+- **Constraints**:
+    - **No Backend**: The entire application runs client-side.
+    - **No External Requests**: All CSS and JS are inlined. No external libraries (like jQuery or SortableJS) were used; it relies on vanilla JavaScript.
+    - **Offline Compatible**: The file works perfectly via `file://` protocol.
+    - **UI/UX**: The interface is responsive, uses a modern professional color palette, and is entirely in Russian.
+
+The final solution is contained in `index.html`.
+
+```bash
+ls -l index.html
+```

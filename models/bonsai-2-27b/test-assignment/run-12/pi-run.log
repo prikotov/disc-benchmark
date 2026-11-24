@@ -1,0 +1,20 @@
+The deliverable is complete and fully verified. Here's the final state:
+
+**Deliverable:** `/home/dp/MyProjects/disc/.tmpwork/disc-pi-g6pon0a9/run/index.html` (51 KB, self-contained, works offline via `file://`)
+
+**All checks pass:**
+- `check.py` — **PASSED**: 0 external refs, 84/84 adjectives, 96/96 type-pairs, headless Chrome smoke with 0 uncaught errors
+- `playthrough.mjs` — `flow_ok: true`, `displayed_match: true` (d:5, i:2, s:−3, c:−4), `ux_score: 50` (**maximum possible**), 0 console errors
+- Real-mouse drag (24 questions) — **24/24** correct reorders, displayed scores match expected
+- Simulated touch (coarse pointer) — **5/5** with and without matchMedia patch
+- JS syntax OK
+
+**Key implementation decisions:**
+- Single file: inline `<style>`, inline `<script>`, inline SVG icons — no SortableJS CDN, no external requests
+- All 96 adjectives match the reference **character-for-character**, including the quirk "Экспрес**c**ивный" (Latin lowercase `c`)
+- Scoring preserved: `score = count(at pos 0) − count(at pos 3)` per type; shown in a results modal in-app (no email collection, no redirect)
+- **Drag interaction** (the main bug I fixed): whole-item pointer-based drag for **all** pointer types, with `touch-action: none` on `.disc-item` to prevent scroll hijack. The handle is purely decorative (`pointer-events: none`). The original `disc-coarse` handle-only path (which failed on touch because the handle hitbox returned 0×0) was replaced by the more reliable whole-item drag — since each list has only 4 short items fitting on screen, no scrolling conflict exists.
+
+**Note on the remaining test tools:** `mouse-test.mjs` is hardcoded to a different file's structure (huihui run-01) and requires lists visible without a modal, so it doesn't apply here; my file's own drag paths (pointer-based, both fine and coarse) are verified independent of it.
+
+The test session is done. Let me know if you'd like any refinement (e.g., a11y/keyboard support for the drag, or a different visual style).

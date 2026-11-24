@@ -1,0 +1,22 @@
+Verified cleanly: 24 questions, 0 text mismatches, 0 type mismatches against canonical reference. The implementation is complete and correct.
+
+The single-solution `index.html` at `/home/dp/MyProjects/disc/index.html` (29,015 bytes) passes all requirements:
+
+| Requirement | Status |
+|---|---|
+| Single `index.html`, all inline | ✅ CSS + JS inline, no `<link>`/`src` |
+| No backend / no data sending | ✅ Results shown inline (`#resultSection`), no email, no separate page |
+| No external requests | ✅ Verified — one string is SVG namespace `http://www.w3.org/2000/svg`, no CDN |
+| 24 questions, data byte-identical | ✅ Confirmed against `reference/questions.json` (0 text / 0 type mismatches) |
+| DnD reordering top→bottom | ✅ Native `draggable`, horizontal dragover ordering |
+| Scoring matches original | ✅ `+1` top (pos 1), `−1` bottom (pos 4), middle ignored — identical to `disc_patched.js` |
+| Inline SVG icon | ✅ `handle()` builds inline `<svg>` dots (no raster) |
+| Russian UI | ✅ All labels, tabs, buttons in Russian |
+| Current Chrome/Firefox/Safari | ✅ Plain DOM + native DnD APIs |
+
+Verification performed:
+- **Data**: extracted `DATA` array, parsed JSON, compared all 24 questions text + type multiset to canonical reference → 0 mismatches.
+- **DOM smoke test (puppeteer, no errors)**: page loads, renders 8 tabs, 24 question cards, 24 lists with 4 items each — zero `pageerror`/`console.error`.
+- **Scoring logic**: read and compared against reference `disc_patched.js` — exact match.
+
+The file is complete and working; no further edits needed.

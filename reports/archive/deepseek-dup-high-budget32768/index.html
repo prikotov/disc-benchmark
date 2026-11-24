@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест DISC — Stratoplan</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --ink:#0f1720;
+    --muted:#5b6b7c;
+    --line:#e2e8f0;
+    --brand:#1f5bd6;
+    --accent:#2f8344;
+    --d:#d64545;
+    --i:#d9992b;
+    --s:#3a944a;
+    --c:#2e6fd9;
+    --radius:18px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  :root{color-scheme:light}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    min-height:100vh;
+    padding:26px 16px 60px;
+    font-family:var(--font);
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 50% -12%, #ffffff 0%, #eef2f7 46%, #e6ecf4 100%);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .app{width:min(1120px,100%);margin:0 auto}
+
+  /* ---------- header ---------- */
+  .head{text-align:center;margin:0 0 20px}
+  .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 12px;margin:0 0 14px;
+    border-radius:999px;background:#fff;border:1px solid var(--line);
+    font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  }
+  .kicker svg{width:14px;height:14px;color:var(--accent)}
+  h1{font-size:clamp(26px,3.6vw,38px);line-height:1.12;letter-spacing:-.02em;margin:0 0 10px}
+  .sub{margin:0 0 10px;font-size:15px;color:var(--muted)}
+  .lead{margin:0;font-size:clamp(15px,1.7vw,18px);font-weight:650;color:var(--accent)}
+
+  /* ---------- panel ---------- */
+  .panel{
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(226,232,240,.95);
+    border-radius:calc(var(--radius) + 6px);
+    padding:16px 16px 18px;
+    box-shadow:0 30px 60px -40px rgba(15,23,32,.55);
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    position:relative;
+    display:flex;gap:8px;
+    padding:4px 2px 12px;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;
+    border:1px solid transparent;
+    background:#e8eef7;color:#2b3a4a;
+    border-radius:999px;
+    padding:9px 16px;
+    font-family:inherit;font-size:14px;font-weight:650;line-height:1;
+    cursor:pointer;
+    transition:background .15s ease,color .15s ease,box-shadow .15s ease,transform .15s ease;
+  }
+  .tab:hover{background:#dde7f3}
+  .tab[aria-selected="true"]{
+    background:var(--brand);color:#fff;
+    box-shadow:0 10px 20px -12px rgba(31,91,214,.95);
+  }
+  .tab:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+  /* ---------- panes / cards ---------- */
+  .pane{display:none}
+  .pane.is-active{display:block;animation:fade .18s ease-out}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .card{
+    display:flex;flex-direction:column;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 14px 28px -26px rgba(15,23,32,.75);
+  }
+  .card__cap,.card__foot{
+    display:flex;align-items:center;gap:7px;
+    padding:10px 13px;
+    font-size:12px;font-weight:750;letter-spacing:.07em;text-transform:uppercase;
+    background:#f6f9fc;
+  }
+  .card__cap{color:#2f8040;border-bottom:1px solid var(--line)}
+  .card__foot{color:#8d98a6;border-top:1px solid var(--line)}
+  .card__cap svg,.card__foot svg{flex:0 0 auto;width:12px;height:12px}
+  .list{
+    list-style:none;
+    margin:0;padding:8px;
+    display:flex;flex-direction:column;gap:7px;
+    flex:1 1 auto;
+  }
+
+  /* ---------- items ---------- */
+  .item{
+    display:flex;align-items:center;gap:9px;
+    padding:10px 8px 10px 9px;
+    min-height:46px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#fff;
+    font-size:15px;line-height:1.25;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:pan-y;
+    transition:background .15s ease,border-color .15s ease,box-shadow .15s ease;
+  }
+  .item:hover{border-color:#cfdae7;background:#f8fbff}
+  .item:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .item__rank{
+    flex:0 0 auto;
+    width:22px;height:22px;
+    display:grid;place-items:center;
+    border-radius:50%;
+    background:#eef3fa;color:#5b6b7c;
+    font-size:12px;font-weight:750;
+    font-variant-numeric:tabular-nums;
+    transition:background .15s ease,color .15s ease;
+  }
+  .item:first-child .item__rank{background:rgba(58,148,74,.16);color:#2f8040}
+  .item:last-child .item__rank{background:rgba(214,69,69,.14);color:#b23c3c}
+  .item__word{flex:1 1 auto;word-break:break-word}
+  .item__grip{
+    flex:0 0 auto;
+    width:26px;height:26px;
+    display:grid;place-items:center;
+    border-radius:6px;
+    color:#a4b1c0;
+    cursor:grab;
+    touch-action:none;
+    transition:background .15s ease,color .15s ease;
+  }
+  .item__grip:hover{background:#eef3fa;color:#6c7d8f}
+  .item__grip svg{width:14px;height:14px}
+  .item.is-dragging{
+    cursor:grabbing;
+    border-color:rgba(31,91,214,.55);
+    background:#f2f7ff;
+    box-shadow:0 16px 30px -20px rgba(31,91,214,.95);
+  }
+  .item.is-dragging .item__grip{cursor:grabbing;color:var(--brand)}
+  body.dragging{cursor:grabbing;user-select:none;-webkit-user-select:none}
+  body.dragging .item{cursor:grabbing}
+
+  /* ---------- progress ---------- */
+  .progress{margin:16px 2px 0}
+  .progress__meta{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    margin-bottom:7px;
+    font-size:12.5px;color:var(--muted);
+  }
+  .progress__meta b{color:#33445a;font-weight:700}
+  .progress__track{height:8px;border-radius:999px;background:#e3eaf3;overflow:hidden}
+  .progress__bar{
+    height:100%;width:12.5%;
+    border-radius:999px;
+    background:linear-gradient(90deg,#2f8344,#6fe28a);
+    transition:width .25s ease;
+  }
+
+  /* ---------- actions ---------- */
+  .actions{
+    display:flex;align-items:center;gap:10px;
+    margin:16px 2px 0;
+  }
+  .actions__spacer{flex:1 1 auto}
+  .btn{
+    appearance:none;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 24px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:#fff;color:#25313d;
+    font-family:inherit;font-size:15px;font-weight:700;line-height:1;
+    cursor:pointer;
+    transition:transform .12s ease,box-shadow .15s ease,background .15s ease,filter .15s ease;
+  }
+  .btn svg{width:15px;height:15px}
+  .btn:hover{background:#f7fafd;border-color:#cfdae7}
+  .btn--primary{
+    border-color:transparent;color:#fff;
+    background:linear-gradient(180deg,#39a053,#2c7d41);
+    box-shadow:0 14px 24px -16px rgba(44,125,65,.95);
+  }
+  .btn--primary:hover{background:linear-gradient(180deg,#3fab5a,#2f8846);border-color:transparent}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  .btn:disabled:hover{background:#fff;border-color:var(--line)}
+  .btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .hint{margin:12px 2px 0;font-size:12.5px;line-height:1.5;color:#7c8a99;text-align:center}
+  .hint kbd{
+    display:inline-block;padding:1px 5px;margin:0 1px;
+    border:1px solid #d5dee8;border-bottom-width:2px;border-radius:5px;
+    background:#f7fafd;font-family:inherit;font-size:11.5px;color:#43536a;
+  }
+
+  /* ---------- result ---------- */
+  .result{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:calc(var(--radius) + 6px);
+    padding:26px 24px 22px;
+    box-shadow:0 30px 60px -40px rgba(15,23,32,.55);
+  }
+  .result__top{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .result__ico{
+    flex:0 0 auto;width:46px;height:46px;
+    display:grid;place-items:center;
+    border-radius:14px;background:rgba(58,148,74,.14);color:#2f8040;
+  }
+  .result__ico svg{width:24px;height:24px}
+  .result__head{flex:1 1 220px;min-width:180px}
+  .result h2{margin:0 0 6px;font-size:clamp(21px,2.6vw,27px);letter-spacing:-.01em}
+  .result__sub{margin:0;color:var(--muted);font-size:14px}
+  .result__line{
+    margin:18px 0 0;
+    padding:12px 14px;
+    border:1px dashed #cdd9e6;border-radius:12px;background:#f8fbff;
+    font-family:var(--mono);font-size:15px;font-weight:600;letter-spacing:.01em;
+    color:#26374a;
+    overflow-wrap:anywhere;
+  }
+  .chart{display:grid;gap:10px;margin:20px 0 0}
+  .row{
+    display:grid;
+    grid-template-columns:34px 130px minmax(0,1fr) 54px;
+    align-items:center;gap:12px;
+  }
+  .row__badge{
+    width:34px;height:34px;
+    display:grid;place-items:center;
+    border-radius:10px;
+    color:#fff;font-size:15px;font-weight:800;
+  }
+  .row__name{font-size:14px;color:#3a4a5b}
+  .row__track{
+    position:relative;height:34px;
+    border-radius:9px;background:#f1f5fa;
+    overflow:hidden;
+  }
+  .row__zero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:#c9d5e2}
+  .row__fill{
+    position:absolute;top:5px;bottom:5px;
+    border-radius:5px;
+    transition:width .5s ease,left .5s ease,right .5s ease;
+  }
+  .row__val{
+    font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;
+    text-align:right;color:#26374a;
+  }
+  .row[data-type="d"] .row__badge,.row[data-type="d"] .row__fill{background:var(--d)}
+  .row[data-type="i"] .row__badge,.row[data-type="i"] .row__fill{background:var(--i)}
+  .row[data-type="s"] .row__badge,.row[data-type="s"] .row__fill{background:var(--s)}
+  .row[data-type="c"] .row__badge,.row[data-type="c"] .row__fill{background:var(--c)}
+  .result__note{
+    display:flex;gap:9px;
+    margin:22px 0 0;padding:14px 16px;
+    border-radius:12px;background:#f6f9fc;border:1px solid var(--line);
+    font-size:13px;line-height:1.55;color:#4f6072;
+  }
+  .result__note svg{flex:0 0 auto;width:16px;height:16px;margin-top:2px;color:#8898a8}
+  .result__foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0 0}
+
+  .sr-only{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+  }
+  [hidden]{display:none !important}
+
+  @media (max-width:980px){
+    .grid{grid-template-columns:1fr}
+  }
+  @media (max-width:640px){
+    body{padding:18px 10px 44px}
+    .panel{padding:12px 10px 14px}
+    .tabs{padding-bottom:10px}
+    .tab{padding:8px 13px;font-size:13px}
+    .item{font-size:14.5px;padding:9px 8px}
+    .actions{gap:8px}
+    .btn{padding:11px 18px;font-size:14px}
+    .actions__spacer{display:none}
+    .actions .btn{flex:1 1 auto}
+    .result{padding:20px 14px 16px}
+    .row{grid-template-columns:32px minmax(0,1fr) 44px;gap:9px}
+    .row__name{display:none}
+    .hint{margin-top:10px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+  }
+</style>
+</head>
+<body>
+<noscript>
+  <p style="max-width:720px;margin:0 auto 16px;padding:12px 16px;border-radius:12px;background:#fff7e8;border:1px solid #f0d8a8;color:#7a5b18;font-family:inherit;font-size:14px;line-height:1.5">
+    Для прохождения теста нужен JavaScript: включите его в браузере и обновите страницу.
+  </p>
+</noscript>
+<div class="app">
+  <header class="head">
+    <p class="kicker">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l1.9 4 4.4.6-3.2 3.1.8 4.3L8 11.6l-3.9 2 0.8-4.3L1.7 6.2l4.4-.6L8 1.6z" fill="currentColor"/></svg>
+      Бесплатный тест DISC
+    </p>
+    <h1>Тестирование DISC</h1>
+    <p class="sub">Помните — чем честнее вы с тестом, тем точнее результаты!</p>
+    <p class="lead">Разместите блоки в порядке от наиболее похожего на вас до наименее похожего</p>
+  </header>
+
+  <main id="testView" class="panel">
+    <div class="tabs" id="tabs" role="tablist" aria-label="Шаги теста"></div>
+
+    <div id="panes">
+            <div class="pane is-active" id="step-0" role="tabpanel" aria-labelledby="tab-0">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="1" aria-label="Вопрос 1: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Экспресcивный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Покладистый</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Волевой</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Осторожный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="2" aria-label="Вопрос 2: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Пылкий</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Разговорчивый</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Добродушный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Сдержанный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="3" aria-label="Вопрос 3: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Любитель приключений</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Энтузиаст</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Исполнитель инструкций</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Верный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+      <div class="pane" id="step-1" role="tabpanel" aria-labelledby="tab-1">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="4" aria-label="Вопрос 4: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Настойчивый</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Осторожный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Эмоциональный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Удовлетворенный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="5" aria-label="Вопрос 5: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Довольный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Нетерпеливый</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Убедительный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Безропотный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="6" aria-label="Вопрос 6: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Смиренный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Умеющий слушать</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Душа компании</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Волевой</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+      <div class="pane" id="step-2" role="tabpanel" aria-labelledby="tab-2">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="7" aria-label="Вопрос 7: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Правильный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Первопроходец</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Спокойный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Влиятельный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="8" aria-label="Вопрос 8: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Почтительный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Контактный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Агрессивный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Мягкий</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="9" aria-label="Вопрос 9: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Весельчак</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Покорный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Тактичный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Соперничающий</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+      <div class="pane" id="step-3" role="tabpanel" aria-labelledby="tab-3">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="10" aria-label="Вопрос 10: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Точный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Доминирующий</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Охотный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Притягательный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="11" aria-label="Вопрос 11: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Уравновешенный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Уступчивый</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Идущий на риск</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Услужливый</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="12" aria-label="Вопрос 12: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Осмотрительный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Добрососедский</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Энергичный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Убедительный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+      <div class="pane" id="step-4" role="tabpanel" aria-labelledby="tab-4">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="13" aria-label="Вопрос 13: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Уравновешенный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Мотивирующий</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Щепетильный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Решительный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="14" aria-label="Вопрос 14: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Уверенный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Готовый к сотрудничеству</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Беззаботный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Аргументирующий</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="15" aria-label="Вопрос 15: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Сдержанный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Прямой</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Строгий</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Убедительный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+      <div class="pane" id="step-5" role="tabpanel" aria-labelledby="tab-5">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="16" aria-label="Вопрос 16: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Застенчивый</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Требовательный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Терпеливый</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Очаровательный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="17" aria-label="Вопрос 17: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Неугомонный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Дисциплинированный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Вдохновляющий</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Внимательный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="18" aria-label="Вопрос 18: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Обязательный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Оживленный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Решительный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Точный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+      <div class="pane" id="step-6" role="tabpanel" aria-labelledby="tab-6">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="19" aria-label="Вопрос 19: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Добросовестный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Компанейский</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Добрый</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Уверенный в себе</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="20" aria-label="Вопрос 20: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Дипломатичный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Отважный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Сочувствующий</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Оптимистичный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="21" aria-label="Вопрос 21: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Настойчивый</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Общительный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Постоянный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Организованный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+      <div class="pane" id="step-7" role="tabpanel" aria-labelledby="tab-7">
+        <div class="grid">
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="22" aria-label="Вопрос 22: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Соглашающийся</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Владеющий собой</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Шутливый</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Настойчивый</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="23" aria-label="Вопрос 23: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Обаятельный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Позитивный</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Снисходительный</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Требовательный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+          <section class="card">
+            <div class="card__cap"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2.2l3.6 4.4H2.4L6 2.2z" fill="currentColor"/></svg>Я наиболее</div>
+            <ul class="list" data-list="24" aria-label="Вопрос 24: расставьте варианты от наиболее похожего на вас к наименее похожему">
+              <li class="item" data-type="i" tabindex="0">
+                <span class="item__rank" aria-hidden="true">1</span>
+                <span class="item__word">Коммуникабельный</span>
+                <span class="item__pos sr-only">позиция 1 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="d" tabindex="0">
+                <span class="item__rank" aria-hidden="true">2</span>
+                <span class="item__word">Смелый</span>
+                <span class="item__pos sr-only">позиция 2 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="c" tabindex="0">
+                <span class="item__rank" aria-hidden="true">3</span>
+                <span class="item__word">Перфекционист</span>
+                <span class="item__pos sr-only">позиция 3 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+              <li class="item" data-type="s" tabindex="0">
+                <span class="item__rank" aria-hidden="true">4</span>
+                <span class="item__word">Сдержанный</span>
+                <span class="item__pos sr-only">позиция 4 из 4</span>
+                <span class="item__grip" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6" cy="3.5" r="1.35" fill="currentColor"/><circle cx="6" cy="8" r="1.35" fill="currentColor"/><circle cx="6" cy="12.5" r="1.35" fill="currentColor"/><circle cx="10" cy="3.5" r="1.35" fill="currentColor"/><circle cx="10" cy="8" r="1.35" fill="currentColor"/><circle cx="10" cy="12.5" r="1.35" fill="currentColor"/></svg></span>
+              </li>
+            </ul>
+            <div class="card__foot"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9.8L2.4 5.4h7.2L6 9.8z" fill="currentColor"/></svg>Я наименее</div>
+          </section>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="progress">
+      <div class="progress__meta">
+        <span id="stepInfo">Шаг 1 из 8</span>
+        <span><b>24</b> вопроса · по 4 варианта</span>
+      </div>
+      <div class="progress__track" id="progressTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="13" aria-label="Прогресс теста">
+        <div class="progress__bar" id="progressBar"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn--ghost" id="prevBtn" type="button" disabled>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Назад
+      </button>
+      <div class="actions__spacer"></div>
+      <button class="btn btn--primary" id="nextBtn" type="button">
+        Далее
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn btn--primary" id="finishBtn" type="button" hidden>
+        Завершить тест
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.5l3.2 3.2L13.5 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <p class="hint">
+      Перетаскивайте варианты за строку (на сенсорном экране — за <b>ручку</b> справа) или меняйте порядок с клавиатуры:
+      <kbd>↑</kbd><kbd>↓</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>.
+      Верхняя строка — <b>наиболее</b> похоже на вас, нижняя — <b>наименее</b>.
+    </p>
+  </main>
+
+  <section id="resultView" class="result" hidden aria-labelledby="resultTitle" tabindex="-1">
+    <div class="result__top">
+      <div class="result__ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M4 13.5l5 5L20 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="result__head">
+        <h2 id="resultTitle">Ваш DISC-профиль</h2>
+        <p class="result__sub">Тест завершён: показаны баллы по каждой шкале — от −24 до 24.</p>
+      </div>
+    </div>
+
+    <p class="result__line" id="resultLine">D:0, I:0, S:0, C:0</p>
+
+    <div class="chart" id="chart" aria-hidden="false"></div>
+
+    <p class="result__note">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 7v5M8 4.4v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>* Обратите внимание: мы не даём расшифровку ваших индивидуальных результатов. Вместо этого мы помогаем
+      вам научиться использовать этот инструмент для самотестирования, а также для дальнейшей работы с вашими
+      командами, сотрудниками и коллегами.</span>
+    </p>
+
+    <div class="result__foot">
+      <button class="btn btn--ghost" id="restartBtn" type="button">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2v3.4H9.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Пройти заново
+      </button>
+    </div>
+  </section>
+
+  <p class="sr-only" id="live" role="status" aria-live="polite"></p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var STEP_NAMES = ['Первый', 'Второй', 'Третий', 'Четвертый', 'Пятый', 'Шестой', 'Седьмой', 'Восьмой'];
+  var STEP_COUNT = STEP_NAMES.length;
+  var MAX_SCORE = 24;
+  var TYPES = [
+    { k: 'd', name: 'Доминирование' },
+    { k: 'i', name: 'Влияние' },
+    { k: 's', name: 'Постоянство' },
+    { k: 'c', name: 'Соответствие' }
+  ];
+
+  var $ = function (sel) { return document.querySelector(sel); };
+
+  var tabsEl = $('#tabs');
+  var panesEl = $('#panes');
+  var panes = Array.prototype.slice.call(panesEl.querySelectorAll('.pane'));
+  var lists = Array.prototype.slice.call(panesEl.querySelectorAll('.list'));
+
+  var prevBtn = $('#prevBtn');
+  var nextBtn = $('#nextBtn');
+  var finishBtn = $('#finishBtn');
+  var stepInfo = $('#stepInfo');
+  var progressBar = $('#progressBar');
+  var progressTrack = $('#progressTrack');
+  var testView = $('#testView');
+  var resultView = $('#resultView');
+  var resultLine = $('#resultLine');
+  var chartEl = $('#chart');
+  var restartBtn = $('#restartBtn');
+  var liveEl = $('#live');
+  var headEl = $('.head');
+
+  var step = 0;
+
+  // исходный (эталонный) порядок вариантов — нужен для «Пройти заново»
+  var initialOrder = lists.map(function (ul) {
+    return Array.prototype.slice.call(ul.children).map(function (li) { return li.cloneNode(true); });
+  });
+
+  // ---------------------------------------------------------------- tabs
+  var tabButtons = STEP_NAMES.map(function (name, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tab';
+    b.id = 'tab-' + i;
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-controls', 'step-' + i);
+    b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    b.tabIndex = i === 0 ? 0 : -1;
+    b.textContent = name;
+    b.addEventListener('click', function () { go(i); });
+    b.addEventListener('keydown', onTabKeyDown);
+    tabsEl.appendChild(b);
+    return b;
+  });
+
+  function onTabKeyDown(e) {
+    var i = tabButtons.indexOf(e.currentTarget);
+    var j = i;
+    if (e.key === 'ArrowRight') j = Math.min(tabButtons.length - 1, i + 1);
+    else if (e.key === 'ArrowLeft') j = Math.max(0, i - 1);
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = tabButtons.length - 1;
+    else return;
+    e.preventDefault();
+    go(j);
+    tabButtons[j].focus();
+  }
+
+  function centerTab() {
+    var t = tabButtons[step];
+    if (!t) return;
+    if (tabsEl.scrollWidth <= tabsEl.clientWidth + 2) return;
+    var maxLeft = tabsEl.scrollWidth - tabsEl.clientWidth;
+    var target = t.offsetLeft - (tabsEl.clientWidth - t.offsetWidth) / 2;
+    target = Math.max(0, Math.min(target, maxLeft));
+    if (Math.abs(tabsEl.scrollLeft - target) < 2) return;
+    tabsEl.scrollTo({ left: target, behavior: 'auto' });
+  }
+
+  // ---------------------------------------------------------------- steps
+  function render() {
+    tabButtons.forEach(function (t, i) {
+      var active = i === step;
+      t.classList.toggle('is-active', active);
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+      t.tabIndex = active ? 0 : -1;
+    });
+
+    panes.forEach(function (p, i) { p.classList.toggle('is-active', i === step); });
+
+    prevBtn.disabled = step === 0;
+    nextBtn.hidden = step === STEP_COUNT - 1;
+    finishBtn.hidden = step !== STEP_COUNT - 1;
+
+    var pct = ((step + 1) / STEP_COUNT) * 100;
+    progressBar.style.width = pct.toFixed(2) + '%';
+    progressTrack.setAttribute('aria-valuenow', String(Math.round(pct)));
+    stepInfo.textContent = 'Шаг ' + (step + 1) + ' из ' + STEP_COUNT;
+
+    centerTab();
+  }
+
+  function go(n) {
+    var target = Math.max(0, Math.min(STEP_COUNT - 1, n));
+    if (target === step) { centerTab(); return; }
+    step = target;
+    render();
+    if (headEl && window.scrollY > 8) headEl.scrollIntoView({ block: 'start' });
+  }
+
+  // ---------------------------------------------------------------- ranking helpers
+  function updateRanks(ul) {
+    var kids = Array.prototype.slice.call(ul.children);
+    kids.forEach(function (li, i) {
+      var rank = li.querySelector('.item__rank');
+      if (rank) rank.textContent = String(i + 1);
+      var pos = li.querySelector('.item__pos');
+      if (pos) pos.textContent = 'позиция ' + (i + 1) + ' из ' + kids.length;
+    });
+  }
+
+  function announce(li, ul) {
+    var wordEl = li.querySelector('.item__word');
+    var idx = Array.prototype.slice.call(ul.children).indexOf(li) + 1;
+    var listNo = lists.indexOf(ul) + 1;
+    liveEl.textContent = (wordEl ? '«' + wordEl.textContent + '»' : 'Вариант') +
+      ' — позиция ' + idx + ' из ' + ul.children.length + ' (вопрос ' + listNo + ').';
+  }
+
+  // ---------------------------------------------------------------- drag & drop
+  var drag = null;
+
+  function onPointerDown(e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (drag) return;
+
+    var li = e.target.closest ? e.target.closest('li.item') : null;
+    if (!li || li.parentNode !== e.currentTarget) return;
+
+    var byGrip = !!(e.target.closest && e.target.closest('.item__grip'));
+    if (e.pointerType !== 'mouse' && !byGrip) return; // касание — только за ручку
+
+    e.preventDefault();
+
+    drag = {
+      li: li,
+      ul: e.currentTarget,
+      id: e.pointerId,
+      startY: e.clientY,
+      moved: false
+    };
+
+    li.classList.add('is-dragging');
+    document.body.classList.add('dragging');
+    try { li.focus({ preventScroll: true }); } catch (_) {}
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+
+    window.addEventListener('pointermove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+  }
+
+  function onPointerMove(e) {
+    if (!drag) return;
+    e.preventDefault();
+
+    if (!drag.moved && Math.abs(e.clientY - drag.startY) < 3) return;
+    drag.moved = true;
+
+    var li = drag.li;
+    var ul = drag.ul;
+    var y = e.clientY;
+    var siblings = Array.prototype.slice.call(ul.children).filter(function (x) { return x !== li; });
+    var target = null;
+
+    for (var i = 0; i < siblings.length; i++) {
+      var r = siblings[i].getBoundingClientRect();
+      if (y < r.top + r.height / 2) { target = siblings[i]; break; }
+    }
+
+    if (target) {
+      if (li.nextElementSibling !== target) ul.insertBefore(li, target);
+    } else if (ul.lastElementChild !== li) {
+      ul.appendChild(li);
+    }
+
+    updateRanks(ul);
+
+    var edge = 90;
+    if (y < edge) window.scrollBy(0, -14);
+    else if (y > window.innerHeight - edge) window.scrollBy(0, 14);
+  }
+
+  function onPointerUp() {
+    if (!drag) return;
+    var li = drag.li;
+    var ul = drag.ul;
+    var id = drag.id;
+    var moved = drag.moved;
+    drag = null;
+
+    li.classList.remove('is-dragging');
+    document.body.classList.remove('dragging');
+    window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerup', onPointerUp);
+    window.removeEventListener('pointercancel', onPointerUp);
+    try { ul.releasePointerCapture(id); } catch (_) {}
+
+    updateRanks(ul);
+    if (moved) announce(li, ul);
+  }
+
+  // ---------------------------------------------------------------- keyboard ranking
+  function onListKeyDown(e) {
+    var li = e.target.closest ? e.target.closest('li.item') : null;
+    if (!li || li.parentNode !== e.currentTarget) return;
+
+    var ul = e.currentTarget;
+    var kids = Array.prototype.slice.call(ul.children);
+    var i = kids.indexOf(li);
+    var j = i;
+
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') j = Math.max(0, i - 1);
+    else if (e.key === 'ArrowDown' || e.key === 'PageDown') j = Math.min(kids.length - 1, i + 1);
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = kids.length - 1;
+    else return;
+
+    e.preventDefault();
+    if (j === i) return;
+
+    if (j < i) ul.insertBefore(li, kids[j]);
+    else ul.insertBefore(li, kids[j].nextElementSibling);
+
+    updateRanks(ul);
+    try { li.focus({ preventScroll: true }); } catch (_) {}
+    li.scrollIntoView({ block: 'nearest' });
+    announce(li, ul);
+  }
+
+  // ---------------------------------------------------------------- HTML5 DnD fallback
+  // Включается только если браузер (или внешняя автоматизация) присылает нативные
+  // drag-события без pointerdown: тогда указательный drag выше не запускался.
+  var nativeDrag = null;
+
+  function onDragStart(e) {
+    if (drag) { e.preventDefault(); return; }
+    var li = e.target.closest ? e.target.closest('li.item') : null;
+    if (!li) return;
+    nativeDrag = { li: li, ul: li.parentNode, moved: false };
+    if (e.dataTransfer) {
+      try {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', '');
+      } catch (_) {}
+    }
+    li.classList.add('is-dragging');
+  }
+
+  function onDragOver(e) {
+    if (!nativeDrag) return;
+    var ul = nativeDrag.ul;
+    var li = nativeDrag.li;
+    if (!ul.contains(e.target) && e.target !== ul) return;
+    e.preventDefault();
+    nativeDrag.moved = true;
+
+    var y = e.clientY;
+    var siblings = Array.prototype.slice.call(ul.children).filter(function (x) { return x !== li; });
+    var target = null;
+
+    for (var i = 0; i < siblings.length; i++) {
+      var r = siblings[i].getBoundingClientRect();
+      if (y < r.top + r.height / 2) { target = siblings[i]; break; }
+    }
+
+    if (target) {
+      if (li.nextElementSibling !== target) ul.insertBefore(li, target);
+    } else if (ul.lastElementChild !== li) {
+      ul.appendChild(li);
+    }
+
+    updateRanks(ul);
+  }
+
+  function onDrop(e) {
+    if (!nativeDrag) return;
+    e.preventDefault();
+    finishNativeDrag();
+  }
+
+  function finishNativeDrag() {
+    if (!nativeDrag) return;
+    var li = nativeDrag.li;
+    var ul = nativeDrag.ul;
+    var moved = nativeDrag.moved;
+    nativeDrag = null;
+    li.classList.remove('is-dragging');
+    updateRanks(ul);
+    if (moved) announce(li, ul);
+  }
+
+  lists.forEach(function (ul) {
+    ul.addEventListener('pointerdown', onPointerDown);
+    ul.addEventListener('keydown', onListKeyDown);
+    ul.addEventListener('dragstart', onDragStart);
+    ul.addEventListener('dragover', onDragOver);
+    ul.addEventListener('drop', onDrop);
+    ul.addEventListener('dragend', finishNativeDrag);
+    Array.prototype.forEach.call(ul.children, function (li) { li.draggable = true; });
+    updateRanks(ul);
+  });
+
+  // ---------------------------------------------------------------- scoring
+  function computeScore() {
+    var res = { d: 0, i: 0, s: 0, c: 0 };
+    lists.forEach(function (ul) {
+      var items = ul.children;
+      if (!items.length) return;
+      var major = items[0].getAttribute('data-type');
+      var minor = items[items.length - 1].getAttribute('data-type');
+      if (major && major in res) res[major] += 1;
+      if (minor && minor in res) res[minor] -= 1;
+    });
+    return res;
+  }
+
+  function buildChart() {
+    chartEl.textContent = '';
+    TYPES.forEach(function (t) {
+      var row = document.createElement('div');
+      row.className = 'row';
+      row.setAttribute('data-type', t.k);
+      row.innerHTML =
+        '<span class="row__badge" aria-hidden="true">' + t.k.toUpperCase() + '</span>' +
+        '<span class="row__name">' + t.name + '</span>' +
+        '<div class="row__track"><span class="row__zero"></span><span class="row__fill"></span></div>' +
+        '<span class="row__val">0</span>';
+      chartEl.appendChild(row);
+    });
+  }
+
+  function renderResult() {
+    var r = computeScore();
+
+    resultLine.textContent = 'D:' + r.d + ', I:' + r.i + ', S:' + r.s + ', C:' + r.c;
+
+    Array.prototype.slice.call(chartEl.children).forEach(function (row) {
+      var k = row.getAttribute('data-type');
+      var v = r[k] || 0;
+      var fill = row.querySelector('.row__fill');
+      var name = row.querySelector('.row__name').textContent;
+      var pct = Math.min(1, Math.abs(v) / MAX_SCORE) * 50;
+
+      fill.style.width = pct.toFixed(3) + '%';
+      fill.style.left = v >= 0 ? '50%' : 'auto';
+      fill.style.right = v < 0 ? '50%' : 'auto';
+
+      row.querySelector('.row__val').textContent = String(v);
+
+      var track = row.querySelector('.row__track');
+      track.setAttribute('role', 'img');
+      track.setAttribute('aria-label', name + ', баллы: ' + v);
+    });
+  }
+
+  function showResult() {
+    renderResult();
+    testView.hidden = true;
+    resultView.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    try { resultView.focus({ preventScroll: true }); } catch (_) {}
+  }
+
+  function restart() {
+    lists.forEach(function (ul, idx) {
+      while (ul.firstChild) ul.removeChild(ul.firstChild);
+      initialOrder[idx].forEach(function (node) {
+        var clone = node.cloneNode(true);
+        clone.draggable = true;
+        ul.appendChild(clone);
+      });
+      updateRanks(ul);
+    });
+
+    resultView.hidden = true;
+    testView.hidden = false;
+    step = 0;
+    render();
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    var first = panes[0].querySelector('.item');
+    if (first) { try { first.focus({ preventScroll: true }); } catch (_) {} }
+  }
+
+  // ---------------------------------------------------------------- wiring
+  prevBtn.addEventListener('click', function () { go(step - 1); });
+  nextBtn.addEventListener('click', function () { go(step + 1); });
+  finishBtn.addEventListener('click', showResult);
+  restartBtn.addEventListener('click', restart);
+
+  window.addEventListener('resize', centerTab);
+
+  buildChart();
+  render();
+})();
+</script>
+</body>
+</html>

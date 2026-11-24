@@ -1,0 +1,16 @@
+The only `http://` is the SVG `xmlns` namespace attribute — no external request. The file is complete.
+
+**Summary:**
+
+- **`~/MyProjects/disc/.tmpwork/disc-pi-uohref38/run/index.html`** — self-contained single-file DISC test copy.
+
+What it does, matching the original:
+- 8 steps × 3 cards × 4 items each = 24 questions, same wording and positions as the original
+- Drag-and-drop reordering per card (all list items are draggable)
+- "Назад / Далее" navigation with progress bar, "Назад" disabled on step 1
+- "Завершить тест" on the last step
+- Score = (rank-#1 count per type) − (rank-#4 count per type) for d/i/s/c — identical formula to original
+- Result shown in-app as `D:X, I:Y, S:Z, C:W` (no email/modal/result-page redirect)
+- "Пройти заново" to restart
+
+Requirements met: single file, all CSS/JS inline, no CDN, no fetch/XHR, works offline / `file://`, inline SVG grip icon, Russian UI, responsive down to mobile (single-column grid at <820px).

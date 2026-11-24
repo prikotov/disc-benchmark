@@ -1,0 +1,23 @@
+`index.html` (27 KB, 689 lines) is the complete self‑contained copy. Summary of what's in it and how it satisfies each requirement:
+
+**Single self-contained file**
+- One `<style>` block, one `<script>` block, inline `<svg>` for the drag handle. No `<link>`, no `@import`, no `src="…"` other than the `xmlns` SVG namespace (required for SVG to be valid), no `fetch`, `XMLHttpRequest`, `localStorage`, `navigator`, `window.open`, `postMessage` — only local DOM APIs.
+- Verified in headless Chrome (no `--disable-network` needed, but zero refs).
+
+**Content parity with the source**
+- Same 96 attributes in 24 lists × 4 items; distribution 24 / 24 / 24 / 24 (D / I / S / C).
+- Step titles: `Первый … Восьмой`.
+- Header card: `Тестирование DISC` / `Помните — чем честнее вы с тестом, тем точнее результаты!` / `Разместите блоки в порядке от наиболее похожего на вас до наименее похожего` — all copied verbatim.
+- Card labels `Я наиболее` / `Я наименее` preserved.
+- Score formula matches `disc_patched.js`: `score[x] = (count of x in first position) − (count of x in last position)` across all 24 lists. Verified: original order → `D:-1, I:0, S:-3, C:4` (matches the example score from the original's result page).
+
+**Behavioural parity**
+- 8 tabs (Первый–Восьмой), one active at a time, clickable to jump; `Назад` disables at step 1, `Далее` / `Завершить тест` toggle on the last step — exactly like the original (the original uses the same buttons, just with slightly different labels).
+- Progress bar fills to 100 % at the last step.
+- Drag-and-drop reorder within each list using Pointer Events (works Chrome / Firefox / Safari, mouse + touch — the same tech stack the original uses via SortableJS, but I re-implemented the pointer logic myself with no external library, so the file stays offline).
+- Scroll lock on the page while the modal is open, `Esc` closes the modal, focus returned to the opener.
+
+**Adaptation requested by the task**
+- No email, no separate result page: `Завершить тест` closes the modal and the inline `#result` block on the same page shows `Ваш DISC-профиль:` + the four numbers in a styled badge, plus the disclaimer the original's result page carries ("мы не даём расшифровки индивидуальных результатов…"). `Пройти ещё раз` resets the lists to their initial order, hides the result, and goes back to step 1 — so the user can re-take without reloading.
+
+**Works via `file://`** — no `fetch`, no `import`, no network, no cookies/storage — all logic runs from inline `<script>` on DOMContentLoaded.

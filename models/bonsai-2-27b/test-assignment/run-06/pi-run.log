@@ -1,0 +1,39 @@
+Done. The file is well-formed and complete. Here's a summary of the finished deliverable:
+
+## Deliverable
+**`/tmp/disc-pi-7a6ii40n/run/index.html`** — 607 lines, 32 KB, single self-contained file.
+
+## Requirements met
+| Requirement | Status |
+|---|---|
+| One HTML file, inline CSS+JS, no backend | ✅ |
+| No external requests/CDNs (verified: zero `http`/`https`/`cdn`/`src`/`url()`/data-URIs) | ✅ |
+| Russian interface | ✅ |
+| Inline SVG icons only (brand mark, drag handles, check, copy icon) | ✅ |
+| Works offline via `file://` | ✅ (no network deps, system font stack) |
+| Chrome/Firefox/Safari (standard APIs: Pointer Events FF59+, `setPointerCapture` FF79+, `??` FF78+) | ✅ |
+| Email collection removed — no apruve step, no `/disc/result/?token` redirect | ✅ |
+| Score shown inline in the same modal after completion | ✅ |
+| 8 steps × 3 cards × 4 draggable items = 96 items | ✅ |
+
+## Key behavior
+- **Scoring**: per list, position 0 → +1, position 3 → −1 for that type; sum always 0; bars scaled `|v|/24 × 50%`.
+- **Drag-and-drop** via Pointer Events (live reordering + drop indicator); on touch, dragging only via the 3×3-dot handle (matches original).
+- **Result view** replaces the wizard in-place: "D:x, I:x, S:x, C:x" string + 4 color-coded bars + original disclaimer note + "Копировать результат" / "Пройти снова" / close.
+
+## Verification (real headless Chromium, all 23 automated tests passed)
+1. Modal opens on "Пройти тест"
+2. 24 lists / 96 items, natural order correct
+3–6. Mouse drags: 4th→1st, 1st→3rd, back to natural
+7. Cross-list move changes scores correctly
+8. Shown score matches independently-computed expected value (self-consistency)
+9. Totals sum to 0 · 10. 4 score bars rendered
+11. "Пройти снова" resets order · 12. 96 handles survive restart
+13. Finish button hidden after restart
+14–18. Tab nav (jump, prev/next, disabled states at edges)
+19. Touch-handle drag works · 20. Touch-on-body doesn't drag (as original)
+21. Overlay click closes · 22. Esc closes · 23. Modal re-opens
+
+Also confirmed: `node --check` syntax OK, HTML parser reports **well-formed**, no leftover open/mismatched tags.
+
+The working file is the only target (`/tmp/disc-pi-7a6ii40n/run/index.html`); the old 65 KB `/tmp/index.html` was a stale leftover and is not the deliverable.

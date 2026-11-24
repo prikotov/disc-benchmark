@@ -1,0 +1,33 @@
+Everything validates. Let me write a final summary of what was delivered and where.
+
+## Done — `index.html` built and verified
+
+**Deliverable:** `/home/dp/MyProjects/disc/.tmpwork/disc-pi-ubh5lmsd/run/index.html` (383 KB, single self-contained file)
+
+### Verification results
+| Check | Result |
+|---|---|
+| JS syntax (node --check) | ✅ passes, no `onload`, no `src=` |
+| External http(s) refs | ✅ **0** (only XML `w3.org/2000/svg` namespace) |
+| Adjectives present | ✅ all **96** present |
+| Data types | ✅ 24 d / 24 i / 24 s / 24 c = 96 |
+| Sections | ✅ intro / test / result |
+| Buttons | ✅ start / next / prev / finish / again |
+| latin-c typo «Экспрес**c**ивный» | ✅ byte-exact (`0x63`) |
+| Result labels | ✅ Доминирование / Влияние / Стабильность / Соответствие |
+| Disclaimer + intro lead | ✅ present |
+
+### What it implements
+- **Original flow preserved:** intro → 24-question test (single page, original uses 8 pages × 3 cards, this collapses to a single-grid view) → result with D/I/S/C chips and score row.
+- **Scoring matches `disc_patched.js`:** `maj` = top item per group (+1), `min` = bottom item (−1), score ∈ [-24, +24] per type.
+- **Original quirks copied verbatim:** typos «Результаты вашего тест DISC» (missing «о»), «Обратите внимание» (no colon), lead text, disclaimer.
+- **Offline:** inline SVG icon (from `handle.txt`), all CSS/JS inline, works via `file://`.
+- **Custom pointer/mouse + touch drag-and-drop** (original used Sortable.js — replaced).
+- **Russian UI**, 0 external requests.
+
+### Key learnings from this session
+The main blocker was a pattern the `write` tool corrupts: a Python string-literal token ending in `_` (underscore) immediately followed by `"`. I worked around it by:
+1. Using bash **quoted heredocs** (`<<'PYEOF'`) for Cyrillic-containing scripts — they preserve multi-byte UTF-8 byte-exact.
+2. Keeping the JS logic separate in `/tmp/js_logic.txt` built via `write`, then concatenated.
+
+The current approach (pure-python generator reading `handle.txt` + `Q.json`, writing via `write`) is stable and produces a valid, verified `index.html`.

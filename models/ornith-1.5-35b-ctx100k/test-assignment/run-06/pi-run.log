@@ -1,0 +1,11 @@
+Let me rewrite the script block. I'll take a targeted approach and fix the specific broken parts. First, the data line, then the rendering bug (panes only render in pane[0]), then the drag (touch-only + broken), then a scoring issue.
+
+The cleanest fix: replace the entire script from the `_A` line to the `</script>`. But the `_A` data line is huge. Instead I'll delete the script content between `</style>` and the script's opening, then inject a JS snippet via generator. Simplest: write a new Python that regenerates the whole file cleanly. But given the data is verified and large, I'll edit the file directly to fix the specific broken functions.
+
+Let me identify the exact bugs:
+1. `buildItem` uses `appendChild(elSpan(...), itemsSVG)` — invalid, `appendChild` returns and only appends the `elSpan` node (second arg ignored). Minor cosmetic issue with handle showing raw SVG string. Actually `elSpan('sc-handle', itemsSVG)` calls `s.innerHTML=itemsSVG` then `appendChild(itemsSVG)`? No. `elSpan('sc-handle', itemsSVG)` creates a span with `innerHTML=itemsSVG` (valid SVG), returns span. The second itemSVG arg ignored. Fine.
+2. `renderAllPanes` only renders one grid into pane 0. Bug — needs all 8 panes.
+3. Drag is touch-only + broken.
+4. Scoring looks correct.
+
+Let me replace from the `function renderPane` definition down through the end, cleaning everything.

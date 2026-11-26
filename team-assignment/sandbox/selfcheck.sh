@@ -33,13 +33,16 @@ env | grep -Ei 'key|token|secret|password|proxy' >/dev/null 2>&1 \
   && { echo "ENV_HAS_SECRETISH"; R=1; }
 touch /usr/share/.pwn-test 2>/dev/null && { echo "WROTE_USR"; R=1; }
 echo t > /work/.w-test || { echo "CANNOT_WRITE_WORK"; R=1; }
+# хостовая таблица процессов не должна просматриваться (свежий procfs)
+ps aux 2>/dev/null | grep -Eq 'systemd --switched-root|sshd' \
+  && { echo "HOST_PROCS_VISIBLE"; R=1; }
 exit $R
 EOF
 OUT="$(SANDBOX_CMD='bash /work/.selfcheck-inner.sh' PI_PROVIDER=ollama "$HERE/pi-sandbox.sh" 2>&1)"
-if grep -qE 'VISIBLE_HOST_PATH|ENV_HAS_SECRETISH|WROTE_USR|CANNOT_WRITE_WORK' <<<"$OUT"; then
-  bad "изоляция ФС/env: $OUT"
+if grep -qE 'VISIBLE_HOST_PATH|ENV_HAS_SECRETISH|WROTE_USR|CANNOT_WRITE_WORK|HOST_PROCS_VISIBLE' <<<"$OUT"; then
+  bad "изоляция ФС/env/proc: $OUT"
 else
-  ok "изоляция ФС/env (секреты невидимы, env чист, запись только в workdir)"
+  ok "изоляция ФС/env/proc (секреты и процессы хоста невидимы, env чист, запись только в workdir)"
 fi
 
 # --- 4: сеть до ollama --------------------------------------------------------

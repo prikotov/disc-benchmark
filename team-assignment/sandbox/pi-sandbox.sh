@@ -99,7 +99,7 @@ ARGS=(
 )
 [ "$NETWORK" = "none" ] && ARGS+=( --unshare-net )
 
-ARGS+=( --ro-bind /proc /proc --dev /dev --tmpfs /tmp )
+ARGS+=( --proc /proc --dev /dev --tmpfs /tmp )   # свежий procfs: хостовая таблица процессов не видна (НЕ --ro-bind /proc)
 
 # runtime roots + корень pi (нода и библиотеки pi живут вне /usr)
 for r in /usr /bin /lib /lib64 "$PI_BIN_ROOT"; do

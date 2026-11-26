@@ -37,7 +37,7 @@
 
 Раннер (`runner.py`), чекер (`check.py`), судья (`judge.py`) — будут
 написаны здесь по образцу `test-assignment/`. Результаты в этой папке
-не живут: командные прогоны — `models/_teams/<слаг>/team-assignment/run-XX/`
+не живут: командные прогоны — `teams/<слаг>/run-XX/`
 (см. `ORCHESTRATION.md`), кросс-командные своды — `reports/`.
 
 ## Статус

@@ -33,8 +33,9 @@ env | grep -Ei 'key|token|secret|password|proxy' >/dev/null 2>&1 \
   && { echo "ENV_HAS_SECRETISH"; R=1; }
 touch /usr/share/.pwn-test 2>/dev/null && { echo "WROTE_USR"; R=1; }
 echo t > /work/.w-test || { echo "CANNOT_WRITE_WORK"; R=1; }
-# хостовая таблица процессов не должна просматриваться (свежий procfs)
-ps aux 2>/dev/null | grep -Eq 'systemd --switched-root|sshd' \
+# хостовая таблица процессов не должна просматриваться (свежий procfs);
+# grep -v grep — иначе проверка находит саму себя в ps
+ps aux 2>/dev/null | grep -v grep | grep -Eq 'systemd --switched-root|[s]shd' \
   && { echo "HOST_PROCS_VISIBLE"; R=1; }
 exit $R
 EOF

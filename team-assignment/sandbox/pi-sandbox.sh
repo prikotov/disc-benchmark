@@ -147,7 +147,7 @@ if [ -n "${SANDBOX_ENV_PREFIX:-}" ]; then
   for p in "${PREFIXES[@]}"; do
     while IFS='=' read -r k v; do
       [ -n "$k" ] && ARGS+=( --setenv "$k" "$v" )
-    done < <(env | grep "^${p}=" || true)
+    done < <(env | grep "^${p}" || true)
   done
 fi
 

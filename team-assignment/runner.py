@@ -155,11 +155,33 @@ def main() -> None:
     prompt_file.write_text(prompt, encoding="utf-8")
 
     # run.json (провенанс)
+    # карточка состава серии (создаётся один раз на слаг)
+    team_md = run_dir.parent / "team.md"
+    if not team_md.exists():
+        rows = "\n".join(
+            f"| {r} | `{{v['model']}}` | {{v['think']}} |"
+            for r, v in comp["roles"].items())
+        team_md.write_text(f"""# {slug} — состав команды (условие {comp.get('condition', 'A')})
+
+Композиция: `compositions/{comp_path.name}` (commit `{comp_commit}`),
+status: {comp.get('status')}.
+
+| Роль | Модель | Уровень мышления |
+|---|---|---|
+{rows}
+
+- Сабагенты не наследуют уровень тимлида (механика subagent).
+- Карточки моделей-участников — `models/<модель>/model.md`, раздел «disc».
+""", encoding="utf-8")
+
     run_meta = {
         "assignment": "team-assignment",
         "prompt": "v1",
         "composition": slug,
         "composition_commit": comp_commit,
+        "team_card": str(team_md.relative_to(TA)),
+        "roles": {r: {"model": v["model"], "think": v["think"]}
+                  for r, v in comp["roles"].items()},
         "methodology_commit": meth_commit,
         "roles_dir": comp["roles_dir"],
         "scope": args.scope,

@@ -49,6 +49,19 @@ def git_commit(path: str) -> str:
                           capture_output=True, text=True).stdout.strip()
 
 
+
+def role_meta(card_path: Path) -> dict:
+    """Белбин/DISC из description фронтматтера карточки роли."""
+    desc = ""
+    for line in card_path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("description:"):
+            desc = line[len("description:"):].strip().strip('"')
+    belbin = re.search(r"Белбин\s*—\s*([^.;)]+)", desc)
+    disc = re.search(r"DISC\s*—\s*([^.;)]+)", desc)
+    return {"belbin": belbin.group(1).strip() if belbin else "",
+            "disc": disc.group(1).strip() if disc else None}
+
+
 def next_run_dir(slug: str) -> Path:
     runs = TA / "runs" / slug
     runs.mkdir(parents=True, exist_ok=True)
@@ -155,6 +168,32 @@ def main() -> None:
     prompt_file.write_text(prompt, encoding="utf-8")
 
     # run.json (провенанс)
+    # карточка команды внутри прогона: кто работал, какие роли
+    roles_meta = {}
+    md_rows = []
+    for r, v in comp["roles"].items():
+        meta = role_meta(TA / comp["roles_dir"] / f"{r}.md")
+        actual = v["think"] if r == "teamlead" else "default модели"
+        roles_meta[r] = {"model": v["model"], "think": v["think"],
+                         "belbin": meta["belbin"], "disc": meta["disc"],
+                         "actual_level": actual}
+        md_rows.append(f"| {r} | {meta['belbin'] or '—'} | "
+                       f"{meta['disc'] or 'нейтральные роли'} | "
+                       f"`{v['model']}` | {actual} |")
+    (run_dir / "team.md").write_text(f"""# Команда прогона: {slug} (условие {comp.get('condition', 'A')})
+
+Композиция: `compositions/{comp_path.name}` @ `{comp_commit[:12]}`
+Методология: `{meth_commit[:12]}` · Промпт: v1 · Карточки ролей: `{comp['roles_dir']}/`
+
+| Роль | Белбин | DISC-профиль | Модель | Уровень (факт) |
+|---|---|---|---|---|
+{chr(10).join(md_rows)}
+
+- Сабагенты не наследуют уровень тимлида (механика subagent: карточки
+  с `model:` идут без `--thinking`) — уровень «default модели».
+- Карточки моделей: `models/<модель>/model.md`, раздел «disc».
+""", encoding="utf-8")
+
     # карточка состава серии (создаётся один раз на слаг)
     team_md = run_dir.parent / "team.md"
     if not team_md.exists():
@@ -180,8 +219,7 @@ status: {comp.get('status')}.
         "composition": slug,
         "composition_commit": comp_commit,
         "team_card": str(team_md.relative_to(TA)),
-        "roles": {r: {"model": v["model"], "think": v["think"]}
-                  for r, v in comp["roles"].items()},
+        "roles": roles_meta,
         "methodology_commit": meth_commit,
         "roles_dir": comp["roles_dir"],
         "scope": args.scope,

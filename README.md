@@ -25,9 +25,9 @@
 | `test-assignment/reference/source/` | снимок оригинала (модели не выдаётся): `page.html`, `widget.html`, `disc_patched.js`, `result-page.html`, `manifest.json` |
 | `test-assignment/reference/` | эталон для сравнения (модели не показывается): `original.md` + `questions.json` (24 вопроса с типами) |
 | `test-assignment/rubrics/` | рубрика оценки (4 оси 0–4) и план машинных проверок |
-| `team-assignment/` | второе задание: DISC-продукт с нуля (Symfony, LLM-интерпретация, почта, деплой на ai-aid.pro) строит LLM-команда — роли по Белбину, поведение по DISC, сабагенты pi |
+| `team-assignment/` | второе задание: DISC-продукт с нуля (Symfony, LLM-интерпретация, почта, деплой на ai-aid.pro) строит LLM-команда — роли по Белбину, поведение по DISC, сабагенты pi; результаты — `runs/<состав>/run-XX/` |
 | `models/<модель>/` | карточка `model.md` + прогоны `test-assignment/run-XX/` (`run.json`, след сессии `pi-session/`, `index.html`) |
-| `team-runs/<состав>/` | командные прогоны `run-XX/` (след тимлида и сабагентов, workspace команды, прод-evidence) |
+
 | `reports/` | кросс-модельные своды; `spend.csv` платных API (вне git) |
 
 ## Быстрый старт

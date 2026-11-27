@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Ревьювер бэкенда (Белбин — Оценщик/Monitor Evaluator). Ревью кода и решений бэкенда против задания.
+description: "Ревьювер бэкенда (Белбин — Оценщик/Monitor Evaluator). Ревью кода и решений бэкенда против задания."
 model: {{model}}
 ---
 

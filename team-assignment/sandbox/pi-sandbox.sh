@@ -31,6 +31,9 @@
 #                       в workdir/.pi-home
 #   SANDBOX_NETWORK     host | none (по умолчанию host; none = --unshare-net)
 #   SANDBOX_RO_BINDS    доп. ro-маунты через ':' — "SRC:TGT[,SRC:TGT…]"
+#   SANDBOX_ENV_PREFIX  префиксы env хоста для проброса внутрь через запятую
+#                       (напр. "DISC_") — значения хоста по этим префиксам
+#                       попадают в песочницу через --setenv
 #   SANDBOX_PI_ARGS     доп. аргументы pi (напр. "--session-dir /work/pi-session")
 #   SANDBOX_PROMPT      текст промпта; иначе читается первый аргумент скрипта
 #   SANDBOX_CMD         вместо pi запускает команду (smoke/самопроверки)
@@ -137,6 +140,16 @@ ARGS+=(
   --setenv LANG ru_RU.UTF-8
   --setenv LC_ALL ru_RU.UTF-8
 )
+
+# проброс env хоста по префиксам (напр. DISC_* для продуктового окружения)
+if [ -n "${SANDBOX_ENV_PREFIX:-}" ]; then
+  IFS=',' read -ra PREFIXES <<< "$SANDBOX_ENV_PREFIX"
+  for p in "${PREFIXES[@]}"; do
+    while IFS='=' read -r k v; do
+      [ -n "$k" ] && ARGS+=( --setenv "$k" "$v" )
+    done < <(env | grep "^${p}=" || true)
+  done
+fi
 
 if [ -n "${SANDBOX_CMD:-}" ]; then
   INNER="$SANDBOX_CMD"

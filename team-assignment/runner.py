@@ -59,7 +59,8 @@ def role_meta(card_path: Path) -> dict:
     belbin = re.search(r"Белбин\s*—\s*([^.;)]+)", desc)
     disc = re.search(r"DISC\s*—\s*([^.;)]+)", desc)
     return {"belbin": belbin.group(1).strip() if belbin else "",
-            "disc": disc.group(1).strip() if disc else None}
+            "disc": disc.group(1).strip() if disc else None,
+            "desc": desc}
 
 
 def next_run_dir(slug: str) -> Path:
@@ -180,6 +181,11 @@ def main() -> None:
         md_rows.append(f"| {r} | {meta['belbin'] or '—'} | "
                        f"{meta['disc'] or 'нейтральные роли'} | "
                        f"`{v['model']}` | {actual} |")
+    # точные карточки ролей, какими их получили агенты (после {{model}})
+    (run_dir / "roles").mkdir(exist_ok=True)
+    for card in (pi_home_src / "agents").glob("*.md"):
+        shutil.copy2(card, run_dir / "roles" / card.name)
+
     (run_dir / "team.md").write_text(f"""# Команда прогона: {slug} (условие {comp.get('condition', 'A')})
 
 Композиция: `compositions/{comp_path.name}` @ `{comp_commit[:12]}`
@@ -188,6 +194,19 @@ def main() -> None:
 | Роль | Белбин | DISC-профиль | Модель | Уровень (факт) |
 |---|---|---|---|---|
 {chr(10).join(md_rows)}
+
+- Сабагенты не наследуют уровень тимлида (механика subagent: карточки
+  с `model:` идут без `--thinking`) — уровень «default модели».
+- Карточки моделей: `models/<модель>/model.md`, раздел «disc».
+
+## Описания ролей
+
+""" + "\n".join(
+        f"### {r} — {roles_meta[r]['belbin']}\n"
+        f"{roles_meta[r]['desc']}\n\n"
+        for r in comp["roles"]) + f"""
+Полные карточки (то, что реально получили агенты): `roles/<роль>.md`
+в этом каталоге.
 
 - Сабагенты не наследуют уровень тимлида (механика subagent: карточки
   с `model:` идут без `--thinking`) — уровень «default модели».

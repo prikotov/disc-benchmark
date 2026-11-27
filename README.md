@@ -27,7 +27,7 @@
 | `test-assignment/rubrics/` | рубрика оценки (4 оси 0–4) и план машинных проверок |
 | `team-assignment/` | второе задание: DISC-продукт с нуля (Symfony, LLM-интерпретация, почта, деплой на ai-aid.pro) строит LLM-команда — роли по Белбину, поведение по DISC, сабагенты pi |
 | `models/<модель>/` | карточка `model.md` + прогоны `test-assignment/run-XX/` (`run.json`, след сессии `pi-session/`, `index.html`) |
-| `teams/<состав>/` | командные прогоны `run-XX/` (след тимлида и сабагентов, workspace команды, прод-evidence) |
+| `team-runs/<состав>/` | командные прогоны `run-XX/` (след тимлида и сабагентов, workspace команды, прод-evidence) |
 | `reports/` | кросс-модельные своды; `spend.csv` платных API (вне git) |
 
 ## Быстрый старт

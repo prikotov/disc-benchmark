@@ -1,0 +1,23 @@
+{
+  "providers": {
+    "ollama": {
+      "baseUrl": "http://nserv:11434/v1",
+      "api": "openai-completions",
+      "apiKey": "ollama",
+      "models": [
+        {
+          "id": "inkling-2-mini:pi-128k",
+          "contextWindow": 131072,
+          "maxTokens": 32768,
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "false",
+            "low": "low",
+            "medium": "medium",
+            "high": "high"
+          }
+        }
+      ]
+    }
+  }
+}

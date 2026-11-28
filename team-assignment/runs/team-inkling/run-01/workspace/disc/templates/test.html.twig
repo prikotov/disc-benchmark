@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}Тест DISC{% endblock %}
+{% block body %}
+<h1 class="sr-only">Тест DISC</h1>
+<div class="progress">
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="progress-text" id="progressText"></div>
+</div>
+
+<div id="emailStep" class="screen hidden">
+  <h2>Где отправить результат?</h2>
+  <p>Введите ваш email — мы отправим баллы и интерпретацию профиля.</p>
+  <form id="emailForm">
+    <input type="email" id="email" required placeholder="you@example.com" autocomplete="email">
+    <button type="submit" class="btn btn-primary">Получить результат</button>
+    <p id="emailError" class="error"></p>
+  </form>
+</div>
+
+<div id="resultStep" class="screen hidden">
+  <h2>Ваш результат</h2>
+  <div class="scores" id="scores"></div>
+  <div id="interpretationBlock"></div>
+  <div id="mailStatus" class="mail-status"></div>
+  <a class="btn btn-secondary" href="/">Пройти ещё раз</a>
+</div>
+
+<div id="wizard" class="screen">
+  <div id="stepContainer"></div>
+  <div class="nav">
+    <button id="backBtn" class="btn btn-secondary">Назад</button>
+    <button id="nextBtn" class="btn btn-primary">Далее</button>
+  </div>
+</div>
+<script>
+window.STEPS = {{ steps|json_encode|raw }};
+</script>
+<script src="/js/test.js"></script>
+{% endblock %}
